@@ -1,0 +1,11 @@
+{
+  "freeze": true,
+  "latedef": true,
+  "noarg": true,
+  "nocomma": true,
+  "strict": true,
+  "undef": true,
+  "unused": true,
+  "esnext": true,
+  "node": true
+}
