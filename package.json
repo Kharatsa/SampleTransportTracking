@@ -1,13 +1,14 @@
 {
   "name": "kharatsa",
-  "version": "0.1.0",
+  "private": true,
+  "version": "0.0.1",
   "description": "Lesotho Sample Tracking",
   "main": "",
   "scripts": {
     "start": "node --harmony server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Sean Herman <sjh293@cornell.edu>",
   "license": "Apache-2.0",
   "dependencies": {
     "bluebird": "^2.10.2",
@@ -15,6 +16,7 @@
     "htmlparser": "^1.7.7",
     "htmlparser2": "^3.8.3",
     "libxmljs": "^0.15.0",
+    "node-gyp": "^3.0.3",
     "request": "^2.65.0",
     "winston": "^1.1.0",
     "xml2js": "^0.4.13"

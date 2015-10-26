@@ -1,6 +1,6 @@
 'use strict';
 
-const Promise = require('bluebird');
+const Bluebird = require('bluebird');
 const request = require('request');
 const odkConfig = require('app/config.js').ODK;
 
@@ -40,19 +40,19 @@ Object.keys(XML_CHAR_MAP).forEach(function(key) {
  * @param  {String} xml [description]
  * @return {String}     [description]
  */
-function unescapeXML(xml) {
-  return xml.replace(/&(lt|gt|amp|quot|apos);/g, function(match) {
-    return XML_ESCAPED_MAP[match];
-  });
-}
+// function unescapeXML(xml) {
+//   return xml.replace(/&(lt|gt|amp|quot|apos);/g, function(match) {
+//     return XML_ESCAPED_MAP[match];
+//   });
+// }
 
 /**
  * [formList description]
  *
- * @return {Promise} [description]
+ * @return {Bluebird} [description]
  */
 var formList = function formListFunc() {
-  return new Promise(function(resolve, reject) {
+  return new Bluebird(function(resolve, reject) {
     request.get({
       'url': '/formList',
       'baseUrl': odkConfig.protocol + '://' + odkConfig.hostname,
@@ -72,10 +72,10 @@ exports.formList = formList;
  *
  * @param  {String} formId  [description]
  * @param  {Number} entries [description]
- * @return {Promise} [description]
+ * @return {Bluebird} [description]
  */
 var submissionList = function submissionListFunc(formId, entries) {
-  return new Promise(function(resolve, reject) {
+  return new Bluebird(function(resolve, reject) {
     request.get({
       'url': '/view/submissionList',
       'baseUrl': odkConfig.protocol + '://' + odkConfig.hostname,
@@ -99,10 +99,10 @@ exports.submissionList = submissionList;
  *
  * @param  {String} formId  [description]
  * @param  {String} submissionId [description]
- * @return {Promise} [description]
+ * @return {Bluebird} [description]
  */
 var downloadSubmission = function downloadSubmissionFunc(formId, submissionId) {
-  return new Promise(function(resolve, reject) {
+  return new Bluebird(function(resolve, reject) {
     var query = 'formid[@version=null and @uiVersion=null]/' +
       formId + '[@key=' + submissionId + ']';
 
