@@ -29,7 +29,7 @@ bower_components
 
 # Project
 tmp/
-secrets*
+secret*
 *.pem
 .vagrant/
 Vagrantfile
