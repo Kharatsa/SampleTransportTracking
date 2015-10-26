@@ -2,6 +2,7 @@
 set -x
 
 TRACKER_REPO="https://github.com/Kharatsa/sample-tracking.git"
+SAMPLE_TRACK_DAEMON="strack"
 SAMPLE_TRACK_BASEDIR="/srv/www"
 SAMPLE_TRACK_DIR="sample-tracking"
 SAMPLE_TRACK_PATH="$SAMPLE_TRACK_BASEDIR/$SAMPLE_TRACK_DIR"
@@ -71,7 +72,7 @@ sudo chown -R $SAMPLE_TRACK_USER_GROUP $SAMPLE_TRACK_LOG_PATH
 sudo chmod -R 770 $SAMPLE_TRACK_LOG_PATH
 
 # Create the supervisor configuration file
-sudo sh -c "echo '[program:strack]
+sudo sh -c "echo '[program:$SAMPLE_TRACK_DAEMON]
 command=$NVM_NODE $SAMPLE_TRACK_PATH/app/server/server.js
 autostart=true
 autorestart=true
@@ -98,13 +99,16 @@ sudo chown -R $CURRENT_USER_GROUP $SAMPLE_TRACK_BASEDIR
 git clone $TRACKER_REPO $SAMPLE_TRACK_PATH
 cd $SAMPLE_TRACK_PATH
 
-# Place the secret file
+# Move the secrets file into place
 mv ~/secrets.js $SAMPLE_TRACK_PATH/app/
 npm install
-cd node_modules
 
 # Add a symbolic link to the app so require statements resolve properly
+cd node_modules
 sudo ln -s $SAMPLE_TRACK_PATH/app $SAMPLE_TRACK_PATH/node_modules/app
+
+# Make the app user the owner of the app directory
+sudo chown -R $SAMPLE_TRACK_USER $SAMPLE_TRACK_BASEDIR
 
 
 echo "----------------------------------------------"
@@ -112,6 +116,6 @@ echo "-------- Launch Sample Tracking app ----------"
 echo "----------------------------------------------"
 sudo supervisorctl reread
 sudo supervisorctl update
-sudo supervisorctl start strack
+sudo supervisorctl start $SAMPLE_TRACK_DAEMON
 
 sudo reboot
