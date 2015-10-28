@@ -1,21 +1,5 @@
 'use strict';
 
-/**
- * STEvent
- *   st_barcode
- *   lab_barcode
- *   odk_form_id
- *   odk_instance_id
- *   submitted_at
- *
- * ODKFormData
- *   odk_instance_id
- *   start
- *   end
- *
- *
- */
-
 var Forms;
 exports.Forms = function(sequelize, DataTypes) {
   Forms = sequelize.define('Forms', {

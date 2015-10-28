@@ -94,35 +94,4 @@ DBStorage.prototype.listTables = function() {
   return this.queryInterface.showAllTables();
 };
 
-/**
- * [saveFormList description]
- *
- * @param  {[type]} forms [description]
- * @return {[type]}       [description]
- */
-DBStorage.prototype.saveFormList = function(forms) {
-  log.debug('Saving forms', forms);
-
-  var self = this;
-  return this.db.transaction(function(tran) {
-    return Bluebird.map(forms, function(form) {
-      return {formId: form.formId, formName: form.name};
-    })
-    .each(function(form) {
-      return self.Forms.findOrCreate({
-        where: {formId: form.formId},
-        defaults: {formName: form.name},
-        transaction: tran
-      });
-      // .spread(function(form, created) {
-      //   if (created) {
-      //     log.info('Saved new form', form);
-      //   } else {
-      //     log.debug('Form already cached', form);
-      //   }
-      // });
-    });
-  });
-};
-
 module.exports = DBStorage;

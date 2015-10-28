@@ -1,7 +1,10 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
+const Bluebird = require('bluebird');
 const secrets = require('app/secrets.js');
+Bluebird.promisifyAll(fs);
 
 const isProduction = process.env.NODE_ENV === 'production';
 exports.isProduction = isProduction;
@@ -10,6 +13,15 @@ exports.loggingLevel = isProduction ? 'info' : 'debug';
 const portNumber = 8081;
 exports.portNumber = portNumber;
 
+const dataPath = path.join(__dirname, 'data');
+fs.statAsync(dataPath)
+.catch(function(err) {
+  if (err.code === 'ENOENT') {
+    return fs.mkdirAsync(dataPath);
+  } else {
+    console.error(err);
+  }
+});
 const sqliteFilename = path.join(__dirname, 'data', 'stracker.sqlite');
 exports.sqliteFilename = sqliteFilename;
 

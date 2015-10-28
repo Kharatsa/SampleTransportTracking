@@ -66,10 +66,8 @@ function PublishClient(dbStorage) {
   syncFormList(this.dbClient)
   .bind(this)
   .then(function(forms) {
-    return server.dbStorage.saveFormList(forms);
+    return this.saveFormList(forms);
   });
-
-  log.debug('App:');
 }
 
 /**
@@ -82,12 +80,64 @@ function PublishClient(dbStorage) {
  *                             Publisher" documentation
  */
 
-PublishClient.prototype.saveSubmission = function(submission) {
-  switch (submission.formId) {
-    case 'sample-origin':
-    case 'yolo':
-      break;
+PublishClient.prototype.saveSubmissionData = function(submission) {
+  var dataSample = submission.data[0] || {};
+
+  if (dataSample['st_barcode'] && dataSample['lab_barcode']) {
+    // TODO: link barcodes
+  } else if (dataSample['st_barcode']) {
+    return this.saveSTSubmission(submission);
+  } else if (dataSample['lab_barcode']) {
+    // TODO: lab barcode
+  } else {
+    throw new Error();
   }
+};
+
+PublishClient.prototype.saveFormList = function(forms) {
+  log.debug('Saving form list', forms);
+
+  var Model = this.dbClient.Forms;
+  return this.dbClient.db.transaction(function(tran) {
+    return Bluebird.map(forms, function(form) {
+      return {formId: form.formId, formName: form.name};
+    })
+    .bind(this)
+    .each(function(form) {
+      return Model.findOrCreate({
+        where: {formId: form.formId},
+        defaults: {formName: form.name},
+        transaction: tran
+      });
+    });
+  });
+};
+
+PublishClient.prototype.saveSTSubmission = function(submission) {
+  log.debug('Saving ST submission', submission);
+
+  return this.dbClient.db.transaction(function(tran) {});
+};
+
+PublishClient.prototype._saveSampleId = function(submission, tran) {
+  var Model = this.dbStorage.SampleIds;
+  return Bluebird.map(submission.data, function(sub) {
+    return {
+      stId: sub['st_barcode'] || null,
+      labId: sub['lab_barcode'] || null
+    };
+  })
+  .all(function(ids) {
+    // TODO
+  });
+};
+
+PublishClient.prototype._saveSTEvent = function(submission) {
+  //
+};
+
+PublishClient.prototype._saveFormData = function(submission) {
+  //
 };
 
 module.exports = PublishClient;

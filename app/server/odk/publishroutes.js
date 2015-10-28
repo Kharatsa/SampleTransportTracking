@@ -24,7 +24,7 @@ router.use(function(err, req, res, next) {
   }
 });
 
-function validPublisherToken(req, res, next) {
+function isPublisherTokenValid(req, res, next) {
   console.log('App:');
   console.dir(server, {colors: true, depth: 0});
 
@@ -39,10 +39,12 @@ function validPublisherToken(req, res, next) {
   }
 }
 
-router.post('/', validPublisherToken, function(req, res) {
+router.post('/', isPublisherTokenValid, function(req, res) {
   log.debug('Received publisher POST', req.originalUrl);
-  log.debug('TODO - save body:\n', req.body);
-  res.status(200).send('');
+  server.publishClient.saveSubmissionData(req.body)
+  .then(function() {
+    res.status(200).send('');
+  });
 });
 
 module.exports = router;
