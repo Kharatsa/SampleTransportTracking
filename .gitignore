@@ -28,6 +28,7 @@ node_modules
 bower_components
 
 # Project
+data/
 tmp/
 secret*
 *.pem

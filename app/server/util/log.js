@@ -32,7 +32,7 @@ var logger = new (winston.Logger)({
       },
       formatter: function(options) {
         // Return string will be passed to logger.
-        return '[' + options.timestamp().toTimeString() + '] ' +
+        return '[' + options.timestamp().toISOString() + '] ' +
           winstonConfig.colorize(options.level,
             '[' + options.level.toUpperCase() + '] ') +
           (undefined !== options.message ? options.message : '') +

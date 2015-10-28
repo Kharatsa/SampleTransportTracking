@@ -2,7 +2,15 @@
 
 const Bluebird = require('bluebird');
 const request = require('request');
+const log = require('app/server/util/log.js');
 const odkConfig = require('app/config.js').ODK;
+
+/**
+ * This module replicates the pull functions of the Briefcase Aggregate API.
+ *
+ * https://github.com/opendatakit/opendatakit/wiki/Briefcase-Aggregate-API
+ *
+ */
 
 /**
  * TODO: document
@@ -96,15 +104,19 @@ exports.submissionList = submissionList;
 
 /**
  * [downloadSubmission description]
+ * http://odk.kharatsa.com/view/downloadSubmission?formId=sample-origin[@version=null%20and%20@uiVersion=null]/sample-origin[@key=uuid:5b6d9e64-e721-42d7-88d4-b3fe62ec2ec1]
  *
  * @param  {String} formId  [description]
+ * @param  {String} topElement [description]
  * @param  {String} submissionId [description]
  * @return {Bluebird} [description]
  */
-var downloadSubmission = function downloadSubmissionFunc(formId, submissionId) {
+var downloadSubmission = function downloadFunc(formId, topElement, submissionId) {
   return new Bluebird(function(resolve, reject) {
-    var query = 'formid[@version=null and @uiVersion=null]/' +
-      formId + '[@key=' + submissionId + ']';
+    var query = formId + '[@version=null and @uiVersion=null]/' +
+      topElement + '[@key=' +
+      submissionId + ']';
+    log.debug('downloadSubmission query:\n\t%s', query);
 
     request.get({
       'url': '/view/downloadSubmission',
