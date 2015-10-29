@@ -10,7 +10,7 @@ gulp.task('nodemon', function(cb) {
     script: 'app/server/server.js',
     verbose: true,
     ignore: [
-      'README.md'
+      'README.md',
       'app/client/**/*.js',
       '.git/*',
       'tmp/*',

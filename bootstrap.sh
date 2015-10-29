@@ -9,6 +9,7 @@ SAMPLE_TRACK_PATH="$SAMPLE_TRACK_BASEDIR/$SAMPLE_TRACK_DIR"
 SAMPLE_TRACK_LOG_PATH="/var/log/$SAMPLE_TRACK_DIR"
 SAMPLE_TRACK_USER="strack"
 SAMPLE_TRACK_USER_GROUP="$SAMPLE_TRACK_USER:$SAMPLE_TRACK_USER"
+SAMPLE_TRACK_STORAGE_DIR="/var/lib/strack"
 CURRENT_USER_GROUP="$(whoami):$(whoami)"
 SECRET_DEST="/srv/www/$SAMPLE_TRACK_DIR/app"
 NVM_DIR="/opt/nvm"
@@ -93,6 +94,7 @@ echo "-------- Scaffold Sample Tracker app ---------"
 echo "----------------------------------------------"
 # Create app directories
 sudo mkdir -p $SAMPLE_TRACK_PATH
+sudo mkdir -p $SAMPLE_TRACK_STORAGE_DIR
 sudo chown -R $CURRENT_USER_GROUP $SAMPLE_TRACK_BASEDIR
 
 # Drop the Sample Tracking application in place
@@ -108,7 +110,8 @@ cd node_modules
 sudo ln -s $SAMPLE_TRACK_PATH/app $SAMPLE_TRACK_PATH/node_modules/app
 
 # Make the app user the owner of the app directory
-sudo chown -R $SAMPLE_TRACK_USER $SAMPLE_TRACK_BASEDIR
+sudo chown -R $SAMPLE_TRACK_USER_GROUP $SAMPLE_TRACK_BASEDIR
+sudo chown -R $SAMPLE_TRACK_USER_GROUP $SAMPLE_TRACK_STORAGE_DIR
 
 
 echo "----------------------------------------------"

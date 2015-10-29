@@ -13,13 +13,14 @@ exports.loggingLevel = isProduction ? 'info' : 'debug';
 const portNumber = 8081;
 exports.portNumber = portNumber;
 
-const dataPath = path.join(__dirname, 'data');
-fs.statAsync(dataPath)
+const dataDir = '/var/lib/strack';
+// const dataPath = path.join(__dirname, 'data');
+fs.statAsync(dataDir)
 .catch(function(err) {
   if (err.code === 'ENOENT') {
-    return fs.mkdirAsync(dataPath);
+    throw new Error('Data directory does not exist', dataDir);
   } else {
-    console.error(err);
+    throw err;
   }
 });
 const sqliteFilename = path.join(__dirname, 'data', 'stracker.sqlite');

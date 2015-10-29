@@ -2,7 +2,6 @@
 
 const _ = require('lodash');
 const Bluebird = require('bluebird');
-const server = require('app/server/server.js');
 const log = require('app/server/util/log.js');
 const odkAggregate = require('app/server/odk/aggregateapi.js');
 const parser = require('app/server/util/xmlconvert.js');
@@ -115,21 +114,21 @@ PublishClient.prototype.saveFormList = function(forms) {
 
 PublishClient.prototype.saveSTSubmission = function(submission) {
   log.debug('Saving ST submission', submission);
-
-  return this.dbClient.db.transaction(function(tran) {});
+  // return this.dbClient.db.transaction(function(tran) {});
 };
 
 PublishClient.prototype._saveSampleId = function(submission, tran) {
-  var Model = this.dbStorage.SampleIds;
-  return Bluebird.map(submission.data, function(sub) {
-    return {
-      stId: sub['st_barcode'] || null,
-      labId: sub['lab_barcode'] || null
-    };
-  })
-  .all(function(ids) {
-    // TODO
-  });
+  log.debug('TODO: _saveSampleId');
+  // var Model = this.dbStorage.SampleIds;
+  // return Bluebird.map(submission.data, function(sub) {
+  //   return {
+  //     stId: sub['st_barcode'] || null,
+  //     labId: sub['lab_barcode'] || null
+  //   };
+  // })
+  // .all(function(ids) {
+  //   // TODO
+  // });
 };
 
 PublishClient.prototype._saveSTEvent = function(submission) {
