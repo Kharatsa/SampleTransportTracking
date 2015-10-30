@@ -70,35 +70,6 @@ function PublishClient(dbClient) {
   });
 }
 
-// /**
-//  * Saves the submission data to the local database. The same data might be
-//  * submitted more than once, so data will only be inserted when the records
-//  * are unique.
-//  *
-//  * @param  {Object} submission The submission object includes all fields
-//  *                             detailed in the ODK Aggregate "Simple JSON
-//  *                             Publisher" documentation
-//  */
-// PublishClient.prototype.saveSubmissionData = function(submission) {
-//   var dataSample = submission.data[0] || {};
-
-//   // TODO: check if the samples have at least 1 sample ID somewhere
-//   // if (!(dataSample.stId || dataSample.labId)) {
-//   //   throw new Error('Submission data must include at least 1 sample ID ' +
-//   //     'field');
-//   // }
-
-//   if (dataSample[sampleIdFields.SAMPLE_TRACKING_ID] && dataSample[sampleIdFields.LAB_ID]) {
-//     // TODO: link barcodes
-//   } else if (dataSample[sampleIdFields.SAMPLE_TRACKING_ID]) {
-//     return this.saveSTSubmission(submission);
-//   } else if (dataSample[sampleIdFields.LAB_ID]) {
-//     // TODO: lab barcode
-//   } else {
-//     throw new Error();
-//   }
-// };
-
 PublishClient.prototype.saveFormList = function(forms) {
   log.debug('Saving form list', forms);
 
