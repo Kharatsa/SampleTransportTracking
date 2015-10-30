@@ -13,7 +13,7 @@ gulp.task('nodemon', function(cb) {
       'README.md',
       'app/client/**/*.js',
       '.git/*',
-      'tmp/*',
+      'junkyard/*',
       'app/data'
     ],
     execMap: {

@@ -14,7 +14,6 @@ const portNumber = 8081;
 exports.portNumber = portNumber;
 
 const dataDir = '/var/lib/strack';
-// const dataPath = path.join(__dirname, 'data');
 fs.statAsync(dataDir)
 .catch(function(err) {
   if (err.code === 'ENOENT') {
@@ -23,7 +22,7 @@ fs.statAsync(dataDir)
     throw err;
   }
 });
-const sqliteFilename = path.join(__dirname, 'data', 'stracker.sqlite');
+const sqliteFilename = path.join(dataDir, 'stracker.sqlite');
 exports.sqliteFilename = sqliteFilename;
 
 const publisherToken = secrets.ODK_PUBLISHER_TOKEN;

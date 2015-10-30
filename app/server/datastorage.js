@@ -2,7 +2,6 @@
 
 const util = require('util');
 const EventEmitter = require('events').EventEmitter;
-const Bluebird = require('bluebird');
 const Sequelize = require('sequelize');
 const log = require('app/server/util/log.js');
 const models = require('app/server/dataschema.js');
@@ -31,8 +30,8 @@ function DBStorage(options) {
 
   this.Forms = this.db.import('Forms', models.Forms);
   this.FormData = this.db.import('FormData', models.FormData);
+  this.STEvents = this.db.import('STEvents', models.STEvents);
   this.SampleIds = this.db.import('SampleIds', models.SampleIds);
-  this.Events = this.db.import('Events', models.Events);
 
   this.db.sync()
   .bind(this)

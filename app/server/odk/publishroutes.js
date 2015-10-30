@@ -37,12 +37,15 @@ function isPublisherTokenValid(req, res, next) {
 }
 
 router.post('/', isPublisherTokenValid, function(req, res) {
-  log.debug('Received publisher POST', req.originalUrl);
-  res.status(200).send('');
-  // server.publishClient.saveSubmissionData(req.body)
-  // .then(function() {
-  //   res.status(200).send('');
-  // });
+  log.info('Received ODK Aggregate POST', req.originalUrl);
+  return server.publishClient.saveSubmission(req.body)
+  .then(function() {
+    res.status(200).send('');
+  })
+  .error(function(err) {
+    log.error('Error saving published submission', err.message, err.stack);
+    res.status(500).send(err.message);
+  });
 });
 
 module.exports = router;

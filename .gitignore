@@ -29,7 +29,7 @@ bower_components
 
 # Project
 data/
-tmp/
+junkyard/
 secret*
 *.pem
 .vagrant/

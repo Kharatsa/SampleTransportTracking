@@ -17,7 +17,7 @@ var dbStorage = exports.dbStorage = new DBStorage(
 
 var publishClient;
 dbStorage.once('ready', function() {
-  log.debug('sqlite DB ready');
+  log.info('sqlite DB ready');
   publishClient = exports.publishClient = new PublishClient(dbStorage);
 });
 
@@ -33,14 +33,14 @@ app.get('/', function(req, res) {
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  var err = new Error('Not Found ' + req.originalUrl);
   err.status = 404;
   next(err);
 });
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+if (config.isProduction) {
   app.use(function(err, req, res) {
     log.error('Request DEV Error', err, err.stack);
     res.status(err.status || 500);
