@@ -3,31 +3,40 @@
 const express = require('express');
 const config = require('app/config.js');
 const log = require('app/server/util/log.js');
+const requestLog = require('app/server/util/logrequest.js');
 const DBStorage = require('app/server/datastorage.js');
 const handleShutdown = require('app/server/util/shutdown.js');
-const PublishClient = require('app/server/odk/publishclient.js');
 const aggregateRoutes = require('app/server/odk/aggregateroutes.js');
+const PublishClient = require('app/server/odk/publishclient.js');
 const publisherRoutes = require('app/server/odk/publishroutes.js');
+const TrackerClient = require('app/server/api/trackerapi.js');
+const trackerRoutes = require('app/server/api/trackerroutes.js');
 
 var app = exports.app = express();
+
+app.use(requestLog.logger);
 
 var dbStorage = exports.dbStorage = new DBStorage(
   {storage: config.sqliteFilename}
 );
 
 var publishClient;
+var apiClient;
 dbStorage.once('ready', function() {
-  log.info('sqlite DB ready');
+  log.info('Database connection established');
   publishClient = exports.publishClient = new PublishClient(dbStorage);
+  apiClient = exports.apiClient = new TrackerClient(dbStorage);
 });
 
+// Pass handleShutdown any functions to execute on shutdown (e.g., close DB
+// connections)
 handleShutdown();
 
 app.use('/odk', aggregateRoutes);
 app.use('/publish', publisherRoutes);
+app.use('/track', trackerRoutes);
 
 app.get('/', function(req, res) {
-  log.debug('Home route', req.originalUrl);
   res.status(200).send('TODO');
 });
 

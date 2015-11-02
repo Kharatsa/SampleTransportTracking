@@ -66,7 +66,7 @@ exports.STEvents = function(sequelize, DataTypes) {
       field: 'odk_completed_date',
     },
   }, {
-    indexes: [{fields: ['sample_id']}]
+    indexes: [{fields: ['sample_id', 'instance_id']}]
   });
   return STEvents;
 };

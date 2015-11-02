@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const Bluebird = require('bluebird');
+const Sequelize = require('sequelize');
 const log = require('app/server/util/log.js');
 const odkAggregate = require('app/server/odk/aggregateapi.js');
 const parser = require('app/server/util/xmlconvert.js');
@@ -60,8 +61,8 @@ function syncFormList() {
  * @param {Object} dbClient  [description]
  */
 function PublishClient(dbClient) {
-  this.dbClient = dbClient;
   log.debug('Creating PublishClient');
+  this.dbClient = dbClient;
 
   syncFormList(this.dbClient)
   .bind(this)
@@ -122,14 +123,20 @@ PublishClient.prototype.saveSubmission = function(submission) {
   log.debug('Save new "' + formId + '" form submission', submission);
 
   var self = this;
-  return this.dbClient.db.transaction(function(tran) {
+  return this.dbClient.db.transaction({
+    isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED
+  }, function(tran) {
     return self._saveSampleIds(submission.data, tran)
     .then(function() {
       return self._saveSTEvent(formId, submission.data, tran);
     })
     .then(function() {
+      // TODO: only save fields if STEvent was created (i.e., non-dupe)
       return self._saveSubmissionData(formId, submission.data, tran);
     });
+  })
+  .then(function(result) {
+    log.debug('Finished COMMITTING form submission', result);
   });
 };
 
@@ -149,14 +156,43 @@ PublishClient.prototype._saveSampleIds = function(submissionData, tran) {
 
   var Model = this.dbClient.SampleIds;
   return Bluebird.map(submissionData, function(data) {
-    return {
-      stId: data[sampleIdFields.SAMPLE_TRACKING_ID] || null,
-      labId: data[sampleIdFields.LAB_ID] || null
-    };
+    // Pull the Id values from data. Parse to int if present.
+    var newStId = data[sampleIdFields.SAMPLE_TRACKING_ID] || null;
+    newStId = newStId ? parseInt(newStId) : newStId;
+    var newLabId = data[sampleIdFields.LAB_ID] || null;
+    newLabId = newLabId ? parseInt(newLabId) : newLabId;
+
+    return {stId: newStId, labId: newLabId};
   })
   .each(function(id) {
-    log.debug('Upsert sample identifiers', id);
-    return Model.upsert(id, {transaction: tran});
+    log.debug('findOrCreate sample identifiers', id);
+    // Check if a record exists for this SampleId already. An existing record
+    // will have either a matching, non-null stId or labId.
+    return Model.findOrCreate({
+      where: {$or: [
+        {$and: [{stId: id.stId}, {stId: {ne: null}}]},
+        {$and: [{labId: id.labId}, {labId: {ne: null}}]}
+      ]},
+      defaults: {
+        stId: id.stId,
+        labId: id.labId
+      },
+      transaction: tran
+    })
+    .spread(function(sampleId, created) {
+      log.debug('Local SampleId', sampleId.get({plain: true}));
+      if (created) {
+        log.debug('Created NEW SampleID');
+      } else if (sampleId.stId !== id.stId || sampleId.labId !== id.labId) {
+        // Update the sampleID record if necessary
+        log.debug('Updating EXISTING SampleID');
+        sampleId.stId = id.stId;
+        sampleId.labId = id.labId;
+        return sampleId.save({
+          transaction: tran
+        });
+      }
+    });
   });
 };
 
@@ -196,12 +232,24 @@ PublishClient.prototype._saveSTEvent = function(formId, submissionData, tran) {
     };
   })
   .each(function(stEvent) {
-    return STEventModel.create(stEvent, {transaction: tran});
+    return STEventModel.findOrCreate({
+      where: {instanceId: stEvent.instanceId},
+      defaults: stEvent,
+      transaction: tran
+    })
+    .spread(function(stEvent, created) {
+      log.debug('DB STEvent', stEvent.get({plain: true}));
+      if (created) {
+        log.debug('Created NEW STEvent');
+      } else {
+        log.debug('STEvent EXISTS. Skipping insert.');
+      }
+    });
+    // return STEventModel.create(stEvent, {transaction: tran});
   });
-
 };
 /**
- * Enum for
+ * Enum for ODK Aggregate form fields relevant to data storage
  * @enum {String}
  */
 const formDataFields = {
@@ -218,7 +266,8 @@ const formDataFields = {
  * @param  {Object}   tran            Sequelize transaction
  * @return {Promise}                  [description]
  */
-PublishClient.prototype._saveSubmissionData = function(formId, submissionData, tran) {
+PublishClient.prototype._saveSubmissionData = function(formId, submissionData,
+                                                       tran) {
   log.debug('Saving FIELD DATA from submission');
 
   var FormDataModel = this.dbClient.FormData;
@@ -233,9 +282,17 @@ PublishClient.prototype._saveSubmissionData = function(formId, submissionData, t
       };
     })
     .all(function(subsData) {
-      log.debug('Saving ' + subsData.length + ' total fields');
-
-      return FormDataModel.bulkCreate(subsData, {transaction: tran});
+      log.debug('FIELD DATA total fields: ', subsData.length);
+      return FormDataModel.bulkCreate(subsData, {
+        transaction: tran,
+        logging: log.debug
+      });
+    })
+    .catch(function(err) {
+      log.error('Error saving FIELD DATA', err);
+    })
+    .then(function(fieldEntries) {
+      log.debug('Instances for the newly created FIELD DATA', fieldEntries);
     });
   });
 };
