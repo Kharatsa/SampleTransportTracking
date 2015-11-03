@@ -112,6 +112,7 @@ const sampleIdFields = {
  * tables. These components are:
  *   * Sample IDs (sample and lab)
  *   * STEvents (sample Id, form Id, instance/submission Id)
+ *   * FormData (all the fields)
  *
  * @param  {Object} submission  A form submission from ODK Aggregate's Simple
  *                              JSON publisher.
@@ -120,7 +121,7 @@ const sampleIdFields = {
  */
 PublishClient.prototype.saveSubmission = function(submission) {
   var formId = submission[formFields.FORM_ID];
-  log.debug('Save new "' + formId + '" form submission', submission);
+  log.info('New `' + formId + '` form submission', submission);
 
   var self = this;
   return this.dbClient.db.transaction({
@@ -128,17 +129,48 @@ PublishClient.prototype.saveSubmission = function(submission) {
   }, function(tran) {
     return self._saveSampleIds(submission.data, tran)
     .then(function() {
-      return self._saveSTEvent(formId, submission.data, tran);
-    })
-    .then(function() {
-      // TODO: only save fields if STEvent was created (i.e., non-dupe)
-      return self._saveSubmissionData(formId, submission.data, tran);
+      return self._saveSTEvent(formId, submission.data, tran)
+      .each(function(eventInstance) {
+        if (eventInstance.created) {
+          return self._saveFieldData(formId, submission.data, tran);
+        }
+        log.info('STEvent from submission');
+      });
     });
   })
   .then(function(result) {
     log.debug('Finished COMMITTING form submission', result);
   });
 };
+
+function parseSampleIds(data) {
+  // Pull the Id values from data. Parse to int if present.
+  var newStId = data[sampleIdFields.SAMPLE_TRACKING_ID] || null;
+  newStId = newStId ? parseInt(newStId) : newStId;
+  var newLabId = data[sampleIdFields.LAB_ID] || null;
+  newLabId = newLabId ? parseInt(newLabId) : newLabId;
+
+  return {stId: newStId, labId: newLabId};
+}
+
+var maybeUpdateSampleId = Bluebird.method(function(newId, localId, created,
+                                                   tran) {
+  log.debug('Local SampleId', localId.get({plain: true}));
+
+  if (localId.stId !== newId.stId || localId.labId !== newId.labId) {
+    log.debug('Update EXISTING SampleID');
+    localId.stId = newId.stId;
+    localId.labId = newId.labId;
+    return localId.save({
+      transaction: tran
+    });
+  } else if (created) {
+    log.debug('Created NEW SampleID');
+  } else {
+    log.debug('EXISTING SampleID does not require update');
+  }
+  return localId;
+});
 
 /**
  * Persists the sample identifiers to the database. Submission data should
@@ -156,15 +188,9 @@ PublishClient.prototype._saveSampleIds = function(submissionData, tran) {
 
   var Model = this.dbClient.SampleIds;
   return Bluebird.map(submissionData, function(data) {
-    // Pull the Id values from data. Parse to int if present.
-    var newStId = data[sampleIdFields.SAMPLE_TRACKING_ID] || null;
-    newStId = newStId ? parseInt(newStId) : newStId;
-    var newLabId = data[sampleIdFields.LAB_ID] || null;
-    newLabId = newLabId ? parseInt(newLabId) : newLabId;
-
-    return {stId: newStId, labId: newLabId};
+    return parseSampleIds(data);
   })
-  .each(function(id) {
+  .map(function(id) {
     log.debug('findOrCreate sample identifiers', id);
     // Check if a record exists for this SampleId already. An existing record
     // will have either a matching, non-null stId or labId.
@@ -173,25 +199,11 @@ PublishClient.prototype._saveSampleIds = function(submissionData, tran) {
         {$and: [{stId: id.stId}, {stId: {ne: null}}]},
         {$and: [{labId: id.labId}, {labId: {ne: null}}]}
       ]},
-      defaults: {
-        stId: id.stId,
-        labId: id.labId
-      },
+      defaults: {stId: id.stId, labId: id.labId},
       transaction: tran
     })
     .spread(function(sampleId, created) {
-      log.debug('Local SampleId', sampleId.get({plain: true}));
-      if (created) {
-        log.debug('Created NEW SampleID');
-      } else if (sampleId.stId !== id.stId || sampleId.labId !== id.labId) {
-        // Update the sampleID record if necessary
-        log.debug('Updating EXISTING SampleID');
-        sampleId.stId = id.stId;
-        sampleId.labId = id.labId;
-        return sampleId.save({
-          transaction: tran
-        });
-      }
+      return maybeUpdateSampleId(id, sampleId, created, tran);
     });
   });
 };
@@ -208,20 +220,16 @@ const eventFields = {
 _.assign(eventFields, sampleIdFields);
 
 /**
- * Persists the sample, form, and submission IDs for a submission to the
- * database.
+ * [parseEvents description]
  *
- * @param  {Object}   formId          [description]
- * @param  {Object[]} submissionData  [description]
- * @param  {Object}   tran            Sequelize transaction
- * @return {Promise}                  [description]
+ * @param  {String}   formId         [description]
+ * @param  {Object[]} data           [description]
+ * @return {Promise}                 [description]
  */
-PublishClient.prototype._saveSTEvent = function(formId, submissionData, tran) {
-  log.debug('Saving EVENTS from submission');
-
-  var STEventModel = this.dbClient.STEvents;
-  return Bluebird.map(submissionData, function(data) {
-    return {
+function parseEvents(formId, data) {
+  return {
+    data: data,
+    model: {
       sampleId: (
         data[eventFields.SAMPLE_TRACKING_ID] ||
         data[eventFields.LAB_ID]),
@@ -229,23 +237,36 @@ PublishClient.prototype._saveSTEvent = function(formId, submissionData, tran) {
       instanceId: data[eventFields.INSTANCE_ID],
       formEndDate: data[eventFields.FORM_END_DATE],
       odkCompletedDate: data[eventFields.COMPLETED_DATE]
-    };
+    }
+  };
+}
+
+/**
+ * Persists the sample, form, and submission IDs for a submission to the
+ * database.
+ *
+ * @param  {String}   formId          [description]
+ * @param  {Object[]} submissionData  [description]
+ * @param  {Object}   tran            Sequelize transaction
+ * @return {Promise.<Object>}         [description]
+ */
+PublishClient.prototype._saveSTEvent = function(formId, submissionData, tran) {
+  log.debug('Saving EVENTS from submission');
+
+  var STEventModel = this.dbClient.STEvents;
+  return Bluebird.map(submissionData, function(data) {
+    return parseEvents(formId, data);
   })
-  .each(function(stEvent) {
+  .map(function(result) {
+    var stEvent = result.model;
     return STEventModel.findOrCreate({
       where: {instanceId: stEvent.instanceId},
       defaults: stEvent,
       transaction: tran
     })
     .spread(function(stEvent, created) {
-      log.debug('DB STEvent', stEvent.get({plain: true}));
-      if (created) {
-        log.debug('Created NEW STEvent');
-      } else {
-        log.debug('STEvent EXISTS. Skipping insert.');
-      }
+      return {instance: stEvent, created: created};
     });
-    // return STEventModel.create(stEvent, {transaction: tran});
   });
 };
 /**
@@ -257,42 +278,47 @@ const formDataFields = {
 };
 
 /**
+ * Transforms the submission data object into an array of objects. Each array
+ * value contains one field and value pair.
+ *
+ * @param  {String} formId
+ * @param  {Object} data
+ * @return {Object[]}
+ */
+function parseFieldData(formId, data) {
+  var instanceId = data[formDataFields.INSTANCE_ID];
+  return Bluebird.map(Object.keys(data), function(field) {
+    return {
+      formId: formId,
+      instanceId: instanceId,
+      fieldLabel: field,
+      fieldValue: data[field]
+    };
+  });
+}
+
+/**
  * Persists the submission instance data fields to the database. Each field is
  * stored as its own row in the database. This approach avoids the need to
  * recreate the form's model schema in this local database.
  *
  * @param  {Object}   formId          [description]
- * @param  {Object[]} submissionData  [description]
+ * @param  {Object} submissionData    [description]
  * @param  {Object}   tran            Sequelize transaction
  * @return {Promise}                  [description]
  */
-PublishClient.prototype._saveSubmissionData = function(formId, submissionData,
-                                                       tran) {
+PublishClient.prototype._saveFieldData = function(formId, submissionData,
+                                                  tran) {
   log.debug('Saving FIELD DATA from submission');
 
   var FormDataModel = this.dbClient.FormData;
   return Bluebird.map(submissionData, function(data) {
-    var instanceId = data[formDataFields.INSTANCE_ID];
-    return Bluebird.map(Object.keys(data), function(field) {
-      return {
-        formId: formId,
-        instanceId: instanceId,
-        fieldLabel: field,
-        fieldValue: data[field]
-      };
-    })
-    .all(function(subsData) {
-      log.debug('FIELD DATA total fields: ', subsData.length);
-      return FormDataModel.bulkCreate(subsData, {
-        transaction: tran,
-        logging: log.debug
+    return parseFieldData(formId, data)
+    .map(function(fieldData) {
+      log.debug('Saving FIELD DATA', fieldData);
+      return FormDataModel.create(fieldData, {
+        transaction: tran
       });
-    })
-    .catch(function(err) {
-      log.error('Error saving FIELD DATA', err);
-    })
-    .then(function(fieldEntries) {
-      log.debug('Instances for the newly created FIELD DATA', fieldEntries);
     });
   });
 };

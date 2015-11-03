@@ -77,20 +77,12 @@ exports.FormData = function(sequelize, DataTypes) {
     formId: {
       type: DataTypes.STRING,
       field: 'form_id',
-      allowNull: false,
-      // references: {
-      //   model: STEvents,
-      //   key: 'form_id',
-      // },
+      allowNull: false
     },
     instanceId: {
       type: DataTypes.UUID,
       field: 'instance_id',
-      allowNull: false,
-      // references: {
-      //   model: STEvents,
-      //   key: 'instance_id',
-      // },
+      allowNull: false
     },
     fieldLabel: {
       type: DataTypes.STRING,
@@ -99,8 +91,7 @@ exports.FormData = function(sequelize, DataTypes) {
     },
     fieldValue: {
       type: DataTypes.STRING,
-      field: 'field_value',
-      allowNull: false,
+      field: 'field_value'
     }
   }, {
     indexes: [{fields: ['instance_id']}]

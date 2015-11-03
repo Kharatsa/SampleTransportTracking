@@ -29,6 +29,7 @@ function isPublisherTokenValid(req, res, next) {
   if (config.publisherToken && token === config.publisherToken) {
     next();
   } else if (config.publisherToken) {
+    log.info('Bad token in publisher request', req.body);
     res.status(400).json({'error': 'Invalid publisher token'});
   } else {
     // No publisher token specified by the server, so the request proceeds
