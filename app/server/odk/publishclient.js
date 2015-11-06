@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-const Bluebird = require('bluebird');
+const BPromise = require('bluebird');
 const Sequelize = require('sequelize');
 const log = require('app/server/util/log.js');
 const odkAggregate = require('app/server/odk/aggregateapi.js');
@@ -30,8 +30,8 @@ function syncFormList() {
   log.debug('Sychronizing ODK Aggregate form list');
 
   return odkAggregate.formList()
-  .then(function(xml) {
-    return parser.parseXML(xml);
+  .spread(function(listRes, listBody) {
+    return parser.parseXML(listBody);
   })
   .then(function(formListObj) {
     return odkTransform.getFormIds(formListObj);
@@ -43,9 +43,9 @@ function syncFormList() {
       return {formId: form.formId, name: form.name, index: i};
     });
 
-    Bluebird.each(serverFormIds, function checkForms(form) {
+    BPromise.each(serverFormIds, function checkForms(form) {
       if (_.indexOf(supportedFormIds, form.formId) === -1) {
-        log.error('Unsupported ODK Aggregate form ' +
+        log.warn('Unrecognized ODK Aggregate form ' +
           JSON.stringify(forms[form.index]));
       }
     });
@@ -71,21 +71,28 @@ function PublishClient(dbClient) {
   });
 }
 
+/**
+ * Stores the latest form list from ODK in the local DB.
+ *
+ * @param  {Object}   forms The parsed /formList object from ODK
+ * @return {Promise}        Resolved on successful sync
+ */
 PublishClient.prototype.saveFormList = function(forms) {
-  log.debug('Saving form list', forms);
-
-  var Model = this.dbClient.Forms;
+  var FormsModel = this.dbClient.Forms;
   return this.dbClient.db.transaction(function(tran) {
-    return Bluebird.map(forms, function(form) {
+    return BPromise.map(forms, function(form) {
       return {formId: form.formId, formName: form.name};
     })
     .bind(this)
-    .each(function(form) {
-      return Model.findOrCreate({
+    .map(function(form) {
+      return FormsModel.findOrCreate({
         where: {formId: form.formId},
         defaults: {formName: form.name},
         transaction: tran
       });
+    })
+    .then(function(forms) {
+      log.info('Successfully processed ' + forms.length + ' forms');
     });
   });
 };
@@ -153,7 +160,7 @@ function parseSampleIds(data) {
   return {stId: newStId, labId: newLabId};
 }
 
-var maybeUpdateSampleId = Bluebird.method(function(newId, localId, created,
+var maybeUpdateSampleId = BPromise.method(function(newId, localId, created,
                                                    tran) {
   log.debug('Local SampleId', localId.get({plain: true}));
 
@@ -179,22 +186,20 @@ var maybeUpdateSampleId = Bluebird.method(function(newId, localId, created,
  *
  * @param  {Object[]} submissionData  An array of fields for the submission
  * @param  {Object}   tran            Sequelize transaction
- * @return {Promise}                  Boolean reporting whether the row was
- *                                            created or updated. Note: SQLite
- *                                            returns undefined for upserts.
+ * @return {Promise.<Boolean>}        Whether the row was created or updated.
  */
 PublishClient.prototype._saveSampleIds = function(submissionData, tran) {
   log.debug('Saving SAMPLE IDS from submission');
 
-  var Model = this.dbClient.SampleIds;
-  return Bluebird.map(submissionData, function(data) {
+  var SampleIdsModel = this.dbClient.SampleIds;
+  return BPromise.map(submissionData, function(data) {
     return parseSampleIds(data);
   })
   .map(function(id) {
     log.debug('findOrCreate sample identifiers', id);
     // Check if a record exists for this SampleId already. An existing record
     // will have either a matching, non-null stId or labId.
-    return Model.findOrCreate({
+    return SampleIdsModel.findOrCreate({
       where: {$or: [
         {$and: [{stId: id.stId}, {stId: {ne: null}}]},
         {$and: [{labId: id.labId}, {labId: {ne: null}}]}
@@ -254,7 +259,7 @@ PublishClient.prototype._saveSTEvent = function(formId, submissionData, tran) {
   log.debug('Saving EVENTS from submission');
 
   var STEventModel = this.dbClient.STEvents;
-  return Bluebird.map(submissionData, function(data) {
+  return BPromise.map(submissionData, function(data) {
     return parseEvents(formId, data);
   })
   .map(function(result) {
@@ -287,7 +292,7 @@ const formDataFields = {
  */
 function parseFieldData(formId, data) {
   var instanceId = data[formDataFields.INSTANCE_ID];
-  return Bluebird.map(Object.keys(data), function(field) {
+  return BPromise.map(Object.keys(data), function(field) {
     return {
       formId: formId,
       instanceId: instanceId,
@@ -312,7 +317,7 @@ PublishClient.prototype._saveFieldData = function(formId, submissionData,
   log.debug('Saving FIELD DATA from submission');
 
   var FormDataModel = this.dbClient.FormData;
-  return Bluebird.map(submissionData, function(data) {
+  return BPromise.map(submissionData, function(data) {
     return parseFieldData(formId, data)
     .map(function(fieldData) {
       log.debug('Saving FIELD DATA', fieldData);

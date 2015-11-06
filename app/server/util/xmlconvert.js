@@ -1,6 +1,6 @@
 'use strict';
 
-const Bluebird = require('bluebird');
+const BPromise = require('bluebird');
 const parser = require('xml2js');
 
-exports.parseXML = Bluebird.promisify(parser.parseString);
+exports.parseXML = BPromise.promisify(parser.parseString);

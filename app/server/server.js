@@ -9,23 +9,23 @@ const handleShutdown = require('app/server/util/shutdown.js');
 const aggregateRoutes = require('app/server/odk/aggregateroutes.js');
 const PublishClient = require('app/server/odk/publishclient.js');
 const publisherRoutes = require('app/server/odk/publishroutes.js');
-const TrackerClient = require('app/server/api/trackerapi.js');
+const SampleTracker = require('app/server/api/trackerapi.js');
 const trackerRoutes = require('app/server/api/trackerroutes.js');
 
 var app = exports.app = express();
 
-app.use(requestLog.logger);
+app.use(requestLog.requestLogger);
 
 var dbStorage = exports.dbStorage = new DBStorage(
   {storage: config.sqliteFilename}
 );
 
 var publishClient;
-var apiClient;
+var sampleTracker;
 dbStorage.once('ready', function() {
   log.info('Database connection established');
   publishClient = exports.publishClient = new PublishClient(dbStorage);
-  apiClient = exports.apiClient = new TrackerClient(dbStorage);
+  sampleTracker = exports.sampleTracker = new SampleTracker(dbStorage);
 });
 
 // Pass handleShutdown any functions to execute on shutdown (e.g., close DB
@@ -39,6 +39,8 @@ app.use('/track', trackerRoutes);
 app.get('/', function(req, res) {
   res.status(200).send('TODO');
 });
+
+app.use(requestLog.errorLogger);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

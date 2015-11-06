@@ -16,17 +16,18 @@ function sendXML(res, xml) {
 router.get('/formlist', function(req, res) {
   log.debug('ODK formList');
   aggregate.formList()
-  .then(function(body) {
-    sendXML(res, body);
+  .spread(function(listRes, listBody) {
+    sendXML(res, listBody);
   });
 });
 
 router.get('/view/submissionList', function(req, res) {
   log.debug('ODK submissionList\n\tformId=%s\n\tnumEntries=%s',
     req.query.formId, req.query.numEntries);
+
   aggregate.submissionList(req.query.formId, req.query.numEntries)
-  .then(function(body) {
-    sendXML(res, body);
+  .spread(function(listRes, listBody) {
+    sendXML(res, listBody);
   });
 });
 
@@ -36,9 +37,10 @@ router.get('/view/downloadSubmission', function(req, res) {
   var submissionId = req.query.submissionId;
   log.debug('ODK downloadSubmission\n\tformId=%s\n\ttopElement=%s' +
     '\n\tsubmissionId=%s', formId, topElement, submissionId);
+
   aggregate.downloadSubmission(formId, topElement, submissionId)
-  .then(function(body) {
-    sendXML(res, body);
+  .spread(function(subRes, subBody) {
+    sendXML(res, subBody);
   });
 });
 

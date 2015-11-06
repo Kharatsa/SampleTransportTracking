@@ -19,11 +19,17 @@ if (config.isProduction) {
 }
 
 var requestLogger = expressWinston.logger({
-  transports: [appLogger],
+  // transports: [appLogger],
+  winstonInstance: appLogger,
   expressFormat: true,
   msg: 'HTTP {{req.method}} {{req.url}}',
 });
 
+var errorLogger = expressWinston.errorLogger({
+  winstonInstance: appLogger,
+});
+
 module.exports = {
-  logger: requestLogger
+  requestLogger: requestLogger,
+  errorLogger: errorLogger
 };

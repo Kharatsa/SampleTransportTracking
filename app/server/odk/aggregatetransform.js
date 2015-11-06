@@ -1,6 +1,6 @@
 'use strict';
 
-const Bluebird = require('bluebird');
+const BPromise = require('bluebird');
 const log = require('app/server/util/log.js');
 
 /**
@@ -16,7 +16,7 @@ function getFormIds(formList) {
   log.debug('getFormIds for formList', formList);
   log.debug('formList keys', Object.keys(formList));
   log.debug('formList.xforms keys', Object.keys(formList.xforms));
-  return Bluebird.map(formList.xforms.xform, function(form) {
+  return BPromise.map(formList.xforms.xform, function(form) {
     return {
       formId: form.formID[0] || '',
       name: form.name[0] || ''
