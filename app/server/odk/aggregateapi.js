@@ -106,7 +106,8 @@ var downloadSubmission = function downloadFunc(formId, topElement, submissionId)
     url: '/view/downloadSubmission',
     baseUrl: ODK_BASE_URL,
     headers: OPEN_ROSA_HEADERS,
-    qs: {formId: query}
+    qs: {formId: query},
+    auth: ODK_REQUEST_AUTH
   });
 };
 exports.downloadSubmission = downloadSubmission;

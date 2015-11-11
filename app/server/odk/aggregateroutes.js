@@ -32,10 +32,16 @@ router.get('/view/submissionList', function(req, res) {
 });
 
 router.get('/view/downloadSubmission', function(req, res) {
-  var formId = req.query.formId;
-  var topElement = req.query.topElement || formId;
-  var submissionId = req.query.submissionId;
-  log.debug('ODK downloadSubmission\n\tformId=%s\n\ttopElement=%s' +
+  log.debug('downloadSubmission query');
+  console.dir(req.query);
+  var formId = req.query.formid || req.query.formId || req.query.formID;
+  var topElement = req.query.topElement || req.query.topelement || formId;
+  var submissionId = (
+    req.query.submissionId || req.query.submissionid ||
+    req.query.submissionID || req.query.idvalue || req.query.instanceId ||
+    req.query.instanceID
+    );
+  log.info('ODK downloadSubmission\n\tformId=%s\n\ttopElement=%s' +
     '\n\tsubmissionId=%s', formId, topElement, submissionId);
 
   aggregate.downloadSubmission(formId, topElement, submissionId)
