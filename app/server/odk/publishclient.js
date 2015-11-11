@@ -139,14 +139,15 @@ PublishClient.prototype.saveSubmission = function(submission) {
       return self._saveSTEvent(formId, submission.data, tran)
       .each(function(eventInstance) {
         if (eventInstance.created) {
+          log.info('New STEvent created from submission');
           return self._saveFieldData(formId, submission.data, tran);
         }
-        log.info('STEvent from submission');
+        log.info('Skipping field data insert for duplicate STEvent');
       });
     });
   })
   .then(function(result) {
-    log.debug('Finished COMMITTING form submission', result);
+    log.info('Finished COMMITTING form submission', result);
   });
 };
 
@@ -160,21 +161,18 @@ function parseSampleIds(data) {
   return {stId: newStId, labId: newLabId};
 }
 
-var maybeUpdateSampleId = BPromise.method(function(newId, localId, created,
-                                                   tran) {
-  log.debug('Local SampleId', localId.get({plain: true}));
+var maybeUpdateSampleId = BPromise.method(function(newId, localId, tran) {
+  log.info('Maybe update local SampleId', localId.get({plain: true}));
 
   if (localId.stId !== newId.stId || localId.labId !== newId.labId) {
-    log.debug('Update EXISTING SampleID');
+    log.info('Updating SampleID');
     localId.stId = newId.stId;
     localId.labId = newId.labId;
     return localId.save({
       transaction: tran
     });
-  } else if (created) {
-    log.debug('Created NEW SampleID');
   } else {
-    log.debug('EXISTING SampleID does not require update');
+    log.info('SampleID does not require update');
   }
   return localId;
 });
@@ -196,7 +194,7 @@ PublishClient.prototype._saveSampleIds = function(submissionData, tran) {
     return parseSampleIds(data);
   })
   .map(function(id) {
-    log.debug('findOrCreate sample identifiers', id);
+    log.info('findOrCreate sample Id', id);
     // Check if a record exists for this SampleId already. An existing record
     // will have either a matching, non-null stId or labId.
     return SampleIdsModel.findOrCreate({
@@ -208,7 +206,10 @@ PublishClient.prototype._saveSampleIds = function(submissionData, tran) {
       transaction: tran
     })
     .spread(function(sampleId, created) {
-      return maybeUpdateSampleId(id, sampleId, created, tran);
+      if (!created) {
+        return maybeUpdateSampleId(id, sampleId, tran);
+      }
+      log.info('Created new SampleID', sampleId.get({plain: true}));
     });
   });
 };

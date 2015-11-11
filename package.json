@@ -15,10 +15,12 @@
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "express-winston": "^0.4.1",
+    "helmet": "^0.14.0",
     "lodash": "^3.10.1",
     "request": "^2.65.0",
     "sequelize": "^3.12.2",
-    "sqlite3": "^3.1.0",
+    "serve-favicon": "^2.3.0",
+    "sqlite3": "^3.1.1",
     "winston": "^1.1.0",
     "xml2js": "^0.4.13"
   },

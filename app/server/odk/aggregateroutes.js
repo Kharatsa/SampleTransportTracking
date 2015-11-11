@@ -13,6 +13,20 @@ function sendXML(res, xml) {
   res.send(xml);
 }
 
+// Convert query parameters to lowercase
+const normalizeParams = function(req, res, next) {
+  var result = {};
+  log.debug('Query parameters before normalization:', req.query);
+  if (req.query) {
+    Object.keys(req.query).forEach(function(key) {
+      result[key.toLowerCase()] = req.query[key];
+    });
+    req.query = result;
+  }
+  log.debug('Query parameters after normalization:', req.query);
+  next();
+};
+
 router.get('/formlist', function(req, res) {
   log.debug('ODK formList');
   aggregate.formList()
@@ -24,23 +38,27 @@ router.get('/formlist', function(req, res) {
 router.get('/view/submissionList', function(req, res) {
   log.debug('ODK submissionList\n\tformId=%s\n\tnumEntries=%s',
     req.query.formId, req.query.numEntries);
-
-  aggregate.submissionList(req.query.formId, req.query.numEntries)
-  .spread(function(listRes, listBody) {
-    sendXML(res, listBody);
-  });
+  var formId = req.query.formid;
+  var numEntries = req.query.numentries;
+  if (formId) {
+    aggregate.submissionList(formId, numEntries)
+    .spread(function(listRes, listBody) {
+      sendXML(res, listBody);
+    });
+  }
 });
 
-router.get('/view/downloadSubmission', function(req, res) {
+router.get('/view/downloadSubmission', normalizeParams, function(req, res) {
   log.debug('downloadSubmission query');
   console.dir(req.query);
-  var formId = req.query.formid || req.query.formId || req.query.formID;
-  var topElement = req.query.topElement || req.query.topelement || formId;
+
+  var formId = req.query.formid;
+  var topElement = req.query.topelement || formId;
   var submissionId = (
-    req.query.submissionId || req.query.submissionid ||
-    req.query.submissionID || req.query.idvalue || req.query.instanceId ||
-    req.query.instanceID
-    );
+    req.query.submissionid ||
+    req.query.idvalue ||
+    req.query.instanceid
+  );
   log.info('ODK downloadSubmission\n\tformId=%s\n\ttopElement=%s' +
     '\n\tsubmissionId=%s', formId, topElement, submissionId);
 

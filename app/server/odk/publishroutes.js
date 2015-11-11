@@ -8,7 +8,7 @@ const config = require('app/config.js');
 const log = require('app/server/util/log.js');
 
 // parse application/json
-router.use(bodyParser.json());
+const jsonParser = bodyParser.json();
 
 // Funnel body-parser errors into the application log
 router.use(function(err, req, res, next) {
@@ -37,7 +37,7 @@ function isPublisherTokenValid(req, res, next) {
   }
 }
 
-router.post('/', isPublisherTokenValid, function(req, res) {
+router.post('/', jsonParser, isPublisherTokenValid, function(req, res) {
   log.info('Received ODK Aggregate POST', req.body);
   return server.publishClient.saveSubmission(req.body)
   .then(function() {
