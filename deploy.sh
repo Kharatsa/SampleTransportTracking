@@ -7,12 +7,15 @@ SAMPLE_TRACK_BASEDIR="/srv/www"
 SAMPLE_TRACK_DIR="sample-tracking"
 SAMPLE_TRACK_PATH="$SAMPLE_TRACK_BASEDIR/$SAMPLE_TRACK_DIR"
 SAMPLE_TRACK_USER="strack"
+SAMPLE_TRACK_USER_GROUP="$SAMPLE_TRACK_USER:$SAMPLE_TRACK_USER"
 
 echo "----------------------------------------------"
 echo "------------ Pull repo updates ---------------"
 echo "----------------------------------------------"
 cd $SAMPLE_TRACK_PATH
-sudo -u $SAMPLE_TRACK_USER bash -c "git pull"
+sudo bash -c "git pull"
+sudo bash -c "npm install"
+sudo chown -R $SAMPLE_TRACK_USER_GROUP $SAMPLE_TRACK_BASEDIR
 
 echo "----------------------------------------------"
 echo "----------- Restart the server ---------------"

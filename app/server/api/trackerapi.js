@@ -1,7 +1,7 @@
 'use strict';
 
 const util = require('util');
-const _ = require('underscore');
+const _ = require('lodash');
 const BPromise = require('bluebird');
 const log = require('app/server/util/log.js');
 
@@ -90,7 +90,7 @@ function getFormData(stEvent, formDataModel) {
   .map(getSimpleInstance)
   .then(reassembleFields)
   .then(function(formFields) {
-    return _.extend(stEvent, {'data': formFields});
+    return _.assign(stEvent, {'data': formFields});
   });
 }
 
