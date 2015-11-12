@@ -47,7 +47,10 @@ function makeSampleWhere(stId, labId) {
 }
 
 function getSimpleInstance(sequelizeInstance) {
-  return sequelizeInstance.get({simple: true});
+  if (sequelizeInstance) {
+    return sequelizeInstance.get({simple: true});
+  }
+  return {};
 }
 
 function getSampleIds(id, sampleIdsModel) {
@@ -58,12 +61,12 @@ function getSampleIds(id, sampleIdsModel) {
   .then(getSimpleInstance);
 }
 
-function getSampleEvents(sampleId, stEventsModel) {
- return stEventsModel.findAll({
+function getSampleEvents(sampleId, trackerEventsModel) {
+ return trackerEventsModel.findAll({
     attributes: {exclude: ['id']},
     where: {$or: [
-      {$and: [{sampleId: sampleId.stId}, {sampleId: {ne: null}}]},
-      {$and: [{sampleId: sampleId.labId}, {sampleId: {ne: null}}]}
+      {$and: [{stId: sampleId.stId}, {stId: {ne: null}}]},
+      {$and: [{labId: sampleId.labId}, {labId: {ne: null}}]}
     ]}
   })
  .map(getSimpleInstance);
@@ -97,21 +100,20 @@ function getSubmissionData(stEvent, submissionDataModel) {
 SampleTracker.prototype.allSampleEvents = function(id) {
   log.info('Fetching all sample events for Id "' + id + '"');
   var SampleIdsModel = this.dbClient.SampleIds;
-  var STEventsModel = this.dbClient.STEvents;
+  var TrackerEventsModel = this.dbClient.TrackerEvents;
   var SubmissionDataModel = this.dbClient.SubmissionData;
 
   return getSampleIds(id, SampleIdsModel)
   .then(function(sampleId) {
     if (sampleId) {
-      log.debug('Retrieved sampleId', util.inspect(sampleId, {depth: 1}));
-      return getSampleEvents(sampleId, STEventsModel);
+      log.debug('Retrieved sampleId', sampleId);
+      return getSampleEvents(sampleId, TrackerEventsModel);
     }
     log.info('Could not locate Id "' + id + '"');
     return [];
   })
   .map(function(stEvent) {
-    log.debug('Retrieved event', util.inspect(stEvent, {depth: 1}));
-    console.dir
+    log.debug('Retrieved event', stEvent);
     return getSubmissionData(stEvent, SubmissionDataModel);
   })
   .error(function(err) {
