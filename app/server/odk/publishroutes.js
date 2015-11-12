@@ -7,11 +7,7 @@ const server = require('app/server/server.js');
 const config = require('app/config.js');
 const log = require('app/server/util/log.js');
 
-// parse application/json
-const jsonParser = bodyParser.json();
-
-// Funnel body-parser errors into the application log
-router.use(function(err, req, res, next) {
+function handleJSONErrors(err, req, res, next) {
   if (err.status) {
     var message = {'error': err.message};
     log.warn('Bad application/json request',
@@ -22,7 +18,13 @@ router.use(function(err, req, res, next) {
   } else {
     next(err);
   }
-});
+}
+
+// parse application/json
+const jsonParser = bodyParser.json();
+
+// Funnel body-parser errors into the application log
+router.use(handleJSONErrors);
 
 function isPublisherTokenValid(req, res, next) {
   var token = req.body.token || null;

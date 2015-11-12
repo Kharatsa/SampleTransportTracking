@@ -69,10 +69,10 @@ function getSampleEvents(sampleId, stEventsModel) {
  .map(getSimpleInstance);
 }
 
-function reassembleFields(formData) {
-  log.debug('Reassembling %d form data fields', formData.length);
+function reassembleFields(submissionData) {
+  log.debug('Reassembling %d form data fields', submissionData.length);
   var result = {};
-  return BPromise.each(formData, function(data) {
+  return BPromise.each(submissionData, function(data) {
     if (data.fieldLabel) {
       result[data.fieldLabel] = data.fieldValue || null;
     }
@@ -82,8 +82,8 @@ function reassembleFields(formData) {
   });
 }
 
-function getFormData(stEvent, formDataModel) {
-  return formDataModel.findAll({
+function getSubmissionData(stEvent, submissionDataModel) {
+  return submissionDataModel.findAll({
     attributes: {exclude: ['id']},
     where: {instanceId: stEvent.instanceId}
   })
@@ -98,7 +98,7 @@ SampleTracker.prototype.allSampleEvents = function(id) {
   log.info('Fetching all sample events for Id "' + id + '"');
   var SampleIdsModel = this.dbClient.SampleIds;
   var STEventsModel = this.dbClient.STEvents;
-  var FormDataModel = this.dbClient.FormData;
+  var SubmissionDataModel = this.dbClient.SubmissionData;
 
   return getSampleIds(id, SampleIdsModel)
   .then(function(sampleId) {
@@ -112,7 +112,7 @@ SampleTracker.prototype.allSampleEvents = function(id) {
   .map(function(stEvent) {
     log.debug('Retrieved event', util.inspect(stEvent, {depth: 1}));
     console.dir
-    return getFormData(stEvent, FormDataModel);
+    return getSubmissionData(stEvent, SubmissionDataModel);
   })
   .error(function(err) {
     log.warn('Error fetching sample events for id ' + id, err, err.stack);

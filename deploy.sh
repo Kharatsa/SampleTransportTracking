@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -x
 
 TRACKER_REPO="https://github.com/Kharatsa/sample-tracking.git"
@@ -13,7 +13,7 @@ echo "----------------------------------------------"
 echo "------------ Pull repo updates ---------------"
 echo "----------------------------------------------"
 cd $SAMPLE_TRACK_PATH
-sudo bash -c "git pull"
+sudo bash -c "git pull origin master"
 sudo bash -c "npm install"
 sudo chown -R $SAMPLE_TRACK_USER_GROUP $SAMPLE_TRACK_BASEDIR
 

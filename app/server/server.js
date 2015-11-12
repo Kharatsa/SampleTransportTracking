@@ -6,11 +6,11 @@ const favicon = require('serve-favicon');
 const config = require('app/config.js');
 const log = require('app/server/util/log.js');
 const requestLog = require('app/server/util/logrequest.js');
-const DBStorage = require('app/server/datastorage.js');
+const DBStorage = require('app/server/storage/datastorage.js');
 const handleShutdown = require('app/server/util/shutdown.js');
 const aggregateRoutes = require('app/server/odk/aggregateroutes.js');
 const PublishClient = require('app/server/odk/publishclient.js');
-const publisherRoutes = require('app/server/odk/publishroutes.js');
+const publishRoutes = require('app/server/odk/publishroutes.js');
 const SampleTracker = require('app/server/api/trackerapi.js');
 const trackerRoutes = require('app/server/api/trackerroutes.js');
 
@@ -44,7 +44,7 @@ dbStorage.once('ready', function() {
 handleShutdown();
 
 app.use('/odk', aggregateRoutes);
-app.use('/publish', publisherRoutes);
+app.use('/publish', publishRoutes);
 app.use('/track', trackerRoutes);
 
 app.get('/', function(req, res) {

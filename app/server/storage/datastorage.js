@@ -4,7 +4,8 @@ const util = require('util');
 const EventEmitter = require('events').EventEmitter;
 const Sequelize = require('sequelize');
 const log = require('app/server/util/log.js');
-const models = require('app/server/dataschema.js');
+const models = require('app/server/storage/models.js');
+const makeAssociations = require('app/server/storage/associations.js');
 
 /**
  * Maintains the database connection and models
@@ -29,9 +30,10 @@ function DBStorage(options) {
   this.queryInterface = this.db.getQueryInterface();
 
   this.Forms = this.db.import('Forms', models.Forms);
-  this.FormData = this.db.import('FormData', models.FormData);
-  this.STEvents = this.db.import('STEvents', models.STEvents);
+  this.SubmissionData = this.db.import('SubmissionData', models.SubmissionData);
+  this.TrackerEvents = this.db.import('TrackerEvents', models.TrackerEvents);
   this.SampleIds = this.db.import('SampleIds', models.SampleIds);
+  makeAssociations(this.db);
 
   this.db.sync()
   .bind(this)

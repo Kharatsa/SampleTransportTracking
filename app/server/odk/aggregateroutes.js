@@ -35,16 +35,19 @@ router.get('/formlist', function(req, res) {
   });
 });
 
-router.get('/view/submissionList', function(req, res) {
+router.get('/view/submissionList', normalizeParams, function(req, res) {
   log.debug('ODK submissionList\n\tformId=%s\n\tnumEntries=%s',
     req.query.formId, req.query.numEntries);
   var formId = req.query.formid;
   var numEntries = req.query.numentries;
-  if (formId) {
-    aggregate.submissionList(formId, numEntries)
+  log.debug('formId', formId);
+  if (typeof formId != 'undefined') {
+    return aggregate.submissionList(formId, numEntries)
     .spread(function(listRes, listBody) {
       sendXML(res, listBody);
     });
+  } else {
+    res.status(500).json({'error': 'Missing formid parameter'});
   }
 });
 
