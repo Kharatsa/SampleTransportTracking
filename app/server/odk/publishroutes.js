@@ -46,7 +46,7 @@ router.post('/', jsonParser, isPublisherTokenValid, function(req, res) {
     res.status(200).send('');
   })
   .error(function(err) {
-    log.error('Error saving published submission', err.message, err.stack);
+    log.warn('Submission could not be saved', req.body, err.message, err.stack);
     res.status(500).send(err.message);
   });
 });

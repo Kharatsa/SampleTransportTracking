@@ -106,15 +106,6 @@ const formFields = {
 };
 
 /**
- * Enum for ODK Aggregate form fields relevant to sample Ids
- * @enum {String}
- */
-const sampleIdFields = {
-  SAMPLE_TRACKING_ID: 'st_barcode',
-  LAB_ID: 'lab_barcode'
-};
-
-/**
  * Persists the component pieces of a submission to various local database
  * tables. These components are:
  *   * Sample IDs (sample and lab)
@@ -164,6 +155,15 @@ PublishClient.prototype.saveSubmission = function(submission) {
   .then(function(result) {
     log.info('Finished COMMITTING form submission', result);
   });
+};
+
+/**
+ * Enum for ODK Aggregate form fields relevant to sample Ids
+ * @enum {String}
+ */
+const sampleIdFields = {
+  SAMPLE_TRACKING_ID: 'stid',
+  LAB_ID: 'labid'
 };
 
 function parseSampleIds(data) {
@@ -219,6 +219,7 @@ PublishClient.prototype._saveSampleIds = function(sampleId, tran) {
   })
   .spread(function(sampleIdInstance, created) {
     var args = Array.prototype.slice.call(arguments);
+
     if (!created) {
       return maybeUpdateSampleId(sampleId, sampleIdInstance, tran)
       .then(function() {
@@ -226,9 +227,6 @@ PublishClient.prototype._saveSampleIds = function(sampleId, tran) {
       })
     }
     log.info('Created new SampleID', sampleIdInstance.get({plain: true}));
-
-    log.info('arguments');
-    console.dir(arguments, {colors: true, depth: 1});
 
     // Pass arguments back out (i.e., treat this spread like a tap call)
     return args;
