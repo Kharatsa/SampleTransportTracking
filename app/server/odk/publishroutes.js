@@ -41,7 +41,7 @@ function isPublisherTokenValid(req, res, next) {
 
 router.post('/', jsonParser, isPublisherTokenValid, function(req, res) {
   log.info('Received ODK Aggregate POST', req.body);
-  return server.publishClient.saveSubmission(req.body)
+  return server.publishClient.save(req.body)
   .then(function() {
     res.status(200).send('');
   })

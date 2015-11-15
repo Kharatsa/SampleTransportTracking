@@ -30,9 +30,11 @@ function DBStorage(options) {
   this.queryInterface = this.db.getQueryInterface();
 
   this.Forms = this.db.import('Forms', models.Forms);
-  this.SubmissionData = this.db.import('SubmissionData', models.SubmissionData);
+  this.Facilities = this.db.import('Facilities', models.Facilities);
+  this.People = this.db.import('People', models.People);
+  this.Samples = this.db.import('Samples', models.Samples);
+  this.Submissions = this.db.import('Submissions', models.Submissions);
   this.TrackerEvents = this.db.import('TrackerEvents', models.TrackerEvents);
-  this.SampleIds = this.db.import('SampleIds', models.SampleIds);
   makeAssociations(this.db);
 
   this.db.sync()

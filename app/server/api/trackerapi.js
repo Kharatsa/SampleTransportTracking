@@ -30,9 +30,9 @@ function SampleTracker(dbClient) {
 //  * All events
 
 SampleTracker.prototype.allIds = function() {
-  var SampleIdsModel = this.dbClient.SampleIds;
+  var SamplesModel = this.dbClient.Samples;
 
-  return SampleIdsModel.findAll({attributes: {exclude: ['id']}})
+  return SamplesModel.findAll({attributes: {exclude: ['id']}})
   .catch(function(err) {
     log.warn('Error fetching all Ids', err, err.stack);
     return [];
@@ -53,21 +53,26 @@ function getSimpleInstance(sequelizeInstance) {
   return {};
 }
 
-function getSampleIds(id, sampleIdsModel) {
-  return sampleIdsModel.findOne({
+function getSamples(id, samplesModel) {
+  return samplesModel.findOne({
     attributes: {exclude: ['id']},
     where: makeSampleWhere(id)
   })
   .then(getSimpleInstance);
 }
 
-function getSampleEvents(sampleId, trackerEventsModel) {
+function getSampleEvents(sampleId, trackerEventsModel, submissionModel) {
  return trackerEventsModel.findAll({
     attributes: {exclude: ['id']},
     where: {$or: [
       {$and: [{stId: sampleId.stId}, {stId: {ne: null}}]},
       {$and: [{labId: sampleId.labId}, {labId: {ne: null}}]}
-    ]}
+    ]},
+    include: [{
+      model: submissionModel,
+      as: 'formSubmission',
+      attributes: {exclude: ['submissionId', 'id', 'created_at', 'updated_at']}
+    }]
   })
  .map(getSimpleInstance);
 }
@@ -99,22 +104,18 @@ function getSubmissionData(stEvent, submissionDataModel) {
 
 SampleTracker.prototype.allSampleEvents = function(id) {
   log.info('Fetching all sample events for Id "' + id + '"');
-  var SampleIdsModel = this.dbClient.SampleIds;
+  var SamplesModel = this.dbClient.Samples;
   var TrackerEventsModel = this.dbClient.TrackerEvents;
-  var SubmissionDataModel = this.dbClient.SubmissionData;
+  var SubmissionsModel = this.dbClient.Submissions;
 
-  return getSampleIds(id, SampleIdsModel)
+  return getSamples(id, SamplesModel)
   .then(function(sampleId) {
     if (sampleId) {
       log.debug('Retrieved sampleId', sampleId);
-      return getSampleEvents(sampleId, TrackerEventsModel);
+      return getSampleEvents(sampleId, TrackerEventsModel, SubmissionsModel);
     }
     log.info('Could not locate Id "' + id + '"');
     return [];
-  })
-  .map(function(stEvent) {
-    log.debug('Retrieved event', stEvent);
-    return getSubmissionData(stEvent, SubmissionDataModel);
   })
   .error(function(err) {
     log.warn('Error fetching sample events for id ' + id, err, err.stack);

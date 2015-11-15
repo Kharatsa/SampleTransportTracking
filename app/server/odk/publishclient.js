@@ -72,6 +72,109 @@ function PublishClient(dbClient) {
 }
 
 /**
+ * Enum for ODK Aggregate form fields relevant to samples
+ * @enum {String}
+ */
+const sampleFields = {
+  SAMPLE_REPEAT: 'stid_repeat',
+  SAMPLE_TRACKING_ID: 'stid',
+  LAB_ID: 'labid',
+  TYPE: 'stype',
+};
+
+function parseSamples(data) {
+  var sampleData = data[sampleFields.SAMPLE_REPEAT];
+
+  return BPromise.map(sampleData, function(sample) {
+    return {
+      stId: sample[sampleFields.SAMPLE_TRACKING_ID] || null,
+      labId: sample[sampleFields.LAB_ID] || null,
+      type: sample[sampleFields.TYPE] || null,
+    };
+  });
+}
+
+/**
+ * Enum for ODK Aggregate form fields relevant to facilities
+ * @enum {String}
+ */
+const facilityFields = {
+  REGION: 'region',
+  FACILITY: 'facility',
+  TYPE: 'ftype',
+};
+
+function parseFacility(data) {
+  return {
+    name: data[facilityFields.FACILITY],
+    region: data[facilityFields.REGION],
+    type: data[facilityFields.TYPE] || null,
+  };
+}
+
+/**
+ * Enum for ODK Aggregate form fields relevant to events
+ * @enum {String}
+ */
+const submissionFields = {
+  SUBMISSION_ID: 'instanceID',
+  PERSON: 'rider',
+  FACILITY: 'facility',
+  SIM_SERIAL: 'simserial',
+  DEVICE_ID: 'deviceid',
+  FORM_START_DATE: 'start',
+  FORM_END_DATE: 'end',
+  COMPLETED_DATE: '*meta-date-marked-as-complete*'
+};
+
+function parseSubmission(formId, data) {
+  return {
+    form: formId,
+    submissionId: data[submissionFields.SUBMISSION_ID],
+    facility: data[submissionFields.FACILITY],
+    person: data[submissionFields.PERSON],
+    deviceId: data[submissionFields.DEVICE_ID],
+    simSerial: data[submissionFields.SIM_SERIAL],
+    formStartDate: data[submissionFields.FORM_START_DATE],
+    formEndDate: data[submissionFields.FORM_END_DATE],
+    completedDate: data[submissionFields.COMPLETED_DATE]
+  };
+}
+
+/**
+ * Enum for ODK Aggregate form fields relevant to data storage
+ * @enum {String}
+ */
+const trackerEventsFields = {
+  SUBMISSION_ID: 'instanceID',
+  INSTANCE_ID: 'instanceID',
+  SAMPLE_REPEAT: 'stid_repeat',
+  ST_ID: 'stid',
+  LAB_ID: 'labid',
+  STATUS: 'condition'
+};
+
+/**
+ * Transforms the submission data object into an array of objects. Each array
+ * value contains one field and value pair.
+ *
+ * @param  {String} formId
+ * @param  {Object} data
+ * @return {Object[]}
+ */
+function parseTrackerEvents(data) {
+  var sampleData = data[trackerEventsFields.SAMPLE_REPEAT];
+  return BPromise.map(sampleData, function(item) {
+    return {
+      submissionId: data[trackerEventsFields.SUBMISSION_ID],
+      stId: item[trackerEventsFields.ST_ID] || null,
+      labId: item[trackerEventsFields.LAB_ID] || null,
+      sampleStatus: item[trackerEventsFields.STATUS] || null,
+    };
+  });
+}
+
+/**
  * Stores the latest form list from ODK in the local DB.
  *
  * @param  {Object}   forms The parsed /formList object from ODK
@@ -108,16 +211,17 @@ const formFields = {
 /**
  * Persists the component pieces of a submission to various local database
  * tables. These components are:
- *   * Sample IDs (sample and lab)
- *   * TrackerEvents (sample Id, form Id, instance/submission Id)
- *   * SubmissionData (all the fields)
+ *   * Samples (sample and lab IDs, sample type)
+ *   * Submission (form Id, instance/submission Id)
+ *   * TrackerEvents
+ *   * Facilities
  *
  * @param  {Object} submission  A form submission from ODK Aggregate's Simple
  *                              JSON publisher.
  * @return {Promise}            Resolved when the data is all committed to the
  *                                       database, and otherwise rejected.
  */
-PublishClient.prototype.saveSubmission = function(submission) {
+PublishClient.prototype.save = function(submission) {
   var formId = submission[formFields.FORM_ID];
   log.info('New `' + formId + '` form submission', submission);
 
@@ -127,65 +231,53 @@ PublishClient.prototype.saveSubmission = function(submission) {
   }, function(tran) {
     return BPromise.map(submission.data, function(entry) {
       return BPromise.props({
-        sampleIds: parseSampleIds(entry),
-        trackerEvents: parseEvents(formId, entry),
-        fieldData: parseFieldData(formId, entry)
+        samples: parseSamples(entry),
+        submission: parseSubmission(formId, entry),
+        facility: parseFacility(entry),
+        trackerEvents: parseTrackerEvents(entry),
       });
     })
-    .each(function(parsed, index, length) {
-      log.debug('saveSubmission parsed result ' + (index + 1) + ' of ' + length);
+    .each(function(parsed, index, len) {
+      log.debug('PublishClient parsed result ' + (index + 1) + ' of ' + len);
       log.debug(parsed);
-      return self._saveSampleIds(parsed.sampleIds, tran)
-      .spread(function(sampleIdInstance, created) {
-        log.debug('saveSubmission completed sampleId insert',
-          sampleIdInstance.get({plain:true}), created);
-        return self._saveSTEvent(formId, parsed.trackerEvents, tran);
+      return self._saveFacility(parsed.facility, tran)
+      .then(function(results) {
+        log.debug('PublishClient completed facility insert');
+        return self._saveSubmission(formId, parsed.submission, tran);
       })
-      .spread(function(trackEventInstance, created) {
-        log.debug('saveSubmission completed trackEvent insert',
-          trackEventInstance.get({plain:true}), created);
-        return self._saveFieldData(formId, parsed.fieldData,
-          trackEventInstance.get('instanceId'), tran);
+      .then(function(result) {
+        log.debug('PublishClient completed submission insert');
+        return self._saveSamples(parsed.samples, tran);
+      })
+      .then(function(results) {
+        var submissionId = parsed.submission.submissionId || null;
+        log.debug('PublishClient completed samples insert');
+        return self._saveEvents(submissionId, parsed.trackerEvents, tran);
       })
       .then(function() {
-        log.debug('Finished inserts');
-      });
+        log.debug('PublishClient completed events insert');
+        log.debug('PublishClient finished result ' + (index + 1) + ' of ' + len);
+      })
     });
   })
   .then(function(result) {
-    log.info('Finished COMMITTING form submission', result);
+    log.info('Finished COMMITTING form complete submission', result);
   });
 };
 
-/**
- * Enum for ODK Aggregate form fields relevant to sample Ids
- * @enum {String}
- */
-const sampleIdFields = {
-  SAMPLE_TRACKING_ID: 'stid',
-  LAB_ID: 'labid'
-};
-
-function parseSampleIds(data) {
-  // Pull the Id values from data. Parse to int if present.
-  var newStId = data[sampleIdFields.SAMPLE_TRACKING_ID] || null;
-  var newLabId = data[sampleIdFields.LAB_ID] || null;
-
-  return {stId: newStId, labId: newLabId};
-}
-
-var maybeUpdateSampleId = BPromise.method(function(newId, localId, tran) {
-  log.info('Maybe update local SampleId', localId.get({plain: true}));
+// TODO: refactor
+var maybeUpdateSamples = BPromise.method(function(newId, localId, tran) {
+  log.info('Maybe update local Sample', localId.get({plain: true}));
 
   if (localId.stId !== newId.stId || localId.labId !== newId.labId) {
-    log.info('Updating SampleID');
+    log.info('Updating Sample');
     localId.stId = newId.stId;
     localId.labId = newId.labId;
     return localId.save({
       transaction: tran
     });
   } else {
-    log.info('SampleID does not require update');
+    log.info('Sample does not require update');
   }
   return localId;
 });
@@ -195,72 +287,79 @@ var maybeUpdateSampleId = BPromise.method(function(newId, localId, tran) {
  * always include at least one sample ID field. Some forms may include only one
  * sample ID, while others might include all.
  *
- * @param  {Object} sampleId              A single parsed object parsed from
+ * @param  {Object} samples              A single parsed object parsed from
  *                                        submission data containing the sample
- *                                        ID values (i.e., the sampleId object
+ *                                        ID values (i.e., the samples object
  *                                        may contain 1 or more "ids" that can
  *                                        identify a sample.
  * @param  {Object}   tran                Sequelize transaction
  * @return {Promise.<Instance, created>}  Whether the row was created or updated.
  */
-PublishClient.prototype._saveSampleIds = function(sampleId, tran) {
-  log.debug('Saving SAMPLE IDS from submission', sampleId);
-  var SampleIdsModel = this.dbClient.SampleIds;
+PublishClient.prototype._saveSamples = function(samples, tran) {
+  log.info('Saving ' + samples.length + ' submission SAMPLES', samples);
+  var SamplesModel = this.dbClient.Samples;
 
-  // Check if a record exists for this SampleId already. An existing record
-  // will have either a matching, non-null stId or labId.
-  return SampleIdsModel.findOrCreate({
-    where: {$or: [
-      {$and: [{stId: sampleId.stId}, {stId: {ne: null}}]},
-      {$and: [{labId: sampleId.labId}, {labId: {ne: null}}]}
-    ]},
-    defaults: {stId: sampleId.stId, labId: sampleId.labId},
-    transaction: tran
-  })
-  .spread(function(sampleIdInstance, created) {
-    var args = Array.prototype.slice.call(arguments);
-
-    if (!created) {
-      return maybeUpdateSampleId(sampleId, sampleIdInstance, tran)
-      .then(function() {
-        return args;
-      })
-    }
-    log.info('Created new SampleID', sampleIdInstance.get({plain: true}));
-
-    // Pass arguments back out (i.e., treat this spread like a tap call)
-    return args;
+  return BPromise.map(samples, function(sample) {
+    return SamplesModel.findOrCreate({
+      where: {$or: [
+        {$and: [{stId: sample.stId}, {stId: {ne: null}}]},
+        {$and: [{labId: sample.labId}, {labId: {ne: null}}]}
+      ]},
+      defaults: sample,
+      transaction: tran
+    })
+    .then(function(result) {
+      var samplesInstance = result[0]
+      var created = result[1];
+      if (!created) {
+        // The sample record already existed. It might require an update.
+        return maybeUpdateSamples(sample, samplesInstance, tran);
+      }
+      log.info('Created new Sample', samplesInstance.get({plain: true}));
+    });
   });
 };
 
 /**
- * Enum for ODK Aggregate form fields relevant to events
- * @enum {String}
- */
-const eventFields = {
-  INSTANCE_ID: 'instanceID',
-  FORM_END_DATE: 'end',
-  COMPLETED_DATE: '*meta-date-marked-as-complete*'
-};
-_.assign(eventFields, sampleIdFields);
-
-/**
- * [parseEvents description]
+ * TODO
  *
- * @param  {String}   formId         [description]
- * @param  {Object[]} data           [description]
- * @return {Promise}                 [description]
+ * @param  {[type]} facility [description]
+ * @param  {[type]} tran     [description]
+ * @return {[type]}          [description]
  */
-function parseEvents(formId, data) {
-  return {
-    stId: data[eventFields.SAMPLE_TRACKING_ID] || null,
-    labId: data[eventFields.LAB_ID] || null,
-    formId: formId,
-    instanceId: data[eventFields.INSTANCE_ID],
-    formEndDate: data[eventFields.FORM_END_DATE],
-    odkCompletedDate: data[eventFields.COMPLETED_DATE]
-  };
+PublishClient.prototype._saveFacility = function(facility, tran) {
+  log.info('Saving FACILITY from submission', facility);
+
+  var FacilitiesModel = this.dbClient.Facilities;
+
+  return FacilitiesModel.findOrCreate({
+    where: {name: facility.name},
+    defaults: facility,
+    transaction: tran
+  })
+  .spread(function(instance, created) {
+    if (created) {
+      log.debug('Created new facility');
+    } else {
+      log.debug('Skipping facility insert');
+    }
+  });
 }
+
+PublishClient.prototype._saveSubmission = function(formId, submission, tran) {
+  log.debug('Saving form submission', submission);
+
+  var SubmissionsModel = this.dbClient.Submissions;
+  return SubmissionsModel.findOrCreate({
+    where: {$and: [
+      {submissionId: submission.submissionId},
+      {submissionId: {ne: null}},
+    ]},
+    defaults: submission,
+    transaction: tran
+  });
+};
+
 
 /**
  * Persists the sample, form, and submission IDs for a submission to the
@@ -272,69 +371,26 @@ function parseEvents(formId, data) {
  * @param  {Object}   tran            Sequelize transaction
  * @return {Promise.<Instance,Boolean>}         [description]
  */
-PublishClient.prototype._saveSTEvent = function(formId, stEvent, tran) {
-  log.debug('Saving EVENTS from submission', stEvent);
+PublishClient.prototype._saveEvents = function(submissionId, updates, tran) {
+  log.info('Saving EVENTS from submission', updates);
 
-  var STEventModel = this.dbClient.TrackerEvents;
+  var TrackerEventModel = this.dbClient.TrackerEvents;
 
-  // The sample Id values included in this
-  return STEventModel.findOrCreate({
-    where: {instanceId: stEvent.instanceId},
-    defaults: stEvent,
+  return TrackerEventModel.findOne({
+    where: {$and: [
+      {submissionId: submissionId},
+      {submissionId: {ne: null}},
+    ]},
     transaction: tran
-  });
-};
-/**
- * Enum for ODK Aggregate form fields relevant to data storage
- * @enum {String}
- */
-const submissionDataFields = {
-  INSTANCE_ID: 'instanceID',
-};
-
-/**
- * Transforms the submission data object into an array of objects. Each array
- * value contains one field and value pair.
- *
- * @param  {String} formId
- * @param  {Object} data
- * @return {Object[]}
- */
-function parseFieldData(formId, data) {
-  var instanceId = data[submissionDataFields.INSTANCE_ID];
-  return BPromise.map(Object.keys(data), function(field) {
-    return {
-      formId: formId,
-      instanceId: instanceId,
-      fieldLabel: field,
-      fieldValue: data[field]
-    };
-  });
-}
-
-/**
- * Persists the submission instance data fields to the database. Each field is
- * stored as its own row in the database. This approach avoids the need to
- * recreate the form's model schema in this local database.
- *
- * @param  {Object}   formId          [description]
- * @param  {Object} submissionData    [description]
- * @param  {Object}   tran            Sequelize transaction
- * @return {Promise}                  [description]
- */
-PublishClient.prototype._saveFieldData = function(formId, fieldsData, instanceId, tran) {
-  log.debug('Saving FIELD DATA from submission', fieldsData);
-  var FieldDataModel = this.dbClient.SubmissionData;
-
-  return FieldDataModel.findOne({where: {instanceId: instanceId}, transaction: tran})
+  })
   .then(function(result) {
     // Only insert the field data when the instance id (i.e., form submission)
     // is not already present in the submission data table.
     if (!result) {
-      log.debug('Inserting field data');
-      return FieldDataModel.bulkCreate(fieldsData, {transaction: tran});
+      log.debug('Inserting sample events');
+      return TrackerEventModel.bulkCreate(updates, {transaction: tran});
     }
-    log.debug('Skipping insert for existing field data');
+    log.debug('Skipping insert for existing sample events');
   });
 };
 

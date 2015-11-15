@@ -12,28 +12,39 @@ const log = require('app/server/util/log.js');
  */
 const makeAssociations = function makeAssociationsFunc(db) {
   var Forms = db.models.Forms;
-  var SubmissionData = db.models.SubmissionData;
+  var Facilities = db.models.Facilities;
+  var Samples = db.models.Samples;
+  var Submissions = db.models.Submissions;
   var TrackerEvents = db.models.TrackerEvents;
-  var SampleIds = db.models.SampleIds;
 
-  TrackerEvents.belongsTo(SampleIds, {
-    as: 'SampleStId', targetKey: 'stId', foreignKey: 'stId'
+  Submissions.belongsTo(Forms, {
+    as: 'submissionForm',
+    targetKey: 'formId',
+    foreignKey: 'form',
   });
-  TrackerEvents.belongsTo(SampleIds, {
-    as: 'SampleIdLabId', targetKey: 'labId', foreignKey: 'labId'
-  });
-  TrackerEvents.belongsTo(Forms, {
-    as: 'TrackerEventForm', targetKey: 'formId', foreignKey: 'formId'
-  });
-
-  SubmissionData.belongsTo(TrackerEvents, {
-    as: 'TrackerEvent', targetKey: 'instanceId', foreignKey: 'instanceId'
-  });
-  SubmissionData.belongsTo(Forms, {
-    as: 'SubmissionForm', targetKey: 'formId', foreignKey: 'formId'
+  Submissions.belongsTo(Facilities, {
+    as: 'submissionFacility',
+    targetKey: 'name',
+    foreignKey: 'facility',
   });
 
-  log.debug('Finished making associations');
+  TrackerEvents.belongsTo(Samples, {
+    as: 'sampleStId',
+    targetKey: 'stId',
+    foreignKey: 'stId',
+  });
+  TrackerEvents.belongsTo(Samples, {
+    as: 'sampleLabId',
+    targetKey: 'labId',
+    foreignKey: 'labId',
+  });
+  TrackerEvents.belongsTo(Submissions, {
+    as: 'formSubmission',
+    targetKey: 'submissionId',
+    foreignKey: 'submissionId',
+  });
+
+  log.info('Finished loading associations');
 };
 
 module.exports = makeAssociations;
