@@ -9,14 +9,14 @@
           <end/>
           <deviceid/>
           <simserial/>
-          <rider/>
+          <person/>
           <region/>
           <facility/>
-          <stid_repeat jr:template="">
+          <srepeat jr:template="">
             <stid/>
             <stype/>
             <condition/>
-          </stid_repeat>
+          </srepeat>
           <store_gps/>
           <meta>
             <instanceID/>
@@ -27,18 +27,18 @@
       <bind jr:preload="timestamp" jr:preloadParams="end" nodeset="/sarrive/end" type="dateTime"/>
       <bind jr:preload="property" jr:preloadParams="deviceid" nodeset="/sarrive/deviceid" type="string"/>
       <bind jr:preload="property" jr:preloadParams="simserial" nodeset="/sarrive/simserial" type="string"/>
-      <bind nodeset="/sarrive/rider" required="true()" type="select1"/>
+      <bind nodeset="/sarrive/person" required="true()" type="select1"/>
       <bind nodeset="/sarrive/region" required="true()" type="select1"/>
       <bind nodeset="/sarrive/facility" required="true()" type="select1"/>
-      <bind nodeset="/sarrive/stid_repeat/stid" required="true()" type="barcode"/>
-      <bind nodeset="/sarrive/stid_repeat/stype" required="true()" type="select1"/>
-      <bind nodeset="/sarrive/stid_repeat/condition" required="true()" type="select1"/>
+      <bind nodeset="/sarrive/srepeat/stid" required="true()" type="barcode"/>
+      <bind nodeset="/sarrive/srepeat/stype" required="true()" type="select1"/>
+      <bind nodeset="/sarrive/srepeat/condition" required="true()" type="select1"/>
       <bind nodeset="/sarrive/store_gps" required="true()" type="geopoint"/>
       <bind calculate="concat('uuid:', uuid())" nodeset="/sarrive/meta/instanceID" readonly="true()" type="string"/>
     </model>
   </h:head>
   <h:body>
-    <select1 appearance="quick search('riders')" ref="/sarrive/rider">
+    <select1 appearance="quick search('riders')" ref="/sarrive/person">
       <label>Rider Name</label>
       <item>
         <label>rider</label>
@@ -59,20 +59,20 @@
         <value>facility_key</value>
       </item>
     </select1>
-    <group ref="/sarrive/stid_repeat">
+    <group ref="/sarrive/srepeat">
       <label>New Sample</label>
-      <repeat nodeset="/sarrive/stid_repeat">
-        <input ref="/sarrive/stid_repeat/stid">
-          <label>STT Barcode</label>
+      <repeat nodeset="/sarrive/srepeat">
+        <input ref="/sarrive/srepeat/stid">
+          <label>ST Barcode</label>
         </input>
-        <select1 appearance="quick search('stypes')" ref="/sarrive/stid_repeat/stype">
+        <select1 appearance="quick search('stypes')" ref="/sarrive/srepeat/stype">
           <label>Specimen Type</label>
           <item>
             <label>stype</label>
             <value>stype_key</value>
           </item>
         </select1>
-        <select1 appearance="quick search('conditions')" ref="/sarrive/stid_repeat/condition">
+        <select1 appearance="quick search('conditions')" ref="/sarrive/srepeat/condition">
           <label>Specimen Condition</label>
           <item>
             <label>cond</label>

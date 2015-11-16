@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>Lab Link</h:title>
+    <model>
+      <instance>
+        <link id="link">
+          <start/>
+          <end/>
+          <deviceid/>
+          <simserial/>
+          <person/>
+          <region/>
+          <facility/>
+          <srepeat jr:template="">
+            <stid/>
+            <labid/>
+            <condition/>
+          </srepeat>
+          <store_gps/>
+          <meta>
+            <instanceID/>
+          </meta>
+        </link>
+      </instance>
+      <bind jr:preload="timestamp" jr:preloadParams="start" nodeset="/link/start" type="dateTime"/>
+      <bind jr:preload="timestamp" jr:preloadParams="end" nodeset="/link/end" type="dateTime"/>
+      <bind jr:preload="property" jr:preloadParams="deviceid" nodeset="/link/deviceid" type="string"/>
+      <bind jr:preload="property" jr:preloadParams="simserial" nodeset="/link/simserial" type="string"/>
+      <bind nodeset="/link/person" required="true()" type="select1"/>
+      <bind nodeset="/link/region" required="true()" type="select1"/>
+      <bind nodeset="/link/facility" required="true()" type="select1"/>
+      <bind nodeset="/link/srepeat/stid" required="true()" type="barcode"/>
+      <bind nodeset="/link/srepeat/labid" required="true()" type="select1"/>
+      <bind nodeset="/link/srepeat/condition" required="true()" type="select1"/>
+      <bind nodeset="/link/store_gps" required="true()" type="geopoint"/>
+      <bind calculate="concat('uuid:', uuid())" nodeset="/link/meta/instanceID" readonly="true()" type="string"/>
+    </model>
+  </h:head>
+  <h:body>
+    <select1 appearance="quick search('riders')" ref="/link/person">
+      <label>Lab Person</label>
+      <item>
+        <label>rider</label>
+        <value>rider_key</value>
+      </item>
+    </select1>
+    <select1 appearance="quick search('regions')" ref="/link/region">
+      <label>Region</label>
+      <item>
+        <label>region</label>
+        <value>region_key</value>
+      </item>
+    </select1>
+    <select1 appearance="quick search('facilities', 'matches', 'region',  /link/region )" ref="/link/facility">
+      <label>Facility</label>
+      <item>
+        <label>facility</label>
+        <value>facility_key</value>
+      </item>
+    </select1>
+    <group ref="/link/srepeat">
+      <label>New Result</label>
+      <repeat nodeset="/link/srepeat">
+        <input ref="/link/srepeat/stid">
+          <label>ST Barcode</label>
+        </input>
+        <select1 appearance="quick search('stypes')" ref="/link/srepeat/labid">
+          <label>Lab Barcode</label>
+          <item>
+            <label>stype</label>
+            <value>stype_key</value>
+          </item>
+        </select1>
+        <select1 appearance="quick search('conditions')" ref="/link/srepeat/condition">
+          <label>Specimen Condition</label>
+          <item>
+            <label>cond</label>
+            <value>cond_key</value>
+          </item>
+        </select1>
+      </repeat>
+    </group>
+    <input ref="/link/store_gps">
+      <label>GPS Coordinates</label>
+      <hint>GPS coordinates can only be collected when outside.</hint>
+    </input>
+  </h:body>
+</h:html>

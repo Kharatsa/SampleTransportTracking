@@ -9,12 +9,12 @@
           <end/>
           <deviceid/>
           <simserial/>
-          <rider/>
+          <person/>
           <region/>
           <facility/>
-          <stid_repeat jr:template="">
+          <srepeat jr:template="">
             <labid/>
-          </stid_repeat>
+          </srepeat>
           <store_gps/>
           <meta>
             <instanceID/>
@@ -25,16 +25,16 @@
       <bind jr:preload="timestamp" jr:preloadParams="end" nodeset="/result/end" type="dateTime"/>
       <bind jr:preload="property" jr:preloadParams="deviceid" nodeset="/result/deviceid" type="string"/>
       <bind jr:preload="property" jr:preloadParams="simserial" nodeset="/result/simserial" type="string"/>
-      <bind nodeset="/result/rider" required="true()" type="select1"/>
+      <bind nodeset="/result/person" required="true()" type="select1"/>
       <bind nodeset="/result/region" required="true()" type="select1"/>
       <bind nodeset="/result/facility" required="true()" type="select1"/>
-      <bind nodeset="/result/stid_repeat/labid" required="true()" type="barcode"/>
+      <bind nodeset="/result/srepeat/labid" required="true()" type="barcode"/>
       <bind nodeset="/result/store_gps" required="true()" type="geopoint"/>
       <bind calculate="concat('uuid:', uuid())" nodeset="/result/meta/instanceID" readonly="true()" type="string"/>
     </model>
   </h:head>
   <h:body>
-    <select1 appearance="quick search('riders')" ref="/result/rider">
+    <select1 appearance="quick search('riders')" ref="/result/person">
       <label>Rider Name</label>
       <item>
         <label>rider</label>
@@ -55,10 +55,10 @@
         <value>facility_key</value>
       </item>
     </select1>
-    <group ref="/result/stid_repeat">
-      <label>New</label>
-      <repeat nodeset="/result/stid_repeat">
-        <input ref="/result/stid_repeat/labid">
+    <group ref="/result/srepeat">
+      <label>New Result</label>
+      <repeat nodeset="/result/srepeat">
+        <input ref="/result/srepeat/labid">
           <label>Lab Barcode</label>
         </input>
       </repeat>
