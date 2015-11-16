@@ -14,10 +14,13 @@ const publishRoutes = require('app/server/odk/publishroutes.js');
 const SampleTracker = require('app/server/api/trackerapi.js');
 const trackerRoutes = require('app/server/api/trackerroutes.js');
 
-var app = exports.app = express();
+const app = exports.app = express();
 
+app.use(express.static(config.publicPath));
+log.info('Serving static files from', config.publicPath);
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(helmet());
+
 if (config.isProduction) {
   log.info('Running PRODUCTION server');
   app.set('trust proxy', 'loopback'); // specify a single subnet

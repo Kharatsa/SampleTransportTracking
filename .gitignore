@@ -27,11 +27,14 @@ build/Release
 node_modules
 bower_components
 
-# Project
-data/
-junkyard/
-secret*
-*.pem
+# Vagrant
 .vagrant/
 Vagrantfile
-build/
+
+# AWS
+*.pem
+
+# Project
+secret*
+junkyard/
+app/server/public/

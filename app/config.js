@@ -13,6 +13,9 @@ exports.loggingLevel = isProduction ? 'info' : 'debug';
 const portNumber = 8081;
 exports.portNumber = portNumber;
 
+const publicPath = path.join(__dirname, 'server/public');
+exports.publicPath = publicPath;
+
 const dataDir = '/var/lib/strack';
 fs.statAsync(dataDir)
 .catch(function(err) {
