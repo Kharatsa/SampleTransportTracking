@@ -39,8 +39,8 @@ dbStorage.once('ready', function() {
   sampleTracker = exports.sampleTracker = new SampleTracker(dbStorage);
 });
 
-// Pass handleShutdown any functions to execute on shutdown (e.g., close DB
-// connections)
+// Pass handleShutdown any functions to execute on shutdown
+// (e.g., close DB connections)
 handleShutdown();
 
 app.use('/odk', aggregateRoutes);

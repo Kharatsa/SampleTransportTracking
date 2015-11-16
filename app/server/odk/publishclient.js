@@ -13,13 +13,10 @@ const odkTransform = require('app/server/odk/aggregatetransform.js');
  * @enum {String}
  */
 const supportedForms = {
-  SAMPLE_ORIGIN: 'sample-origin',
-  SAMPLE_DEPARTURE: 'sample-departure',
-  SAMPLE_ARRIVAL: 'sample-arrival',
-  LAB_LINK: 'lab-link',
-  LAB_STATUS: 'lab-status',
-  RESULT_DEPARTURE: 'result-departure',
-  RESULT_ARRIVAL: 'result-arrival'
+  SAMPLE_DEPARTURE: 'sdepart',
+  SAMPLE_ARRIVAL: 'sarrive',
+  LAB_LINK: 'link',
+  RESULT: 'result',
 };
 
 const supportedFormIds = Object.keys(supportedForms).map(function(key) {
@@ -76,13 +73,14 @@ function PublishClient(dbClient) {
  * @enum {String}
  */
 const sampleFields = {
-  SAMPLE_REPEAT: 'stid_repeat',
+  SAMPLE_REPEAT: 'srepeat',
   SAMPLE_TRACKING_ID: 'stid',
   LAB_ID: 'labid',
   TYPE: 'stype',
 };
 
 function parseSamples(data) {
+  log.debug('parseSamples', data);
   var sampleData = data[sampleFields.SAMPLE_REPEAT];
 
   return BPromise.map(sampleData, function(sample) {
@@ -105,6 +103,7 @@ const facilityFields = {
 };
 
 function parseFacility(data) {
+  log.debug('parseFacility', data);
   return {
     name: data[facilityFields.FACILITY],
     region: data[facilityFields.REGION],
@@ -118,7 +117,7 @@ function parseFacility(data) {
  */
 const submissionFields = {
   SUBMISSION_ID: 'instanceID',
-  PERSON: 'rider',
+  PERSON: 'person',
   FACILITY: 'facility',
   SIM_SERIAL: 'simserial',
   DEVICE_ID: 'deviceid',
@@ -128,6 +127,7 @@ const submissionFields = {
 };
 
 function parseSubmission(formId, data) {
+  log.debug('parseSubmission', formId, data);
   return {
     form: formId,
     submissionId: data[submissionFields.SUBMISSION_ID],
@@ -148,7 +148,7 @@ function parseSubmission(formId, data) {
 const trackerEventsFields = {
   SUBMISSION_ID: 'instanceID',
   INSTANCE_ID: 'instanceID',
-  SAMPLE_REPEAT: 'stid_repeat',
+  SAMPLE_REPEAT: 'srepeat',
   ST_ID: 'stid',
   LAB_ID: 'labid',
   STATUS: 'condition'
@@ -163,7 +163,9 @@ const trackerEventsFields = {
  * @return {Object[]}
  */
 function parseTrackerEvents(data) {
+  log.debug('parseTrackerEvents', data);
   var sampleData = data[trackerEventsFields.SAMPLE_REPEAT];
+  log.debug('parseTrackerEvents sampleData', sampleData);
   return BPromise.map(sampleData, function(item) {
     return {
       submissionId: data[trackerEventsFields.SUBMISSION_ID],
@@ -224,12 +226,15 @@ const formFields = {
 PublishClient.prototype.save = function(submission) {
   var formId = submission[formFields.FORM_ID];
   log.info('New `' + formId + '` form submission', submission);
+  log.debug('Data', submission.data);
 
   var self = this;
   return this.dbClient.db.transaction({
     isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED
   }, function(tran) {
+    log.debug('Opening new transaction');
     return BPromise.map(submission.data, function(entry) {
+      log.debug('ENTRY', entry);
       return BPromise.props({
         samples: parseSamples(entry),
         submission: parseSubmission(formId, entry),
