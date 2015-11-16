@@ -49,8 +49,6 @@ function bundle() {
       $.sourcemaps.write('./') :
       $.util.noop()
     )
-    // .pipe($.filesize())
-    // .pipe($.sourcemaps.write('./')) // writes .map file
     .pipe(gulp.dest('app/server/public'));
 }
 
@@ -76,9 +74,10 @@ gulp.task('nodemon', function(cb) {
     ignore: [
       '.git/*',
       'README.md',
+      'gulpfile.js',
       'junkyard/*',
       'app/client/**/*.js',
-      'app/server/public/**',
+      'app/server/public/**/*',
     ],
     execMap: {
       js: 'node --harmony'
@@ -101,3 +100,4 @@ gulp.task('copy', function() {
 });
 
 gulp.task('default', ['nodemon', 'copy', 'lint', 'bundle', 'styles']);
+gulp.task('build', []);

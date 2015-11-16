@@ -8,11 +8,11 @@ const log = require('app/server/util/log.js');
 const requestLog = require('app/server/util/logrequest.js');
 const DBStorage = require('app/server/storage/datastorage.js');
 const handleShutdown = require('app/server/util/shutdown.js');
-const aggregateRoutes = require('app/server/odk/aggregateroutes.js');
+const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
 const PublishClient = require('app/server/odk/publishclient.js');
-const publishRoutes = require('app/server/odk/publishroutes.js');
+const PublishRoutes = require('app/server/odk/publishroutes.js');
 const SampleTracker = require('app/server/api/trackerapi.js');
-const trackerRoutes = require('app/server/api/trackerroutes.js');
+const TrackerRoutes = require('app/server/api/trackerroutes.js');
 
 const app = exports.app = express();
 
@@ -46,9 +46,9 @@ dbStorage.once('ready', function() {
 // (e.g., close DB connections)
 handleShutdown();
 
-app.use('/odk', aggregateRoutes);
-app.use('/publish', publishRoutes);
-app.use('/track', trackerRoutes);
+app.use('/odk', AggregateRoutes);
+app.use('/publish', PublishRoutes);
+app.use('/track', TrackerRoutes);
 
 app.get('/', function(req, res) {
   res.status(200).send('TODO');

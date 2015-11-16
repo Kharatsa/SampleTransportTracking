@@ -1,14 +1,17 @@
 'use strict';
 
+var BPromise = require('bluebird');
+var request = require('request');
+var store = require('../index.js').store;
+var getAsync = BPromise.promisify(request.get);
+
 // https://github.com/acdlite/flux-standard-action
 // http://rackt.org/redux/docs/basics/Actions.html
 
 /*
  * action types
  */
-
-exports.SOMETHING = 'SOMETHING';
-exports.SOMETHING_ELSE = 'SOMETHING_ELSE';
+var RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
 
 /*
  * other constants
@@ -17,11 +20,24 @@ exports.SOMETHING_ELSE = 'SOMETHING_ELSE';
 /*
  * action creators
  */
+function receiveSamples(samples) {
+  return {
+    type: RECEIVE_SAMPLES,
+    updates: samples
+  };
+}
 
-exports.doSomething = function doSomethingFunc(value) {
-  return { type: SOMETHING, value: value };
+var getAllSamples = function() {
+  return getAsync('/tracker/ids')
+  .then(function(result) {
+    store.dispatch(receiveSamples(result));
+  });
 };
 
-exports.doSomethingElse = function doSomethingElseFunc(value) {
-  return { type: SOMETHING_ELSE, value: value };
+/*
+ * exports
+ */
+module.exports = {
+  RECEIVE_SAMPLES: RECEIVE_SAMPLES,
+  getAllSamples: getAllSamples,
 };
