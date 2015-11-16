@@ -15,7 +15,6 @@
           <srepeat jr:template="">
             <stid/>
             <labid/>
-            <condition/>
           </srepeat>
           <store_gps/>
           <meta>
@@ -31,8 +30,7 @@
       <bind nodeset="/link/region" required="true()" type="select1"/>
       <bind nodeset="/link/facility" required="true()" type="select1"/>
       <bind nodeset="/link/srepeat/stid" required="true()" type="barcode"/>
-      <bind nodeset="/link/srepeat/labid" required="true()" type="select1"/>
-      <bind nodeset="/link/srepeat/condition" required="true()" type="select1"/>
+      <bind nodeset="/link/srepeat/labid" required="true()" type="barcode"/>
       <bind nodeset="/link/store_gps" required="true()" type="geopoint"/>
       <bind calculate="concat('uuid:', uuid())" nodeset="/link/meta/instanceID" readonly="true()" type="string"/>
     </model>
@@ -60,25 +58,14 @@
       </item>
     </select1>
     <group ref="/link/srepeat">
-      <label>New Result</label>
+      <label>New Link</label>
       <repeat nodeset="/link/srepeat">
         <input ref="/link/srepeat/stid">
           <label>ST Barcode</label>
         </input>
-        <select1 appearance="quick search('stypes')" ref="/link/srepeat/labid">
+        <input ref="/link/srepeat/labid">
           <label>Lab Barcode</label>
-          <item>
-            <label>stype</label>
-            <value>stype_key</value>
-          </item>
-        </select1>
-        <select1 appearance="quick search('conditions')" ref="/link/srepeat/condition">
-          <label>Specimen Condition</label>
-          <item>
-            <label>cond</label>
-            <value>cond_key</value>
-          </item>
-        </select1>
+        </input>
       </repeat>
     </group>
     <input ref="/link/store_gps">
