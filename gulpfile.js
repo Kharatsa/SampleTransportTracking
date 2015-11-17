@@ -12,16 +12,43 @@ const assign = require('lodash').assign;
 const stylish = require('jshint-stylish');
 const config = require('app/config.js');
 
+var isDevelopment = !config.isProduction;
+
 // add custom browserify options here
-const customOptions = {
+const browserifyOptions = {
   entries: ['app/client/index.js'],
-  debug: !config.isProduction,
+  debug: isDevelopment,
+  extensions: ['.jsx']
 };
-const opts = assign({}, watchify.args, customOptions);
-const bundler = watchify(browserify(opts));
-bundler.transform(babelify.configure({
-  presets: ['react']
-}));
+const opts = assign({}, watchify.args, browserifyOptions);
+var bundler = browserify(opts);
+bundler.transform(babelify.configure({presets: ['react']}));
+
+function bundle() {
+  return bundler.bundle()
+    .on('error', $.util.log.bind($.util, 'Browserify Error'))
+    .pipe(source('bundle.js'))
+    .pipe(buffer())
+      .pipe(isDevelopment ? $.util.noop() : $.uglify().on('error', $.util.log))
+      .pipe(isDevelopment ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
+      .pipe(isDevelopment ? $.sourcemaps.write('./') : $.util.noop())
+    .pipe(gulp.dest('app/server/public'));
+}
+
+bundler.on('log', $.util.log); // output build logs to terminal
+gulp.task('bundle', bundle); // so you can run `gulp js` to build the file
+
+gulp.task('development', function() {
+  isDevelopment = true;
+  bundler = watchify(bundler);
+  bundler.on('update', bundle); // on any dep update, runs the bundler
+  return;
+});
+
+gulp.task('production', function() {
+  isDevelopment = false;
+  return;
+});
 
 gulp.task('lint', function() {
   return gulp.src(['app/**/*.js', '!app/server/public/**'])
@@ -29,37 +56,10 @@ gulp.task('lint', function() {
     .pipe($.jshint.reporter(stylish));
 });
 
-function bundle() {
-  return bundler.bundle()
-    // log errors if they happen
-    .on('error', $.util.log.bind($.util, 'Browserify Error'))
-    .pipe(source('bundle.js'))
-    .pipe($.filesize())
-    // optional, remove if you don't need to buffer file contents
-    .pipe(buffer())
-    // produce sourcemaps in development
-    .pipe(
-      (!config.isProduction) ?
-      $.sourcemaps.init({loadMaps: true}) :
-      $.util.noop()
-    )
-     // Add transformation tasks to the pipeline here.
-    .pipe(
-      (!config.isProduction) ?
-      $.sourcemaps.write('./') :
-      $.util.noop()
-    )
-    .pipe(gulp.dest('app/server/public'));
-}
-
-bundler.on('update', bundle); // on any dep update, runs the bundler
-bundler.on('log', $.util.log); // output build logs to terminal
-gulp.task('bundle', bundle); // so you can run `gulp js` to build the file
-
+const clientCSS = 'app/client/**/*.css';
 gulp.task('styles', function() {
-  var clientCSS = 'app/client/**/*.css';
-  gulp.src(clientCSS)
-  .pipe($.watch(clientCSS))
+  return gulp.src(clientCSS)
+  .pipe(isDevelopment ? $.watch(clientCSS) : $.util.noop())
   .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
   .pipe($.concat('app.css'))
   .pipe($.filesize())
@@ -92,12 +92,31 @@ gulp.task('nodemon', function(cb) {
   });
 });
 
-gulp.task('copy', function() {
-  var clientHTML = 'app/client/**/*.html';
+const clientHTML = 'app/client/**/*.html';
+gulp.task('static', function() {
   return gulp.src(clientHTML)
-    .pipe($.watch(clientHTML))
+    .pipe(isDevelopment ? $.watch(clientHTML) : $.util.noop())
+    .pipe($.filesize())
     .pipe(gulp.dest('app/server/public'));
 });
 
-gulp.task('default', ['nodemon', 'copy', 'lint', 'bundle', 'styles']);
-gulp.task('build', []);
+gulp.task('watchStyles', function() {
+  return gulp.watch(clientCSS, ['styles']);
+});
+gulp.task('watchStatic', function() {
+  return gulp.watch(clientHTML, ['static']);
+});
+gulp.task('watch', ['watchStatic', 'watchStyles']);
+
+gulp.task('clean', function() {
+  return gulp.src('app/server/public/**/*.+(js|map|css|html)', {read: false})
+  .pipe($.rimraf());
+});
+
+gulp.task('default',
+  ['development', 'nodemon', 'watch', 'bundle', 'static', 'lint', 'styles']
+);
+
+gulp.task('build',
+  ['production', 'clean', 'bundle', 'static', 'styles']
+);

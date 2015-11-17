@@ -7,7 +7,7 @@ const initialState = {
   name: '',
 };
 
-function stApp(state, action) {
+var stApp = function(state, action) {
   if (typeof state === 'undefined') {
     return initialState;
   }
@@ -20,10 +20,8 @@ function stApp(state, action) {
     default:
       return state;
   }
-}
+};
 
-var todoApp = redux.combineReducers({
-  stApp
-});
+var todoApp = redux.combineReducers({stApp: stApp});
 
 module.exports = todoApp;
