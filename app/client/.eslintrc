@@ -1,0 +1,14 @@
+{
+  "extends": "../../.eslintrc",
+  "rules": {
+    "no-console": 1
+  },
+  "env": {
+    "browser": true,
+    "node": false,
+    "es6": true
+  },
+  "ecmaFeatures": {
+    "modules": true
+  }
+}

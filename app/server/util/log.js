@@ -27,19 +27,18 @@ var logger = new (winston.Logger)({
       level: config.loggingLevel,
       levels: customLevels.levels,
       colorize: true,
-      timestamp: function() {
-        return new Date();
-      },
+      timestamp: function() { return new Date(); },
       formatter: function(options) {
         // Return string will be passed to logger.
         return '[' + options.timestamp().toISOString() + '] ' +
-          winstonConfig.colorize(options.level,
-            '[' + options.level.toUpperCase() + '] ') +
+          winstonConfig.colorize(
+            options.level, '[' + options.level.toUpperCase() + '] ') +
           (undefined !== options.message ? options.message : '') +
-          (options.meta && Object.keys(options.meta).length ? '\n\t' +
-            JSON.stringify(options.meta) : '');
+          (options.meta && Object.keys(options.meta).length ?
+            '\n\t' + JSON.stringify(options.meta) :
+            '');
       }
-    }),
+    })
   ]
 });
 

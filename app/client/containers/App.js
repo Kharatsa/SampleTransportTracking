@@ -1,26 +1,39 @@
 'use strict';
 
-var React = require('react');
-var Redux = require('redux');
-var ReactRedux = require('react-redux');
-var store = require('../index.js').store;
-var STActions = require('../actions/actions.js');
+import React, {createClass, PropTypes} from 'react';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {List} from 'immutable';
+import {store} from '../index.js';
+import actions from '../actions/actions.js';
 
-var App = React.createClass({
+const App = createClass({
+  componentDidMount: function() {
+    this.props.fetchSamples();
+  },
+
   render: function() {
-    console.debug('this.props', this.props);
-    return <div>Hello Sean</div>;
+    const {samples} = this.props;
+    return (
+      <div>
+        Total samples: <span>{samples.size}</span>
+        {samples.map(sample => <li key={sample.id}>{sample.stId}</li>)}
+      </div>
+    );
   }
 });
 
+App.propTypes = {
+  isFetchingSamples: PropTypes.bool,
+  samples: PropTypes.instanceOf(List)
+};
+
 function mapStateToProps(state) {
-  return {
-    samples: state.samples
-  };
+  return state;
 }
 
 function mapDispatchToProps() {
-  return Redux.bindActionCreators(STActions, store.dispatch);
+  return bindActionCreators(actions, store.dispatch);
 }
 
 // Which props do we want to inject, given the global state?
@@ -32,7 +45,7 @@ function mapDispatchToProps() {
 // }
 
 // Wrap the component to inject dispatch and state into it
-module.exports = ReactRedux.connect(
+module.exports = connect(
   mapStateToProps,
   mapDispatchToProps
 )(App);

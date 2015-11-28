@@ -1,27 +1,43 @@
 'use strict';
 
-var redux = require('redux');
-var actions = require('app/client/actions/actions.js');
+import {combineReducers} from 'redux';
+import {List} from 'immutable';
+import {
+    FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES
+} from '../actions/actions.js';
 
-const initialState = {
-  name: '',
-};
+/*
 
-var stApp = function(state, action) {
-  if (typeof state === 'undefined') {
-    return initialState;
-  }
+Store/State:
+  updates/events
+  samples
+  origin location/facility
+  current location/facility
+ */
 
+const isFetchingSamples = function fetchingReduer(state=false, action) {
   switch (action.type) {
-    case actions.SOMETHING:
-      return 'something';
-    case actions.SOMETHING_ELSE:
-      return 'else';
-    default:
-      return state;
+  case RECEIVE_SAMPLES:
+    return false;
+  case FETCH_SAMPLES:
+    return true;
+  case FETCH_SAMPLES_FAILURE:
+    return false;
+  default:
+    return state;
   }
 };
 
-var todoApp = redux.combineReducers({stApp: stApp});
+const defaultSamples = List([]);
 
-module.exports = todoApp;
+const samples = function sampleReducer(state=defaultSamples, action) {
+  switch (action.type) {
+  case RECEIVE_SAMPLES:
+    return List(action.samples);
+  default:
+    return state;
+  }
+};
+
+const rootReducer = combineReducers({isFetchingSamples, samples});
+module.exports = rootReducer;

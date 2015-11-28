@@ -1,18 +1,28 @@
 'use strict';
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var redux = require('redux');
-var Provider = require('react-redux').Provider;
-var sttReducer = require('./reducers/reducers.js');
+import React from 'react';
+import {render} from 'react-dom';
+import {createStore, applyMiddleware} from 'redux';
+import {Provider} from 'react-redux';
+import thunk from 'redux-thunk';
+import createLogger from 'redux-logger';
+import reducers from './reducers/reducers.js';
 
-var store = redux.createStore(sttReducer);
+const logger = createLogger();
+exports.logger = logger;
+
+const createStoreWithMiddleware = applyMiddleware(
+  thunk, // lets us dispatch() functions
+  logger // neat middleware that logs actions
+)(createStore);
+
+const store = createStoreWithMiddleware(reducers);
 exports.store = store;
 
-var App = require('./containers/App.js');
+const App = require('./containers/App.js');
 
-var rootElement = document.getElementById('root');
-ReactDOM.render(
+const rootElement = document.getElementById('root');
+render(
   <Provider store={store}>
     <App />
   </Provider>,

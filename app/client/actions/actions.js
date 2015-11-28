@@ -1,9 +1,10 @@
 'use strict';
 
-var BPromise = require('bluebird');
-var request = require('request');
-var store = require('../index.js').store;
-var getAsync = BPromise.promisify(request.get);
+// import {Map} from 'immutable';
+// const immutable = require('immutable');
+// import store from '../index.js';
+// const store = require('../index.js').store;
+import request from '../util/request.js';
 
 // https://github.com/acdlite/flux-standard-action
 // http://rackt.org/redux/docs/basics/Actions.html
@@ -11,7 +12,12 @@ var getAsync = BPromise.promisify(request.get);
 /*
  * action types
  */
-var RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
+
+// const FETCH_UPDATES = 'FETCH_UPDATES';
+// const RECEIVE_UPDATES = 'RECEIVE_UPDATES';
+const FETCH_SAMPLES = 'FETCH_SAMPLES';
+const FETCH_SAMPLES_FAILURE = 'FETCH_SAMPLES_FAILURE';
+const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
 
 /*
  * other constants
@@ -20,24 +26,49 @@ var RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
 /*
  * action creators
  */
-function receiveSamples(samples) {
+
+function requestSamples() {
   return {
-    type: RECEIVE_SAMPLES,
-    updates: samples
+    type: FETCH_SAMPLES,
+    requestedAt: Date.now()
   };
 }
 
-var getAllSamples = function() {
-  return getAsync('/tracker/ids')
-  .then(function(result) {
-    store.dispatch(receiveSamples(result));
-  });
-};
+function fetchSamples() {
+  return function(dispatch) {
+    dispatch(requestSamples());
+    return request('/track/ids', function(err, res) {
+      if (err) {
+        return dispatch(fetchSamplesFailure(err));
+      }
+      dispatch(receiveSamples(res.json));
+    });
+  };
+}
+
+function fetchSamplesFailure(err) {
+  return {
+    type: FETCH_SAMPLES_FAILURE,
+    error: err
+  };
+}
+
+function receiveSamples(samples) {
+  return {
+    type: RECEIVE_SAMPLES,
+    samples,
+    receivedAt: Date.now()
+  };
+}
 
 /*
  * exports
  */
 module.exports = {
-  RECEIVE_SAMPLES: RECEIVE_SAMPLES,
-  getAllSamples: getAllSamples,
+  FETCH_SAMPLES,
+  FETCH_SAMPLES_FAILURE,
+  RECEIVE_SAMPLES,
+  fetchSamples,
+  fetchSamplesFailure,
+  receiveSamples
 };

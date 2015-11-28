@@ -16,6 +16,8 @@ const TrackerRoutes = require('app/server/api/trackerroutes.js');
 
 const app = exports.app = express();
 
+console.log('YP');
+
 app.use(express.static(config.publicPath));
 log.info('Serving static files from', config.publicPath);
 app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -34,12 +36,10 @@ var dbStorage = exports.dbStorage = new DBStorage(
   {storage: config.sqliteFilename}
 );
 
-var publishClient;
-var sampleTracker;
 dbStorage.once('ready', function() {
   log.info('Database connection established');
-  publishClient = exports.publishClient = new PublishClient(dbStorage);
-  sampleTracker = exports.sampleTracker = new SampleTracker(dbStorage);
+  exports.publishClient = new PublishClient(dbStorage);
+  exports.sampleTracker = new SampleTracker(dbStorage);
 });
 
 // Pass handleShutdown any functions to execute on shutdown

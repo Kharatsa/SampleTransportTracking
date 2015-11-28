@@ -1,6 +1,5 @@
 'use strict';
 
-const util = require('util');
 const _ = require('lodash');
 const BPromise = require('bluebird');
 const log = require('app/server/util/log.js');
@@ -29,10 +28,70 @@ function SampleTracker(dbClient) {
 // Samples
 //  * All events
 
-SampleTracker.prototype.allIds = function() {
+function getSimpleInstance(sequelizeInstance) {
+  if (sequelizeInstance) {
+    return sequelizeInstance.get({simple: true});
+  }
+  return {};
+}
+
+/*
+ * One Submission includes many TrackerEvents. This function combines the
+ * Submission data into each of the its TrackerEvent objects.
+ */
+function submissionEventCombine(stEvent) {
+  var submissionAttribs = Object.keys(
+    getSimpleInstance(stEvent.formSubmission)
+  );
+
+  return BPromise.each(submissionAttribs, function(key) {
+    stEvent[key] = stEvent.formSubmission[key];
+  })
+  .then(function() {
+    return _.omit(stEvent, 'formSubmission');
+  });
+}
+
+const DEFAULT_PAGE_LIMIT = 5;
+const ST_EVENTS_FIELDS_EXCLUDE = [
+  'submissionId', 'id', 'created_at', 'updated_at'
+];
+
+SampleTracker.prototype.listEvents = function(_maxId) {
+  var maxId = _maxId || null;
+  // If maxId is provided, find records where ids <= maxId
+  var pageWhere = maxId === null ? {} : {id: {lte: maxId}};
+
+  var TrackerEventsModel = this.dbClient.TrackerEvents;
+  var SubmissionsModel = this.dbClient.Submissions;
+
+  return TrackerEventsModel.findAll({
+    limit: DEFAULT_PAGE_LIMIT,
+    where: pageWhere,
+    include: [{
+      model: SubmissionsModel,
+      as: 'formSubmission',
+      attributes: {exclude: ST_EVENTS_FIELDS_EXCLUDE}
+    }],
+    order: [
+      [
+        {model: SubmissionsModel, as: 'formSubmission'},
+        'completed_date',
+        'DESC'
+      ],
+      ['submission_num', 'DESC']
+    ]
+  })
+  .map(getSimpleInstance)
+  .map(submissionEventCombine);
+};
+
+SampleTracker.prototype.listSampleIds = function() {
   var SamplesModel = this.dbClient.Samples;
 
-  return SamplesModel.findAll({attributes: {exclude: ['id']}})
+  return SamplesModel.findAll({
+    // attributes: {exclude: ['id']}
+  })
   .catch(function(err) {
     log.warn('Error fetching all Ids', err, err.stack);
     return [];
@@ -43,14 +102,7 @@ function makeSampleWhere(stId, labId) {
   return {$or: [
     {$and: [{stId: stId}, {stId: {ne: null}}]},
     {$and: [{labId: labId}, {labId: {ne: null}}]}
-  ]}
-}
-
-function getSimpleInstance(sequelizeInstance) {
-  if (sequelizeInstance) {
-    return sequelizeInstance.get({simple: true});
-  }
-  return {};
+  ]};
 }
 
 function getSamples(id, samplesModel) {
@@ -62,7 +114,7 @@ function getSamples(id, samplesModel) {
 }
 
 function getSampleEvents(sampleId, trackerEventsModel, submissionModel) {
- return trackerEventsModel.findAll({
+  return trackerEventsModel.findAll({
     attributes: {exclude: ['id']},
     where: {$or: [
       {$and: [{stId: sampleId.stId}, {stId: {ne: null}}]},
@@ -71,35 +123,11 @@ function getSampleEvents(sampleId, trackerEventsModel, submissionModel) {
     include: [{
       model: submissionModel,
       as: 'formSubmission',
-      attributes: {exclude: ['submissionId', 'id', 'created_at', 'updated_at']}
+      attributes: {exclude: ST_EVENTS_FIELDS_EXCLUDE}
     }]
   })
- .map(getSimpleInstance);
-}
-
-function reassembleFields(submissionData) {
-  log.debug('Reassembling %d form data fields', submissionData.length);
-  var result = {};
-  return BPromise.each(submissionData, function(data) {
-    if (data.fieldLabel) {
-      result[data.fieldLabel] = data.fieldValue || null;
-    }
-  })
-  .then(function() {
-    return result;
-  });
-}
-
-function getSubmissionData(stEvent, submissionDataModel) {
-  return submissionDataModel.findAll({
-    attributes: {exclude: ['id']},
-    where: {instanceId: stEvent.instanceId}
-  })
   .map(getSimpleInstance)
-  .then(reassembleFields)
-  .then(function(formFields) {
-    return _.assign(stEvent, {'data': formFields});
-  });
+  .map(submissionEventCombine);
 }
 
 SampleTracker.prototype.allSampleEvents = function(id) {

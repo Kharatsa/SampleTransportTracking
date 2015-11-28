@@ -20,28 +20,31 @@ const makeAssociations = function makeAssociationsFunc(db) {
   Submissions.belongsTo(Forms, {
     as: 'submissionForm',
     targetKey: 'formId',
-    foreignKey: 'form',
+    foreignKey: 'form'
   });
+
   Submissions.belongsTo(Facilities, {
     as: 'submissionFacility',
     targetKey: 'name',
-    foreignKey: 'facility',
+    foreignKey: 'facility'
   });
 
   TrackerEvents.belongsTo(Samples, {
     as: 'sampleStId',
     targetKey: 'stId',
-    foreignKey: 'stId',
+    foreignKey: 'stId'
   });
+
   TrackerEvents.belongsTo(Samples, {
     as: 'sampleLabId',
     targetKey: 'labId',
-    foreignKey: 'labId',
+    foreignKey: 'labId'
   });
+
   TrackerEvents.belongsTo(Submissions, {
     as: 'formSubmission',
     targetKey: 'submissionId',
-    foreignKey: 'submissionId',
+    foreignKey: 'submissionId'
   });
 
   log.info('Finished loading associations');

@@ -16,7 +16,7 @@ const supportedForms = {
   SAMPLE_DEPARTURE: 'sdepart',
   SAMPLE_ARRIVAL: 'sarrive',
   LAB_LINK: 'link',
-  RESULT: 'result',
+  RESULT: 'result'
 };
 
 const supportedFormIds = Object.keys(supportedForms).map(function(key) {
@@ -76,7 +76,7 @@ const sampleFields = {
   SAMPLE_REPEAT: 'srepeat',
   SAMPLE_TRACKING_ID: 'stid',
   LAB_ID: 'labid',
-  TYPE: 'stype',
+  TYPE: 'stype'
 };
 
 function parseSamples(data) {
@@ -87,7 +87,7 @@ function parseSamples(data) {
     return {
       stId: sample[sampleFields.SAMPLE_TRACKING_ID] || null,
       labId: sample[sampleFields.LAB_ID] || null,
-      type: sample[sampleFields.TYPE] || null,
+      type: sample[sampleFields.TYPE] || null
     };
   });
 }
@@ -99,7 +99,7 @@ function parseSamples(data) {
 const facilityFields = {
   REGION: 'region',
   FACILITY: 'facility',
-  TYPE: 'ftype',
+  TYPE: 'ftype'
 };
 
 function parseFacility(data) {
@@ -107,7 +107,7 @@ function parseFacility(data) {
   return {
     name: data[facilityFields.FACILITY],
     region: data[facilityFields.REGION],
-    type: data[facilityFields.TYPE] || null,
+    type: data[facilityFields.TYPE] || null
   };
 }
 
@@ -158,7 +158,6 @@ const trackerEventsFields = {
  * Transforms the submission data object into an array of objects. Each array
  * value contains one field and value pair.
  *
- * @param  {String} formId
  * @param  {Object} data
  * @return {Object[]}
  */
@@ -166,12 +165,13 @@ function parseTrackerEvents(data) {
   log.debug('parseTrackerEvents', data);
   var sampleData = data[trackerEventsFields.SAMPLE_REPEAT];
   log.debug('parseTrackerEvents sampleData', sampleData);
-  return BPromise.map(sampleData, function(item) {
+  return BPromise.map(sampleData, function(item, index) {
     return {
       submissionId: data[trackerEventsFields.SUBMISSION_ID],
+      submissionNumber: index + 1,
       stId: item[trackerEventsFields.ST_ID] || null,
       labId: item[trackerEventsFields.LAB_ID] || null,
-      sampleStatus: item[trackerEventsFields.STATUS] || null,
+      sampleStatus: item[trackerEventsFields.STATUS] || null
     };
   });
 }
@@ -239,30 +239,30 @@ PublishClient.prototype.save = function(submission) {
         samples: parseSamples(entry),
         submission: parseSubmission(formId, entry),
         facility: parseFacility(entry),
-        trackerEvents: parseTrackerEvents(entry),
+        trackerEvents: parseTrackerEvents(entry)
       });
     })
     .each(function(parsed, index, len) {
       log.debug('PublishClient parsed result ' + (index + 1) + ' of ' + len);
       log.debug(parsed);
       return self._saveFacility(parsed.facility, tran)
-      .then(function(results) {
+      .then(function() {
         log.debug('PublishClient completed facility insert');
         return self._saveSubmission(formId, parsed.submission, tran);
       })
-      .then(function(result) {
+      .then(function() {
         log.debug('PublishClient completed submission insert');
         return self._saveSamples(parsed.samples, tran);
       })
-      .then(function(results) {
+      .then(function() {
         var submissionId = parsed.submission.submissionId || null;
         log.debug('PublishClient completed samples insert');
         return self._saveEvents(submissionId, parsed.trackerEvents, tran);
       })
       .then(function() {
         log.debug('PublishClient completed events insert');
-        log.debug('PublishClient finished result ' + (index + 1) + ' of ' + len);
-      })
+        log.debug('PublishClient result ' + (index + 1) + ' of ' + len);
+      });
     });
   })
   .then(function(result) {
@@ -314,7 +314,7 @@ PublishClient.prototype._saveSamples = function(samples, tran) {
       transaction: tran
     })
     .then(function(result) {
-      var samplesInstance = result[0]
+      var samplesInstance = result[0];
       var created = result[1];
       if (!created) {
         // The sample record already existed. It might require an update.
@@ -328,9 +328,9 @@ PublishClient.prototype._saveSamples = function(samples, tran) {
 /**
  * TODO
  *
- * @param  {[type]} facility [description]
- * @param  {[type]} tran     [description]
- * @return {[type]}          [description]
+ * @param  {Object} facility [description]
+ * @param  {Object} tran     [description]
+ * @return {Promise}          [description]
  */
 PublishClient.prototype._saveFacility = function(facility, tran) {
   log.info('Saving FACILITY from submission', facility);
@@ -349,7 +349,7 @@ PublishClient.prototype._saveFacility = function(facility, tran) {
       log.debug('Skipping facility insert');
     }
   });
-}
+};
 
 PublishClient.prototype._saveSubmission = function(formId, submission, tran) {
   log.debug('Saving form submission', submission);
@@ -358,7 +358,7 @@ PublishClient.prototype._saveSubmission = function(formId, submission, tran) {
   return SubmissionsModel.findOrCreate({
     where: {$and: [
       {submissionId: submission.submissionId},
-      {submissionId: {ne: null}},
+      {submissionId: {ne: null}}
     ]},
     defaults: submission,
     transaction: tran
@@ -370,9 +370,9 @@ PublishClient.prototype._saveSubmission = function(formId, submission, tran) {
  * Persists the sample, form, and submission IDs for a submission to the
  * database.
  *
- * @param  {String}   formId          [description]
- * @param  {Object[]} trackerEventsData    A single parsed ST Event object from
- *                                    submission data.
+ * @param  {String}   submissionId
+ * @param  {Object[]} updates         A parsed collection of ST Events from a
+ *                                    single submission.
  * @param  {Object}   tran            Sequelize transaction
  * @return {Promise.<Instance,Boolean>}         [description]
  */
@@ -384,7 +384,7 @@ PublishClient.prototype._saveEvents = function(submissionId, updates, tran) {
   return TrackerEventModel.findOne({
     where: {$and: [
       {submissionId: submissionId},
-      {submissionId: {ne: null}},
+      {submissionId: {ne: null}}
     ]},
     transaction: tran
   })

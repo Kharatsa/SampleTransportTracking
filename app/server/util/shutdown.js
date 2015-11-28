@@ -5,9 +5,8 @@ const log = require('app/server/util/log.js');
 /**
  * [handleShutdown description]
  *
- * @param {Function} varArgs Functions to be called on shutdown
  */
-var handleShutdown = function(varArgs) {
+var handleShutdown = function() {
   var args = Array.prototype.slice.call(arguments);
 
   function gracefulShutdown(cb) {

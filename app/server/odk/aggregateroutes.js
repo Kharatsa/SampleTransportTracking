@@ -3,29 +3,16 @@
 const express = require('express');
 const router = express.Router();
 const log = require('app/server/util/log.js');
+const normalizeParams = require('app/server/middleware.js').normalizeParams;
 const aggregate = require('app/server/odk/aggregateapi.js');
 
 function sendXML(res, xml) {
   res.set({
-      'Content-Type': 'text/xml',
-      'Content-Length': xml.length
-    });
+    'Content-Type': 'text/xml',
+    'Content-Length': xml.length
+  });
   res.send(xml);
 }
-
-// Convert query parameters to lowercase
-const normalizeParams = function(req, res, next) {
-  var result = {};
-  log.debug('Query parameters before normalization:', req.query);
-  if (req.query) {
-    Object.keys(req.query).forEach(function(key) {
-      result[key.toLowerCase()] = req.query[key];
-    });
-    req.query = result;
-  }
-  log.debug('Query parameters after normalization:', req.query);
-  next();
-};
 
 router.get('/formlist', function(req, res) {
   log.debug('ODK formList');
@@ -53,7 +40,6 @@ router.get('/view/submissionList', normalizeParams, function(req, res) {
 
 router.get('/view/downloadSubmission', normalizeParams, function(req, res) {
   log.debug('downloadSubmission query');
-  console.dir(req.query);
 
   var formId = req.query.formid;
   var topElement = req.query.topelement || formId;

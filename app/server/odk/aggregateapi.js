@@ -21,7 +21,7 @@ BPromise.promisifyAll(request);
  */
 const OPEN_ROSA_HEADERS = {
   'Accept-Language': 'en',
-  'X-OpenRosa-Version': '1.0',
+  'X-OpenRosa-Version': '1.0'
 };
 
 /**
@@ -36,7 +36,7 @@ const OPEN_ROSA_HEADERS = {
 const ODK_REQUEST_AUTH = {
   user: odkConfig.username,
   pass: odkConfig.password,
-  sendImmediately: false,
+  sendImmediately: false
 };
 
 const ODK_BASE_URL = odkConfig.protocol + '://' + odkConfig.hostname;
@@ -96,7 +96,8 @@ exports.submissionList = submissionList;
  * @return {Promise.<Object,String>}  An http.IncomingMessage object and the
  *                                      text/xml response from ODK
  */
-var downloadSubmission = function downloadFunc(formId, topElement, submissionId) {
+var downloadSubmission = function downloadFunc(formId, topElement,
+                                               submissionId) {
   var query = formId + '[@version=null and @uiVersion=null]/' +
     topElement + '[@key=' +
     submissionId + ']';

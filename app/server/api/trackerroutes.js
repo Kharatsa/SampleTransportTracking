@@ -4,9 +4,18 @@ const express = require('express');
 const router = express.Router();
 const server = require('app/server/server.js');
 const log = require('app/server/util/log.js');
+const normalizeParams = require('app/server/middleware.js').normalizeParams;
+
+router.get('/events', normalizeParams, function(req, res) {
+  var maxId = req.query.maxid;
+  return server.sampleTracker.listEvents(maxId)
+  .then(function(updates) {
+    res.json(updates);
+  });
+});
 
 router.get('/ids', function(req, res) {
-  return server.sampleTracker.allIds()
+  return server.sampleTracker.listSampleIds()
   .then(function(ids) {
     res.json(ids);
   });

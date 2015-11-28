@@ -9,7 +9,6 @@ const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const assign = require('lodash').assign;
-const stylish = require('jshint-stylish');
 const config = require('app/config.js');
 
 var isDevelopment = !config.isProduction;
@@ -22,7 +21,10 @@ const browserifyOptions = {
 };
 const opts = assign({}, watchify.args, browserifyOptions);
 var bundler = browserify(opts);
-bundler.transform(babelify.configure({presets: ['react']}));
+bundler.transform(babelify.configure({presets: [
+  'react',
+  'es2015'
+]}));
 
 function bundle() {
   return bundler.bundle()
@@ -30,6 +32,7 @@ function bundle() {
     .pipe(source('bundle.js'))
     .pipe(buffer())
       .pipe(isDevelopment ? $.util.noop() : $.uglify().on('error', $.util.log))
+      .pipe($.filesize())
       .pipe(isDevelopment ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
       .pipe(isDevelopment ? $.sourcemaps.write('./') : $.util.noop())
     .pipe(gulp.dest('app/server/public'));
@@ -52,21 +55,26 @@ gulp.task('production', function() {
 
 gulp.task('lint', function() {
   return gulp.src(['app/**/*.js', '!app/server/public/**'])
-    .pipe($.jshint())
-    .pipe($.jshint.reporter(stylish));
+    .pipe($.eslint())
+    .pipe($.eslint.format())
+    .pipe($.eslint.results(function(results) {
+      // Called once for all ESLint results.
+      $.util.log('Total Results: ' + results.length);
+      $.util.log('Total Warnings: ' + results.warningCount);
+      $.util.log('Total Errors: ' + results.errorCount);
+    }));
 });
 
 const clientCSS = 'app/client/**/*.css';
 gulp.task('styles', function() {
   return gulp.src(clientCSS)
-  .pipe(isDevelopment ? $.watch(clientCSS) : $.util.noop())
   .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
   .pipe($.concat('app.css'))
   .pipe($.filesize())
   .pipe(gulp.dest('app/server/public'));
 });
 
-gulp.task('nodemon', function(cb) {
+gulp.task('nodemon', ['lint'], function(cb) {
   var started = false;
   return nodemon({
     script: 'app/server/server.js',
@@ -77,11 +85,11 @@ gulp.task('nodemon', function(cb) {
       'gulpfile.js',
       'junkyard/*',
       'app/client/**/*.js',
-      'app/server/public/**/*',
+      'app/server/public/**/*'
     ],
     execMap: {
       js: 'node --harmony'
-    },
+    }
   }).on('start', function() {
     // to avoid nodemon being started multiple times
     // thanks @matthisk
@@ -93,9 +101,8 @@ gulp.task('nodemon', function(cb) {
 });
 
 const clientHTML = 'app/client/**/*.html';
-gulp.task('static', function() {
+gulp.task('static', ['clean'], function() {
   return gulp.src(clientHTML)
-    .pipe(isDevelopment ? $.watch(clientHTML) : $.util.noop())
     .pipe($.filesize())
     .pipe(gulp.dest('app/server/public'));
 });
@@ -110,13 +117,13 @@ gulp.task('watch', ['watchStatic', 'watchStyles']);
 
 gulp.task('clean', function() {
   return gulp.src('app/server/public/**/*.+(js|map|css|html)', {read: false})
-  .pipe($.rimraf());
+    .pipe($.rimraf());
 });
 
 gulp.task('default',
-  ['development', 'nodemon', 'watch', 'bundle', 'static', 'lint', 'styles']
+  ['development', 'nodemon', 'watch', 'bundle', 'static', 'styles']
 );
 
 gulp.task('build',
-  ['production', 'clean', 'bundle', 'static', 'styles']
+  ['production', 'bundle', 'styles', 'static']
 );
