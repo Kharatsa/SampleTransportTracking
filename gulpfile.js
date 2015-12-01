@@ -8,7 +8,7 @@ const browserify = require('browserify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-const assign = require('lodash').assign;
+// const assign = require('lodash').assign;
 const config = require('app/config.js');
 
 var isDevelopment = !config.isProduction;
@@ -19,7 +19,7 @@ const browserifyOptions = {
   debug: isDevelopment,
   extensions: ['.jsx']
 };
-const opts = assign({}, watchify.args, browserifyOptions);
+const opts = Object.assign({}, watchify.args, browserifyOptions);
 var bundler = browserify(opts);
 bundler.transform(babelify.configure({presets: [
   'react',

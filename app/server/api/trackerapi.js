@@ -53,11 +53,49 @@ function submissionEventCombine(stEvent) {
 }
 
 const DEFAULT_PAGE_LIMIT = 5;
-const ST_EVENTS_FIELDS_EXCLUDE = [
-  'submissionId', 'id', 'created_at', 'updated_at'
+const SUBMISSION_FIELDS_EXCLUDE = [
+  'id', 'created_at', 'updated_at'
 ];
 
-SampleTracker.prototype.listEvents = function(_maxId) {
+function maybeCombineWhere(oldWhere, newWhere) {
+  return {};
+}
+
+function parseEventsOptions(options) {
+  var maybeEventsWhere = {};
+
+  if (options.afterDate) {
+    // TODO
+  }
+  if (options.beforeDate) {
+    // TODO
+  }
+  if (options.maxId) {
+    // maxId is not combined with any other filters
+    return {id: {lte: maxId}};
+  }
+  if (options.location) {
+    return maybeCombineWhere(maybeEventsWhere, {});
+  }
+  if (options.person) {
+    return maybeCombineWhere(maybeEventsWhere, {});
+  }
+
+  return maybeEventsWhere;
+}
+
+/**
+ * Retrieve a list of sample tracking events
+ *
+ * @param  {Object} options   Event record filter options
+ *                    options.maxId
+ *                    options.location
+ *                    options.person
+ *                    options.afterDate
+ *                    options.beforeDate
+ * @return {Promise.<Array<Object>>}
+ */
+SampleTracker.prototype.listEvents = function(options) {
   var maxId = _maxId || null;
   // If maxId is provided, find records where ids <= maxId
   var pageWhere = maxId === null ? {} : {id: {lte: maxId}};
@@ -71,8 +109,10 @@ SampleTracker.prototype.listEvents = function(_maxId) {
     include: [{
       model: SubmissionsModel,
       as: 'formSubmission',
-      attributes: {exclude: ST_EVENTS_FIELDS_EXCLUDE}
+      attributes: {exclude: SUBMISSION_FIELDS_EXCLUDE}
     }],
+    // Order events by the containing form submission completed dates, then by
+    // the form submission event number.
     order: [
       [
         {model: SubmissionsModel, as: 'formSubmission'},
@@ -115,7 +155,7 @@ function getSamples(id, samplesModel) {
 
 function getSampleEvents(sampleId, trackerEventsModel, submissionModel) {
   return trackerEventsModel.findAll({
-    attributes: {exclude: ['id']},
+    // attributes: {exclude: ['id']},
     where: {$or: [
       {$and: [{stId: sampleId.stId}, {stId: {ne: null}}]},
       {$and: [{labId: sampleId.labId}, {labId: {ne: null}}]}
@@ -123,7 +163,7 @@ function getSampleEvents(sampleId, trackerEventsModel, submissionModel) {
     include: [{
       model: submissionModel,
       as: 'formSubmission',
-      attributes: {exclude: ST_EVENTS_FIELDS_EXCLUDE}
+      attributes: {exclude: SUBMISSION_FIELDS_EXCLUDE}
     }]
   })
   .map(getSimpleInstance)
