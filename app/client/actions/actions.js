@@ -1,9 +1,5 @@
 'use strict';
 
-// import {Map} from 'immutable';
-// const immutable = require('immutable');
-// import store from '../index.js';
-// const store = require('../index.js').store;
 import request from '../util/request.js';
 
 // https://github.com/acdlite/flux-standard-action
@@ -15,9 +11,9 @@ import request from '../util/request.js';
 
 // const FETCH_UPDATES = 'FETCH_UPDATES';
 // const RECEIVE_UPDATES = 'RECEIVE_UPDATES';
-const FETCH_SAMPLES = 'FETCH_SAMPLES';
-const FETCH_SAMPLES_FAILURE = 'FETCH_SAMPLES_FAILURE';
-const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
+export const FETCH_SAMPLES = 'FETCH_SAMPLES';
+export const FETCH_SAMPLES_FAILURE = 'FETCH_SAMPLES_FAILURE';
+export const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
 
 /*
  * other constants
@@ -34,7 +30,7 @@ function requestSamples() {
   };
 }
 
-function fetchSamples() {
+export function fetchSamples() {
   return function(dispatch) {
     dispatch(requestSamples());
     return request('/track/ids', function(err, res) {
@@ -60,15 +56,3 @@ function receiveSamples(samples) {
     receivedAt: Date.now()
   };
 }
-
-/*
- * exports
- */
-module.exports = {
-  FETCH_SAMPLES,
-  FETCH_SAMPLES_FAILURE,
-  RECEIVE_SAMPLES,
-  fetchSamples,
-  fetchSamplesFailure,
-  receiveSamples
-};

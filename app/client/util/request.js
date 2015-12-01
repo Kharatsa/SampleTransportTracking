@@ -29,8 +29,22 @@ function loadHandler(request) {
 /**
  * Helper function for XMLHttpRequests
  *
- * @param   {Object|String}  options  [description]
- * @param   {Function}       callback [description]
+ * @param   {Object|String}  options  URL String or options Object.
+ *          {String}         options.method HTTP method (GET/POST)
+ *          {String}         options.url    Request URL
+ * @param   {Function}       callback  The callback is called after one of the
+ *                                     XMLHttpRequest onload, onerror, or
+ *                                     onabord events are emitted. The function
+ *                                     is called with an (err, res)
+ *                                     arguments. The res Object includes the
+ *                                     follow attributes:
+ *                                       {String}   res.response
+ *                                       {String}   res.text
+ *                                       {String}   res.type
+ *                                       {Object}   res.json
+ *                                       {Document} res.xml
+ *                                       {Number}   res.status
+ *                                       {String}   res.statusText
  */
 var request = function(options, callback) {
   var method = options.method || 'GET';

@@ -7,19 +7,15 @@ import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import reducers from './reducers/reducers.js';
+import App from './containers/App.js';
 
 const logger = createLogger();
-exports.logger = logger;
-
 const createStoreWithMiddleware = applyMiddleware(
   thunk, // lets us dispatch() functions
   logger // neat middleware that logs actions
 )(createStore);
 
-const store = createStoreWithMiddleware(reducers);
-exports.store = store;
-
-const App = require('./containers/App.js');
+export const store = createStoreWithMiddleware(reducers);
 
 const rootElement = document.getElementById('root');
 render(
