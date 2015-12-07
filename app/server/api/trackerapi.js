@@ -96,9 +96,10 @@ function parseEventsOptions(options) {
  * @return {Promise.<Array<Object>>}
  */
 SampleTracker.prototype.listEvents = function(options) {
-  var maxId = _maxId || null;
+  // var maxId = _maxId || null;
   // If maxId is provided, find records where ids <= maxId
-  var pageWhere = maxId === null ? {} : {id: {lte: maxId}};
+  // var pageWhere = maxId === null ? {} : {id: {lte: maxId}};
+  var pageWhere = {};
 
   var TrackerEventsModel = this.dbClient.TrackerEvents;
   var SubmissionsModel = this.dbClient.Submissions;

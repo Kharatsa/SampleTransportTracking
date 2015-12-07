@@ -3,21 +3,24 @@
 import React, {createClass, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {List} from 'immutable';
+import {List, Map as ImmutableMap} from 'immutable';
 import {store} from '../index.js';
 import * as actions from '../actions/actions.js';
+import Main from '../components/Main.jsx';
+// import AllEvents from '../components/AllEvents.jsx';
 
 const App = createClass({
   componentDidMount: function() {
     this.props.fetchSamples();
   },
 
+        // <AllEvents samples = {samples} samplesById={samplesById}>
+        // </AllEvents>
   render: function() {
-    const {samples} = this.props;
+    const {samplesById, samples} = this.props;
     return (
       <div>
-        Total samples: <span>{samples.size}</span>
-        {samples.map(sample => <li key={sample.id}>{sample.stId}</li>)}
+        <Main></Main>
       </div>
     );
   }
@@ -25,7 +28,8 @@ const App = createClass({
 
 App.propTypes = {
   isFetchingSamples: PropTypes.bool,
-  samples: PropTypes.instanceOf(List)
+  samples: PropTypes.instanceOf(List),
+  samplesById: PropTypes.instanceOf(ImmutableMap)
 };
 
 function mapStateToProps(state) {

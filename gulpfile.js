@@ -15,7 +15,10 @@ var isDevelopment = !config.isProduction;
 
 // add custom browserify options here
 const browserifyOptions = {
-  entries: ['app/client/index.js'],
+  entries: [
+    'app/client/index.js',
+    // 'node_modules/material-design-lite/material.min.js'
+  ],
   debug: isDevelopment,
   extensions: ['.jsx']
 };
@@ -54,7 +57,11 @@ gulp.task('production', function() {
 });
 
 gulp.task('lint', function() {
-  return gulp.src(['app/**/*.js', '!app/server/public/**'])
+  return gulp.src([
+      'app/**/*.js',
+      '!app/server/public/**',
+      '!app/client/util/material.js'
+    ])
     .pipe($.eslint())
     .pipe($.eslint.format())
     .pipe($.eslint.results(function(results) {
@@ -63,15 +70,6 @@ gulp.task('lint', function() {
       $.util.log('Total Warnings: ' + results.warningCount);
       $.util.log('Total Errors: ' + results.errorCount);
     }));
-});
-
-const clientCSS = 'app/client/**/*.css';
-gulp.task('styles', function() {
-  return gulp.src(clientCSS)
-  .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
-  .pipe($.concat('app.css'))
-  .pipe($.filesize())
-  .pipe(gulp.dest('app/server/public'));
 });
 
 gulp.task('nodemon', ['lint'], function(cb) {
@@ -100,20 +98,49 @@ gulp.task('nodemon', ['lint'], function(cb) {
   });
 });
 
+const clientCSS = 'app/client/**/*.css';
+gulp.task('styles', function() {
+  return gulp.src(clientCSS)
+  .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
+  .pipe($.concat('app.css'))
+  .pipe($.filesize())
+  .pipe(gulp.dest('app/server/public'));
+});
+
+
+const clientSass = 'app/client/**/*.scss';
+gulp.task('sass', function () {
+  var sassOptions = isDevelopment ? {outputStyle: 'compressed'} : {};
+  gulp.src([clientSass, clientCSS])
+    .pipe(isDevelopment ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
+    .pipe($.sass(sassOptions).on('error', $.sass.logError))
+    .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
+    .pipe($.concat('app.css'))
+    .pipe($.filesize())
+    .pipe(isDevelopment ? $.sourcemaps.write('./') : $.util.noop())
+    .pipe(gulp.dest('app/server/public'));
+});
+
+gulp.task('sass:watch', function () {
+  gulp.watch(clientSass, ['sass']);
+});
+
 const clientHTML = 'app/client/**/*.html';
+// const materialCSS = 'node_modules/material-design-lite/material.min.css';
+// const materialStatic = 'node_modules/material-design-lite/material.min.js';
 gulp.task('static', ['clean'], function() {
-  return gulp.src(clientHTML)
+  return gulp.src([clientHTML])
     .pipe($.filesize())
     .pipe(gulp.dest('app/server/public'));
 });
 
-gulp.task('watchStyles', function() {
+gulp.task('styles:watch', function() {
   return gulp.watch(clientCSS, ['styles']);
 });
-gulp.task('watchStatic', function() {
+gulp.task('static:watch', function() {
   return gulp.watch(clientHTML, ['static']);
 });
-gulp.task('watch', ['watchStatic', 'watchStyles']);
+gulp.task('watch', ['static:watch', 'sass:watch', 'styles:watch']);
 
 gulp.task('clean', function() {
   return gulp.src('app/server/public/**/*.+(js|map|css|html)', {read: false})
@@ -121,9 +148,9 @@ gulp.task('clean', function() {
 });
 
 gulp.task('default',
-  ['development', 'nodemon', 'watch', 'bundle', 'static', 'styles']
+  ['development', 'nodemon', 'watch', 'bundle', 'static', 'sass']
 );
 
 gulp.task('build',
-  ['production', 'bundle', 'styles', 'static']
+  ['production', 'bundle', 'sass', 'static']
 );

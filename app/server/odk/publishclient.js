@@ -25,13 +25,16 @@ const supportedFormIds = Object.keys(supportedForms).map(function(key) {
 
 function syncFormList() {
   log.debug('Sychronizing ODK Aggregate form list');
-
   return odkAggregate.formList()
   .spread(function(listRes, listBody) {
-    return parser.parseXML(listBody);
+    log.debug('Parsing ODK Aggregate forms', listBody);
+    return parser.parseXML(listBody)
   })
   .then(function(formListObj) {
     return odkTransform.getFormIds(formListObj);
+  })
+  .catch(function(err) {
+    log.error('Error parsing ODK Aggregate form listing', err, err.stack);
   })
   .tap(function(forms) {
     log.info('Retrieved ODK Aggregate form list ', forms);

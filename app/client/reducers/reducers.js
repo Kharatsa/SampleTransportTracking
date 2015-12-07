@@ -1,7 +1,7 @@
 'use strict';
 
 import {combineReducers} from 'redux';
-import {List} from 'immutable';
+import {List, Map as ImmutableMap} from 'immutable';
 import {
     FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES
 } from '../actions/actions.js';
@@ -33,11 +33,27 @@ const defaultSamples = List([]);
 const samples = function sampleReducer(state=defaultSamples, action) {
   switch (action.type) {
   case RECEIVE_SAMPLES:
-    return List(action.samples);
+    return List(action.samples.map(sample => sample.id));
   default:
     return state;
   }
 };
 
-const rootReducer = combineReducers({isFetchingSamples, samples});
-module.exports = rootReducer;
+const defaultSamplesById = ImmutableMap({});
+const samplesById = function sIdReducer(state=defaultSamplesById, action) {
+  switch (action.type) {
+  case RECEIVE_SAMPLES:
+    return ImmutableMap(action.samples.reduce(function(previous, current) {
+      previous[current.id] = current;
+      return previous;
+    }, {}));
+  default:
+    return state;
+  }
+};
+
+export default combineReducers({
+  isFetchingSamples,
+  samples,
+  samplesById
+});

@@ -13,10 +13,9 @@ const PublishClient = require('app/server/odk/publishclient.js');
 const PublishRoutes = require('app/server/odk/publishroutes.js');
 const SampleTracker = require('app/server/api/trackerapi.js');
 const TrackerRoutes = require('app/server/api/trackerroutes.js');
+const MobileRoutes = require('app/server/api/mobileroutes.js');
 
 const app = exports.app = express();
-
-console.log('YP');
 
 app.use(express.static(config.publicPath));
 log.info('Serving static files from', config.publicPath);
@@ -49,6 +48,7 @@ handleShutdown();
 app.use('/odk', AggregateRoutes);
 app.use('/publish', PublishRoutes);
 app.use('/track', TrackerRoutes);
+app.use('/collect', MobileRoutes);
 
 app.get('/', function(req, res) {
   res.status(200).send('TODO');

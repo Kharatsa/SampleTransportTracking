@@ -6,23 +6,10 @@ const bodyParser = require('body-parser');
 const server = require('app/server/server.js');
 const config = require('app/config.js');
 const log = require('app/server/util/log.js');
-
-function handleJSONErrors(err, req, res, next) {
-  if (err.status) {
-    var message = {'error': err.message};
-    log.warn('Bad application/json request',
-      err.message, err.stack, req.originalUrl
-    );
-    log.warn('Responding to error with status %s', err.status, message);
-    res.status(err.status).json(message);
-  } else {
-    next(err);
-  }
-}
+const handleJSONErrors = require('app/server/middleware.js').handleJSONErrors;
 
 // parse application/json
 const jsonParser = bodyParser.json();
-
 // Funnel body-parser errors into the application log
 router.use(handleJSONErrors);
 
