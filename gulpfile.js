@@ -107,23 +107,22 @@ gulp.task('styles', function() {
   .pipe(gulp.dest('app/server/public'));
 });
 
+// const clientSass = 'app/client/**/*.scss';
+// gulp.task('sass', function () {
+//   var sassOptions = isDevelopment ? {outputStyle: 'compressed'} : {};
+//   gulp.src([clientSass, clientCSS])
+//     .pipe(isDevelopment ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
+//     .pipe($.sass(sassOptions).on('error', $.sass.logError))
+//     .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
+//     .pipe($.concat('app.css'))
+//     .pipe($.filesize())
+//     .pipe(isDevelopment ? $.sourcemaps.write('./') : $.util.noop())
+//     .pipe(gulp.dest('app/server/public'));
+// });
 
-const clientSass = 'app/client/**/*.scss';
-gulp.task('sass', function () {
-  var sassOptions = isDevelopment ? {outputStyle: 'compressed'} : {};
-  gulp.src([clientSass, clientCSS])
-    .pipe(isDevelopment ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
-    .pipe($.sass(sassOptions).on('error', $.sass.logError))
-    .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
-    .pipe($.concat('app.css'))
-    .pipe($.filesize())
-    .pipe(isDevelopment ? $.sourcemaps.write('./') : $.util.noop())
-    .pipe(gulp.dest('app/server/public'));
-});
-
-gulp.task('sass:watch', function () {
-  gulp.watch(clientSass, ['sass']);
-});
+// gulp.task('sass:watch', function () {
+//   gulp.watch(clientSass, ['sass']);
+// });
 
 const clientHTML = 'app/client/**/*.html';
 const indexJSX = 'app/client/index.jsx';
@@ -147,9 +146,9 @@ gulp.task('clean', function() {
 });
 
 gulp.task('default',
-  ['development', 'nodemon', 'watch', 'bundle', 'static', 'sass']
+  ['development', 'nodemon', 'watch', 'bundle', 'static', 'styles']
 );
 
 gulp.task('build',
-  ['production', 'bundle', 'sass', 'static']
+  ['production', 'bundle', 'styles', 'static']
 );
