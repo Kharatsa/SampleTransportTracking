@@ -5,7 +5,8 @@ import {routeReducer} from 'redux-simple-router';
 import {List, Map as ImmutableMap} from 'immutable';
 import {
     defaultTabsById, RECEIVE_TABS, SELECT_TAB, UPDATE_PATH,
-    FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES
+    FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
+    FETCH_EVENTS, FETCH_EVENTS_FAILURE, RECEIVE_EVENTS
 } from '../actions/actions.js';
 
 const tabsById = function(state=defaultTabsById, action) {
@@ -26,25 +27,9 @@ const tabs = function(state=defaultTabs, action) {
     default:
       return state;
   }
-}
-
-const isFetchingSamples = function(state=false, action) {
-  switch (action.type) {
-  case RECEIVE_SAMPLES:
-    return false;
-  case FETCH_SAMPLES:
-    return true;
-  case FETCH_SAMPLES_FAILURE:
-    return false;
-  default:
-    return state;
-  }
 };
 
-// const defaultRoutingState = ImmutableMap({
-//   path: '\\'
-// });
-const updatePath = function updatePathReducer(state, action) {
+const updatePath = function(state, action) {
   switch(action.type) {
     case UPDATE_PATH:
       console.debug(action);
@@ -52,47 +37,99 @@ const updatePath = function updatePathReducer(state, action) {
     default:
       return state;
   }
-}
+};
 
 const defaultTab= '0';
-const selectedTab = function selectedTabReducer(state=defaultTab, action) {
+const selectedTab = function(state=defaultTab, action) {
   switch (action.type) {
     case SELECT_TAB:
       return action.tabId;
     default:
       return state;
   }
-}
+};
 
-const defaultSamples = List([]);
-const samples = function sampleReducer(state=defaultSamples, action) {
+const isFetchingData = function(state=false, action) {
   switch (action.type) {
   case RECEIVE_SAMPLES:
-    return List(action.samples.map(sample => sample.id));
+  case RECEIVE_EVENTS:
+    return false;
+  case FETCH_SAMPLES:
+  case FETCH_EVENTS:
+    return true;
+  case FETCH_SAMPLES_FAILURE:
+  case FETCH_EVENTS_FAILURE:
+    return false;
   default:
     return state;
   }
 };
 
-const defaultSamplesById = ImmutableMap({});
-const samplesById = function sampleIdsReducer(state=defaultSamplesById, action) {
+function listArrayItemsWithId(items) {
+  return List(items.map(item => item.id));
+}
+
+const defaultSamples = List([]);
+const samples = function(state=defaultSamples, action) {
   switch (action.type) {
   case RECEIVE_SAMPLES:
-    return ImmutableMap(action.samples.reduce(function(previous, current) {
-      previous[current.id] = current;
-      return previous;
-    }, {}));
+    return listArrayItemsWithId(action.samples);
+    // return List(action.samples.map(sample => sample.id));
   default:
     return state;
+  }
+};
+
+function transformArrayItemsWithId(items, _collection) {
+  let collection = collection || ImmutableMap;
+  return collection(items.reduce(function(previous, current) {
+    previous[current.id] = current;
+    return previous;
+  }, {}));
+}
+
+const defaultSamplesById = ImmutableMap({});
+const samplesById = function(state=defaultSamplesById, action) {
+  switch (action.type) {
+  case RECEIVE_SAMPLES:
+    return transformArrayItemsWithId(action.samples);
+    // return ImmutableMap(action.samples.reduce(function(previous, current) {
+    //   previous[current.id] = current;
+    //   return previous;
+    // }, {}));
+  default:
+    return state;
+  }
+};
+
+const defaultEvents = List([]);
+const events = function(state=defaultEvents, action) {
+  switch (action.type) {
+    case RECEIVE_EVENTS:
+      return listArrayItemsWithId(action.events);
+    default:
+      return state;
+  }
+};
+
+const defaultEventsById = ImmutableMap({});
+const eventsById = function(state=defaultEventsById, action) {
+  switch (action.type) {
+    case RECEIVE_EVENTS:
+      return transformArrayItemsWithId(action.events);
+    default:
+      return state;
   }
 };
 
 export default combineReducers({
+  routing: routeReducer,
   tabs,
   tabsById,
-  routing: routeReducer,
   selectedTab,
-  isFetchingSamples,
+  isFetchingData,
+  events,
+  eventsById,
   samples,
   samplesById
 });

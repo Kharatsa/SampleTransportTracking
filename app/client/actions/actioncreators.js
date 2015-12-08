@@ -3,7 +3,8 @@
 import {updatePath as routerUpdatePath} from 'redux-simple-router';
 import {
     RECEIVE_TABS, SELECT_TAB, UPDATE_PATH,
-    FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES
+    FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
+    FETCH_EVENTS, FETCH_EVENTS_FAILURE, RECEIVE_EVENTS
 } from '../actions/actions.js';
 import request from '../util/request.js';
 
@@ -61,6 +62,40 @@ function receiveSamples(samples) {
   return {
     type: RECEIVE_SAMPLES,
     samples,
+    receivedAt: Date.now()
+  };
+}
+
+function requestEvents() {
+  return {
+    type: FETCH_EVENTS,
+    requestedAt: Date.now()
+  };
+}
+
+export function fetchEvents() {
+  return function(dispatch) {
+    dispatch(requestEvents());
+    return request('/track/events', function(err, res) {
+      if (err) {
+        dispatch(fetchEventsFailure(err));
+      }
+      dispatch(receiveEvents(res.json));
+    });
+  }
+}
+
+function fetchEventsFailure(err) {
+  return {
+    type: FETCH_EVENTS_FAILURE,
+    error: err
+  };
+}
+
+function receiveEvents(events) {
+  return {
+    type: RECEIVE_EVENTS,
+    events,
     receivedAt: Date.now()
   };
 }

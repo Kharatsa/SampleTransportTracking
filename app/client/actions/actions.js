@@ -17,8 +17,11 @@ import request from '../util/request.js';
 export const RECEIVE_TABS = 'RECEIVE_TABS';
 export const UPDATE_PATH = ROUTER_UPDATE_PATH;
 export const SELECT_TAB = 'SELECT_TAB';
-// const FETCH_UPDATES = 'FETCH_UPDATES';
-// const RECEIVE_UPDATES = 'RECEIVE_UPDATES';
+
+export const FETCH_EVENTS = 'FETCH_EVENTS';
+export const FETCH_EVENTS_FAILURE = 'FETCH_EVENTS_FAILURE';
+export const RECEIVE_EVENTS = 'RECEIVE_EVENTS';
+
 export const FETCH_SAMPLES = 'FETCH_SAMPLES';
 export const FETCH_SAMPLES_FAILURE = 'FETCH_SAMPLES_FAILURE';
 export const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
