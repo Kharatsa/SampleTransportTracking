@@ -6,8 +6,18 @@ import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
+import {createHistory} from 'history';
+import {Router, Route, IndexRoute} from 'react-router';
+import {syncReduxAndRouter} from 'redux-simple-router';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import reducers from './reducers/reducers.js';
-import App from './containers/App.jsx';
+import routes from './routes.js';
+
+//Needed for onTouchTap
+//Can go away when react 1.0 release
+//Check this repo:
+//https://github.com/zilverline/react-tap-event-plugin
+injectTapEventPlugin();
 
 const logger = createLogger();
 const createStoreWithMiddleware = applyMiddleware(
@@ -15,12 +25,13 @@ const createStoreWithMiddleware = applyMiddleware(
   logger // neat middleware that logs actions
 )(createStore);
 
-export const store = createStoreWithMiddleware(reducers);
+const store = createStoreWithMiddleware(reducers);
+const history = createHistory();
+syncReduxAndRouter(history, store);
 
-const rootElement = document.getElementById('root');
 render(
   <Provider store={store}>
-    <App />
+    <Router history={history} routes={routes} />
   </Provider>,
-  rootElement
+  document.getElementById('root')
 );

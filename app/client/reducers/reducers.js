@@ -1,21 +1,34 @@
 'use strict';
 
 import {combineReducers} from 'redux';
+import {routeReducer} from 'redux-simple-router';
 import {List, Map as ImmutableMap} from 'immutable';
 import {
+    defaultTabsById, RECEIVE_TABS, SELECT_TAB, UPDATE_PATH,
     FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES
 } from '../actions/actions.js';
 
-/*
+const tabsById = function(state=defaultTabsById, action) {
+  switch(action.type) {
+    case RECEIVE_TABS:
+      return action.tabs;
+    default:
+      return state;
+  }
+};
 
-Store/State:
-  updates/events
-  samples
-  origin location/facility
-  current location/facility
- */
+const defaultTabs = List([]);
+const tabs = function(state=defaultTabs, action) {
+    switch(action.type) {
+    case RECEIVE_TABS:
+      let allTabs = action.tabs;
+      return List(allTabs.keys());
+    default:
+      return state;
+  }
+}
 
-const isFetchingSamples = function fetchingReduer(state=false, action) {
+const isFetchingSamples = function(state=false, action) {
   switch (action.type) {
   case RECEIVE_SAMPLES:
     return false;
@@ -28,8 +41,30 @@ const isFetchingSamples = function fetchingReduer(state=false, action) {
   }
 };
 
-const defaultSamples = List([]);
+// const defaultRoutingState = ImmutableMap({
+//   path: '\\'
+// });
+const updatePath = function updatePathReducer(state, action) {
+  switch(action.type) {
+    case UPDATE_PATH:
+      console.debug(action);
+      // do something here
+    default:
+      return state;
+  }
+}
 
+const defaultTab= '0';
+const selectedTab = function selectedTabReducer(state=defaultTab, action) {
+  switch (action.type) {
+    case SELECT_TAB:
+      return action.tabId;
+    default:
+      return state;
+  }
+}
+
+const defaultSamples = List([]);
 const samples = function sampleReducer(state=defaultSamples, action) {
   switch (action.type) {
   case RECEIVE_SAMPLES:
@@ -40,7 +75,7 @@ const samples = function sampleReducer(state=defaultSamples, action) {
 };
 
 const defaultSamplesById = ImmutableMap({});
-const samplesById = function sIdReducer(state=defaultSamplesById, action) {
+const samplesById = function sampleIdsReducer(state=defaultSamplesById, action) {
   switch (action.type) {
   case RECEIVE_SAMPLES:
     return ImmutableMap(action.samples.reduce(function(previous, current) {
@@ -53,6 +88,10 @@ const samplesById = function sIdReducer(state=defaultSamplesById, action) {
 };
 
 export default combineReducers({
+  tabs,
+  tabsById,
+  routing: routeReducer,
+  selectedTab,
   isFetchingSamples,
   samples,
   samplesById

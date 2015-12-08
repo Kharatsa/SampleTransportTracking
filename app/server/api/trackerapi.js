@@ -9,25 +9,6 @@ function SampleTracker(dbClient) {
   this.dbClient = dbClient;
 }
 
-// Resources
-//  Samples
-//  Events
-
-// Event endpoints
-//  params:
-//    * last location
-//    * origin location
-//    * created location
-//    * created time
-//    * updated time
-//    * last status
-//    * complete/incomplete/rejected
-//  * Oldest incomplete (created time)
-//  * Newest (created time)
-//  * Rejected
-// Samples
-//  * All events
-
 function getSimpleInstance(sequelizeInstance) {
   if (sequelizeInstance) {
     return sequelizeInstance.get({simple: true});

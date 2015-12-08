@@ -1,10 +1,10 @@
 'use strict';
 
 function loadHandler(request) {
-  var response;
+  let response;
   if (request.status >= 200 && request.status < 400) {
     // Success!
-    var json = null;
+    let json = null;
     try {
       json = JSON.parse(request.response);
     } catch (e) {
@@ -46,16 +46,16 @@ function loadHandler(request) {
  *                                       {Number}   res.status
  *                                       {String}   res.statusText
  */
-var request = function(options, callback) {
-  var method = options.method || 'GET';
-  var url = typeof options === 'string' ? options : options.url;
+let request = function(options, callback) {
+  let method = options.method || 'GET';
+  let url = typeof options === 'string' ? options : options.url;
 
   // XMLHttpRequest(JSObject objParameters);
-  var finished = false;
-  var req = new XMLHttpRequest();
+  let finished = false;
+  let req = new XMLHttpRequest();
 
   req.onload = function() {
-    var res = loadHandler(req);
+    let res = loadHandler(req);
     if (finished) {
       return;
     }

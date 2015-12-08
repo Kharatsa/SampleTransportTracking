@@ -1,3 +1,27 @@
-.test {
-  margin: 2px;
+html {
+  font-family: 'Roboto', sans-serif;
+}
+
+body, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+body {
+  font-size: 15px;
+  line-height: 24px;
+}
+
+#index {
+  margin: 10px;
+  padding: 10px;
+}
+
+.vcontainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexitem {
+  flex: 1 0 auto;
+  align-self: auto;
 }

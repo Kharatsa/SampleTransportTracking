@@ -28,7 +28,7 @@ function syncFormList() {
   return odkAggregate.formList()
   .spread(function(listRes, listBody) {
     log.debug('Parsing ODK Aggregate forms', listBody);
-    return parser.parseXML(listBody)
+    return parser.parseXML(listBody);
   })
   .then(function(formListObj) {
     return odkTransform.getFormIds(formListObj);

@@ -126,10 +126,9 @@ gulp.task('sass:watch', function () {
 });
 
 const clientHTML = 'app/client/**/*.html';
-// const materialCSS = 'node_modules/material-design-lite/material.min.css';
-// const materialStatic = 'node_modules/material-design-lite/material.min.js';
-gulp.task('static', ['clean'], function() {
-  return gulp.src([clientHTML])
+const indexJSX = 'app/client/index.jsx';
+gulp.task('static', function() {
+  return gulp.src([clientHTML, indexJSX])
     .pipe($.filesize())
     .pipe(gulp.dest('app/server/public'));
 });

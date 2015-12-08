@@ -1,45 +1,84 @@
 'use strict';
 
-import React, {createClass, PropTypes} from 'react';
+import React, {createClass, createElement, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import {Router, Route, IndexRoute, Link} from 'react-router';
 import {List, Map as ImmutableMap} from 'immutable';
 import {store} from '../index.js';
-import * as actions from '../actions/actions.js';
-import Main from '../components/Main.jsx';
-// import AllEvents from '../components/AllEvents.jsx';
+import * as actions from '../actions/actioncreators.js';
+import AppBar from 'material-ui/lib/app-bar';
+import Tabs from 'material-ui/lib/tabs/tabs';
+import Tab from 'material-ui/lib/tabs/tab';
+import Paper from 'material-ui/lib/paper';
+
+const appName = 'Sample Transport Tracking';
 
 const App = createClass({
-  componentDidMount: function() {
-    this.props.fetchSamples();
+  propTypes: {
+    isFetchingSamples: PropTypes.bool,
+    samples: PropTypes.instanceOf(List),
+    samplesById: PropTypes.instanceOf(ImmutableMap),
+    routing: PropTypes.shape({
+      path: PropTypes.string.isRequired
+    })
   },
 
-        // <AllEvents samples = {samples} samplesById={samplesById}>
-        // </AllEvents>
+  syncTabWithRoute: function() {
+    const {selectedTab, tabsById, routing} = this.props;
+
+    // Synchronize selectedTab to match the tab with a route matching the
+    // current route, represented by routing.path
+    let activeTab = tabsById.filter((tab, tabId) => tab.route === routing.path);
+    if (activeTab && activeTab.first().route === selectedTab) {
+      selectTab(activeTab.keySeq().first());
+    }
+  },
+
+  handleTabClick: function(tabId) {
+    const {tabsById} = this.props;
+    const {selectTab, updatePath} = this.props.actions;
+    let selected = tabsById.get(tabId);
+    selectTab(tabId);
+    updatePath(selected.route);
+  },
+
+  componentDidMount: function() {
+    const {updatePath, selectTab} = this.props.actions;
+    const {path} = this.props.routing;
+    this.syncTabWithRoute();
+    // fetchSamples();
+  },
+
   render: function() {
-    const {samplesById, samples} = this.props;
+    const {children, selectedTab} = this.props;
+    const {selectTab} = this.props.actions;
+
     return (
       <div>
-        <Main></Main>
+        <Paper zDepth={1} rounded={false}>
+          <AppBar zDepth={0} title={appName} showMenuIconButton={false} />
+          <div>
+            <Tabs onChange={this.handleTabClick} value={selectedTab}>
+              <Tab label='Events' value="0"></Tab>
+              <Tab label='Samples' value="1"></Tab>
+              <Tab label='Facilities' value="2"></Tab>
+              <Tab label='Riders' value="3"></Tab>
+            </Tabs>
+          </div>
+        </Paper>
+
+        <div id='index' className='vcontainer'>
+            {children}
+        </div>
       </div>
     );
   }
 });
 
-App.propTypes = {
-  isFetchingSamples: PropTypes.bool,
-  samples: PropTypes.instanceOf(List),
-  samplesById: PropTypes.instanceOf(ImmutableMap)
-};
-
-function mapStateToProps(state) {
-  return state;
-}
-
-function mapDispatchToProps() {
-  return bindActionCreators(actions, store.dispatch);
-}
-
 // Wrap the component to inject dispatch and state into it
-// module.exports = connect(mapStateToProps, mapDispatchToProps)(App);
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(
+  state => (state),
+  dispatch => ({actions: bindActionCreators(actions, dispatch)})
+)(App);
+

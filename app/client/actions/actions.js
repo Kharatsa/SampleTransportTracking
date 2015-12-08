@@ -1,5 +1,7 @@
 'use strict';
 
+import {Map as ImmutableMap} from 'immutable';
+import {UPDATE_PATH as ROUTER_UPDATE_PATH, updatePath as routerUpdatePath} from 'redux-simple-router';
 import request from '../util/request.js';
 
 // https://github.com/acdlite/flux-standard-action
@@ -9,6 +11,12 @@ import request from '../util/request.js';
  * action types
  */
 
+/*
+ * https://github.com/jlongster/redux-simple-router#update_path
+ */
+export const RECEIVE_TABS = 'RECEIVE_TABS';
+export const UPDATE_PATH = ROUTER_UPDATE_PATH;
+export const SELECT_TAB = 'SELECT_TAB';
 // const FETCH_UPDATES = 'FETCH_UPDATES';
 // const RECEIVE_UPDATES = 'RECEIVE_UPDATES';
 export const FETCH_SAMPLES = 'FETCH_SAMPLES';
@@ -19,40 +27,21 @@ export const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
  * other constants
  */
 
-/*
- * action creators
- */
-
-function requestSamples() {
-  return {
-    type: FETCH_SAMPLES,
-    requestedAt: Date.now()
-  };
-}
-
-export function fetchSamples() {
-  return function(dispatch) {
-    dispatch(requestSamples());
-    return request('/track/ids', function(err, res) {
-      if (err) {
-        return dispatch(fetchSamplesFailure(err));
-      }
-      dispatch(receiveSamples(res.json));
-    });
-  };
-}
-
-function fetchSamplesFailure(err) {
-  return {
-    type: FETCH_SAMPLES_FAILURE,
-    error: err
-  };
-}
-
-function receiveSamples(samples) {
-  return {
-    type: RECEIVE_SAMPLES,
-    samples,
-    receivedAt: Date.now()
-  };
-}
+export const defaultTabsById = ImmutableMap({
+  '0': {
+    label: 'Events',
+    'route': '/'
+  },
+  '1': {
+    name: 'Samples',
+    route: '/samples'
+  },
+  '2': {
+    name: 'Facilities',
+    route: '/facilities'
+  },
+  '3': {
+    name: 'Riders',
+    route: 'riders'
+  }
+});
