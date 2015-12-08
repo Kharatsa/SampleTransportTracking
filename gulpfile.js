@@ -8,7 +8,6 @@ const browserify = require('browserify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-// const assign = require('lodash').assign;
 const config = require('app/config.js');
 
 var isDevelopment = !config.isProduction;
@@ -16,7 +15,7 @@ var isDevelopment = !config.isProduction;
 // add custom browserify options here
 const browserifyOptions = {
   entries: [
-    'app/client/index.js',
+    'app/client/index.js'
     // 'node_modules/material-design-lite/material.min.js'
   ],
   debug: isDevelopment,
@@ -58,18 +57,18 @@ gulp.task('production', function() {
 
 gulp.task('lint', function() {
   return gulp.src([
-      'app/**/*.js',
-      '!app/server/public/**',
-      '!app/client/util/material.js'
-    ])
-    .pipe($.eslint())
-    .pipe($.eslint.format())
-    .pipe($.eslint.results(function(results) {
-      // Called once for all ESLint results.
-      $.util.log('Total Results: ' + results.length);
-      $.util.log('Total Warnings: ' + results.warningCount);
-      $.util.log('Total Errors: ' + results.errorCount);
-    }));
+    'app/**/*.js',
+    '!app/server/public/**',
+    '!app/client/util/material.js'
+  ])
+  .pipe($.eslint())
+  .pipe($.eslint.format())
+  .pipe($.eslint.results(function(results) {
+    // Called once for all ESLint results.
+    $.util.log('Total Results: ' + results.length);
+    $.util.log('Total Warnings: ' + results.warningCount);
+    $.util.log('Total Errors: ' + results.errorCount);
+  }));
 });
 
 gulp.task('nodemon', ['lint'], function(cb) {
@@ -138,7 +137,8 @@ gulp.task('styles:watch', function() {
 gulp.task('static:watch', function() {
   return gulp.watch(clientHTML, ['static']);
 });
-gulp.task('watch', ['static:watch', 'sass:watch', 'styles:watch']);
+gulp.task('watch', ['static:watch', 'styles:watch']);
+// gulp.task('watch', ['static:watch', 'sass:watch', 'styles:watch']);
 
 gulp.task('clean', function() {
   return gulp.src('app/server/public/**/*.+(js|map|css|html)', {read: false})
