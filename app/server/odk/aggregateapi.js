@@ -4,7 +4,6 @@ const BPromise = require('bluebird');
 const request = require('request');
 const log = require('app/server/util/log.js');
 const odkConfig = require('app/config.js').ODK;
-BPromise.promisifyAll(request);
 
 /**
  * This module replicates the pull functions of the Briefcase Aggregate API.
@@ -41,6 +40,16 @@ const ODK_REQUEST_AUTH = {
 
 const ODK_BASE_URL = odkConfig.protocol + '://' + odkConfig.hostname;
 
+const odkRequest = request.defaults({
+  baseUrl: ODK_BASE_URL,
+  headers: OPEN_ROSA_HEADERS,
+  auth: ODK_REQUEST_AUTH,
+  gzip: true,
+  time: true
+});
+
+var odkRequestGetAsync = BPromise.promisify(odkRequest.get, {multiArgs: true});
+
 /**
  * Fetches a list of forms from ODK Aggregate
  *
@@ -48,14 +57,9 @@ const ODK_BASE_URL = odkConfig.protocol + '://' + odkConfig.hostname;
  *                                        text/xml response from ODK
  */
 var formList = function formListFunc() {
-  return request.getAsync({
-    url: '/formList',
-    baseUrl: ODK_BASE_URL,
-    headers: OPEN_ROSA_HEADERS,
-    auth: ODK_REQUEST_AUTH
-  });
+  log.debug('ODK formlist request');
+  return odkRequestGetAsync('/formList');
 };
-exports.formList = formList;
 
 /**
  * Fetches the submission list for a single ODK Aggregate form
@@ -69,15 +73,13 @@ exports.formList = formList;
  *                                      text/xml response from ODK
  */
 var submissionList = function submissionListFunc(formId, entries) {
-  return request.getAsync({
+  log.debug('ODK /view/submissionList formId=' + formId +
+            ' entries=' + entries);
+  return odkRequestGetAsync({
     url: '/view/submissionList',
-    baseUrl: ODK_BASE_URL,
-    headers: OPEN_ROSA_HEADERS,
-    qs: {formId: formId, numEntries: entries || null},
-    auth: ODK_REQUEST_AUTH
+    qs: {formId: formId, numEntries: entries || null}
   });
 };
-exports.submissionList = submissionList;
 
 /**
  * Fetches the data for a single ODK Aggregate form submission.
@@ -103,12 +105,14 @@ var downloadSubmission = function downloadFunc(formId, topElement,
     submissionId + ']';
   log.debug('downloadSubmission query:\n\t%s', query);
 
-  return request.getAsync({
+  return odkRequestGetAsync({
     url: '/view/downloadSubmission',
-    baseUrl: ODK_BASE_URL,
-    headers: OPEN_ROSA_HEADERS,
-    qs: {formId: query},
-    auth: ODK_REQUEST_AUTH
+    qs: {formId: query}
   });
 };
-exports.downloadSubmission = downloadSubmission;
+
+module.exports = {
+  formList: formList,
+  submissionList: submissionList,
+  downloadSubmission: downloadSubmission
+};
