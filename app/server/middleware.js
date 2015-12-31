@@ -1,5 +1,6 @@
 'use strict';
 
+// const config = require('app/config');
 const log = require('app/server/util/log.js');
 
 // Convert query parameters to lowercase
@@ -27,7 +28,34 @@ function handleJSONErrors(err, req, res, next) {
   }
 }
 
+// // production error handler
+// // no stacktraces leaked to user
+// function handleProductionErrors(err, req, res, next) {
+//   if (res.headersSent) {
+//     return next(err);
+//   }
+//   log.error('Request Error', err, err.stack);
+//   res.status(err.status || 500);
+//   res.json({message: err.message, error: {}});
+// }
+
+// function handleDevelopmentErrors(err, req, res, next) {
+//   if (res.headersSent) {
+//     return next(err);
+//   }
+//   log.error('Request DEVELOPMENT Error', err, err.stack);
+//   res.status(err.status || 500);
+//   res.json({message: err.message, error: err});
+// }
+
+// const handleErrors = (
+//   config.server.IS_PRODUCTION ?
+//   handleProductionErrors :
+//   handleDevelopmentErrors
+// );
+
 module.exports = {
   normalizeParams: normalizeParams,
   handleJSONErrors: handleJSONErrors
+  // handleErrors: handleErrors
 };

@@ -3,90 +3,69 @@
 const express = require('express');
 const helmet = require('helmet');
 const favicon = require('serve-favicon');
-const config = require('app/config.js');
+const config = require('app/config');
 const log = require('app/server/util/log.js');
 const requestLog = require('app/server/util/logrequest.js');
-const DBStorage = require('app/server/storage/datastorage.js');
-const handleShutdown = require('app/server/util/shutdown.js');
+const storage = require('app/server/storage');
+storage.init({config: config.db});
+const sttModels = require('app/server/stt/models');
+const authModels = require('app/server/auth/models');
+Object.keys(sttModels).forEach(modelName =>
+  storage.loadModel(sttModels[modelName])
+);
+Object.keys(authModels).forEach(modelName =>
+  storage.loadModel(authModels[modelName])
+);
+const passport = require('app/server/auth/httpauth.js');
+const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
-const PublishClient = require('app/server/odk/publishclient.js');
-const PublishRoutes = require('app/server/odk/publishroutes.js');
-const SampleTracker = require('app/server/api/trackerapi.js');
-const TrackerRoutes = require('app/server/api/trackerroutes.js');
-const MobileRoutes = require('app/server/api/mobileroutes.js');
+const PublishRoutes = require('app/server/odk/publisher/publishroutes.js');
+const STTRoutes = require('app/server/stt/sttroutes.js');
 
-const app = exports.app = express();
+const app = express();
+shutdownhandler.init();
 
-app.use(express.static(config.publicPath));
-log.info('Serving static files from', config.publicPath);
-app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(express.static(config.server.PUBLIC_PATH));
+log.info('Serving static files from', config.server.PUBLIC_PATH);
+app.use(favicon(config.server.PUBLIC_PATH + '/favicon.ico'));
 app.use(helmet());
 
-if (config.isProduction) {
+log.info('NODE_ENV=%s', config.server.NODE_ENV);
+if (config.server.IS_PRODUCTION) {
   log.info('Running PRODUCTION server');
   app.set('trust proxy', 'loopback'); // specify a single subnet
 } else {
   log.info('Running DEVELOPMENT server');
   app.set('json spaces', 2);
 }
+
 app.use(requestLog.requestLogger);
 
-var dbStorage = exports.dbStorage = new DBStorage(
-  {storage: config.sqliteFilename}
-);
-
-dbStorage.once('ready', function() {
-  log.info('Database connection established');
-  exports.publishClient = new PublishClient(dbStorage);
-  exports.sampleTracker = new SampleTracker(dbStorage);
-});
-
-// Pass handleShutdown any functions to execute on shutdown
-// (e.g., close DB connections)
-handleShutdown();
-
+// App routes
 app.use('/odk', AggregateRoutes);
 app.use('/publish', PublishRoutes);
-app.use('/track', TrackerRoutes);
-app.use('/collect', MobileRoutes);
+app.use('/track', STTRoutes);
 
-app.get('/', function(req, res) {
-  res.status(200).send('TODO');
-});
+app.get('/secret',
+  passport.authenticate('basic', { session: false }),
+  function(req, res) {
+    res.json(req.user);
+  }
+);
 
-app.use(requestLog.errorLogger);
+// app.use(requestLog.errorLogger);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   var err = new Error('Not Found ' + req.originalUrl);
   err.status = 404;
   next(err);
 });
 
-// development error handler
-// will print stacktrace
-if (config.isProduction) {
-  app.use(function(err, req, res) {
-    log.error('Request DEV Error', err, err.stack);
-    res.status(err.status || 500);
-    res.json({
-      message: err.message,
-      error: err
-    });
-  });
-}
+// app.use(middleware.handleErrors);
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res) {
-  log.error('Request Error', err, err.stack);
-  res.status(err.status || 500);
-  res.json({
-    message: err.message,
-    error: {}
-  });
-});
+app.listen(config.server.PORT, config.server.HOST, () =>
+  log.info('Listening at ' + config.server.HOST + ':' + config.server.PORT)
+);
 
-app.listen(config.portNumber, function() {
-  log.info('Server listening on port', config.portNumber);
-});
+module.exports = app;

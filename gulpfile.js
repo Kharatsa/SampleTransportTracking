@@ -1,5 +1,6 @@
 'use strict';
 
+// const exec = require('child_process').exec;
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const nodemon = require('gulp-nodemon');
@@ -8,17 +9,17 @@ const browserify = require('browserify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-const config = require('app/config.js');
+const config = require('app/config');
+// const log = require('app/server/util/log.js');
 
-var isDevelopment = !config.isProduction;
+var IS_DEVELOPMENT = !config.server.IS_PRODUCTION;
 
 // add custom browserify options here
 const browserifyOptions = {
   entries: [
     'app/client/index.js'
-    // 'node_modules/material-design-lite/material.min.js'
   ],
-  debug: isDevelopment,
+  debug: IS_DEVELOPMENT,
   extensions: ['.jsx']
 };
 const opts = Object.assign({}, watchify.args, browserifyOptions);
@@ -28,38 +29,42 @@ bundler.transform(babelify.configure({presets: [
   'es2015'
 ]}));
 
+var uglify = function() {
+  return $.uglify({compress: {
+    'global_defs': {DEBUG: false}
+  }}).on('error', $.util.log);
+};
+
 function bundle() {
   return bundler.bundle()
     .on('error', $.util.log.bind($.util, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(buffer())
-      .pipe(isDevelopment ? $.util.noop() : $.uglify().on('error', $.util.log))
+      .pipe(IS_DEVELOPMENT ? $.util.noop() : uglify())
       .pipe($.filesize())
-      .pipe(isDevelopment ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
-      .pipe(isDevelopment ? $.sourcemaps.write('./') : $.util.noop())
-    .pipe(gulp.dest('app/server/public'));
+      .pipe(IS_DEVELOPMENT ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
+      .pipe(IS_DEVELOPMENT ? $.sourcemaps.write('./') : $.util.noop())
+    .pipe(gulp.dest(config.server.PUBLIC_PATH));
 }
 
 bundler.on('log', $.util.log); // output build logs to terminal
 gulp.task('bundle', bundle); // so you can run `gulp js` to build the file
 
 gulp.task('development', function() {
-  isDevelopment = true;
+  IS_DEVELOPMENT = true;
   bundler = watchify(bundler);
   bundler.on('update', bundle); // on any dep update, runs the bundler
   return;
 });
 
 gulp.task('production', function() {
-  isDevelopment = false;
+  IS_DEVELOPMENT = false;
   return;
 });
 
 gulp.task('lint', function() {
   return gulp.src([
-    'app/**/*.js',
-    '!app/server/public/**',
-    '!app/client/util/material.js'
+    'app/**/*.js', '!app/public/**'
   ])
   .pipe($.eslint())
   .pipe($.eslint.format())
@@ -72,6 +77,11 @@ gulp.task('lint', function() {
 });
 
 gulp.task('nodemon', ['lint'], function(cb) {
+  var execEnv = (
+    IS_DEVELOPMENT ?
+    'BLUEBIRD_WARNINGS=0 NODE_ENV=development' :
+    'NODE_ENV=production'
+  );
   var started = false;
   return nodemon({
     script: 'app/server/server.js',
@@ -80,12 +90,15 @@ gulp.task('nodemon', ['lint'], function(cb) {
       '.git/*',
       'README.md',
       'gulpfile.js',
-      'junkyard/*',
-      'app/client/**/*.js',
-      'app/server/public/**/*'
+      'app/client/**/*',
+      'app/assets/**/*',
+      'app/public/**/*',
+      'app/maintenance/**/*',
+      'test/**/*',
+      'docs/**/*'
     ],
     execMap: {
-      js: 'node --harmony'
+      js: execEnv + ' node --harmony'
     }
   }).on('start', function() {
     // to avoid nodemon being started multiple times
@@ -103,20 +116,20 @@ gulp.task('styles', function() {
   .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
   .pipe($.concat('app.css'))
   .pipe($.filesize())
-  .pipe(gulp.dest('app/server/public'));
+  .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
 
 // const clientSass = 'app/client/**/*.scss';
 // gulp.task('sass', function () {
-//   var sassOptions = isDevelopment ? {outputStyle: 'compressed'} : {};
+//   var sassOptions = IS_DEVELOPMENT ? {outputStyle: 'compressed'} : {};
 //   gulp.src([clientSass, clientCSS])
-//     .pipe(isDevelopment ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
+//     .pipe(IS_DEVELOPMENT ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
 //     .pipe($.sass(sassOptions).on('error', $.sass.logError))
 //     .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
 //     .pipe($.concat('app.css'))
 //     .pipe($.filesize())
-//     .pipe(isDevelopment ? $.sourcemaps.write('./') : $.util.noop())
-//     .pipe(gulp.dest('app/server/public'));
+//     .pipe(IS_DEVELOPMENT ? $.sourcemaps.write('./') : $.util.noop())
+//     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 // });
 
 // gulp.task('sass:watch', function () {
@@ -125,30 +138,70 @@ gulp.task('styles', function() {
 
 const clientHTML = 'app/client/**/*.html';
 const indexJSX = 'app/client/index.jsx';
+const favicon = 'app/assets/favicon.ico';
 gulp.task('static', function() {
-  return gulp.src([clientHTML, indexJSX])
+  return gulp.src([clientHTML, indexJSX, favicon])
     .pipe($.filesize())
-    .pipe(gulp.dest('app/server/public'));
+    .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
 
-gulp.task('styles:watch', function() {
-  return gulp.watch(clientCSS, ['styles']);
-});
-gulp.task('static:watch', function() {
-  return gulp.watch(clientHTML, ['static']);
-});
+gulp.task('styles:watch', () => gulp.watch(clientCSS, ['styles']));
+
+gulp.task('static:watch', () =>
+  gulp.watch([clientHTML, indexJSX, favicon], ['static'])
+);
+
 gulp.task('watch', ['static:watch', 'styles:watch']);
 // gulp.task('watch', ['static:watch', 'sass:watch', 'styles:watch']);
 
-gulp.task('clean', function() {
-  return gulp.src('app/server/public/**/*.+(js|map|css|html)', {read: false})
-    .pipe($.rimraf());
-});
+gulp.task('clean', () =>
+  gulp.src('app/server/public/**/*.+(js|map|css|html)', {read: false})
+    .pipe($.rimraf())
+);
+
+// gulp.task('test:pre', () => {
+//   // process.env.NODE_ENV = 'test';
+
+//   // Switch off most logging while tests are executed
+
+// });
+
+// gulp.task('test:server', () => {
+//   process.env.NODE_ENV = 'test';
+//   return gulp.src('test/server/**/*.js', {read: false})
+//         .pipe($.mocha({reporter: 'nyan'}))
+//         .on('error', $.util.log);
+//   // Object.keys(log.transports).forEach(
+//   //   key => log.transports[key].level = 'error'
+//   // );
+
+//   // return exec('mocha test/server/**/*.js', (err, stdout, stderr) => {
+//   //   if (err !== null) {
+//   //     $.util.log('exec error: ' + err);
+//   //   }
+//   //   $.util.log('stdout: ' + stdout);
+//   //   $.util.log('stderr: ' + stderr);
+//   // });
+// });
+
+// gulp.task('docs', (callback) => {
+//   return exec('jsdoc app/server -r -R README.md -d docs',
+//     (err, stdout, stderr) => {
+//       $.util.log('stdout: ' + stdout);
+//       $.util.log('stderr: ' + stderr);
+//       if (err !== null) {
+//         $.util.log('exec error: ' + err);
+//       }
+//       callback();
+//     });
+// });
+
+// gulp.task('test', ['test:pre', 'test:server']);
 
 gulp.task('default',
   ['development', 'nodemon', 'watch', 'bundle', 'static', 'styles']
 );
 
 gulp.task('build',
-  ['production', 'bundle', 'styles', 'static']
+  ['production', 'bundle', 'styles', 'static', 'docs']
 );

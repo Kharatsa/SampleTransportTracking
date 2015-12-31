@@ -27,24 +27,31 @@ function loadHandler(request) {
 }
 
 /**
+ * The callback is called after one of the XMLHttpRequest onload, onerror, or
+ * onabord events are emitted. The function is called with an (err, res)
+ * arguments.
+ *
+ * @callback requestCallback
+ * @param {Error|null} err - The request error
+ * @param {Object} res - The XHR response object
+ * @param {string} res.response
+ * @param {string} res.text
+ * @param {string} res.type
+ * @param {Object} res.json
+ * @param {Document} res.xml
+ * @param {number} res.status
+ * @param {string} res.statusText
+ */
+
+/**
  * Helper function for XMLHttpRequests
  *
- * @param   {Object|String}  options  URL String or options Object.
- *          {String}         options.method HTTP method (GET/POST)
- *          {String}         options.url    Request URL
- * @param   {Function}       callback  The callback is called after one of the
- *                                     XMLHttpRequest onload, onerror, or
- *                                     onabord events are emitted. The function
- *                                     is called with an (err, res)
- *                                     arguments. The res Object includes the
- *                                     follow attributes:
- *                                       {String}   res.response
- *                                       {String}   res.text
- *                                       {String}   res.type
- *                                       {Object}   res.json
- *                                       {Document} res.xml
- *                                       {Number}   res.status
- *                                       {String}   res.statusText
+ * @param {Object|string} options - URL String or options Object.
+ * @param {string} options.method - HTTP method (GET/POST)
+ * @param {string} options.url - Request URL
+ * @param {requestCallback} callback - The callback that handles the response.
+ * @param  {Function}       callback
+
  */
 let request = function(options, callback) {
   let method = options.method || 'GET';

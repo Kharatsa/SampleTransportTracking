@@ -16,5 +16,8 @@
         "jsx": true,
         "experimentalObjectRestSpread": true
     },
-    "plugins": ["react"]
+    "plugins": ["react"],
+    "globals": {
+        "DEBUG": true
+    }
 }

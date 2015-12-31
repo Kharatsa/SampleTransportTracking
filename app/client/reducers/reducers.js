@@ -6,59 +6,59 @@ import {List, Map as ImmutableMap} from 'immutable';
 import {
     defaultTabsById, RECEIVE_TABS, SELECT_TAB, UPDATE_PATH,
     FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
-    FETCH_EVENTS, FETCH_EVENTS_FAILURE, RECEIVE_EVENTS
+    FETCH_UPDATES, FETCH_UPDATES_FAILURE, RECEIVE_UPDATES
 } from '../actions/actions.js';
 
 const tabsById = function(state=defaultTabsById, action) {
   switch(action.type) {
-    case RECEIVE_TABS:
-      return action.tabs;
-    default:
-      return state;
+  case RECEIVE_TABS:
+    return action.tabs;
+  default:
+    return state;
   }
 };
 
 const defaultTabs = List([]);
 const tabs = function(state=defaultTabs, action) {
-    switch(action.type) {
-    case RECEIVE_TABS:
-      let allTabs = action.tabs;
-      return List(allTabs.keys());
-    default:
-      return state;
+  switch(action.type) {
+  case RECEIVE_TABS:
+    let allTabs = action.tabs;
+    return List(allTabs.keys());
+  default:
+    return state;
   }
 };
 
 const updatePath = function(state, action) {
   switch(action.type) {
-    case UPDATE_PATH:
-      console.debug(action);
-      // do something here
-    default:
-      return state;
+  case UPDATE_PATH:
+    // do something here
+    return state;
+  default:
+    return state;
   }
 };
 
 const defaultTab= '0';
 const selectedTab = function(state=defaultTab, action) {
   switch (action.type) {
-    case SELECT_TAB:
-      return action.tabId;
-    default:
-      return state;
+  case SELECT_TAB:
+    return action.tabId;
+  default:
+    return state;
   }
 };
 
 const isFetchingData = function(state=false, action) {
   switch (action.type) {
   case RECEIVE_SAMPLES:
-  case RECEIVE_EVENTS:
+  case RECEIVE_UPDATES:
     return false;
   case FETCH_SAMPLES:
-  case FETCH_EVENTS:
+  case FETCH_UPDATES:
     return true;
   case FETCH_SAMPLES_FAILURE:
-  case FETCH_EVENTS_FAILURE:
+  case FETCH_UPDATES_FAILURE:
     return false;
   default:
     return state;
@@ -81,7 +81,7 @@ const samples = function(state=defaultSamples, action) {
 };
 
 function transformArrayItemsWithId(items, _collection) {
-  let collection = collection || ImmutableMap;
+  let collection = _collection || ImmutableMap;
   return collection(items.reduce(function(previous, current) {
     previous[current.id] = current;
     return previous;
@@ -102,23 +102,23 @@ const samplesById = function(state=defaultSamplesById, action) {
   }
 };
 
-const defaultEvents = List([]);
-const events = function(state=defaultEvents, action) {
+const defaultUpdates = List([]);
+const updates = function(state=defaultUpdates, action) {
   switch (action.type) {
-    case RECEIVE_EVENTS:
-      return listArrayItemsWithId(action.events);
-    default:
-      return state;
+  case RECEIVE_UPDATES:
+    return listArrayItemsWithId(action.updates);
+  default:
+    return state;
   }
 };
 
-const defaultEventsById = ImmutableMap({});
-const eventsById = function(state=defaultEventsById, action) {
+const defaultUpdatesById = ImmutableMap({});
+const updatesById = function(state=defaultUpdatesById, action) {
   switch (action.type) {
-    case RECEIVE_EVENTS:
-      return transformArrayItemsWithId(action.events);
-    default:
-      return state;
+  case RECEIVE_UPDATES:
+    return transformArrayItemsWithId(action.updates);
+  default:
+    return state;
   }
 };
 
@@ -128,8 +128,8 @@ export default combineReducers({
   tabsById,
   selectedTab,
   isFetchingData,
-  events,
-  eventsById,
+  updates,
+  updatesById,
   samples,
   samplesById
 });

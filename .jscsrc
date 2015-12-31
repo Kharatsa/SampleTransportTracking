@@ -1,5 +1,16 @@
 {
     "preset": "google",
     "esnext": true,
+    "plugins": [
+        "jscs-jsdoc"
+    ],
+    "jsDoc": {
+        "checkAnnotations": {"preset": "jsdoc3"},
+        "checkTypes": "strictNativeCase",
+        "enforceExistence": false
+        // "enforceExistence": {
+        //     "allExcept": ["exports"]
+        // }
+    },
     "excludeFiles": []
 }

@@ -37,4 +37,6 @@ Vagrantfile
 # Project
 secret*
 junkyard/
+app/public
 app/server/public/
+docs/

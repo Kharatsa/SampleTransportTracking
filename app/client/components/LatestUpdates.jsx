@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {createClass, PropTypes} from 'react';
+import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {List, Map as ImmutableMap} from 'immutable';
 import Table from 'material-ui/lib/table/table';
@@ -16,12 +16,12 @@ export default React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    events: PropTypes.instanceOf(List),
-    eventsById: PropTypes.instanceOf(ImmutableMap)
+    updates: PropTypes.instanceOf(List),
+    updatesById: PropTypes.instanceOf(ImmutableMap)
   },
 
   render: function() {
-    const {eventsById, events} = this.props;
+    const {updatesById, updates} = this.props;
 
     const columnNames = {
       'id': 'ID',
@@ -44,8 +44,8 @@ export default React.createClass({
       return <TableHeaderColumn key={i}>{columnValue}</TableHeaderColumn>
     });
 
-    const tableRows = events.map(function(eventId, i) {
-      let event = eventsById.get(eventId.toString());
+    const tableRows = updates.map(function(eventId, i) {
+      let event = updatesById.get(eventId.toString());
 
       let rowValues = columnKeys.map(function(colKey, j) {
         let rowValue = event[colKey];

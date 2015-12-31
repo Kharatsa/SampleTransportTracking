@@ -1,8 +1,7 @@
 'use strict';
 
 import {Map as ImmutableMap} from 'immutable';
-import {UPDATE_PATH as ROUTER_UPDATE_PATH, updatePath as routerUpdatePath} from 'redux-simple-router';
-import request from '../util/request.js';
+import {UPDATE_PATH as ROUTER_UPDATE_PATH} from 'redux-simple-router';
 
 // https://github.com/acdlite/flux-standard-action
 // http://rackt.org/redux/docs/basics/Actions.html
@@ -18,9 +17,9 @@ export const RECEIVE_TABS = 'RECEIVE_TABS';
 export const UPDATE_PATH = ROUTER_UPDATE_PATH;
 export const SELECT_TAB = 'SELECT_TAB';
 
-export const FETCH_EVENTS = 'FETCH_EVENTS';
-export const FETCH_EVENTS_FAILURE = 'FETCH_EVENTS_FAILURE';
-export const RECEIVE_EVENTS = 'RECEIVE_EVENTS';
+export const FETCH_UPDATES = 'FETCH_UPDATES';
+export const FETCH_UPDATES_FAILURE = 'FETCH_UPDATES_FAILURE';
+export const RECEIVE_UPDATES = 'RECEIVE_UPDATES';
 
 export const FETCH_SAMPLES = 'FETCH_SAMPLES';
 export const FETCH_SAMPLES_FAILURE = 'FETCH_SAMPLES_FAILURE';
@@ -32,7 +31,7 @@ export const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
 
 export const defaultTabsById = ImmutableMap({
   '0': {
-    label: 'Events',
+    label: 'Updates',
     'route': '/'
   },
   '1': {

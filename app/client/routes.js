@@ -1,14 +1,14 @@
 'use strict';
 
 import App from './containers/App.jsx';
-import Events from './containers/Events.jsx';
+import Updates from './containers/Updates.jsx';
 import Samples from './containers/Samples.jsx';
 import Facilities from './containers/Facilities.jsx';
 import Riders from './containers/Riders.jsx';
 
 /* equiavlent to the following JSX:
 <Route path='/' component={App}>
-  <IndexRoute component={Events}/>
+  <IndexRoute component={Updates}/>
   <Route path='/samples' component={Samples}/>
   <Route path='/facilities' component={Facilities}/>
   <Route path='/riders' component={Riders}/>
@@ -18,7 +18,7 @@ import Riders from './containers/Riders.jsx';
 export default [
   { path: '/',
     component: App,
-    indexRoute: { component: Events },
+    indexRoute: { component: Updates },
     childRoutes: [
       { path: '/samples', component: Samples },
       { path: '/facilities', component: Facilities },

@@ -1,11 +1,9 @@
 'use strict';
 
-import React, {createClass, createElement, PropTypes} from 'react';
+import React, {PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {Router, Route, IndexRoute, Link} from 'react-router';
 import {List, Map as ImmutableMap} from 'immutable';
-import {store} from '../index.js';
 import * as actions from '../actions/actioncreators.js';
 import AppBar from 'material-ui/lib/app-bar';
 import Tabs from 'material-ui/lib/tabs/tabs';
@@ -14,7 +12,7 @@ import Paper from 'material-ui/lib/paper';
 
 const appName = 'Sample Transport Tracking';
 
-const App = createClass({
+const App = React.createClass({
   propTypes: {
     isFetchingSamples: PropTypes.bool,
     samples: PropTypes.instanceOf(List),
@@ -26,6 +24,7 @@ const App = createClass({
 
   syncTabWithRoute: function() {
     const {selectedTab, tabsById, routing} = this.props;
+    const {selectTab} = this.props.actions;
 
     // Synchronize selectedTab to match the tab with a route matching the
     // current route, represented by routing.path
@@ -44,15 +43,11 @@ const App = createClass({
   },
 
   componentDidMount: function() {
-    const {updatePath, selectTab} = this.props.actions;
-    const {path} = this.props.routing;
     this.syncTabWithRoute();
-    // fetchSamples();
   },
 
   render: function() {
     const {children, selectedTab} = this.props;
-    const {selectTab} = this.props.actions;
 
     return (
       <div>
@@ -60,7 +55,7 @@ const App = createClass({
           <AppBar zDepth={0} title={appName} showMenuIconButton={false} />
           <div>
             <Tabs onChange={this.handleTabClick} value={selectedTab}>
-              <Tab label='Events' value="0"></Tab>
+              <Tab label='Updates' value="0"></Tab>
               <Tab label='Samples' value="1"></Tab>
               <Tab label='Facilities' value="2"></Tab>
               <Tab label='Riders' value="3"></Tab>

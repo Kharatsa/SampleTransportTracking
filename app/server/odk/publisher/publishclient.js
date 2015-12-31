@@ -1,56 +1,8 @@
 'use strict';
 
-const _ = require('lodash');
 const BPromise = require('bluebird');
 const Sequelize = require('sequelize');
 const log = require('app/server/util/log.js');
-const odkAggregate = require('app/server/odk/aggregateapi.js');
-const parser = require('app/server/util/xmlconvert.js');
-const odkTransform = require('app/server/odk/aggregatetransform.js');
-
-/**
- * Enum covering the formIds currently supported by the sample tracking service.
- * @enum {String}
- */
-const supportedForms = {
-  SAMPLE_DEPARTURE: 'sdepart',
-  SAMPLE_ARRIVAL: 'sarrive',
-  LAB_LINK: 'link',
-  RESULT: 'result'
-};
-
-const supportedFormIds = Object.keys(supportedForms).map(function(key) {
-  return supportedForms[key];
-});
-
-function syncFormList() {
-  log.debug('Sychronizing ODK Aggregate form list');
-  return odkAggregate.formList()
-  .spread(function(listRes, listBody) {
-    log.debug('Parsing ODK Aggregate forms', listBody);
-    return parser.parseXML(listBody);
-  })
-  .then(function(formListObj) {
-    return odkTransform.getFormIds(formListObj);
-  })
-  .catch(function(err) {
-    log.error('Error parsing ODK Aggregate form listing', err, err.stack);
-  })
-  .tap(function(forms) {
-    log.info('Retrieved ODK Aggregate form list ', forms);
-
-    var serverFormIds = forms.map(function(form, i) {
-      return {formId: form.formId, name: form.name, index: i};
-    });
-
-    BPromise.each(serverFormIds, function checkForms(form) {
-      if (_.indexOf(supportedFormIds, form.formId) === -1) {
-        log.warn('Unrecognized ODK Aggregate form ' +
-          JSON.stringify(forms[form.index]));
-      }
-    });
-  });
-}
 
 /**
  * PublishClient handles data delivered by the ODK Aggregate "Simple JSON
@@ -58,125 +10,16 @@ function syncFormList() {
  *
  * https://github.com/opendatakit/opendatakit/wiki/Aggregate-Publishers-Implementation-Details
  *
- * @param {Object} dbClient  [description]
+ * @param {Object} options
+ * @param {Object} options.db   An reference to the DataStorage object
  */
-function PublishClient(dbClient) {
+function PublishClient(options) {
   log.debug('Creating PublishClient');
-  this.dbClient = dbClient;
+  if (!options.db) {
+    throw new Error('PublishClient requires options.db');
+  }
 
-  syncFormList(this.dbClient)
-  .bind(this)
-  .then(function(forms) {
-    return this.saveFormList(forms);
-  });
-}
-
-/**
- * Enum for ODK Aggregate form fields relevant to samples
- * @enum {String}
- */
-const sampleFields = {
-  SAMPLE_REPEAT: 'srepeat',
-  SAMPLE_TRACKING_ID: 'stid',
-  LAB_ID: 'labid',
-  TYPE: 'stype'
-};
-
-function parseSamples(data) {
-  log.debug('parseSamples', data);
-  var sampleData = data[sampleFields.SAMPLE_REPEAT];
-
-  return BPromise.map(sampleData, function(sample) {
-    return {
-      stId: sample[sampleFields.SAMPLE_TRACKING_ID] || null,
-      labId: sample[sampleFields.LAB_ID] || null,
-      type: sample[sampleFields.TYPE] || null
-    };
-  });
-}
-
-/**
- * Enum for ODK Aggregate form fields relevant to facilities
- * @enum {String}
- */
-const facilityFields = {
-  REGION: 'region',
-  FACILITY: 'facility',
-  TYPE: 'ftype'
-};
-
-function parseFacility(data) {
-  log.debug('parseFacility', data);
-  return {
-    name: data[facilityFields.FACILITY],
-    region: data[facilityFields.REGION],
-    type: data[facilityFields.TYPE] || null
-  };
-}
-
-/**
- * Enum for ODK Aggregate form fields relevant to events
- * @enum {String}
- */
-const submissionFields = {
-  SUBMISSION_ID: 'instanceID',
-  PERSON: 'person',
-  FACILITY: 'facility',
-  SIM_SERIAL: 'simserial',
-  DEVICE_ID: 'deviceid',
-  FORM_START_DATE: 'start',
-  FORM_END_DATE: 'end',
-  COMPLETED_DATE: '*meta-date-marked-as-complete*'
-};
-
-function parseSubmission(formId, data) {
-  log.debug('parseSubmission', formId, data);
-  return {
-    form: formId,
-    submissionId: data[submissionFields.SUBMISSION_ID],
-    facility: data[submissionFields.FACILITY],
-    person: data[submissionFields.PERSON],
-    deviceId: data[submissionFields.DEVICE_ID],
-    simSerial: data[submissionFields.SIM_SERIAL],
-    formStartDate: data[submissionFields.FORM_START_DATE],
-    formEndDate: data[submissionFields.FORM_END_DATE],
-    completedDate: data[submissionFields.COMPLETED_DATE]
-  };
-}
-
-/**
- * Enum for ODK Aggregate form fields relevant to data storage
- * @enum {String}
- */
-const trackerEventsFields = {
-  SUBMISSION_ID: 'instanceID',
-  INSTANCE_ID: 'instanceID',
-  SAMPLE_REPEAT: 'srepeat',
-  ST_ID: 'stid',
-  LAB_ID: 'labid',
-  STATUS: 'condition'
-};
-
-/**
- * Transforms the submission data object into an array of objects. Each array
- * value contains one field and value pair.
- *
- * @param  {Object} data
- * @return {Object[]}
- */
-function parseTrackerEvents(data) {
-  log.debug('parseTrackerEvents', data);
-  var sampleData = data[trackerEventsFields.SAMPLE_REPEAT];
-  log.debug('parseTrackerEvents sampleData', sampleData);
-  return BPromise.map(sampleData, function(item, index) {
-    return {
-      submissionId: data[trackerEventsFields.SUBMISSION_ID],
-      submissionNumber: index + 1,
-      stId: item[trackerEventsFields.ST_ID] || null,
-      labId: item[trackerEventsFields.LAB_ID] || null,
-      sampleStatus: item[trackerEventsFields.STATUS] || null
-    };
-  });
+  this.db = options.db;
 }
 
 /**
@@ -186,8 +29,9 @@ function parseTrackerEvents(data) {
  * @return {Promise}        Resolved on successful sync
  */
 PublishClient.prototype.saveFormList = function(forms) {
-  var FormsModel = this.dbClient.Forms;
-  return this.dbClient.db.transaction(function(tran) {
+  var FormsModel = this.db.models.Forms;
+
+  return this.db.transaction(function(tran) {
     return BPromise.map(forms, function(form) {
       return {formId: form.formId, formName: form.name};
     })
@@ -206,19 +50,11 @@ PublishClient.prototype.saveFormList = function(forms) {
 };
 
 /**
- * Enum for ODK Aggregate form-level fields
- * @enum {String}
- */
-const formFields = {
-  FORM_ID: 'formId'
-};
-
-/**
  * Persists the component pieces of a submission to various local database
  * tables. These components are:
  *   * Samples (sample and lab IDs, sample type)
  *   * Submission (form Id, instance/submission Id)
- *   * TrackerEvents
+ *   * Updates
  *   * Facilities
  *
  * @param  {Object} submission  A form submission from ODK Aggregate's Simple
@@ -232,7 +68,7 @@ PublishClient.prototype.save = function(submission) {
   log.debug('Data', submission.data);
 
   var self = this;
-  return this.dbClient.db.transaction({
+  return this.db.transaction({
     isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED
   }, function(tran) {
     log.debug('Opening new transaction');
@@ -242,7 +78,7 @@ PublishClient.prototype.save = function(submission) {
         samples: parseSamples(entry),
         submission: parseSubmission(formId, entry),
         facility: parseFacility(entry),
-        trackerEvents: parseTrackerEvents(entry)
+        updates: parseUpdates(entry)
       });
     })
     .each(function(parsed, index, len) {
@@ -260,10 +96,10 @@ PublishClient.prototype.save = function(submission) {
       .then(function() {
         var submissionId = parsed.submission.submissionId || null;
         log.debug('PublishClient completed samples insert');
-        return self._saveEvents(submissionId, parsed.trackerEvents, tran);
+        return self._saveUpdates(submissionId, parsed.updates, tran);
       })
       .then(function() {
-        log.debug('PublishClient completed events insert');
+        log.debug('PublishClient completed updates insert');
         log.debug('PublishClient result ' + (index + 1) + ' of ' + len);
       });
     });
@@ -305,7 +141,7 @@ var maybeUpdateSamples = BPromise.method(function(newId, localId, tran) {
  */
 PublishClient.prototype._saveSamples = function(samples, tran) {
   log.info('Saving ' + samples.length + ' submission SAMPLES', samples);
-  var SamplesModel = this.dbClient.Samples;
+  var SamplesModel = this.db.models.Samples;
 
   return BPromise.map(samples, function(sample) {
     return SamplesModel.findOrCreate({
@@ -338,7 +174,7 @@ PublishClient.prototype._saveSamples = function(samples, tran) {
 PublishClient.prototype._saveFacility = function(facility, tran) {
   log.info('Saving FACILITY from submission', facility);
 
-  var FacilitiesModel = this.dbClient.Facilities;
+  var FacilitiesModel = this.db.models.Facilities;
 
   return FacilitiesModel.findOrCreate({
     where: {name: facility.name},
@@ -357,7 +193,7 @@ PublishClient.prototype._saveFacility = function(facility, tran) {
 PublishClient.prototype._saveSubmission = function(formId, submission, tran) {
   log.debug('Saving form submission', submission);
 
-  var SubmissionsModel = this.dbClient.Submissions;
+  var SubmissionsModel = this.db.models.Submissions;
   return SubmissionsModel.findOrCreate({
     where: {$and: [
       {submissionId: submission.submissionId},
@@ -373,18 +209,18 @@ PublishClient.prototype._saveSubmission = function(formId, submission, tran) {
  * Persists the sample, form, and submission IDs for a submission to the
  * database.
  *
- * @param  {String}   submissionId
- * @param  {Object[]} updates         A parsed collection of ST Events from a
+ * @param  {string}   submissionId
+ * @param  {Object[]} updates         A parsed collection of ST Updates from a
  *                                    single submission.
  * @param  {Object}   tran            Sequelize transaction
  * @return {Promise.<Instance,Boolean>}         [description]
  */
-PublishClient.prototype._saveEvents = function(submissionId, updates, tran) {
+PublishClient.prototype._saveUpdates = function(submissionId, updates, tran) {
   log.info('Saving EVENTS from submission', updates);
 
-  var TrackerEventModel = this.dbClient.TrackerEvents;
+  var UpdatesModel = this.db.models.Updates;
 
-  return TrackerEventModel.findOne({
+  return UpdatesModel.findOne({
     where: {$and: [
       {submissionId: submissionId},
       {submissionId: {ne: null}}
@@ -395,11 +231,13 @@ PublishClient.prototype._saveEvents = function(submissionId, updates, tran) {
     // Only insert the field data when the instance id (i.e., form submission)
     // is not already present in the submission data table.
     if (!result) {
-      log.debug('Inserting sample events');
-      return TrackerEventModel.bulkCreate(updates, {transaction: tran});
+      log.debug('Inserting sample updates');
+      return UpdatesModel.bulkCreate(updates, {transaction: tran});
     }
-    log.debug('Skipping insert for existing sample events');
+    log.debug('Skipping insert for existing sample updates');
   });
 };
 
-module.exports = PublishClient;
+exports.create = function(options) {
+  return new PublishClient(options);
+};

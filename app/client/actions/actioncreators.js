@@ -4,21 +4,21 @@ import {updatePath as routerUpdatePath} from 'redux-simple-router';
 import {
     RECEIVE_TABS, SELECT_TAB, UPDATE_PATH,
     FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
-    FETCH_EVENTS, FETCH_EVENTS_FAILURE, RECEIVE_EVENTS
+    FETCH_UPDATES, FETCH_UPDATES_FAILURE, RECEIVE_UPDATES
 } from '../actions/actions.js';
 import request from '../util/request.js';
 
 /**
  * https://github.com/jlongster/redux-simple-router#updatepathpath-norouterupdate
  *
- * @param {String} path The current URL as a String
- * @param {Boolean} noRouterUpdate Signals a toggle to the router. Passing false
+ * @param {string} path The current URL as a String
+ * @param {boolean} noRouterUpdate Signals a toggle to the router. Passing false
  *                                 will switch off all changes resulting from
  *                                 route updates until true is passed.
  */
 export const updatePath = routerUpdatePath;
 
-export function receiveTabs() {
+export function receiveTabs(tabs) {
   return {
     type: RECEIVE_TABS,
     tabs
@@ -66,36 +66,36 @@ function receiveSamples(samples) {
   };
 }
 
-function requestEvents() {
+function requestUpdates() {
   return {
-    type: FETCH_EVENTS,
+    type: FETCH_UPDATES,
     requestedAt: Date.now()
   };
 }
 
-export function fetchEvents() {
+export function fetchUpdates() {
   return function(dispatch) {
-    dispatch(requestEvents());
-    return request('/track/events', function(err, res) {
+    dispatch(requestUpdates());
+    return request('/track/updates', function(err, res) {
       if (err) {
-        dispatch(fetchEventsFailure(err));
+        dispatch(fetchUpdatesFailure(err));
       }
-      dispatch(receiveEvents(res.json));
+      dispatch(receiveUpdates(res.json));
     });
-  }
+  };
 }
 
-function fetchEventsFailure(err) {
+function fetchUpdatesFailure(err) {
   return {
-    type: FETCH_EVENTS_FAILURE,
+    type: FETCH_UPDATES_FAILURE,
     error: err
   };
 }
 
-function receiveEvents(events) {
+function receiveUpdates(updates) {
   return {
-    type: RECEIVE_EVENTS,
-    events,
+    type: RECEIVE_UPDATES,
+    updates,
     receivedAt: Date.now()
   };
 }

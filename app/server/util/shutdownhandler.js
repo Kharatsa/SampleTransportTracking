@@ -6,13 +6,15 @@ const log = require('app/server/util/log.js');
  * [handleShutdown description]
  *
  */
+
+var handlers = [];
+
 var handleShutdown = function() {
-  var args = Array.prototype.slice.call(arguments);
 
   function gracefulShutdown(cb) {
     // Any additional teardown logic lives here
-    log.info('Beginning teardown with %d handlers.', args.length);
-    args.forEach(function(handler) {
+    log.info('Beginning teardown with %d handlers.', handlers.length);
+    handlers.forEach(function(handler) {
       handler();
     });
     if (cb) {
@@ -31,4 +33,10 @@ var handleShutdown = function() {
   process.once('SIGTERM', killProcess);
 };
 
-module.exports = handleShutdown;
+module.exports = {
+  init: handleShutdown,
+
+  add: function(shutdownFunc) {
+    handlers.push(shutdownFunc);
+  }
+};
