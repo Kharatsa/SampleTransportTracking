@@ -8,6 +8,7 @@ const config = require('app/config');
 const storage = require('app/server/storage');
 const sttModels = require('app/server/stt/models');
 const sttclient = require('app/server/stt/sttclient.js');
+const clientutils = require('app/server/storage/clientutils.js');
 
 describe('Sample Transport Tracking Client', () => {
   var client;
@@ -43,16 +44,15 @@ describe('Sample Transport Tracking Client', () => {
 
   });
 
+  const goodSamples = [
+    {stId: 'st1', labId: null, type: 'blood'},
+    {stId: 'st2', labId: null, type: 'sputum'},
+    {stId: 'st3', labId: null, type: null},
+    {stId: 'st4', labId: 'lab1', type: 'dbs'},
+    {stId: 'st5', labId: 'lab2', type: 'urine'}
+  ];
 
   describe('sample entity methods', () => {
-
-    const goodSamples = [
-      {stId: 'st1', labId: null, type: 'blood'},
-      {stId: 'st2', labId: null, type: 'sputum'},
-      {stId: 'st3', labId: null, type: null},
-      {stId: 'st4', labId: 'lab1', type: 'dbs'},
-      {stId: 'st5', labId: 'lab2', type: 'urine'}
-    ];
 
     it('should save new samples', done => {
       client.db.transaction(tran => {
@@ -72,9 +72,7 @@ describe('Sample Transport Tracking Client', () => {
         })
       )
       .each(item => {
-        expect(item.sample).to.deep.equal(
-          _.omit(item.result, 'id', 'created_at', 'updated_at')
-        );
+        expect(item.sample).to.deep.equal(clientutils.omitDBCols(item.result));
       }).then(() => done());
     });
 
@@ -90,11 +88,9 @@ describe('Sample Transport Tracking Client', () => {
           sample
         })
       )
-      .each(item => {
-        expect(item.sample).to.deep.equal(
-          _.omit(item.result, 'id', 'created_at', 'updated_at')
-        );
-      }).then(() => done());
+      .each(item =>
+        expect(item.sample).to.deep.equal(clientutils.omitDBCols(item.result))
+      ).then(() => done());
     });
 
     it('should retrieve individual samples by anyId', done => {
@@ -111,42 +107,333 @@ describe('Sample Transport Tracking Client', () => {
         })
       )
       .each(item =>
-        expect(item.sample).to.deep.equal(
-          _.omit(item.result, 'id', 'created_at', 'updated_at')
-        )
+        expect(item.sample).to.deep.equal(clientutils.omitDBCols(item.result))
       ).then(() => done());
     });
 
-    it('should update samples by ids');
+    it('should update samples with ids', done => {
+      var updateSample;
+      client.getSample({stId: goodSamples[0].stId})
+      .then(sample => {
+        updateSample = clientutils.omitDateDBCols(sample);
+        updateSample.type = 'blood';
+        return client.updateSamples({samples: [updateSample]})
+        .then(counts => {
+          var affectedCount = counts[0];
+          expect(affectedCount).to.be.above(0,
+            'update samples should return affectedCount > 0');
+        })
+        .then(() => client.getSample({stId: updateSample.stId}))
+        .then(sample =>
+          expect(clientutils.omitDateDBCols(sample))
+          .to.deep.equal(clientutils.omitDateDBCols(updateSample),
+            'sample record was not updated')
+        )
+        .then(() => done());
+      });
+    });
 
   });
 
-  describe('submission entity methods', () => {
-    it('should save new submissions');
-    it('should retrieve submissions by submissionId');
-    it('should retrieve an individual submission by submissionId');
-    it('should update submissions by ids');
+  const goodForms = [
+   {formId: 'form1', formName: 'Form One'},
+   {formId: 'form2', formName: 'Form 2'},
+   {formId: 'form3', formName: null}
+  ];
+
+  describe('form entity methods', () => {
+
+    it('should save new forms', done => {
+      client.saveForms(goodForms)
+      .then(results => expect(results).to.have.length(goodForms.length))
+      .then(() => done());
+    });
+
+    it('should throw a validation error for duplicate formIds', done => {
+      return client.saveForms([goodForms[0]])
+      .then(results => expect(results).to.be.undefined)
+      .catch(err =>
+        expect(err).to.be.instanceof(storage.Sequelize.UniqueConstraintError,
+          'duplicate formIds should throw a violate the unique contraint')
+      )
+      .then(() => done());
+    });
+
+    var matchFormPair = form => {
+      var match = _.find(goodForms, good => good.formId === form.formId);
+      return {form, match};
+    };
+
+    it('should retrieve all forms', done => {
+      return client.getForms()
+      .map(matchFormPair)
+      .each(pair => {
+        expect(pair.match).to.be.defined;
+        expect(pair.match).to.deep.equal(clientutils.omitDBCols(pair.form));
+      }).then(() => done());
+    });
+
+    it('should retrieve forms by formIds', done => {
+      var formIds = [goodForms[0].formId, goodForms[1].formId];
+      return client.getForms({formIds})
+      .tap(results => expect(results).to.be.length(formIds.length))
+      .map(matchFormPair)
+      .each(pair => {
+        expect(pair.match).to.be.defined;
+        expect(pair.match).to.deep.equal(clientutils.omitDBCols(pair.form));
+      }).then(() => done());
+    });
+
+    it('should retrieve an individual form by formId', done => {
+      var targetForm = goodForms[0];
+      return client.getForm({formId: targetForm.formId})
+      .then(form =>
+        expect(clientutils.omitDBCols(form)).to.deep.equal(targetForm)
+      ).then(() => done());
+    });
+
+    it('should update forms with ids');
+
   });
 
+  const goodFacilities = [
+    {name: 'fac1', region: 'region1', type: null},
+    {name: 'fac2', region: 'region1', type: null},
+    {name: 'fac3', region: 'region2', type: null}
+  ];
   describe('facilities entity methods', () => {
-    it('should save new facilities');
+
+    var matchFacilityPair = facility => {
+      var match = _.find(goodFacilities, good => good.name === facility.name);
+      return {facility, match};
+    };
+
+    it('should save new facilities', done => {
+      return client.saveFacilities(goodFacilities)
+      .then(results => expect(results).to.have.length(goodFacilities.length))
+      .then(() => done());
+    });
+
+    it('should retrieve all facilities', done => {
+      client.getFacilities()
+      .tap(facilities =>
+        expect(facilities).to.be.length(goodFacilities.length)
+      )
+      .map(matchFacilityPair)
+      .each(pair => {
+        expect(pair.match).to.be.defined;
+        expect(pair.match).to.deep.equal(clientutils.omitDBCols(pair.facility));
+      })
+      .then(() => done());
+    });
+
     it('should retrieve facilities by facilityKeys');
+
     it('should retrieve an individual facility by facilityKey');
-    it('should update facilities by ids');
+
+    it('should update facilities with ids');
+
   });
+
+  const goodPeople = [
+    {name: 'person1', type: 'rider'},
+    {name: 'person2', type: 'lab'},
+    {name: 'person3', type: null}
+  ];
 
   describe('people entity methods', () => {
-    it('should save new people');
+
+    var matchPeoplePair = person => {
+      var match = _.find(goodPeople, good => good.name === person.name);
+      return {person, match};
+    };
+
+    it('should save new people', done => {
+      return client.savePeople(goodPeople)
+      .then(results => expect(results).to.have.length(goodPeople.length))
+      .then(() => done());
+    });
+
+    it('should retrieve all people', done => {
+      return client.getPeople()
+      .tap(people => expect(people).to.be.length(goodPeople.length))
+      .map(matchPeoplePair)
+      .each(pair => {
+        expect(pair.match).to.be.defined;
+        expect(pair.match).to.deep.equal(clientutils.omitDBCols(pair.person));
+      }).then(() => done());
+    });
+
     it('should retrieve people by peopleKeys');
     it('should retrieve an individual person by personKey');
-    it('should update people by ids');
+    it('should update people with ids');
   });
 
+  const goodSubmissions = [
+    {
+      form: goodForms[0].formId,
+      submissionId: 'sub1',
+      facility: goodFacilities[0].name,
+      person: goodPeople[0].name,
+      deviceId: 'dev1',
+      simSerial: 'sim1',
+      formStartDate: new Date(2015, 1, 1, 0, 0, 0, 0),
+      formEndDate: new Date(2015, 1, 1, 0, 0, 10, 0),
+      completedDate: new Date(2015, 1, 1, 0, 0, 20, 0)
+    },
+    {
+      form: goodForms[0].formId,
+      submissionId: 'sub2',
+      facility: goodFacilities[0].name,
+      person: goodPeople[0].name,
+      deviceId: 'dev1',
+      simSerial: 'sim1',
+      formStartDate: new Date(2015, 1, 1, 0, 0, 0, 0),
+      formEndDate: new Date(2015, 1, 1, 0, 0, 20, 0),
+      completedDate: new Date(2015, 1, 1, 0, 0, 30, 0)
+    },
+    {
+      form: goodForms[1].formId,
+      submissionId: 'sub3',
+      facility: goodFacilities[1].name,
+      person: goodPeople[1].name,
+      deviceId: null,
+      simSerial: null,
+      formStartDate: new Date(2015, 1, 1, 0, 0, 0, 0),
+      formEndDate: new Date(2015, 1, 2, 0, 0, 10, 0),
+      completedDate: new Date(2015, 1, 2, 0, 0, 25, 0)
+    }
+  ];
+
+  describe('submission entity methods', () => {
+
+    var matchSubmissionPair = submission => {
+      var match = _.find(goodSubmissions, good =>
+        good.submissionId === submission.submissionId);
+      return {submission, match};
+    };
+
+    it('should save new submissions', done => {
+      return client.saveSubmissions(goodSubmissions)
+      .then(results => expect(results).to.have.length(goodSubmissions.length))
+      .then(() => done());
+    });
+
+    it('should retrieve submissions by submissionIds', done => {
+      var submissionIds = goodSubmissions.map(sub => sub.submissionId);
+
+      return client.getSubmissions({submissionIds})
+      .tap(submissions =>
+        expect(submissions).to.have.length(goodSubmissions.length)
+      )
+      .map(matchSubmissionPair)
+      .each(pair => {
+        expect(pair.match).to.be.defined;
+        expect(pair.match).to.deep.equal(
+          clientutils.omitDBCols(pair.submission)
+        );
+      })
+      .then(() => done());
+    });
+
+    it('should retrieve an individual submission by submissionId', done => {
+      var target = goodSubmissions[1];
+      return client.getSubmission({submissionId: target.submissionId})
+      .then(matchSubmissionPair)
+      .then(pair => {
+        expect(pair.match).to.be.defined;
+        expect(pair.match).to.deep.equal(
+          clientutils.omitDBCols(pair.submission)
+        );
+      })
+      .then(() => done());
+    });
+
+    it('should return submissions default sorted by completed_date', done => {
+      return client.getSubmissions({
+        submissionIds: goodSubmissions.map(sub => sub.submissionId)
+      })
+      .then(results => {
+        var last = results[0];
+        return BPromise.each(results.slice(1), submission => {
+          expect(last.completedDate.getTime()).to.be.above(
+            submission.completedDate.getTime()
+          );
+          last = submission;
+        });
+      })
+      .then(() => done());
+    });
+
+    it('should update submissions with ids');
+
+  });
+
+  const goodUpdates = [
+    {
+      submissionId: goodSubmissions[0].submissionId,
+      submissionNumber: 1,
+      stId: goodSamples[0].stId,
+      labId: goodSamples[0].labId,
+      sampleStatus: 'ok'
+    },
+    {
+      submissionId: goodSubmissions[0].submissionId,
+      submissionNumber: 2,
+      stId: goodSamples[1].stId,
+      labId: goodSamples[1].labId,
+      sampleStatus: 'broken'
+    },
+    {
+      submissionId: goodSubmissions[0].submissionId,
+      submissionNumber: 3,
+      stId: goodSamples[2].stId,
+      labId: goodSamples[2].labId,
+      sampleStatus: 'ok'
+    },
+    {
+      submissionId: goodSubmissions[1].submissionId,
+      submissionNumber: 1,
+      stId: goodSamples[3].stId,
+      labId: goodSamples[3].labId,
+      sampleStatus: 'ok'
+    },
+    {
+      submissionId: goodSubmissions[1].submissionId,
+      submissionNumber: 2,
+      stId: goodSamples[4].stId,
+      labId: goodSamples[4].labId,
+      sampleStatus: 'ok'
+    }
+  ];
+
   describe('updates entity methods', () => {
-    it('should save new updates');
+    it('should save new updates', done => {
+      return client.saveUpdates(goodUpdates)
+      .then(results => expect(results).to.have.length(goodUpdates.length))
+      .then(() => done());
+    });
+
+    it('should throw a validation error for dupe submissionId/Number', done => {
+      var dupeSample = Object.assign(goodUpdates[0]);
+      dupeSample.stId = 'st99';
+      dupeSample.labId = null;
+      dupeSample.sampleStatus = 'broken';
+      return client.saveUpdates([dupeSample])
+      .then(results => expect(results).to.be.undefined)
+      .catch(err =>
+        expect(err).to.be.instanceof(storage.Sequelize.UniqueConstraintError,
+          'duplicate submissionId/Number values violate the unique contraint')
+      )
+      .then(() => done());
+    });
+
     it('should retrieve updates by updateIds');
+
     it('should retrieve an individual update by updateId');
-    it('should update updates by ids');
+
+    it('should update updates with ids');
+
   });
 
 });

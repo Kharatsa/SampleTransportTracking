@@ -1,7 +1,9 @@
 'use strict';
 
 /**
- * This callback is displayed as part of the Database class.
+ * A function conforming to the Sequelize import interface.
+ * http://docs.sequelizejs.com/en/latest/docs/models-definition/#import
+ *
  * @callback ModelCallback
  * @param {Sequelize.Sequelize} Sequelize instance
  * @param {Sequelize.DataTypes} DataTypes

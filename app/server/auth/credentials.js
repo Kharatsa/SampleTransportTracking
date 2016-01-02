@@ -21,7 +21,7 @@ const PASSWORD_MAX_LENGTH = 160;
  */
 const hash = BPromise.method(function hashFunc(password, salt) {
   if (password.length > PASSWORD_MAX_LENGTH) {
-    return BPromise.reject(new Error('Passwords must be <= 160 characters'));
+    return new Error('Passwords must be <= 160 characters');
   }
 
   return crypto.pbkdf2Async(password, salt, ITERATIONS, KEYLEN, ALGORITHM)

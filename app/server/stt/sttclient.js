@@ -28,6 +28,9 @@ function STTClient(options) {
   }
   this.db = options.db;
 
+  if (!options.models.Forms) {
+    throw new Error('Forms model is a required parameter');
+  }
   if (!options.models.Samples) {
     throw new Error('Samples model is a required parameter');
   }
@@ -45,6 +48,69 @@ function STTClient(options) {
   }
   this.models = options.models || {};
 }
+
+/**
+ * [getForms description]
+ * @param  {?Object} options [description]
+ * @param {?Array.<string>} options.formIds [description]
+ * @param {?number} [options.limit] [description]
+ * @param {?boolean} [options.simple=true] [description]
+ * @return {Promise.<Sequelize.Instance|Object>}
+ */
+STTClient.prototype.getForms = function(options) {
+  options = _.defaultsDeep(options || {}, {
+    formIds: [],
+    simple: true
+  });
+
+  var formsWhere;
+  if (!(options && options.formIds && options.formIds.length)) {
+    log.debug('Get ALL forms');
+  } else {
+    log.debug('getForms with formIds', options.formIds);
+    formsWhere = {formId: {in: options.formIds}};
+  }
+
+  return this.models.Forms.findAll({
+    where: formsWhere,
+    limit: options.limit
+  })
+  .then(results => {
+    if (options.simple) {
+      return results.map(clientutils.getSimpleInstance);
+    }
+    return results;
+  });
+};
+
+/**
+ * [getForm description]
+ *
+ * @param {!Object} options
+ * @param {!string} [options.formId] - The form Id
+ * @param {boolean} [options.simple=true] [description]
+ * @return {Form|Sequelize.Instance}
+ */
+STTClient.prototype.getForm = function(options) {
+  return this.getForms({
+    formIds: [options.formId],
+    simple: options.simple
+  })
+  .then(clientutils.getOneResult);
+};
+
+/**
+ * [saveForms description]
+ *
+ * @param  {!Array.<Form>} forms [description]
+ * @param  {?Sequelize.Transaction} tran  [description]
+ * @return {Promise.<Array.<Sequelize.Instance>>}
+ */
+STTClient.prototype.saveForms = function(forms, tran) {
+  log.info('CREATING ' + forms.length + ' forms', forms);
+
+  return clientutils.saveBulk(this.models.Forms, forms, tran);
+};
 
 /**
  * [prepareSamplesWhere description]
@@ -84,8 +150,9 @@ function prepareSamplesWhere(sampleIds) {
  *
  * @method
  * @param {Object} options
- * @param {SampleIds} options.sampleIds A sam
- * @param {boolean} [options.simple=true] When simple is true, the method
+ * @param {?SampleIds} options.sampleIds   Sample identifiers
+ * @param {?number} [options.limit] [description]
+ * @param {?boolean} [options.simple=true] When simple is true, the method
  *                                        returns plain objects. Otherwise,
  *                                        Sequelize Instance objects are
  *                                        returned.
@@ -95,14 +162,14 @@ function prepareSamplesWhere(sampleIds) {
  *                     !sampleIds.anyId.length]
  */
 STTClient.prototype.getSamples = BPromise.method(function(options) {
-  var SamplesModel = this.models.Samples;
-
   options = _.defaultsDeep(options || {}, {
     sampleIds: {stId: [], labId: [], anyId: []},
     simple: true
   });
   var sampleIds = options.sampleIds;
   log.debug('getSamples with sampleIds', sampleIds);
+  console.log('getSamples with sampleIds');
+  console.dir(sampleIds);
 
   if (sampleIds.stId.length === 0 &&
       sampleIds.labId.length === 0 &&
@@ -112,8 +179,9 @@ STTClient.prototype.getSamples = BPromise.method(function(options) {
 
   var samplesWhere = prepareSamplesWhere(sampleIds);
 
-  return SamplesModel.findAll({
-    where: samplesWhere
+  return this.models.Samples.findAll({
+    where: samplesWhere,
+    limit: options.limit
   })
   .then(results => {
     if (options.simple) {
@@ -146,7 +214,8 @@ STTClient.prototype.getSample = function(options) {
       labId: options.labId ? [options.labId] : [],
       anyId: options.anyId ? [options.anyId] : []
     },
-    simple: options.simple
+    simple: options.simple,
+    limit: 1
   })
   .then(clientutils.getOneResult);
 };
@@ -166,21 +235,16 @@ STTClient.prototype.saveSamples = function(samples, tran) {
 /**
  * [updateSamples description]
  *
- * @param  {Array.<Sample>} samples [description]
- * @param  {Sequelize.Transaction} tran    [description]
+ * @param {!Object} options [description]
+ * @param  {!Array.<Sample>} options.samples [description]
+ * @param  {?Sequelize.Transaction} options.tran    [description]
  * @return {Promise.<Array.<affectedCount, affectedRows>>}
  */
-STTClient.prototype.updateSamples = function(samples, tran) {
-  // var SamplesModel = this.models.Samples;
-
-  log.info('UPDATING ' + samples.length + ' samples\n\t', samples);
-  return clientutils.updateBulk(this.models.Samples, samples, tran);
-  // return BPromise.map(samples, sample => {
-  //   return SamplesModel.update(sample, {
-  //     where: {id: sample.id},
-  //     transaction: tran
-  //   });
-  // });
+STTClient.prototype.updateSamples = function(options) {
+  log.info('Update %s samples ', options.samples.length);
+  return clientutils.updateBulk(
+    this.models.Samples, options.samples, options.tran
+  );
 };
 
 /**
@@ -190,13 +254,12 @@ STTClient.prototype.updateSamples = function(samples, tran) {
  * @param {Object} options
  * @param {Array.<string>}  options.submissionIds - Form submission Ids
  * @param {Array} [options.order=[['completed_date', 'DESC']]]
+ * @param {?number} [options.limit] [description]
  * @param {boolean} [options.simple=true] [description]
  * @return {Promise.<Array.<Submission|Sequelize.Instance>>}
  * @throws {Error} If [!options.submissionIds.length]
  */
 STTClient.prototype.getSubmissions = BPromise.method(function(options) {
-  var SubmissionsModel = this.models.Submissions;
-
   options = _.defaultsDeep(options || {}, {
     submissionIds: [],
     // Return results by default sorted by completed_date in descending order
@@ -212,9 +275,10 @@ STTClient.prototype.getSubmissions = BPromise.method(function(options) {
     throw new Error('Requires at least 1 submission Id');
   }
 
-  return SubmissionsModel.findAll({
+  return this.models.Submissions.findAll({
     where: submissionsWhere,
-    order: options.order
+    order: options.order,
+    limit: options.limit
   })
   .then(results => {
     if (options.simple) {
@@ -237,6 +301,7 @@ STTClient.prototype.getSubmission = function(options) {
   return this.getSubmissions({
     submissionIds: options.submissionId ? [options.submissionId] : [],
     order: options.order,
+    limit: 1,
     simple: options.simple
   })
   .then(clientutils.getOneResult);
@@ -249,7 +314,7 @@ STTClient.prototype.getSubmission = function(options) {
  * @param  {Sequelize.Transaction} tran - [description]
  * @return {Promise.<Array.<Sequelize.Instance>>}
  */
-STTClient.prototype.saveSubmission = function(submissions, tran) {
+STTClient.prototype.saveSubmissions = function(submissions, tran) {
   log.info('CREATING ' + submissions.length + ' submissions\n\t' + submissions);
   return clientutils.saveBulk(this.models.Submissions, submissions, tran);
 };
@@ -257,13 +322,12 @@ STTClient.prototype.saveSubmission = function(submissions, tran) {
 /**
  * [updateSubmission description]
  *
- * @param  {[type]} submissions - [description]
+ * @param  {Array.<Object>} submissions - [description]
  * @param  {Sequelize.Transaction} tran - [description]
- * @return {[type]}             [description]
+ * @return {Promise.<Array.<number, number>>}
  */
-STTClient.prototype.updateSubmission = function(submissions, tran) {
-  // TODO
-  console.log('tran', tran);
+STTClient.prototype.updateSubmission = function() {
+  throw new Error('Not implemented');
 };
 
 /**
@@ -271,12 +335,11 @@ STTClient.prototype.updateSubmission = function(submissions, tran) {
  *
  * @param {Object} options [description]
  * @param  {Array.<string>} [options.facilityKeys]
+ * @param {?number} [options.limit] [description]
  * @param {boolean} [options.simple=true] [description]
  * @return {Promise.<Array.<Facility|Sequelize.Instance>>}
  */
 STTClient.prototype.getFacilities = function(options) {
-  var FacilitiesModel = this.models.Facilities;
-
   options = _.defaultsDeep(options || {}, {
     facilityKeys: [],
     simple: true
@@ -288,8 +351,9 @@ STTClient.prototype.getFacilities = function(options) {
     facilityWhere = {name: {in: options.facilityKeys}};
   }
 
-  return FacilitiesModel.findAll({
-    where: facilityWhere
+  return this.models.Facilities.findAll({
+    where: facilityWhere,
+    limit: options.limit
   })
   .then(results => {
     if (options.simple) {
@@ -310,9 +374,33 @@ STTClient.prototype.getFacilities = function(options) {
 STTClient.prototype.getFacility = function(options) {
   return this.getFacilities({
     facilityKeys: options.facilityKey ? [options.facilityKey] : [],
+    limit: 1,
     simple: options.simple
   })
   .then(clientutils.getOneResult);
+};
+
+/**
+ * [saveFacilities description]
+ *
+ * @param  {Array.<Submission>} facilities - [description]
+ * @param  {Sequelize.Transaction} tran - [description]
+ * @return {Promise.<Array.<Sequelize.Instance>>}
+ */
+STTClient.prototype.saveFacilities = function(facilities, tran) {
+  log.info('CREATING ' + facilities.length + ' facilities', facilities);
+  return clientutils.saveBulk(this.models.Facilities, facilities, tran);
+};
+
+/**
+ * [updateSubmission description]
+ *
+ * @param  {Array.<Object>} facilities - [description]
+ * @param  {Sequelize.Transaction} tran - [description]
+ * @return {Promise.<Array.<number, number>>}
+ */
+STTClient.prototype.updateFacilities = function() {
+  throw new Error('Not implemented');
 };
 
 /**
@@ -320,12 +408,11 @@ STTClient.prototype.getFacility = function(options) {
  *
  * @param {Object} [options] [description]
  * @param {Array.<string>} [options.peopleKeys] [description]
+ * @param {?number} [options.limit] [description]
  * @param {boolean} [options.simple=true] [description]
  * @return {Promise.<Array.<Person|Sequelize.Instance>>}
  */
 STTClient.prototype.getPeople = function(options) {
-  var PeopleModel = this.models.People;
-
   options = _.defaultsDeep(options || {}, {
     peopleKeys: [],
     simple: true
@@ -337,8 +424,9 @@ STTClient.prototype.getPeople = function(options) {
     peopleWhere = {name: {in: options.peopleKeys}};
   }
 
-  return PeopleModel.findAll({
-    where: peopleWhere
+  return this.models.People.findAll({
+    where: peopleWhere,
+    limit: options.limit
   })
   .then(results => {
     if (options.simple) {
@@ -359,9 +447,33 @@ STTClient.prototype.getPeople = function(options) {
 STTClient.prototype.getPerson = function(options) {
   return this.getPeople({
     peopleKeys: options.personKey ? [options.personKey] : [],
+    limit: 1,
     simple: options.simple
   })
   .then(clientutils.getOneResult);
+};
+
+/**
+ * [saveFacilities description]
+ *
+ * @param  {Array.<Submission>} people - [description]
+ * @param  {Sequelize.Transaction} tran - [description]
+ * @return {Promise.<Array.<Sequelize.Instance>>}
+ */
+STTClient.prototype.savePeople = function(people, tran) {
+  log.info('CREATING ' + people.length + ' people', people);
+  return clientutils.saveBulk(this.models.People, people, tran);
+};
+
+/**
+ * [updatePeople description]
+ *
+ * @param  {Array.<Object>} people - [description]
+ * @param  {Sequelize.Transaction} tran - [description]
+ * @return {Promise.<Array.<number, number>>}
+ */
+STTClient.prototype.updatePeople = function() {
+  throw new Error('Not implemented');
 };
 
 /**
@@ -379,13 +491,12 @@ STTClient.prototype.getPerson = function(options) {
  * @method
  * @param {Object} options [description]
  * @param {Array.<UpdateId>} options.updateIds [description]
+ * @param {?number} [options.limit] [description]
  * @param {boolean} [options.simple=true] [description]
  * @return {Promise.<Array.<Update|Sequelize.Instance>>}
  * @throws {Error} If [updateIds.length === 0]
  */
 STTClient.prototype.getUpdates = BPromise.method(function(options) {
-  var UpdatesModel = this.models.Updates;
-
   options = _.defaultsDeep(options || {}, {
     updateIds: [],
     simple: true
@@ -403,12 +514,14 @@ STTClient.prototype.getUpdates = BPromise.method(function(options) {
       {submissionNumber: ids.submissionNumber}
     ]};
   })
+  .bind(this)
   .then(function(idPairs) {
     log.debug('getUpdates idPairs', idPairs);
 
     // Match any of the id pairs
-    return UpdatesModel.findAll({
-      where: {$or: idPairs}
+    return this.models.Updates.findAll({
+      where: {$or: idPairs},
+      limit: options.limit
     });
   })
   .then(results => {
@@ -430,9 +543,33 @@ STTClient.prototype.getUpdates = BPromise.method(function(options) {
 STTClient.prototype.getUpdate = function(options) {
   return this.getUpdates({
     updateIds: options.updateId ? [options.updateId] : [],
+    limit: 1,
     simple: options.simple
   })
   .then(clientutils.getOneResult);
+};
+
+/**
+ * [saveFacilities description]
+ *
+ * @param  {Array.<Submission>} updates - [description]
+ * @param  {Sequelize.Transaction} tran - [description]
+ * @return {Promise.<Array.<Sequelize.Instance>>}
+ */
+STTClient.prototype.saveUpdates = function(updates, tran) {
+  log.info('CREATING ' + updates.length + ' updates', updates);
+  return clientutils.saveBulk(this.models.Updates, updates, tran);
+};
+
+/**
+ * [updatePeople description]
+ *
+ * @param  {Array.<Object>} updates - [description]
+ * @param  {Sequelize.Transaction} tran - [description]
+ * @return {Promise.<Array.<number, number>>}
+ */
+STTClient.prototype.updateUpdates = function() {
+  throw new Error('Not implemented');
 };
 
 /*

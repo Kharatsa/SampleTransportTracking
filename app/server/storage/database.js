@@ -29,7 +29,7 @@ function Database(options) {
   // Load any models provided up front
   this.models = {};
   var modelSpecs = options.models || [];
-  log.debug('Database loading ' + modelSpecs.length + ' models');
+  log.debug('Importing ' + modelSpecs.length + ' models with database');
   modelSpecs.forEach(spec => this.loadModel(spec));
 }
 

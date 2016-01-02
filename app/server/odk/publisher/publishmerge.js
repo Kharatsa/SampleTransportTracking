@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
+const clientutils = require('app/server/storage/clientutils.js');
 const log = require('app/server/util/log.js');
 
 /** @module publiser/publishmerge */
@@ -19,8 +20,8 @@ const log = require('app/server/util/log.js');
  * @return {boolean}
  */
 function areCommonPropsEqual(local, target) {
-  return Object.keys(_.omit(target, 'id')).every(key => {
-    if (!local[key]) {
+  return Object.keys(clientutils.omitDBCols(target)).every(key => {
+    if (typeof local[key] === 'undefined') {
       return false;
     }
     // For Date objects, compare the valueOf to ensure identical values
