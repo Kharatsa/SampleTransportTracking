@@ -4,11 +4,11 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const config = require('app/config');
-const handleJSONErrors = require('app/server/middleware.js').handleJSONErrors;
 const log = require('app/server/util/log.js');
-const publishtransform = require('./publishtransform.js');
-const publishmerge = require('./publishmerge.js');
-const publishreconcile = require('./publishreconcile.js');
+const handleJSONErrors = require('app/server/middleware.js').handleJSONErrors;
+const publishtransform = require('app/server/odk/publisher/publishtransform.js');
+const publishmerge = require('app/server/odk/publisher/publishmerge.js');
+const publishsync = require('app/server/odk/publisher/publishsync.js');
 
 // parse application/json
 const jsonParser = bodyParser.json();
@@ -34,14 +34,14 @@ router.post('/', jsonParser, isPublisherTokenValid, function(req, res) {
   return publishtransform(req.body)
   .then(transformed => {
     log.debug('Transformed publish data:', transformed);
-    return publishreconcile.fetchLocal(transformed)
+    return publishsync.fetchLocal(transformed)
     .then(local => {
       return publishmerge.merge(local, transformed);
     })
     .tap(merged => {
       log.debug('Finished published data merge', merged);
     })
-    .then(publishreconcile.syncMerged);
+    .then(publishsync.syncMerged);
   })
   .then(result => {
     log.debug('Finished processing published data', result);

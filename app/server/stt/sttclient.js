@@ -168,8 +168,6 @@ STTClient.prototype.getSamples = BPromise.method(function(options) {
   });
   var sampleIds = options.sampleIds;
   log.debug('getSamples with sampleIds', sampleIds);
-  console.log('getSamples with sampleIds');
-  console.dir(sampleIds);
 
   if (sampleIds.stId.length === 0 &&
       sampleIds.labId.length === 0 &&

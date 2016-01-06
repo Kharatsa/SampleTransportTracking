@@ -25,8 +25,9 @@ router.get('/formlist', function(req, res) {
 router.get('/view/submissionList', normalizeParams, function(req, res) {
   var formId = req.query.formid;
   var numEntries = req.query.numentries;
+  var cursor = req.query.cursor;
   if (typeof formId != 'undefined') {
-    return aggregate.submissionList(formId, numEntries)
+    return aggregate.submissionList(formId, numEntries, cursor)
     .spread(function(odkRes, body) {
       sendXML(res, odkRes, body);
     });

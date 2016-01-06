@@ -136,9 +136,33 @@ describe('Sample Transport Tracking Client', () => {
   });
 
   const goodForms = [
-   {formId: 'form1', formName: 'Form One'},
-   {formId: 'form2', formName: 'Form 2'},
-   {formId: 'form3', formName: null}
+    {
+      formId: 'form1',
+      formName: 'Form One',
+      majorMinorVersion: 1,
+      version: 1,
+      hash: 'abc',
+      downloadUrl: 'http://www.form.com/form1.xml',
+      manifestUrl: 'http://www.form.com/xformsManifest?formId=form1'
+    },
+    {
+      formId: 'form2',
+      formName: 'The Second Form',
+      majorMinorVersion: 5,
+      version: 55,
+      hash: 'def',
+      downloadUrl: 'http://www.form.com/form1.xml',
+      manifestUrl: 'http://www.form.com/xformsManifest?formId=form1'
+    },
+    {
+      formId: 'form3',
+      formName: null,
+      majorMinorVersion: null,
+      version: null,
+      hash: null,
+      downloadUrl: null,
+      manifestUrl: null
+    }
   ];
 
   describe('form entity methods', () => {

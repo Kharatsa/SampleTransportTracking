@@ -32,20 +32,33 @@ const sampleFields = {
  * Parses the sample details from a form submission
  *
  * @param  {Object} data - The published form submission
- * @return {Sample}
+ * @return {Promise.<Sample>}
  */
 function parseSamples(data) {
   log.debug('Parse samples');
 
   var sampleData = data[sampleFields.SAMPLE_REPEAT];
+  var parsedByStId = {};
 
-  return BPromise.map(sampleData, function(sample) {
-    return {
+  return BPromise.map(sampleData, sample => {
+    var item = {
       stId: sample[sampleFields.SAMPLE_TRACKING_ID] || null,
       labId: sample[sampleFields.LAB_ID] || null,
-      type: sample[sampleFields.TYPE] || null
+      type: sample[sampleFields.TYPE] || null//,
+      // repeatCount: 1
     };
-  });
+
+    // Each unique stId should appear only 1x in the results array
+    var sameSample = parsedByStId[item.stId];
+    if (typeof sameSample === 'undefined') {
+      parsedByStId[item.stId] = item;
+      return item;
+    }
+    // TODO: throw an error if stId/labId doesn't match for all records?
+    // sameSample.repeatCount += 1;
+    return null;
+  })
+  .filter(sample => sample !== null);
 }
 
 /**
@@ -111,11 +124,15 @@ const facilityFields = {
 function parseFacility(data) {
   log.debug('Parse facility');
 
-  return {
-    name: data[facilityFields.FACILITY],
-    region: data[facilityFields.REGION],
-    type: data[facilityFields.TYPE] || null
-  };
+  var facilityKey = data[facilityFields.FACILITY];
+  if (facilityKey) {
+    return {
+      name: data[facilityFields.FACILITY],
+      region: data[facilityFields.REGION],
+      type: data[facilityFields.TYPE] || null
+    };
+  }
+  return null;
 }
 
 /**
@@ -135,9 +152,11 @@ const personFields = {
 function parsePerson(data) {
   log.debug('Parse person');
 
-  return {
-    name: data[personFields.PERSON]
-  };
+  var personKey = data[personFields.PERSON];
+  if (personKey) {
+    return {name: personKey};
+  }
+  return null;
 }
 
 /**
@@ -146,7 +165,6 @@ function parsePerson(data) {
  */
 const updatesFields = {
   SUBMISSION_ID: 'instanceID',
-  INSTANCE_ID: 'instanceID',
   SAMPLE_REPEAT: 'srepeat',
   ST_ID: 'stid',
   LAB_ID: 'labid',
@@ -158,21 +176,80 @@ const updatesFields = {
  * value contains one field and value pair.
  *
  * @param  {Object} data - The published form submission
- * @return {Array.<Update>}
+ * @return {Promise.<Array.<Update>>}
  */
 function parseUpdates(data) {
   log.debug('Parsing updates');
 
-  var samples = data[updatesFields.SAMPLE_REPEAT];
-  return BPromise.map(samples, function(item, index) {
-    return {
+  var repeats = data[updatesFields.SAMPLE_REPEAT];
+  var updateByStId = {};
+  var updateCount = 0;
+
+  return BPromise.map(repeats, entry => {
+    var item = {
       submissionId: data[updatesFields.SUBMISSION_ID],
-      submissionNumber: index + 1,
-      stId: item[updatesFields.ST_ID] || null,
-      labId: item[updatesFields.LAB_ID] || null,
-      sampleStatus: item[updatesFields.STATUS] || null
+      submissionNumber: null,
+      stId: entry[updatesFields.ST_ID] || null,
+      labId: entry[updatesFields.LAB_ID] || null,
+      sampleUpdatesCount: 1,
+      sampleStatus: entry[updatesFields.STATUS] || null
     };
-  });
+
+    // Each unique stId should appear only 1x in the results array
+    var sameSample = updateByStId[item.stId];
+    if (typeof sameSample === 'undefined') {
+      updateCount += 1;
+      item.submissionNumber = updateCount;
+      updateByStId[item.stId] = item;
+      return item;
+    }
+    sameSample.sampleUpdatesCount += 1;
+    // TODO: throw an error on inconsist status values?
+    sameSample.sampleStatus = item.sampleStatus;
+    return null;
+  })
+  .filter(update => update !== null);
+}
+
+/**
+ * Enum for ODK Aggregate form fields relevant to data storage
+ * @enum {string}
+ */
+const testFields = {
+  SUBMISSION_ID: 'instanceID',
+  LAB_REPEAT: 'srepeat',
+  ST_ID: 'stid',
+  LAB_ID: 'labid',
+  LAB_STATUS: 'labstatus',
+  LAB_TEST: 'labtest',
+  LAB_REJECT: 'labreject'
+};
+
+const LAB_STATUS_FORMID = 'labstatus';
+
+/**
+ * [parseTestRequests description]
+ *
+ * @param {!string} formId [description]
+ * @param  {!Object} data [description]
+ * @return {Promise.<Array.<TestRequest>>}      [description]
+ */
+function parseTestRequests(formId, data) {
+  if (formId === LAB_STATUS_FORMID) {
+    log.debug('Parsing test requests');
+
+    var repeats = data[updatesFields.SAMPLE_REPEAT];
+    return BPromise.map(repeats, entry => ({
+      submissionId: data[updatesFields.SUBMISSION_ID],
+      stId: entry[updatesFields.ST_ID] || null,
+      labId: entry[updatesFields.LAB_ID] || null,
+      statusCode: entry[testFields.LAB_STATUS],
+      testCode: entry[testFields.LAB_TEST],
+      rejectCode: entry[testFields.LAB_REJECT]
+    }));
+  }
+  log.debug('Skipping parse test request');
+  return BPromise.resolve([]);
 }
 
 /**
@@ -217,15 +294,22 @@ const parsePublished = function(published) {
   log.info('Parsing aggregate publish data', published);
 
   var formId = published[formFields.FORM_ID];
-  return BPromise.map(published.data, function(submission) {
-    return BPromise.props({
+  return BPromise.map(published.data, submission =>
+    BPromise.props({
       samples: parseSamples(submission),
       submission: parseSubmission(formId, submission),
       facility: parseFacility(submission),
       person: parsePerson(submission),
       updates: parseUpdates(submission)
-    });
-  });
+    })
+    .then(transformed =>
+      parseTestRequests(formId, submission, transformed.updates)
+      .then(tests => {
+        transformed.tests = tests;
+        return transformed;
+      })
+    )
+  );
 };
 
 module.exports = parsePublished;

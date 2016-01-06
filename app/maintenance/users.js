@@ -14,9 +14,6 @@ const cli = require('commander');
 
 const client = authclient.create({db: storage.db, models: storage.models});
 
-const VERSION_NUM = '0.0.1';
-cli.version(VERSION_NUM);
-
 /**
  * Adds a new user to the STT database
  *

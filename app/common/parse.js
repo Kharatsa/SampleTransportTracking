@@ -9,34 +9,46 @@ function filterInt(value) {
   return NaN;
 }
 
+// via MDN
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat#A_stricter_parse_function
+function filterFloat(value) {
+  if(/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
+    return Number(value);
+  }
+  return NaN;
+}
+
 /**
  * Converts a String value to its underlying primitive type.
  *
- * @param  {String} text [description]
- * @return {Number|Boolean|String|null|undefined}
+ * @param  {string} text [description]
+ * @return {Number|Boolean|String|Date|null|undefined}
  */
 function parseText(text) {
-  // TODO: maybe support floats
-
-  var tmp;
   // undefined conversion
   if (typeof text === 'undefined' || text === 'undefined') {
     return undefined;
   }
 
   // null conversion
-  if (text === null) {
-    return null;
-  }
-  tmp = text.toLowerCase();
-  if (tmp === 'null') {
+  if (text === null || text.toLowerCase() === 'null') {
     return null;
   }
 
   // Number (Integer) conversion
-  tmp = filterInt(text);
+  var tmp = filterInt(text);
   if (!isNaN(tmp)) {
     return tmp;
+  }
+
+  tmp = filterFloat(text);
+  if (!isNaN(tmp)) {
+    return tmp;
+  }
+
+  tmp = Date.parse(text);
+  if (!isNaN(tmp)) {
+    return new Date(text);
   }
 
   // Boolean conversion

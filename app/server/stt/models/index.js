@@ -6,7 +6,8 @@ const facilities = require('./facilities.js');
 const submissions = require('./submissions.js');
 const samples = require('./samples.js');
 const updates = require('./updates.js');
+const testrequests = require('./testrequests.js');
 
 module.exports = {
-  forms, people, facilities, submissions, samples, updates
+  forms, people, facilities, submissions, samples, updates, testrequests
 };
