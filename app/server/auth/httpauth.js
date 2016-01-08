@@ -18,14 +18,13 @@ const client = authclient.create({db: storage.db, models: storage.models});
 // authentication.
 passport.use(new BasicStrategy(
   function(username, password, callback) {
-    log.debug('Authenticating username=`%s`, password=`%s`', username, password);
+    log.debug('Authenticating username=`%s`', username);
     return client.getUser({username})
     .then(user => {
       if (!user) {
         return false;
       }
 
-      log.debug('Validating credentials for user:', user);
       return credentials.isValid(password, user.salt, user.digest)
       .then(valid => valid ? user : false);
     })

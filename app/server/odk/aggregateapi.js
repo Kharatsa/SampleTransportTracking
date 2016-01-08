@@ -2,6 +2,8 @@
 
 const BPromise = require('bluebird');
 const request = require('request');
+const FormData = require('form-data');
+const Auth = require('request/lib/auth').Auth;
 const log = require('app/server/util/log.js');
 const aggregateConfig = require('app/config').odk.aggregate;
 
@@ -38,13 +40,18 @@ const ODK_REQUEST_AUTH = {
   sendImmediately: false
 };
 
-const odkRequest = request.defaults({
+const ODK_REQUEST_OPTIONS = {
   baseUrl: aggregateConfig.URL,
   headers: OPEN_ROSA_HEADERS,
-  auth: ODK_REQUEST_AUTH,
   gzip: true,
   time: true
+};
+
+const ODK_AUTH_REQUEST_OPTIONS = Object.assign({}, ODK_REQUEST_OPTIONS, {
+  auth: ODK_REQUEST_AUTH
 });
+
+const odkRequest = request.defaults(ODK_AUTH_REQUEST_OPTIONS);
 
 const odkRequestGetAsync = BPromise.promisify(odkRequest.get, {multiArgs: true});
 
@@ -108,8 +115,87 @@ const downloadSubmission = function(formId, topElement, submissionId) {
   });
 };
 
+/**
+ * Generates a new authorization header from an request and its response.
+ *
+ * @param  {http.ClientRequest} req
+ * @param  {http.IncomingMessage} res
+ * @param  {string} method The HTTP request method
+ * @return {Object}        [description]
+ */
+function buildAuthorizationHeader(req, res, method) {
+  req.method = method;
+  var auth = new Auth(req);
+  auth.hasAuth = true;
+  auth.user = ODK_REQUEST_AUTH.user;
+  auth.pass = ODK_REQUEST_AUTH.pass;
+
+  var authHeader = auth.onResponse(res);
+  log.debug('Authorization header', authHeader);
+  return authHeader;
+}
+
+function authorizationRequired(res) {
+  return res.statusCode === 401;
+}
+
+const SUBMISSION_OPTIONS = Object.assign({}, ODK_REQUEST_OPTIONS, {
+  url: '/submission'
+});
+
+/**
+ * Conducts a HEAD request to retrieve fresh Authorization headers from the
+ * ODK server. These headers are updated, and used with the multipart form
+ * submission to ODK.
+ *
+ * TODO: Make this less hacky
+ *
+ * @param  {string} submission [description]
+ * @return {Promise.<Array.<http.IncomingMessage, string>>}
+ */
+function makeSubmission(submission) {
+  log.debug('Making ODK Aggregate form submission', submission);
+
+  return new BPromise((resolve, reject) => {
+
+    var headReq = request.head(SUBMISSION_OPTIONS, (err, res) => {
+      if (err) {
+        reject(err);
+      }
+
+      // Build the form
+      var form = new FormData();
+      form.append('xml_submission_file', submission, {
+        filename: 'submission.xml',
+        contentType: 'text/xml'
+      });
+      var postHeaders = Object.assign({},
+        OPEN_ROSA_HEADERS,
+        form.getHeaders()
+      );
+
+      if (authorizationRequired(res)) {
+        postHeaders.Authorization = buildAuthorizationHeader(
+          headReq, res, 'POST'
+        );
+      }
+
+      var postOptions = Object.assign({},
+        SUBMISSION_OPTIONS,
+        {headers: postHeaders}
+      );
+
+      var postReq = request.post(postOptions, (err, res, body) => {
+        if (err) {
+          reject(err);
+        }
+        resolve([res, body]);
+      });
+      postReq._form = form;
+    });
+  });
+}
+
 module.exports = {
-  formList: formList,
-  submissionList: submissionList,
-  downloadSubmission: downloadSubmission
+  formList, submissionList, downloadSubmission, makeSubmission
 };

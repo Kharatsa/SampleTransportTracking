@@ -70,9 +70,7 @@ function generateSalt() {
  * @throws {Error} If [password.length > 160]
  */
 function isValid(password, salt, expectedDigest) {
-  log.debug('isValid\n\tpassword=%s\n\tsalt=%s\n\tdigest=%s', password, salt, expectedDigest);
   return hash(password, salt)
-  .tap(passwordDigest => log.debug('passwordDigest: %s', passwordDigest))
   .then(passwordDigest => passwordDigest === expectedDigest);
 }
 

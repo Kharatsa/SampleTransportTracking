@@ -1,6 +1,6 @@
 'use strict';
 
-// const config = require('app/config');
+const config = require('app/config');
 const log = require('app/server/util/log.js');
 
 // Convert query parameters to lowercase
@@ -28,34 +28,34 @@ function handleJSONErrors(err, req, res, next) {
   }
 }
 
-// // production error handler
-// // no stacktraces leaked to user
-// function handleProductionErrors(err, req, res, next) {
-//   if (res.headersSent) {
-//     return next(err);
-//   }
-//   log.error('Request Error', err, err.stack);
-//   res.status(err.status || 500);
-//   res.json({message: err.message, error: {}});
-// }
+// production error handler
+// no stacktraces leaked to user
+function handleProductionErrors(err, req, res, next) {
+  if (res.headersSent) {
+    return next(err);
+  }
+  log.error('Request Error', err, err.stack);
+  res.status(err.status || 500);
+  res.send(err.message);
+}
 
-// function handleDevelopmentErrors(err, req, res, next) {
-//   if (res.headersSent) {
-//     return next(err);
-//   }
-//   log.error('Request DEVELOPMENT Error', err, err.stack);
-//   res.status(err.status || 500);
-//   res.json({message: err.message, error: err});
-// }
+function handleDevelopmentErrors(err, req, res, next) {
+  if (res.headersSent) {
+    return next(err);
+  }
+  log.error('Request Error', err, err.stack);
+  res.status(err.status || 500);
+  res.send(err.message + '\n' + err.stack);
+}
 
-// const handleErrors = (
-//   config.server.IS_PRODUCTION ?
-//   handleProductionErrors :
-//   handleDevelopmentErrors
-// );
+const handleErrors = (
+  config.server.IS_PRODUCTION ?
+  handleProductionErrors :
+  handleDevelopmentErrors
+);
 
 module.exports = {
   normalizeParams: normalizeParams,
-  handleJSONErrors: handleJSONErrors
-  // handleErrors: handleErrors
+  handleJSONErrors: handleJSONErrors,
+  handleErrors: handleErrors
 };

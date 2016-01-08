@@ -16,19 +16,16 @@ Object.keys(sttModels).forEach(modelName =>
 Object.keys(authModels).forEach(modelName =>
   storage.loadModel(authModels[modelName])
 );
-const passport = require('app/server/auth/httpauth.js');
+const middleware = require('app/server/middleware.js');
 const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
 const PublishRoutes = require('app/server/odk/publisher/publishroutes.js');
 const STTRoutes = require('app/server/stt/sttroutes.js');
+const DisaRoutes = require('app/server/disa/disaroutes.js');
 
-const app = express();
 shutdownhandler.init();
 
-app.use(express.static(config.server.PUBLIC_PATH));
-log.info('Serving static files from', config.server.PUBLIC_PATH);
-app.use(favicon(config.server.PUBLIC_PATH + '/favicon.ico'));
-app.use(helmet());
+const app = express();
 
 log.info('NODE_ENV=%s', config.server.NODE_ENV);
 if (config.server.IS_PRODUCTION) {
@@ -39,19 +36,18 @@ if (config.server.IS_PRODUCTION) {
   app.set('json spaces', 2);
 }
 
+app.use(express.static(config.server.PUBLIC_PATH));
+log.info('Serving static files from', config.server.PUBLIC_PATH);
+app.use(favicon(config.server.PUBLIC_PATH + '/favicon.ico'));
+app.use(helmet());
+
 app.use(requestLog.requestLogger);
 
 // App routes
 app.use('/odk', AggregateRoutes);
 app.use('/publish', PublishRoutes);
 app.use('/track', STTRoutes);
-
-app.get('/secret',
-  passport.authenticate('basic', { session: false }),
-  function(req, res) {
-    res.json(req.user);
-  }
-);
+app.use('/disa', DisaRoutes);
 
 // app.use(requestLog.errorLogger);
 
@@ -62,7 +58,7 @@ app.use((req, res, next) => {
   next(err);
 });
 
-// app.use(middleware.handleErrors);
+app.use(middleware.handleErrors);
 
 app.listen(config.server.PORT, config.server.HOST, () =>
   log.info('Listening at ' + config.server.HOST + ':' + config.server.PORT)

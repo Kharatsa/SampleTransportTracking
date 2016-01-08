@@ -12,19 +12,16 @@ const sttClient = sttclient.create({
   models: storage.models
 });
 
-router.get('/updates', normalizeParams, function(req, res) {
-  var maxId = req.query.maxid;
-  return sttClient.listUpdates(maxId)
-  .then(function(updates) {
-    res.json(updates);
-  });
+router.get('/updates', normalizeParams, function(req, res, next) {
+  return sttClient.getUpdates()
+  .then(updates => res.json(updates))
+  .catch(err => next(err));
 });
 
-router.get('/ids', function(req, res) {
-  return sttClient.listSampleIds()
-  .then(function(ids) {
-    res.json(ids);
-  });
+router.get('/ids', function(req, res, next) {
+  return sttClient.getSamples()
+  .then(ids => res.json(ids))
+  .catch(err => next(err));
 });
 
 router.get('/id/:id', function(req, res) {

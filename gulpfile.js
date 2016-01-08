@@ -203,5 +203,5 @@ gulp.task('default',
 );
 
 gulp.task('build',
-  ['production', 'bundle', 'styles', 'static', 'docs']
+  ['production', 'bundle', 'styles', 'static']
 );

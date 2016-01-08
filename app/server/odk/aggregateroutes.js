@@ -2,7 +2,6 @@
 
 const express = require('express');
 const router = express.Router();
-const log = require('app/server/util/log.js');
 const normalizeParams = require('app/server/middleware.js').normalizeParams;
 const aggregate = require('app/server/odk/aggregateapi.js');
 
@@ -26,7 +25,7 @@ router.get('/view/submissionList', normalizeParams, function(req, res) {
   var formId = req.query.formid;
   var numEntries = req.query.numentries;
   var cursor = req.query.cursor;
-  if (typeof formId != 'undefined') {
+  if (typeof formId !== 'undefined') {
     return aggregate.submissionList(formId, numEntries, cursor)
     .spread(function(odkRes, body) {
       sendXML(res, odkRes, body);

@@ -7,6 +7,11 @@ const clientutils = require('app/server/storage/clientutils.js');
 
 /** @module stt/sttclient */
 
+// TODO: create wrapper functions to handle limit? simple?
+// TODO: create helpers for default limits?
+// TODO: create helpers for pagination?
+// TODO: create helpers for ordering?
+
 /**
  * Creates a new Sample Transport Tracking client.
  * @class
@@ -169,13 +174,17 @@ STTClient.prototype.getSamples = BPromise.method(function(options) {
   var sampleIds = options.sampleIds;
   log.debug('getSamples with sampleIds', sampleIds);
 
+  var samplesWhere;
   if (sampleIds.stId.length === 0 &&
       sampleIds.labId.length === 0 &&
       sampleIds.anyId.length === 0) {
-    throw new Error('Requires one or both of stId, labId, or anyId');
+    samplesWhere = {};
+    // throw new Error('Requires one or both of stId, labId, or anyId');
+  } else {
+    samplesWhere = prepareSamplesWhere(sampleIds);
   }
 
-  var samplesWhere = prepareSamplesWhere(sampleIds);
+  // var samplesWhere = prepareSamplesWhere(sampleIds);
 
   return this.models.Samples.findAll({
     where: samplesWhere,
@@ -501,9 +510,9 @@ STTClient.prototype.getUpdates = BPromise.method(function(options) {
   });
   log.debug('getUpdates with updateIds', options.updateIds);
 
-  if (options.updateIds.length < 1) {
-    throw new Error('getUpdates requires at least 1 update Id');
-  }
+  // if (options.updateIds.length < 1) {
+  //   throw new Error('getUpdates requires at least 1 update Id');
+  // }
 
   return BPromise.map(options.updateIds, function(ids) {
     // Add each id pair to a SQL "AND" statement

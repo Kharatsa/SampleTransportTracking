@@ -20,7 +20,7 @@ import routes from './routes.js';
 injectTapEventPlugin();
 
 let createStoreWithMiddleware;
-if (DEBUG) {
+if (global.DEBUG) {
   const logger = createLogger();
   createStoreWithMiddleware = applyMiddleware(
     thunk, // lets us dispatch() functions
