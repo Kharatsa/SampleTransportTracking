@@ -5,10 +5,14 @@
 const config = require('app/config');
 const log = require('app/server/util/log.js');
 const sttModels = require('app/server/stt/models');
+const authModels = require('app/server/auth/models');
 const storage = require('app/server/storage');
 storage.init({config: config.db});
 Object.keys(sttModels).forEach(modelName =>
   storage.loadModel(sttModels[modelName])
+);
+Object.keys(authModels).forEach(modelName =>
+  storage.loadModel(authModels[modelName])
 );
 const sttclient = require('app/server/stt/sttclient.js');
 const client = sttclient.create({db: storage.db, models: storage.models});
@@ -30,7 +34,18 @@ cli
   .action(purge);
 
 function sync() {
-  log.info('Re-syncing the local database');
+  log.info('Syncing the local database');
+
+  return client.db.sync();
+}
+
+cli
+  .command('sync')
+  .description('sync the database tables')
+  .action(sync);
+
+function rebuild() {
+  log.info('Rebuilding the local database');
 
   return client.db.sync()
   .then(() => client.models.Forms.truncate())
@@ -40,8 +55,8 @@ function sync() {
 }
 
 cli
-  .command('sync')
+  .command('rebuild')
   .description('purge the database, and reload from odk aggregate')
-  .action(sync);
+  .action(rebuild);
 
 cli.parse(process.argv);

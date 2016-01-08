@@ -22,7 +22,6 @@
     "helmet": "^0.15.0",
     "history": "^1.13.x",
     "immutable": "^3.7.5",
-    "libxmljs": "^0.16.1",
     "lodash": "^3.10.1",
     "material-ui": "^0.14.0-rc1",
     "passport": "^0.3.2",
