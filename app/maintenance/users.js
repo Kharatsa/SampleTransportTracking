@@ -5,14 +5,18 @@
 const config = require('app/config');
 const log = require('app/server/util/log.js');
 const storage = require('app/server/storage');
-storage.init({config: config.db});
 const authModels = require('app/server/auth/models');
 const authclient = require('app/server/auth/authclient.js');
 const credentials = require('app/server/auth/credentials.js');
-storage.loadModel(authModels.users);
 const cli = require('commander');
 
-const client = authclient.create({db: storage.db, models: storage.models});
+var client;
+
+function before() {
+  storage.init({config: config.db});
+  storage.loadModel(authModels.users);
+  client = authclient.create({db: storage.db, models: storage.models});
+}
 
 /**
  * Adds a new user to the STT database
@@ -22,7 +26,9 @@ const client = authclient.create({db: storage.db, models: storage.models});
  * @param  {?Object} options  [description]
  * @param {?boolean} options.admin [description]
  */
-function handleAdd(username, password, options) {
+function add(username, password, options) {
+  before();
+
   username = username.trim();
   password = password.trim();
   var admin = !!options.admin;
@@ -42,18 +48,19 @@ function handleAdd(username, password, options) {
   });
 }
 
-cli
-  .command('add <username> <password>')
+cli.command('add <username> <password>')
   .description('add a new user')
   .option('-a, --admin', 'add user as administrator')
-  .action(handleAdd);
+  .action(add);
 
 /**
  * Removes a user from the STT database
  *
  * @param  {string} username [description]
  */
-function handleRemove(username) {
+function remove(username) {
+  before();
+
   username = username.trim();
 
   log.debug('User Remove -- username=%s', username);
@@ -68,10 +75,9 @@ function handleRemove(username) {
   });
 }
 
-cli
-  .command('remove <username>')
+cli.command('remove <username>')
   .description('remove an existing user')
-  .action(handleRemove);
+  .action(remove);
 
 // TODO: Change user's password
 // TODO: List existing users
