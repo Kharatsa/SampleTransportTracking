@@ -12,6 +12,25 @@ function getElemText(parent, textNode) {
 }
 
 /**
+ * Returns a new Object with the id attribute, required for ODK Aggregate
+ * submissions, included on the object under the `$` property. These `$`
+ * properties are translated to an XML attribute by the xml2js builder.
+ *
+ * The passed object is also nested with a new object, keyed on formId.
+ *
+ * @param  {Object} obj    [description]
+ * @param  {string} formId [description]
+ * @return {Object}        [description]
+ */
+function formIdWrap(obj, formId) {
+  var data = Object.assign(obj, {$: {id: formId}});
+
+  var form = {};
+  form[formId] = data;
+  return form;
+}
+
+/**
  * @typedef {LabTest}
  * @property {!string} labstatus [description]
  * @property {!string} labtest [description]
@@ -85,21 +104,93 @@ const LAB_STATUS_FORM_ID = 'labstatus';
 
 /**
  * [buildLabForm description]
+ *
  * @param  {LabStatus} labStatus [description]
- * @return {[type]}           [description]
+ * @return {string} labstatus form submission XML
  */
 function buildLabForm(labStatus) {
-  log.debug('Converting lab status object to ODK submission XML', labStatus);
-  // Include ODK's required `id` attribute on the data element
-  var formData = Object.assign(labStatus, {
-    $: {id: LAB_STATUS_FORM_ID}
-  });
+  log.debug('Building lab status submission XML', labStatus);
+  return xmlBuilder.buildObject(formIdWrap(labStatus, LAB_STATUS_FORM_ID));
+}
 
-  var obj = {};
-  obj[LAB_STATUS_FORM_ID] = formData;
-  return xmlBuilder.buildObject(obj);
+const metadataFields = {
+  META: 'Meta',
+  CHANGED_TIME: 'ChangedTimestamp',
+  ADD: 'Add',
+  REMOVE: 'Remove',
+  UPDATE: 'Update',
+  TYPE: 'Type',
+  KEY: 'Key',
+  DETAIL: 'Detail'
+};
+
+function makeMetaAction(action, item, actionDate) {
+  return {
+    action,
+    actionDate,
+    type: getElemText(item, metadataFields.TYPE),
+    key: getElemText(item, metadataFields.KEY),
+    detail: getElemText(item, metadataFields.DETAIL)
+  };
+}
+
+/**
+ * [parseMetadataUpdate description]
+ *
+ * @param  {string} update Metadata update XML
+ * @return {[type]}        [description]
+ */
+function parseMetadataUpdate(xml) {
+  log.debug('Parsing metadata update XML');
+
+  return xml2js.parseStringAsync(xml)
+  .then(parsed => parsed[metadataFields.META])
+  .then(parsed => {
+    var actionDate = parse.parseText(
+      getElemText(parsed, metadataFields.CHANGED_TIME)
+    ).toISOString();
+
+    return BPromise.props({
+      adds: BPromise.map(parsed[metadataFields.ADD] || [], item => {
+        return makeMetaAction('add', item, actionDate);
+      }),
+      removes: BPromise.map(parsed[metadataFields.REMOVE] || [], item => {
+        return makeMetaAction('remove', item, actionDate);
+      }),
+      updates: BPromise.map(parsed[metadataFields.UPDATE] || [], item => {
+        return makeMetaAction('update', item, actionDate);
+      })
+    });
+  })
+  .then(result => [].concat(
+    result.adds, result.removes, result.updates
+  ));
+}
+
+/**
+ * @typedef {MetadataUpdate}
+ * @property {string} action [description]
+ * @property {string} type [description]
+ * @property {string} key [description]
+ * @property {string} detail [description]
+ */
+
+const METADATA_FORM_ID = 'stt_metadata';
+
+/**
+ * [buildMetadataForm description]
+ *
+ * @param  {MetadataUpdate} metaUpdate [description]
+ * @return {string} stt_metadata form submission XML
+ */
+function buildMetadataForm(meta) {
+  log.debug('Building metadata form submission XML', meta);
+  return xmlBuilder.buildObject(formIdWrap(meta, METADATA_FORM_ID));
 }
 
 module.exports = {
-  parseLabStatus, buildLabForm
+  parseLabStatus,
+  buildLabForm,
+  parseMetadataUpdate,
+  buildMetadataForm
 };

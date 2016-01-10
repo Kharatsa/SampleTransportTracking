@@ -76,6 +76,7 @@ function handleSync(client, syncMethod, data, tran) {
   .then(() => data && data.length ? syncMethod.call(client, data, tran) : null);
 }
 
+// TODO: finish implementing update methods
 const empty = {noop: () => log.debug('noop')};
 const saveSamples = handleSync.bind(null, client, client.saveSamples);
 const updateSamples = handleSync.bind(null, client, client.updateSamples);

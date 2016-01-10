@@ -11,6 +11,7 @@ const clientutils = require('app/server/storage/clientutils.js');
 // TODO: create helpers for default limits?
 // TODO: create helpers for pagination?
 // TODO: create helpers for ordering?
+// TODO: finish implementing update methods
 
 /**
  * Creates a new Sample Transport Tracking client.
@@ -24,6 +25,7 @@ const clientutils = require('app/server/storage/clientutils.js');
  * @param {!Sequelize.Model} options.models.Facilities [description]
  * @param {!Sequelize.Model} options.models.People [description]
  * @param {!Sequelize.Model} options.models.Updates [description]
+ * @param {!Sequelize.Model} options.models.Metadata [description]
  */
 function STTClient(options) {
   log.debug('Creating STTClient');
@@ -51,7 +53,17 @@ function STTClient(options) {
   if (!options.models.Updates) {
     throw new Error('Updates model is a required parameter');
   }
+  if (!options.models.Metadata) {
+    throw new Error('Metadata model is a required parameter');
+  }
   this.models = options.models || {};
+}
+
+function handleSimpleOption(options, results) {
+  if (options && options.simple) {
+    return results.map(clientutils.getSimpleInstance);
+  }
+  return results;
 }
 
 /**
@@ -80,12 +92,7 @@ STTClient.prototype.getForms = function(options) {
     where: formsWhere,
     limit: options.limit
   })
-  .then(results => {
-    if (options.simple) {
-      return results.map(clientutils.getSimpleInstance);
-    }
-    return results;
-  });
+  .then(results => handleSimpleOption(options, results));
 };
 
 /**
@@ -93,7 +100,7 @@ STTClient.prototype.getForms = function(options) {
  *
  * @param {!Object} options
  * @param {!string} [options.formId] - The form Id
- * @param {boolean} [options.simple=true] [description]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Form|Sequelize.Instance}
  */
 STTClient.prototype.getForm = function(options) {
@@ -120,7 +127,7 @@ STTClient.prototype.saveForms = function(forms, tran) {
 /**
  * [prepareSamplesWhere description]
  *
- * @param  {SampleIds} sampleIds [description]
+ * @param  {!SampleIds} sampleIds [description]
  * @return {Object}           [description]
  */
 function prepareSamplesWhere(sampleIds) {
@@ -154,7 +161,7 @@ function prepareSamplesWhere(sampleIds) {
  * [getSamples description]
  *
  * @method
- * @param {Object} options
+ * @param {?Object} options
  * @param {?SampleIds} options.sampleIds   Sample identifiers
  * @param {?number} [options.limit] [description]
  * @param {?boolean} [options.simple=true] When simple is true, the method
@@ -179,23 +186,15 @@ STTClient.prototype.getSamples = BPromise.method(function(options) {
       sampleIds.labId.length === 0 &&
       sampleIds.anyId.length === 0) {
     samplesWhere = {};
-    // throw new Error('Requires one or both of stId, labId, or anyId');
   } else {
     samplesWhere = prepareSamplesWhere(sampleIds);
   }
-
-  // var samplesWhere = prepareSamplesWhere(sampleIds);
 
   return this.models.Samples.findAll({
     where: samplesWhere,
     limit: options.limit
   })
-  .then(results => {
-    if (options.simple) {
-      return results.map(clientutils.getSimpleInstance);
-    }
-    return results;
-  });
+  .then(results => handleSimpleOption(options, results));
 });
 
 /**
@@ -206,11 +205,11 @@ STTClient.prototype.getSamples = BPromise.method(function(options) {
  *     anyId: options.anyId
  * }})[0]
  *
- * @param {Object} options [description]
+ * @param {!Object} options [description]
  * @param {string} [options.stId] - The sample tracking Id
  * @param {string} [options.labId] - The lab Id
  * @param {string} [options.anyId] - The sample or lab Id
- * @param {boolean} [options.simple=true] [description]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Sample|Sequelize.Instance}         [description]
  * @throws {Error} If [!options.stId && !options.labId && !options.anyId]
  */
@@ -230,8 +229,8 @@ STTClient.prototype.getSample = function(options) {
 /**
  * [_saveSamples description]
  *
- * @param  {Array.<Sample>} samples [description]
- * @param  {Sequelize.Transaction} tran    [description]
+ * @param  {!Array.<Sample>} samples [description]
+ * @param  {?Sequelize.Transaction} [tran]    [description]
  * @return {Promise.<Array.<Sequelize.Instance>>}
  */
 STTClient.prototype.saveSamples = function(samples, tran) {
@@ -243,8 +242,8 @@ STTClient.prototype.saveSamples = function(samples, tran) {
  * [updateSamples description]
  *
  * @param {!Object} options [description]
- * @param  {!Array.<Sample>} options.samples [description]
- * @param  {?Sequelize.Transaction} options.tran    [description]
+ * @param {!Array.<Sample>} options.samples [description]
+ * @param {?Sequelize.Transaction} [options.tran]    [description]
  * @return {Promise.<Array.<affectedCount, affectedRows>>}
  */
 STTClient.prototype.updateSamples = function(options) {
@@ -258,11 +257,11 @@ STTClient.prototype.updateSamples = function(options) {
  * [getSubmissions description]
  *
  * @method
- * @param {Object} options
- * @param {Array.<string>}  options.submissionIds - Form submission Ids
- * @param {Array} [options.order=[['completed_date', 'DESC']]]
+ * @param {?Object} options
+ * @param {?Array.<string>}  options.submissionIds - Form submission Ids
+ * @param {?Array} [options.order=[['completed_date', 'DESC']]]
  * @param {?number} [options.limit] [description]
- * @param {boolean} [options.simple=true] [description]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Promise.<Array.<Submission|Sequelize.Instance>>}
  * @throws {Error} If [!options.submissionIds.length]
  */
@@ -287,21 +286,16 @@ STTClient.prototype.getSubmissions = BPromise.method(function(options) {
     order: options.order,
     limit: options.limit
   })
-  .then(results => {
-    if (options.simple) {
-      return results.map(clientutils.getSimpleInstance);
-    }
-    return results;
-  });
+  .then(results => handleSimpleOption(options, results));
 });
 
 /**
  * Equivalent to getSubmissions({submissionIds: options.submissionId})[0]
  *
- * @param {Object} options [description]
- * @param  {string} options.submissionId
- * @param  {string|Array}   [options.order=[['completed_date', 'DESC']]]
- * @param {boolean} [options.simple=true] [description]
+ * @param {!Object} options [description]
+ * @param {!string} options.submissionId
+ * @param {?string|Array}   [options.order=[['completed_date', 'DESC']]]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Promise.<Submission|Sequelize.Instance>}
  */
 STTClient.prototype.getSubmission = function(options) {
@@ -317,8 +311,8 @@ STTClient.prototype.getSubmission = function(options) {
 /**
  * [saveSubmission description]
  *
- * @param  {Array.<Submission>} submissions - [description]
- * @param  {Sequelize.Transaction} tran - [description]
+ * @param  {!Array.<Submission>} submissions - [description]
+ * @param  {?Sequelize.Transaction} [tran] - [description]
  * @return {Promise.<Array.<Sequelize.Instance>>}
  */
 STTClient.prototype.saveSubmissions = function(submissions, tran) {
@@ -329,8 +323,8 @@ STTClient.prototype.saveSubmissions = function(submissions, tran) {
 /**
  * [updateSubmission description]
  *
- * @param  {Array.<Object>} submissions - [description]
- * @param  {Sequelize.Transaction} tran - [description]
+ * @param  {!Array.<Object>} submissions - [description]
+ * @param  {?Sequelize.Transaction} [tran] - [description]
  * @return {Promise.<Array.<number, number>>}
  */
 STTClient.prototype.updateSubmission = function() {
@@ -340,10 +334,10 @@ STTClient.prototype.updateSubmission = function() {
 /**
  * [getFacilities description]
  *
- * @param {Object} options [description]
- * @param  {Array.<string>} [options.facilityKeys]
+ * @param {?Object} options [description]
+ * @param {?Array.<string>} [options.facilityKeys]
  * @param {?number} [options.limit] [description]
- * @param {boolean} [options.simple=true] [description]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Promise.<Array.<Facility|Sequelize.Instance>>}
  */
 STTClient.prototype.getFacilities = function(options) {
@@ -362,20 +356,15 @@ STTClient.prototype.getFacilities = function(options) {
     where: facilityWhere,
     limit: options.limit
   })
-  .then(results => {
-    if (options.simple) {
-      return results.map(clientutils.getSimpleInstance);
-    }
-    return results;
-  });
+  .then(results => handleSimpleOption(options, results));
 };
 
 /**
  * Equivalent to getFacilities({facilityKeys: [options.facilityKey]})[0]
  *
- * @param {Object} [options] [description]
- * @param {string} [options.facilityKey] [description]
- * @param {boolean} [options.simple=true]
+ * @param {!Object} [options] [description]
+ * @param {!string} [options.facilityKey] [description]
+ * @param {?boolean} [options.simple=true]
  * @return {Promise.<Facility|Sequelize.Instance>}
  */
 STTClient.prototype.getFacility = function(options) {
@@ -390,8 +379,8 @@ STTClient.prototype.getFacility = function(options) {
 /**
  * [saveFacilities description]
  *
- * @param  {Array.<Submission>} facilities - [description]
- * @param  {Sequelize.Transaction} tran - [description]
+ * @param  {!Array.<Submission>} facilities - [description]
+ * @param  {?Sequelize.Transaction} [tran] - [description]
  * @return {Promise.<Array.<Sequelize.Instance>>}
  */
 STTClient.prototype.saveFacilities = function(facilities, tran) {
@@ -413,10 +402,10 @@ STTClient.prototype.updateFacilities = function() {
 /**
  * [getPeople description]
  *
- * @param {Object} [options] [description]
- * @param {Array.<string>} [options.peopleKeys] [description]
+ * @param {?Object} [options] [description]
+ * @param {?Array.<string>} [options.peopleKeys] [description]
  * @param {?number} [options.limit] [description]
- * @param {boolean} [options.simple=true] [description]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Promise.<Array.<Person|Sequelize.Instance>>}
  */
 STTClient.prototype.getPeople = function(options) {
@@ -446,9 +435,9 @@ STTClient.prototype.getPeople = function(options) {
 /**
  * Equivalent to getPeople({peopleKeys: [options.personKey]})[0]
  *
- * @param {Object} [options] [description]
- * @param {string} [options.personKey]   [description]
- * @param {boolean} [options.simple=true] [description]
+ * @param {?Object} [options] [description]
+ * @param {?string} [options.personKey]   [description]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Promise.<Person>}
  */
 STTClient.prototype.getPerson = function(options) {
@@ -463,8 +452,8 @@ STTClient.prototype.getPerson = function(options) {
 /**
  * [saveFacilities description]
  *
- * @param  {Array.<Submission>} people - [description]
- * @param  {Sequelize.Transaction} tran - [description]
+ * @param  {!Array.<Submission>} people - [description]
+ * @param  {?Sequelize.Transaction} [tran] - [description]
  * @return {Promise.<Array.<Sequelize.Instance>>}
  */
 STTClient.prototype.savePeople = function(people, tran) {
@@ -475,8 +464,8 @@ STTClient.prototype.savePeople = function(people, tran) {
 /**
  * [updatePeople description]
  *
- * @param  {Array.<Object>} people - [description]
- * @param  {Sequelize.Transaction} tran - [description]
+ * @param  {!Array.<Object>} people - [description]
+ * @param  {?Sequelize.Transaction} [tran] - [description]
  * @return {Promise.<Array.<number, number>>}
  */
 STTClient.prototype.updatePeople = function() {
@@ -496,10 +485,10 @@ STTClient.prototype.updatePeople = function() {
  * [getUpdates description]
  *
  * @method
- * @param {Object} options [description]
- * @param {Array.<UpdateId>} options.updateIds [description]
+ * @param {?Object} options [description]
+ * @param {?Array.<UpdateId>} options.updateIds [description]
  * @param {?number} [options.limit] [description]
- * @param {boolean} [options.simple=true] [description]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Promise.<Array.<Update|Sequelize.Instance>>}
  * @throws {Error} If [updateIds.length === 0]
  */
@@ -509,10 +498,6 @@ STTClient.prototype.getUpdates = BPromise.method(function(options) {
     simple: true
   });
   log.debug('getUpdates with updateIds', options.updateIds);
-
-  // if (options.updateIds.length < 1) {
-  //   throw new Error('getUpdates requires at least 1 update Id');
-  // }
 
   return BPromise.map(options.updateIds, function(ids) {
     // Add each id pair to a SQL "AND" statement
@@ -531,20 +516,15 @@ STTClient.prototype.getUpdates = BPromise.method(function(options) {
       limit: options.limit
     });
   })
-  .then(results => {
-    if (options.simple) {
-      return results.map(clientutils.getSimpleInstance);
-    }
-    return results;
-  });
+  .then(results => handleSimpleOption(options, results));
 });
 
 /**
  Equivalent to getUpdates({updateIds: [updateId]})[0]
  *
- * @param {Object} options [description]
- * @param {UpdateId} options.updateId [description]
- * @param {boolean} [options.simple=true] [description]
+ * @param {!Object} options [description]
+ * @param {!UpdateId} options.updateId [description]
+ * @param {?boolean} [options.simple=true] [description]
  * @return {Promise.<Update|Sequelize.Instance>}
  */
 STTClient.prototype.getUpdate = function(options) {
@@ -576,6 +556,62 @@ STTClient.prototype.saveUpdates = function(updates, tran) {
  * @return {Promise.<Array.<number, number>>}
  */
 STTClient.prototype.updateUpdates = function() {
+  throw new Error('Not implemented');
+};
+
+/**
+ * @typedef {MetadataKey}
+ * @param {string} type The metadata type (e.g., facility)
+ * @param {string} key  The metadata key for the given type (e.g., "MBT")
+ */
+
+/**
+ * [getMetadata description]
+ *
+ * @param {Object} options [description]
+ * @param {?Array.<MetadataKey>} [options.keys] [description]
+ * @param {?number} [options.limit] [description]
+ * @param {?boolean} [options.simple=true] [description]
+ * @return {Promise.<Array.<Metadata|Sequelize.Instance>>}
+ */
+STTClient.prototype.getMetadata = function(options) {
+  options = _.defaultsDeep(options || {}, {
+    keys: [],
+    simple: true
+  });
+
+  return BPromise.reduce(options.keys, (ids, metaId) => {
+    ids.push({
+      $and: [{type: metaId.type}, {key: metaId.key}]
+    });
+  }, [])
+  .then(metaIds => this.models.Metadata.findAll({
+    where: metaIds.length ? {$or: metaIds} : {},
+    limit: options.limit
+  }))
+  .then(results => handleSimpleOption(options, results));
+};
+
+/**
+ * [saveMetadata description]
+ *
+ * @param  {Array.<Metadata>} metadata - [description]
+ * @param  {Sequelize.Transaction} tran - [description]
+ * @return {Promise.<Array.<Sequelize.Instance>>}
+ */
+STTClient.prototype.saveMetadata = function(metadata, tran) {
+  log.info('CREATING ' + metadata.length + ' metadata entries', metadata);
+  return clientutils.saveBulk(this.models.Metadata, metadata, tran);
+};
+
+/**
+ * [updatePeople description]
+ *
+ * @param  {Array.<Object>} updates - [description]
+ * @param  {Sequelize.Transaction} tran - [description]
+ * @return {Promise.<Array.<number, number>>}
+ */
+STTClient.prototype.updateMetadata = function() {
   throw new Error('Not implemented');
 };
 

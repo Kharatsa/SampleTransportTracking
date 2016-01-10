@@ -2,6 +2,7 @@
 
 'use strict';
 
+const BPromise = require('bluebird');
 const config = require('app/config');
 const log = require('app/server/util/log.js');
 const sttModels = require('app/server/stt/models');
@@ -13,6 +14,7 @@ const cli = require('commander');
 var client;
 
 function before() {
+  // process.NODE_ENV = 'development';
   storage.init({config: config.db});
 
   Object.keys(sttModels).forEach(modelName =>
@@ -55,11 +57,19 @@ function rebuild() {
 
   const aggregatesync = require('app/server/odk/sync/aggregatesync.js');
 
-  return client.db.sync()
-  .then(() => client.models.Forms.truncate())
-  .then(() => log.info('Finished Forms truncate'))
-  .then(() => aggregatesync.syncFormList())
-  .then(forms => log.info('Finished synchronizing forms', forms));
+  return purge()
+  .then(() => aggregatesync.getFormList())
+  .then(parsed => client.saveForms(parsed))
+  .tap(forms => log.info('Finished synchronizing forms', forms))
+  .map(form => form.get('form_id'))
+  .map(formId => (
+    BPromise.props({ formId, ids: aggregatesync.getAllSubmissionIds(formId)})
+  ))
+  .tap(results => log.info('Finished fetching submission ids', results))
+  .map(formSubs =>
+    BPromise.map(formSubs.ids, id =>
+      aggregatesync.getSubmission(formSubs.formId, id)
+  ));
 }
 
 cli.command('rebuild')

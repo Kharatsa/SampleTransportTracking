@@ -7,7 +7,15 @@ const submissions = require('./submissions.js');
 const samples = require('./samples.js');
 const updates = require('./updates.js');
 const testrequests = require('./testrequests.js');
+const metadata = require('./metadata.js');
 
 module.exports = {
-  forms, people, facilities, submissions, samples, updates, testrequests
+  forms,
+  people,
+  facilities,
+  submissions,
+  samples,
+  updates,
+  testrequests,
+  metadata
 };

@@ -68,22 +68,35 @@ const formList = function() {
 /**
  * Fetches the submission list for a single ODK Aggregate form
  *
- * @param  {!string} formId A formID from ODK. This value should appear as
- *                          the text content in a <xform><formID> on the
- *                          /formList ODK endpoint
- * @param {?number|string} [entries] Limits the number of submissions returned.
- * @param {?string} [cursor] The resumptionCursor holds opaque data that is used
- *                         by the server to track the location at which to
- *                         resume the list of ids
+ * @param {Object} options [description]
+ * @param  {!string} options.formId A formID from ODK. This value should appear
+ *                                  as the text content in a <xform><formID> on
+ *                                  the /formList ODK endpoint
+ * @param {?number|string} [options.entries] Limits the number of submissions
+ *                                           returned.
+ * @param {?string} [options.cursor] The resumptionCursor holds opaque data that
+ *                                   is used by the server to track the location
+ *                                   at which to resume the list of ids
  * @return {Promise.<http.IncomingMessage,string>} The response and respose body
  */
-const submissionList = function(formId, entries, cursor) {
-  log.debug('ODK /view/submissionList formId=' + formId +
-            ' entries=' + entries);
-  log.debug('submissionList cursor:', cursor || 'N/A');
+const submissionList = function(options) {
+  if (!options.formId) {
+    throw new Error('formId is a required parameter');
+  }
+  var query = {formId: options.formId};
+  if (typeof options.entries !== 'undefined') {
+    query.numEntries = options.entries;
+  }
+  if (typeof options.cursor !== 'undefined') {
+    query.cursor = options.cursor;
+  }
+
+  log.debug('ODK /view/submissionList formId=' + options.formId +
+            ' entries=' + options.entries);
+  log.debug('submissionList cursor:', options.cursor || 'N/A');
   return odkRequestGetAsync({
     url: '/view/submissionList',
-    qs: {formId, numEntries: entries, cursor}
+    qs: query
   });
 };
 
@@ -92,18 +105,31 @@ const submissionList = function(formId, entries, cursor) {
  *
  * http://odk.kharatsa.com/view/downloadSubmission?formId=sample-origin[@version=null%20and%20@uiVersion=null]/sample-origin[@key=uuid:5b6d9e64-e721-42d7-88d4-b3fe62ec2ec1]
  *
- * @param  {!string} formId            The ODK formID for the submission.
- * @param  {!string} topElement        Name of the top-level element in the
+ * @param {Object} options
+ * @param  {!string} options.formId    The ODK formID for the submission.
+ * @param  {?string} [options.topElement] Name of the top-level element in the
  *                                    form submission. This is the element
  *                                    within the instance element of the model
  *                                    that has the id attribute identifying the
- *                                    formid. The formID is reused in most cases
- *                                    as the topElement.
- * @param  {!string} submissionId      The value of the id returned by the
+ *                                    formid.
+ * @param  {!string} options.submissionId The value of the id returned by the
  *                                    view/submissionList API
  * @return {Promise.<http.IncomingMessage,string>} The response and respose body
  */
-const downloadSubmission = function(formId, topElement, submissionId) {
+// const downloadSubmission = function(formId, topElement, submissionId) {
+const downloadSubmission = function(options) {
+  var formId = options.formId;
+  if (!options.formId) {
+    throw new Error('Form Id is a required parameter');
+  }
+
+  var submissionId = options.submissionId;
+  if (!options.submissionId) {
+    throw new Error('Submission Id is a required parameter');
+  }
+  // The formID is reused in most cases as the topElement
+  var topElement = options.topElement ? options.topElement : options.formId;
+
   var query = formId + '[@version=null and @uiVersion=null]/' +
     topElement + '[@key=' +
     submissionId + ']';

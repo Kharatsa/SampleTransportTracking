@@ -26,7 +26,7 @@ router.get('/view/submissionList', normalizeParams, function(req, res) {
   var numEntries = req.query.numentries;
   var cursor = req.query.cursor;
   if (typeof formId !== 'undefined') {
-    return aggregate.submissionList(formId, numEntries, cursor)
+    return aggregate.submissionList({formId, numEntries, cursor})
     .spread(function(odkRes, body) {
       sendXML(res, odkRes, body);
     });
@@ -44,7 +44,7 @@ router.get('/view/downloadSubmission', normalizeParams, function(req, res) {
     req.query.instanceid
   );
 
-  aggregate.downloadSubmission(formId, topElement, submissionId)
+  aggregate.downloadSubmission({formId, topElement, submissionId})
   .spread(function(odkRes, body) {
     sendXML(res, odkRes, body);
   });

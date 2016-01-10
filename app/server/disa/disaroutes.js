@@ -26,7 +26,7 @@ function validateBody(req, res, next) {
   if (req.body && req.body.length) {
     return next();
   }
-  var err = new Error('POST body cannot be empty');
+  var err = new Error('Request body cannot be empty');
   err.status = 422;
   next(err);
 }
@@ -36,9 +36,24 @@ router.post('/metadata',
   validateMIMEType,
   textParser,
   validateBody,
-  function(req, res) {
-    // TODO: Update metadata
-    res.status(201).send('YOLO');
+  function(req, res, next) {
+    log.info('Received Disa Labs metadata update', req.body);
+
+    return transform.parseMetadataUpdate(req.body)
+    .map(transform.buildMetadataForm)
+    .tap(meta => log.debug('Submitting %s metadata changes', meta.length))
+    .map(aggregate.makeSubmission)
+    .then(responses => {
+      var bodies = responses.map(response => response[1]);
+      res.status(201).send(bodies.join('\n'));
+    })
+    .then(() => {
+      log.warn('TODO: TRIGGER RESYNC METADATA');
+    })
+    .catch(err => {
+      err.status = 500;
+      next(err);
+    });
   });
 
 router.post('/status',
@@ -47,7 +62,8 @@ router.post('/status',
   textParser,
   validateBody,
   function(req, res, next) {
-    log.debug('Received Disa Labs status\n\t', req.body);
+    log.info('Received Disa Labs status\n\t', req.body);
+
     return transform.parseLabStatus(req.body)
     .then(transform.buildLabForm)
     .then(aggregate.makeSubmission)

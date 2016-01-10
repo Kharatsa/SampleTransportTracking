@@ -3,6 +3,7 @@
 const BPromise = require('bluebird');
 const xml2js = require('xml2js');
 BPromise.promisifyAll(xml2js);
+const log = require('app/server/util/log.js');
 const parse = require('app/common/parse.js');
 
 function getElemText(parent, textNode) {
@@ -10,7 +11,7 @@ function getElemText(parent, textNode) {
 }
 
 /**
- * Enum for ODK Aggregate Form List fields
+ * ODK Aggregate form list XML top-level element names
  * @enum {string}
  */
 const formListFields = {
@@ -19,7 +20,7 @@ const formListFields = {
 };
 
 /**
- * Enum for ODK Aggregate form-level fields
+ * ODK Aggregate form list XML element names for xform element children
  * @enum {string}
  */
 const xformFields = {
@@ -32,16 +33,8 @@ const xformFields = {
   MANIFEST_URL: 'manifestUrl'
 };
 
-/**
- * [parseFormList description]
- *
- * @param  {string} formList Form list XML
- * @return {Promise.<Array.<Form>>}
- */
-function parseFormList(formList) {
-  return xml2js.parseStringAsync(formList)
-  .then(parsed => parsed[formListFields.XFORMS][formListFields.XFORM])
-  .map(xform => ({
+function parseXForm(xform) {
+  return {
     formId: getElemText(xform, xformFields.ID),
     formName: getElemText(xform, xformFields.NAME),
     majorMinorVersion: parse.parseText(
@@ -51,9 +44,102 @@ function parseFormList(formList) {
     hash: getElemText(xform, xformFields.HASH),
     downloadUrl: getElemText(xform, xformFields.DOWNLOAD_URL),
     manifestUrl: getElemText(xform, xformFields.MANIFEST_URL)
+  };
+}
+
+/**
+ * [parseFormList description]
+ *
+ * @param  {string} formList Form list XML
+ * @return {Promise.<Array.<Form>>}
+ */
+function parseFormList(formList) {
+  log.debug('Parsing form list XML');
+
+  return xml2js.parseStringAsync(formList)
+  .then(parsed => parsed[formListFields.XFORMS][formListFields.XFORM])
+  .map(parseXForm);
+}
+
+/**
+ * Manifest XML element names
+ * @enum {string}
+ */
+const manifestFields = {
+  MANFIEST: 'manifest',
+  MEDIA_FILE: 'mediaFile',
+  FILENAME: 'filename',
+  HASH: 'hash',
+  DOWNLOAD_URL: 'downloadUrl'
+};
+
+/**
+ * @typedef {Manifest}
+ * @property {string} filename [description]
+ * @property {string} hash [description]
+ * @property {string} downloadUrl [description]
+ */
+
+/**
+ * [parseFormManifest description]
+ *
+ * @param  {string} manifest [description]
+ * @return {Promise.<Manifest>}          [description]
+ */
+function parseFormManifest(manifest) {
+  log.debug('Parsing form manifest XML');
+
+  return xml2js.parseStringAsync(manifest)
+  .then(parsed => parsed[manifestFields.MANFIEST][manifestFields.MEDIA_FILE])
+  .map(media => ({
+    filename: getElemText(media, manifestFields.FILENAME),
+    hash: getElemText(media, manifestFields.HASH),
+    downloadUrl: getElemText(media, manifestFields.DOWNLOAD_URL)
   }));
 }
 
+/**
+ * @typedef {SubmissionList}
+ * @property {Array.<string>} ids Submission IDs
+ * @property {string} cursor ODK Aggregate resumption cursor
+ */
+
+const submissionListFields = {
+  CHUNK: 'idChunk',
+  ID_LIST: 'idList',
+  ID: 'id',
+  CURSOR: 'resumptionCursor'
+};
+
+/**
+ * [parseSubmissionList description]
+ * @param  {string} list [description]
+ * @return {Promise.<SubmissionList>}      [description]
+ */
+function parseSubmissionList(list) {
+  log.debug('Parsing form submission list');
+
+  return xml2js.parseStringAsync(list)
+  .then(parsed => parsed[submissionListFields.CHUNK])
+  .then(parsed => ({
+    idList: parsed[submissionListFields.ID_LIST],
+    cursor: getElemText(parsed, submissionListFields.CURSOR)
+  }))
+  .then(result => ({
+    ids: result.idList[0][submissionListFields.ID],
+    cursor: result.cursor
+  }));
+}
+
+/**
+ * [parseSubmission description]
+ * @param  {[type]} sub [description]
+ * @return {[type]}     [description]
+ */
+function parseSubmission(sub) {
+  return xml2js.parseStringAsync(sub);
+}
+
 module.exports = {
-  parseFormList
+  parseFormList, parseFormManifest, parseSubmissionList, parseSubmission
 };

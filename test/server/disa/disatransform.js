@@ -79,11 +79,122 @@ describe('Disa Labs Tranforms', () => {
     '</labstatus>'
   );
 
-  it('should convert lab status objects to XML form submissions', () =>
+  it('should convert lab status objects to form submission XML', () =>
     expect(
       disatransform.parseLabStatus(goodManySubmission)
       .then(disatransform.buildLabForm)
     ).to.eventually.equal(expectedXML)
+  );
+
+  const addMetaXML = (
+    '<Meta>' +
+      '<ChangedTimestamp>2015-12-07T21:32:52</ChangedTimestamp>' +
+      '<Add>' +
+        '<Type>person</Type>' +
+        '<Key>P1</Key>' +
+        '<Detail>Person One</Detail>' +
+      '</Add>' +
+      '<Add>' +
+        '<Type>person</Type>' +
+        '<Key>P2</Key>' +
+        '<Detail>Another Person</Detail>' +
+      '</Add>' +
+    '</Meta>'
+  );
+
+  const actionDate = new Date('2015-12-07T21:32:52').toISOString();
+
+  const addMetaParsed = [
+    {actionDate, action: 'add', type: 'person', key: 'P1', detail: 'Person One'},
+    {actionDate, action: 'add', type: 'person', key: 'P2', detail: 'Another Person'}
+  ];
+
+  it('should convert metadata XML with adds', () =>
+    expect(disatransform.parseMetadataUpdate(addMetaXML))
+    .to.eventually.deep.equal(addMetaParsed)
+  );
+
+  const mixedMetaXML = (
+    '<Meta>' +
+      '<ChangedTimestamp>2015-12-07T21:32:52</ChangedTimestamp>' +
+      '<Add>' +
+        '<Type>person</Type>' +
+        '<Key>P1</Key>' +
+        '<Detail>Person One</Detail>' +
+      '</Add>' +
+      '<Add>' +
+        '<Type>person</Type>' +
+        '<Key>P2</Key>' +
+        '<Detail>Another Person</Detail>' +
+      '</Add>' +
+      '<Remove>' +
+        '<Type>person</Type>' +
+        '<Key>P1</Key>' +
+      '</Remove>' +
+      '<Update>' +
+        '<Type>person</Type>' +
+        '<Key>P2</Key>' +
+        '<Detail>Person Two</Detail>' +
+      '</Update>' +
+    '</Meta>'
+  );
+
+  const mixedMetaParsed = [
+    {actionDate, action: 'add', type: 'person', key: 'P1', detail: 'Person One'},
+    {actionDate, action: 'add', type: 'person', key: 'P2', detail: 'Another Person'},
+    {actionDate, action: 'remove', type: 'person', key: 'P1', detail: null},
+    {actionDate, action: 'update', type: 'person', key: 'P2', detail: 'Person Two'}
+  ];
+
+  it('should convert metadata XML with mixed actions', () =>
+    expect(disatransform.parseMetadataUpdate(mixedMetaXML))
+    .to.eventually.deep.equal(mixedMetaParsed)
+  );
+
+  const metadataSubmissionXML = [
+    ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<stt_metadata id="stt_metadata">' +
+        '<action>add</action>' +
+        '<actionDate>2015-12-07T21:32:52.000Z</actionDate>' +
+        '<type>person</type>' +
+        '<key>P1</key>' +
+        '<detail>Person One</detail>' +
+      '</stt_metadata>'
+    ),
+    ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<stt_metadata id="stt_metadata">' +
+        '<action>add</action>' +
+        '<actionDate>2015-12-07T21:32:52.000Z</actionDate>' +
+        '<type>person</type>' +
+        '<key>P2</key>' +
+        '<detail>Another Person</detail>' +
+      '</stt_metadata>'
+    ),
+    ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<stt_metadata id="stt_metadata">' +
+        '<action>remove</action>' +
+        '<actionDate>2015-12-07T21:32:52.000Z</actionDate>' +
+        '<type>person</type>' +
+        '<key>P1</key>' +
+        '<detail/>' +
+      '</stt_metadata>'
+    ),
+    ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<stt_metadata id="stt_metadata">' +
+        '<action>update</action>' +
+        '<actionDate>2015-12-07T21:32:52.000Z</actionDate>' +
+        '<type>person</type>' +
+        '<key>P2</key>' +
+        '<detail>Person Two</detail>' +
+      '</stt_metadata>'
+    )
+  ];
+
+  it('should convert metadata objects to form submission XML', () =>
+    expect(
+      disatransform.parseMetadataUpdate(mixedMetaXML)
+      .map(disatransform.buildMetadataForm)
+    ).to.eventually.deep.equal(metadataSubmissionXML)
   );
 
 });
