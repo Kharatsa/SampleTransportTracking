@@ -1,6 +1,5 @@
 'use strict';
 
-// const exec = require('child_process').exec;
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const nodemon = require('gulp-nodemon');
@@ -10,7 +9,6 @@ const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const config = require('app/config');
-// const log = require('app/server/util/log.js');
 
 var IS_DEVELOPMENT = !config.server.IS_PRODUCTION;
 
@@ -136,26 +134,38 @@ gulp.task('styles', function() {
 //   gulp.watch(clientSass, ['sass']);
 // });
 
-const clientHTML = 'app/client/**/*.html';
-const indexJSX = 'app/client/index.jsx';
+const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
-gulp.task('static', function() {
-  return gulp.src([clientHTML, indexJSX, favicon])
+const fonts = 'app/assets/fonts';
+gulp.task('static', ['static:schemas'], () => {
+  return gulp.src([html, favicon, fonts])
     .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
+});
+
+const schemas = 'app/assets/schemas/**/*';
+gulp.task('static:schemas', () => {
+  return gulp.src(schemas)
+  .pipe($.filesize())
+  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/schemas'));
 });
 
 gulp.task('styles:watch', () => gulp.watch(clientCSS, ['styles']));
 
 gulp.task('static:watch', () =>
-  gulp.watch([clientHTML, indexJSX, favicon], ['static'])
+  gulp.watch([html, favicon, fonts, schemas], ['static'])
 );
 
 gulp.task('watch', ['static:watch', 'styles:watch']);
 // gulp.task('watch', ['static:watch', 'sass:watch', 'styles:watch']);
 
+
 gulp.task('clean', () =>
-  gulp.src('app/server/public/**/*.+(js|map|css|html)', {read: false})
+  gulp.src([
+    'app/public/**/*+(js|map|css|html|ico)',
+    'app/public/schemas',
+    'app/public/fonts'
+  ], {read: false})
     .pipe($.rimraf())
 );
 

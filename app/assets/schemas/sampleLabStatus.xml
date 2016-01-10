@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<LabStatus xmlns="http://SomeMoHDomain/LabStatus.xsd" >
+  <STID>ABCD12345</STID>
+  <LabID>MHL1234567</LabID>
+  <StatusTimestamp>2015-12-07T21:32:52</StatusTimestamp>
+  <SampleTest>
+    <StatusCode>ABC</StatusCode>
+    <TestCode>DEFGH</TestCode>
+    <RejectionCode>IJKLM</RejectionCode>
+  </SampleTest>
+</LabStatus>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:simpleType name="MetaType">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="stype"/>
+    <xs:enumeration value="condition"/>
+    <xs:enumeration value="person"/>
+    <xs:enumeration value="facility"/>
+    <xs:enumeration value="region"/>
+    <xs:enumeration value="labstatus"/>
+    <xs:enumeration value="labtest"/>
+    <xs:enumeration value="labreject"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="MetaTimestamp">
+  <xs:restriction base="xs:dateTime">
+    <xs:whiteSpace value="collapse"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="MetaKey">
+  <xs:restriction base="xs:string">
+    <xs:pattern value="[a-zA-Z0-9]+"/>
+    <xs:maxLength value="10"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="MetaDetail">
+  <xs:restriction base="xs:string">
+    <xs:maxLength value="255"/>
+    <xs:whiteSpace value="preserve"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="Add">
+  <xs:sequence>
+    <xs:element name="Type" type="MetaType"/>
+    <xs:element name="Key" type="MetaKey"/>
+    <xs:element name="Detail" type="MetaDetail"/>
+  </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="MetaAdd">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="Type" type="MetaType"/>
+    <xs:element name="Key" type="MetaKey"/>
+    <xs:element name="Detail" type="MetaDetail"/>
+  </xs:all>
+</xs:complexType>
+
+<xs:complexType name="MetaRemove">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="Type" type="MetaType"/>
+    <xs:element name="Key" type="MetaKey"/>
+  </xs:all>
+</xs:complexType>
+
+<xs:complexType name="MetaUpdate">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="Type" type="MetaType"/>
+    <xs:element name="Key" type="MetaKey"/>
+    <xs:element name="Detail" type="MetaDetail"/>
+  </xs:all>
+</xs:complexType>
+
+<xs:element name="Meta">
+  <xs:complexType>
+    <xs:sequence minOccurs="1" maxOccurs="1">
+      <xs:element name="ChangedTimestamp" type="MetaTimestamp"/>
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element name="Add" type="MetaAdd"/>
+        <xs:element name="Remove" type="MetaRemove"/>
+        <xs:element name="Update" type="MetaUpdate"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+</xs:schema>
