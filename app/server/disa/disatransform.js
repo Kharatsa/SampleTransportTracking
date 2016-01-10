@@ -114,7 +114,7 @@ function buildLabForm(labStatus) {
 }
 
 const metadataFields = {
-  META: 'Meta',
+  META: 'Metadata',
   CHANGED_TIME: 'ChangedTimestamp',
   ADD: 'Add',
   REMOVE: 'Remove',
