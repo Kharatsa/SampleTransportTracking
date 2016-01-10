@@ -1,54 +1,62 @@
 <?xml version="1.0"?>
-<xs:schema targetNamespace="http://SomeMoHDomain/LabStatus.xsd"
-                xmlns="http://SomeMoHDomain/LabStatus.xsd"
-                xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                elementFormDefault="qualified" >
-  <xs:element name="LabStatus">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="STID">
-          <xs:simpleType>
-            <xs:restriction base="xs:token">
-                <xs:pattern value="[\w]{9}" />
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:element>
-        <xs:element name="LabID">
-          <xs:simpleType>
-            <xs:restriction base="xs:token">
-                <xs:pattern value="[A-Z]{3}[0-9]{7}"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:element>
-        <xs:element name="StatusTimestamp" type="xs:dateTime" />
-        <xs:element name="SampleTest">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="StatusCode">
-                <xs:simpleType>
-                  <xs:restriction base="xs:token">
-                      <xs:pattern value="[A-Z]{3}" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="TestCode">
-                <xs:simpleType>
-                  <xs:restriction base="xs:token">
-                      <xs:pattern value="[A-Z]{5}|[\*]{1}" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="RejectionCode">
-                <xs:simpleType>
-                  <xs:restriction base="xs:token">
-                      <xs:pattern value="([A-Z]{5})?" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+<xs:schema targetNamespace="http://kharatsa.com/schemas/LabStatus.xsd"
+    xmlns="http://kharatsa.com/schemas/LabStatus.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified" >
+
+<xs:simpleType name="STIDType">
+  <xs:restriction base="xs:token">
+      <xs:pattern value="[\w]{9}" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="LabIDType">
+  <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Z]{3}[0-9]{7}"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="StatusTimestampType">
+  <xs:restriction base="xs:dateTime">
+    <xs:whiteSpace value="collapse"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="StatusCodeType">
+  <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Z]{3}" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="TestCodeType">
+  <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Z]{5}|[\*]{1}" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="RejectionCodeType">
+  <xs:restriction base="xs:token">
+      <xs:pattern value="([A-Z]{5})?" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="SampleTestType">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="StatusCode" type="StatusCodeType"/>
+    <xs:element name="TestCode" type="TestCodeType"/>
+    <xs:element name="RejectionCode" type="RejectionCodeType"/>
+  </xs:all>
+</xs:complexType>
+
+<xs:complexType name="LabStatusType">
+  <xs:sequence>
+    <xs:element name="STID" type="STIDType" maxOccurs="1"/>
+    <xs:element name="LabID" type="LabIDType" maxOccurs="1"/>
+    <xs:element name="StatusTimestamp" type="StatusTimestampType" maxOccurs="1"/>
+    <xs:element name="SampleTest" type="SampleTestType" maxOccurs="unbounded"/>
+  </xs:sequence>
+</xs:complexType>
+
+<xs:element name="LabStatus" type="LabStatusType"/>
+
 </xs:schema>

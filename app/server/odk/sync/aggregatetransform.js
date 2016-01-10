@@ -138,6 +138,7 @@ function parseSubmissionList(list) {
  */
 function parseSubmission(sub) {
   return xml2js.parseStringAsync(sub);
+  // TODO: flatten arrays/objects
 }
 
 module.exports = {

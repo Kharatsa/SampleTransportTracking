@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
-<LabStatus xmlns="http://SomeMoHDomain/LabStatus.xsd" >
+<LabStatus xmlns="http://kharatsa.com/schemas/LabStatus.xsd" >
   <STID>ABCD12345</STID>
   <LabID>MHL1234567</LabID>
   <StatusTimestamp>2015-12-07T21:32:52</StatusTimestamp>
   <SampleTest>
-    <StatusCode>ABC</StatusCode>
-    <TestCode>DEFGH</TestCode>
-    <RejectionCode>IJKLM</RejectionCode>
+    <StatusCode>REQ</StatusCode>
+    <TestCode>*</TestCode>
+    <RejectionCode/>
+  </SampleTest>
+  <SampleTest>
+    <StatusCode>RVW</StatusCode>
+    <TestCode>TESTB</TestCode>
+    <RejectionCode/>
+  </SampleTest>
+  <SampleTest>
+    <StatusCode>REJ</StatusCode>
+    <TestCode>TESTC</TestCode>
+    <RejectionCode>SOBAD</RejectionCode>
   </SampleTest>
 </LabStatus>
