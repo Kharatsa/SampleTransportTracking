@@ -22,11 +22,25 @@
   </xs:restriction>
 </xs:simpleType>
 
+<xs:simpleType name="DescriptionType">
+  <xs:restriction base="xs:string">
+    <xs:maxLength value="255"/>
+    <xs:whiteSpace value="preserve"/>
+  </xs:restriction>
+</xs:simpleType>
+
 <xs:simpleType name="StatusCodeType">
   <xs:restriction base="xs:token">
       <xs:pattern value="[A-Z]{3}" />
   </xs:restriction>
 </xs:simpleType>
+
+<xs:complexType name="StatusType">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="StatusCode" type="StatusCodeType"/>
+    <xs:element name="Description" type="DescriptionType"/>
+  </xs:all>
+</xs:complexType>
 
 <xs:simpleType name="TestCodeType">
   <xs:restriction base="xs:token">
@@ -34,17 +48,31 @@
   </xs:restriction>
 </xs:simpleType>
 
+<xs:complexType name="TestType">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="TestCode" type="TestCodeType"/>
+    <xs:element name="Description" type="DescriptionType"/>
+  </xs:all>
+</xs:complexType>
+
 <xs:simpleType name="RejectionCodeType">
   <xs:restriction base="xs:token">
       <xs:pattern value="([A-Z]{5})?" />
   </xs:restriction>
 </xs:simpleType>
 
+<xs:complexType name="RejectionType">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="RejectionCode" type="RejectionCodeType"/>
+    <xs:element name="Description" type="DescriptionType"/>
+  </xs:all>
+</xs:complexType>
+
 <xs:complexType name="SampleTestType">
   <xs:all minOccurs="1" maxOccurs="1">
-    <xs:element name="StatusCode" type="StatusCodeType"/>
-    <xs:element name="TestCode" type="TestCodeType"/>
-    <xs:element name="RejectionCode" type="RejectionCodeType"/>
+    <xs:element name="Status" type="StatusType"/>
+    <xs:element name="Test" type="TestType"/>
+    <xs:element name="Rejection" type="RejectionType" minOccurs="0"/>
   </xs:all>
 </xs:complexType>
 

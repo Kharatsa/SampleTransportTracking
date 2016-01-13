@@ -4,18 +4,37 @@
   <LabID>MHL1234567</LabID>
   <StatusTimestamp>2015-12-07T21:32:52</StatusTimestamp>
   <SampleTest>
-    <StatusCode>REQ</StatusCode>
-    <TestCode>*</TestCode>
-    <RejectionCode/>
+    <Status>
+      <StatusCode>REQ</StatusCode>
+      <Description>Lorem ipsum dolor sit amet</Description>
+    </Status>
+    <Test>
+      <TestCode>*</TestCode>
+      <Description>Proin molestie, ligula sit amet mattis vulputate</Description>
+    </Test>
   </SampleTest>
   <SampleTest>
-    <StatusCode>RVW</StatusCode>
-    <TestCode>TESTB</TestCode>
-    <RejectionCode/>
+    <Status>
+      <StatusCode>RVW</StatusCode>
+      <Description>Fusce vulputate faucibus lectus, et lacinia urna</Description>
+    </Status>
+    <Test>
+      <TestCode>TESTB</TestCode>
+      <Description>Fusce vulputate faucibus lectus, et lacinia urna</Description>
+    </Test>
   </SampleTest>
   <SampleTest>
-    <StatusCode>REJ</StatusCode>
-    <TestCode>TESTC</TestCode>
-    <RejectionCode>SOBAD</RejectionCode>
+    <Status>
+      <StatusCode>REJ</StatusCode>
+      <Description>Cras nec tristique enim</Description>
+    </Status>
+    <Test>
+      <TestCode>TESTC</TestCode>
+      <Description></Description>
+    </Test>
+    <Rejection>
+      <RejectionCode>SOBAD</RejectionCode>
+      <Description>Morbi elementum erat quis pretium sodales</Description>
+    </Rejection>
   </SampleTest>
 </LabStatus>
