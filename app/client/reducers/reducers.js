@@ -10,7 +10,7 @@ import {
 } from '../actions/actions.js';
 
 const tabsById = function(state=defaultTabsById, action) {
-  switch(action.type) {
+  switch (action.type) {
   case RECEIVE_TABS:
     return action.tabs;
   default:
@@ -20,7 +20,7 @@ const tabsById = function(state=defaultTabsById, action) {
 
 const defaultTabs = List([]);
 const tabs = function(state=defaultTabs, action) {
-  switch(action.type) {
+  switch (action.type) {
   case RECEIVE_TABS:
     let allTabs = action.tabs;
     return List(allTabs.keys());
@@ -30,7 +30,7 @@ const tabs = function(state=defaultTabs, action) {
 };
 
 const updatePath = function(state, action) {
-  switch(action.type) {
+  switch (action.type) {
   case UPDATE_PATH:
     // do something here
     return state;
@@ -39,7 +39,7 @@ const updatePath = function(state, action) {
   }
 };
 
-const defaultTab= '0';
+const defaultTab = '0';
 const selectedTab = function(state=defaultTab, action) {
   switch (action.type) {
   case SELECT_TAB:

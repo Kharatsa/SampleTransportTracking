@@ -38,5 +38,7 @@ const Updates = React.createClass({
 
 export default connect(
   state => ({updates: state.updates, updatesById: state.updatesById}),
-  dispatch => ({actions: bindActionCreators({fetchUpdates: actions.fetchUpdates}, dispatch)})
+  dispatch => ({
+    actions: bindActionCreators({fetchUpdates: actions.fetchUpdates}, dispatch)
+  })
 )(Updates);

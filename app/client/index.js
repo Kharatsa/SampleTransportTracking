@@ -6,8 +6,7 @@ import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
-import {createHistory} from 'history';
-import {Router} from 'react-router';
+import {Router, browserHistory} from 'react-router';
 import {syncReduxAndRouter} from 'redux-simple-router';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import reducers from './reducers/reducers.js';
@@ -33,12 +32,11 @@ if (global.DEBUG) {
 }
 
 const store = createStoreWithMiddleware(reducers);
-const history = createHistory();
-syncReduxAndRouter(history, store);
+syncReduxAndRouter(browserHistory, store);
 
 render(
   <Provider store={store}>
-    <Router history={history} routes={routes} />
+    <Router history={browserHistory} routes={routes} />
   </Provider>,
   document.getElementById('root')
 );

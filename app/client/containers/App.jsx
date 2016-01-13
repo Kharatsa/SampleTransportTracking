@@ -55,10 +55,10 @@ const App = React.createClass({
           <AppBar zDepth={0} title={appName} showMenuIconButton={false} />
           <div>
             <Tabs onChange={this.handleTabClick} value={selectedTab}>
-              <Tab label='Updates' value="0"></Tab>
-              <Tab label='Samples' value="1"></Tab>
-              <Tab label='Facilities' value="2"></Tab>
-              <Tab label='Riders' value="3"></Tab>
+              <Tab label='Updates' value='0'></Tab>
+              <Tab label='Samples' value='1'></Tab>
+              <Tab label='Facilities' value='2'></Tab>
+              <Tab label='Riders' value='3'></Tab>
             </Tabs>
           </div>
         </Paper>
