@@ -9,6 +9,7 @@ const requestLog = require('app/server/util/logrequest.js');
 const storage = require('app/server/storage');
 storage.init({config: config.db});
 const sttModels = require('app/server/stt/models');
+const newModels = require('app/server/stt/modelsnew');
 const authModels = require('app/server/auth/models');
 Object.keys(sttModels).forEach(modelName =>
   storage.loadModel(sttModels[modelName])
@@ -16,7 +17,11 @@ Object.keys(sttModels).forEach(modelName =>
 Object.keys(authModels).forEach(modelName =>
   storage.loadModel(authModels[modelName])
 );
-const middleware = require('app/server/middleware.js');
+// TODO: cleanup
+Object.keys(newModels).forEach(modelName =>
+  storage.loadModel(newModels[modelName])
+);
+const sttmiddleware = require('app/server/sttmiddleware.js');
 const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
 const PublishRoutes = require('app/server/odk/publisher/publishroutes.js');
@@ -58,10 +63,11 @@ app.use((req, res, next) => {
   next(err);
 });
 
-app.use(middleware.handleErrors);
+app.use(sttmiddleware.handleErrors);
 
-app.listen(config.server.PORT, config.server.HOST, () =>
-  log.info('Listening at ' + config.server.HOST + ':' + config.server.PORT)
+app.listen(config.server.LISTEN_PORT, config.server.LISTEN_HOST, () =>
+  log.info('Listening at ' + config.server.LISTEN_HOST +
+    ':' + config.server.LISTEN_PORT)
 );
 
 module.exports = app;

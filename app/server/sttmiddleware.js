@@ -55,7 +55,7 @@ const handleErrors = (
 );
 
 module.exports = {
-  normalizeParams: normalizeParams,
-  handleJSONErrors: handleJSONErrors,
-  handleErrors: handleErrors
+  normalizeParams,
+  handleJSONErrors,
+  handleErrors
 };

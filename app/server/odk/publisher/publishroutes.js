@@ -5,7 +5,7 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const config = require('app/config');
 const log = require('app/server/util/log.js');
-const handleJSONErrors = require('app/server/middleware.js').handleJSONErrors;
+const sttmiddleware = require('app/server/sttmiddleware.js');
 const publishtransform = require('app/server/odk/publisher/publishtransform.js');
 const publishmerge = require('app/server/odk/publisher/publishmerge.js');
 const publishsync = require('app/server/odk/publisher/publishsync.js');
@@ -13,7 +13,7 @@ const publishsync = require('app/server/odk/publisher/publishsync.js');
 // parse application/json
 const jsonParser = bodyParser.json();
 // Funnel body-parser errors into the application log
-router.use(handleJSONErrors);
+router.use(sttmiddleware.handleJSONErrors);
 
 function isPublisherTokenValid(req, res, next) {
   var token = req.body.token || null;

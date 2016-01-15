@@ -12,7 +12,7 @@ function filterInt(value) {
 // via MDN
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat#A_stricter_parse_function
 function filterFloat(value) {
-  if(/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
+  if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
     return Number(value);
   }
   return NaN;
@@ -22,7 +22,7 @@ function filterFloat(value) {
  * Converts a String value to its underlying primitive type.
  *
  * @param  {string} text [description]
- * @return {Number|Boolean|String|Date|null|undefined}
+ * @return {number|boolean|string|Date|null|undefined}
  */
 function parseText(text) {
   // undefined conversion
@@ -64,6 +64,7 @@ function parseText(text) {
 }
 
 module.exports = {
-  parseText: parseText,
-  filterInt: filterInt
+  parseText,
+  filterInt,
+  filterFloat
 };

@@ -18,6 +18,7 @@
     "express": "^4.13.3",
     "express-winston": "^1.2.0",
     "form-data": "^1.0.0-rc3",
+    "formidable": "^1.0.17",
     "helmet": "^1.1.0",
     "immutable": "^3.7.6",
     "lodash": "^4.0.0",

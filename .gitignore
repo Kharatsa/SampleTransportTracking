@@ -34,6 +34,10 @@ Vagrantfile
 # AWS
 *.pem
 
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
 # Project
 secret*
 junkyard/

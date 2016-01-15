@@ -35,8 +35,8 @@ const xformFields = {
 
 function parseXForm(xform) {
   return {
-    formId: getElemText(xform, xformFields.ID),
-    formName: getElemText(xform, xformFields.NAME),
+    formID: getElemText(xform, xformFields.ID),
+    name: getElemText(xform, xformFields.NAME),
     majorMinorVersion: parse.parseText(
       getElemText(xform, xformFields.MAJOR_VERSION)
     ),
@@ -133,8 +133,8 @@ function parseSubmissionList(list) {
 
 /**
  * [parseSubmission description]
- * @param  {[type]} sub [description]
- * @return {[type]}     [description]
+ * @param  {string} sub [description]
+ * @return {Object}     [description]
  */
 function parseSubmission(sub) {
   return xml2js.parseStringAsync(sub);

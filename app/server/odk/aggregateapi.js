@@ -25,6 +25,13 @@ const OPEN_ROSA_HEADERS = {
   'X-OpenRosa-Version': '1.0'
 };
 
+function setOpenRosaHeaders(req, res, next) {
+  Object.keys(OPEN_ROSA_HEADERS).forEach(head =>
+    res.append(head, OPEN_ROSA_HEADERS[head])
+  );
+  next();
+}
+
 /**
  * Authentication object for requests to ODK. The sendImmediately attribute
  * is required to communicate to ODK using HTTP's digest authentication. Digest
@@ -53,16 +60,45 @@ const ODK_AUTH_REQUEST_OPTIONS = Object.assign({}, ODK_REQUEST_OPTIONS, {
 
 const odkRequest = request.defaults(ODK_AUTH_REQUEST_OPTIONS);
 
-const odkRequestGetAsync = BPromise.promisify(odkRequest.get, {multiArgs: true});
+const odkRequestGetAsync = BPromise.promisify(
+  odkRequest.get, {multiArgs: true}
+);
+
+/**
+ * [generic description]
+ * @param  {Object} options [description]
+ * @param {string} options.url [description]
+ * @param {?Object} [options.query]
+ * @return {Promise.<string>}         [description]
+ */
+const passthroughGet = function(options) {
+  log.debug('ODK GET request pass through', options);
+  return odkRequestGetAsync({
+    url: options.url,
+    qs: options.query
+  });
+};
 
 /**
  * Fetches a list of forms from ODK Aggregate
  *
+ * @param {?Object} [options] [description]
+ * @param {string} [options.formId] [description]
+ * @param {string} [options.verbose] [description]
+ * @param {string} [options.listAllVersions] [description]
+ *
  * @return {Promise.<http.IncomingMessage,string>} The response and respose body
  */
-const formList = function() {
-  log.debug('ODK formlist request');
-  return odkRequestGetAsync('/formList');
+const formList = function(options) {
+  log.debug('ODK formlist request', options);
+  return odkRequestGetAsync({
+    url: '/formList',
+    qs: {
+      formId: options.formId,
+      verbose: options.verbose,
+      listAllVersions: options.listAllVersions
+    }
+  });
 };
 
 /**
@@ -120,7 +156,7 @@ const submissionList = function(options) {
 const downloadSubmission = function(options) {
   var formId = options.formId;
   if (!options.formId) {
-    throw new Error('Form Id is a required parameter');
+    throw new Error('formId is a required parameter');
   }
 
   var submissionId = options.submissionId;
@@ -223,5 +259,10 @@ function makeSubmission(submission) {
 }
 
 module.exports = {
-  formList, submissionList, downloadSubmission, makeSubmission
+  passthroughGet,
+  formList,
+  submissionList,
+  downloadSubmission,
+  makeSubmission,
+  setOpenRosaHeaders
 };
