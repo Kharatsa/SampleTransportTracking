@@ -1,22 +1,11 @@
 'use strict';
 
-import {updatePath as routerUpdatePath} from 'redux-simple-router';
 import {
-    RECEIVE_TABS, SELECT_TAB, UPDATE_PATH,
+    RECEIVE_TABS, SELECT_TAB,
     FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
     FETCH_UPDATES, FETCH_UPDATES_FAILURE, RECEIVE_UPDATES
 } from '../actions/actions.js';
 import request from '../util/request.js';
-
-/**
- * https://github.com/jlongster/redux-simple-router#updatepathpath-norouterupdate
- *
- * @param {string} path The current URL as a String
- * @param {boolean} noRouterUpdate Signals a toggle to the router. Passing false
- *                                 will switch off all changes resulting from
- *                                 route updates until true is passed.
- */
-export const updatePath = routerUpdatePath;
 
 export function receiveTabs(tabs) {
   return {

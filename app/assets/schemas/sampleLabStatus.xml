@@ -3,6 +3,10 @@
   <STID>ABCD12345</STID>
   <LabID>MHL1234567</LabID>
   <StatusTimestamp>2015-12-07T21:32:52</StatusTimestamp>
+  <LabPrefix>
+    <LabPrefixCode>MHL</LabPrefixCode>
+    <Description>Duis autem vel</Description>
+  </LabPrefix>
   <SampleTest>
     <Status>
       <StatusCode>REQ</StatusCode>
@@ -20,7 +24,7 @@
     </Status>
     <Test>
       <TestCode>TESTB</TestCode>
-      <Description>Fusce vulputate faucibus lectus, et lacinia urna</Description>
+      <Description>Praesent luptatum zzril delenit</Description>
     </Test>
   </SampleTest>
   <SampleTest>

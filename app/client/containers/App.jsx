@@ -3,6 +3,7 @@
 import React, {PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import {routeActions as routerActions} from 'redux-simple-router';
 import {List, Map as ImmutableMap} from 'immutable';
 import * as actions from '../actions/actioncreators.js';
 import AppBar from 'material-ui/lib/app-bar';
@@ -16,30 +17,38 @@ const App = React.createClass({
   propTypes: {
     isFetchingSamples: PropTypes.bool,
     samples: PropTypes.instanceOf(List),
-    samplesById: PropTypes.instanceOf(ImmutableMap),
-    routing: PropTypes.shape({
-      path: PropTypes.string.isRequired
-    })
+    samplesById: PropTypes.instanceOf(ImmutableMap)
+    // TODO: fix/re-enable this
+    // routing: PropTypes.shape({
+    //   path: PropTypes.string.isRequired
+    // })
   },
 
   syncTabWithRoute: function() {
-    const {selectedTab, tabsById, routing} = this.props;
-    const {selectTab} = this.props.actions;
+    // TODO: fix/re-enable this
+
+    // const {selectedTab, tabsById, routing} = this.props;
+    // const {selectTab} = this.props.actions;
 
     // Synchronize selectedTab to match the tab with a route matching the
     // current route, represented by routing.path
-    let activeTab = tabsById.filter((tab, tabId) => tab.route === routing.path);
-    if (activeTab && activeTab.first().route === selectedTab) {
-      selectTab(activeTab.keySeq().first());
-    }
+    // console.log('ROUTING', routing)
+    // let activeTab = tabsById.filter((tab, tabId) => tab.route === routing.path);
+    // if (activeTab && activeTab.first().route === selectedTab) {
+      // selectTab(activeTab.keySeq().first());
+    // }
   },
 
   handleTabClick: function(tabId) {
     const {tabsById} = this.props;
-    const {selectTab, updatePath} = this.props.actions;
+    const {selectTab} = this.props.actions;
+    const {push} = this.props.routeActions;
+    // const {push} = this.props.actions.routeActions;
+    // const {selectTab, updatePath} = this.props.actions;
     let selected = tabsById.get(tabId);
     selectTab(tabId);
-    updatePath(selected.route);
+    push(selected.route);
+    // updatePath(selected.route);
   },
 
   componentDidMount: function() {
@@ -74,6 +83,9 @@ const App = React.createClass({
 // Wrap the component to inject dispatch and state into it
 export default connect(
   state => (state),
-  dispatch => ({actions: bindActionCreators(actions, dispatch)})
+  dispatch => ({
+    actions: bindActionCreators(actions, dispatch),
+    routeActions: bindActionCreators(routerActions, dispatch)
+  })
 )(App);
 

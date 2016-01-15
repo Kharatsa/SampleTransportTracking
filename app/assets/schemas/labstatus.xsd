@@ -12,7 +12,7 @@
 
 <xs:simpleType name="LabIDType">
   <xs:restriction base="xs:token">
-      <xs:pattern value="[A-Z]{3}[0-9]{7}"/>
+      <xs:pattern value="[A-Za-z]{3}[0-9]{7}"/>
   </xs:restriction>
 </xs:simpleType>
 
@@ -28,6 +28,19 @@
     <xs:whiteSpace value="preserve"/>
   </xs:restriction>
 </xs:simpleType>
+
+<xs:simpleType name="LabPrefixCodeType">
+  <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Za-z]{3}" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="LabPrefixType">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="LabPrefixCode" type="LabPrefixCodeType"/>
+    <xs:element name="Description" type="DescriptionType"/>
+  </xs:all>
+</xs:complexType>
 
 <xs:simpleType name="StatusCodeType">
   <xs:restriction base="xs:token">
@@ -81,6 +94,7 @@
     <xs:element name="STID" type="STIDType" maxOccurs="1"/>
     <xs:element name="LabID" type="LabIDType" maxOccurs="1"/>
     <xs:element name="StatusTimestamp" type="StatusTimestampType" maxOccurs="1"/>
+    <xs:element name="LabPrefix" type="LabPrefixType" maxOccurs="1"/>
     <xs:element name="SampleTest" type="SampleTestType" maxOccurs="unbounded"/>
   </xs:sequence>
 </xs:complexType>

@@ -15,14 +15,16 @@ import Riders from './containers/Riders.jsx';
 </Route>
  */
 
+// Routes configuration
 export default [
-  { path: '/',
+  {
+    path: '/',
     component: App,
-    indexRoute: { component: Updates },
+    indexRoute: {component: Updates},
     childRoutes: [
-      { path: '/samples', component: Samples },
-      { path: '/facilities', component: Facilities },
-      { path: '/riders', component: Riders }
+      {path: '/samples', component: Samples},
+      {path: '/facilities', component: Facilities},
+      {path: '/riders', component: Riders}
     ]
   }
 ];

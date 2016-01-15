@@ -4,10 +4,12 @@ import {combineReducers} from 'redux';
 import {routeReducer} from 'redux-simple-router';
 import {List, Map as ImmutableMap} from 'immutable';
 import {
-    defaultTabsById, RECEIVE_TABS, SELECT_TAB, UPDATE_PATH,
+    defaultTabsById, RECEIVE_TABS, SELECT_TAB,
     FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
     FETCH_UPDATES, FETCH_UPDATES_FAILURE, RECEIVE_UPDATES
 } from '../actions/actions.js';
+
+// TODO: Make Records from the objects
 
 const tabsById = function(state=defaultTabsById, action) {
   switch (action.type) {
@@ -29,15 +31,15 @@ const tabs = function(state=defaultTabs, action) {
   }
 };
 
-const updatePath = function(state, action) {
-  switch (action.type) {
-  case UPDATE_PATH:
-    // do something here
-    return state;
-  default:
-    return state;
-  }
-};
+// const updatePath = function(state, action) {
+//   switch (action.type) {
+//   case UPDATE_LOCATION:
+//     // do something here
+//     return state;
+//   default:
+//     return state;
+//   }
+// };
 
 const defaultTab = '0';
 const selectedTab = function(state=defaultTab, action) {

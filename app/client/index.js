@@ -7,7 +7,7 @@ import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import {Router, browserHistory} from 'react-router';
-import {syncReduxAndRouter} from 'redux-simple-router';
+import {syncHistory} from 'redux-simple-router';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import reducers from './reducers/reducers.js';
 import routes from './routes.js';
@@ -18,21 +18,27 @@ import routes from './routes.js';
 //https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
 
+const reduxRouterMiddleware = syncHistory(browserHistory);
 let createStoreWithMiddleware;
 if (global.DEBUG) {
   const logger = createLogger();
   createStoreWithMiddleware = applyMiddleware(
     thunk, // lets us dispatch() functions
+    reduxRouterMiddleware,
     logger // neat middleware that logs actions
   )(createStore);
 } else {
   createStoreWithMiddleware = applyMiddleware(
-    thunk // lets us dispatch() functions
+    thunk, // lets us dispatch() functions
+    reduxRouterMiddleware
   )(createStore);
 }
 
 const store = createStoreWithMiddleware(reducers);
-syncReduxAndRouter(browserHistory, store);
+// const store = createStoreWithMiddleware(combineReducers(Object.assign({},
+//   reducers,
+//   {routing: routeReducer}
+// )));
 
 render(
   <Provider store={store}>

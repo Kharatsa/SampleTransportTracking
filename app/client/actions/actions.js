@@ -1,7 +1,7 @@
 'use strict';
 
 import {Map as ImmutableMap} from 'immutable';
-import {UPDATE_PATH as ROUTER_UPDATE_PATH} from 'redux-simple-router';
+// import {UPDATE_LOCATION as ROUTER_UPDATE_LOCATION} from 'redux-simple-router';
 
 // https://github.com/acdlite/flux-standard-action
 // http://rackt.org/redux/docs/basics/Actions.html
@@ -9,12 +9,9 @@ import {UPDATE_PATH as ROUTER_UPDATE_PATH} from 'redux-simple-router';
 /*
  * action types
  */
-
-/*
- * https://github.com/jlongster/redux-simple-router#update_path
- */
 export const RECEIVE_TABS = 'RECEIVE_TABS';
-export const UPDATE_PATH = ROUTER_UPDATE_PATH;
+// UPDATE_LOCATION via https://github.com/rackt/redux-simple-router#api
+// export const UPDATE_LOCATION = ROUTER_UPDATE_LOCATION;
 export const SELECT_TAB = 'SELECT_TAB';
 
 export const FETCH_UPDATES = 'FETCH_UPDATES';
@@ -28,7 +25,7 @@ export const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
 /*
  * other constants
  */
-
+// TODO: Use records here
 export const defaultTabsById = ImmutableMap({
   '0': {
     label: 'Updates',
