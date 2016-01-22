@@ -1,7 +1,7 @@
 'use strict';
 
 const expressWinston = require('express-winston');
-const appLogger = require('app/server/util/log.js');
+const appLogger = require('app/server/util/logapp.js');
 
 // expressWinston.requestWhitelist.push('session');
 // expressWinston.bodyWhitelist.push('secretid', 'secretproperty');

@@ -10,7 +10,7 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const config = require('app/config');
 
-var IS_DEVELOPMENT = !config.server.IS_PRODUCTION;
+var IS_DEVELOPMENT = !config.server.isProduction();
 
 // add custom browserify options here
 const browserifyOptions = {
@@ -40,7 +40,10 @@ function bundle() {
     .pipe(buffer())
       .pipe(IS_DEVELOPMENT ? $.util.noop() : uglify())
       .pipe($.filesize())
-      .pipe(IS_DEVELOPMENT ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
+      .pipe(IS_DEVELOPMENT ?
+        $.sourcemaps.init({loadMaps: true}) :
+        $.util.noop()
+      )
       .pipe(IS_DEVELOPMENT ? $.sourcemaps.write('./') : $.util.noop())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 }
@@ -75,11 +78,6 @@ gulp.task('lint', function() {
 });
 
 gulp.task('nodemon', ['lint'], function(cb) {
-  var execEnv = (
-    IS_DEVELOPMENT ?
-    'BLUEBIRD_WARNINGS=0 NODE_ENV=development' :
-    'NODE_ENV=production'
-  );
   var started = false;
   return nodemon({
     script: 'app/server/server.js',
@@ -96,7 +94,7 @@ gulp.task('nodemon', ['lint'], function(cb) {
       'docs/**/*'
     ],
     execMap: {
-      js: execEnv + ' node --harmony'
+      js: 'BLUEBIRD_WARNINGS=0 NODE_ENV=development node --harmony'
     }
   }).on('start', function() {
     // to avoid nodemon being started multiple times
@@ -116,23 +114,6 @@ gulp.task('styles', function() {
   .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
-
-// const clientSass = 'app/client/**/*.scss';
-// gulp.task('sass', function () {
-//   var sassOptions = IS_DEVELOPMENT ? {outputStyle: 'compressed'} : {};
-//   gulp.src([clientSass, clientCSS])
-//     .pipe(IS_DEVELOPMENT ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
-//     .pipe($.sass(sassOptions).on('error', $.sass.logError))
-//     .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
-//     .pipe($.concat('app.css'))
-//     .pipe($.filesize())
-//     .pipe(IS_DEVELOPMENT ? $.sourcemaps.write('./') : $.util.noop())
-//     .pipe(gulp.dest(config.server.PUBLIC_PATH));
-// });
-
-// gulp.task('sass:watch', function () {
-//   gulp.watch(clientSass, ['sass']);
-// });
 
 const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
@@ -157,8 +138,6 @@ gulp.task('static:watch', () =>
 );
 
 gulp.task('watch', ['static:watch', 'styles:watch']);
-// gulp.task('watch', ['static:watch', 'sass:watch', 'styles:watch']);
-
 
 gulp.task('clean', () =>
   gulp.src([
@@ -168,45 +147,6 @@ gulp.task('clean', () =>
   ], {read: false})
     .pipe($.rimraf())
 );
-
-// gulp.task('test:pre', () => {
-//   // process.env.NODE_ENV = 'test';
-
-//   // Switch off most logging while tests are executed
-
-// });
-
-// gulp.task('test:server', () => {
-//   process.env.NODE_ENV = 'test';
-//   return gulp.src('test/server/**/*.js', {read: false})
-//         .pipe($.mocha({reporter: 'nyan'}))
-//         .on('error', $.util.log);
-//   // Object.keys(log.transports).forEach(
-//   //   key => log.transports[key].level = 'error'
-//   // );
-
-//   // return exec('mocha test/server/**/*.js', (err, stdout, stderr) => {
-//   //   if (err !== null) {
-//   //     $.util.log('exec error: ' + err);
-//   //   }
-//   //   $.util.log('stdout: ' + stdout);
-//   //   $.util.log('stderr: ' + stderr);
-//   // });
-// });
-
-// gulp.task('docs', (callback) => {
-//   return exec('jsdoc app/server -r -R README.md -d docs',
-//     (err, stdout, stderr) => {
-//       $.util.log('stdout: ' + stdout);
-//       $.util.log('stderr: ' + stderr);
-//       if (err !== null) {
-//         $.util.log('exec error: ' + err);
-//       }
-//       callback();
-//     });
-// });
-
-// gulp.task('test', ['test:pre', 'test:server']);
 
 gulp.task('default',
   ['development', 'nodemon', 'watch', 'bundle', 'static', 'styles']

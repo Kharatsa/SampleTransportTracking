@@ -5,9 +5,18 @@ const router = express.Router();
 const BPromise = require('bluebird');
 const formidable = require('formidable');
 const config = require('app/config');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 const sttmiddleware = require('app/server/sttmiddleware.js');
 const aggregate = require('app/server/odk/aggregateapi.js');
+
+let passport = null;
+let authenticate = null;
+if (config.server.isProduction()) {
+  passport = require('app/server/auth/httpauth.js');
+  authenticate = passport.authenticate('basic', {session: false});
+} else {
+  authenticate = (req, res, next) => next();
+}
 
 function prepareXMLResponse(res, statusCode, body) {
   res.set({
@@ -17,22 +26,27 @@ function prepareXMLResponse(res, statusCode, body) {
   res.status(statusCode);
 }
 
-router.all('*', aggregate.setOpenRosaHeaders);
-
-function setOpenRosaAcceptLenghtHeaders(req, res, next) {
-  log.debug('Setting X-OpenRosa-Accept-Content-Length header');
-  res.append('X-OpenRosa-Accept-Content-Length', '10485760');
-  next();
-}
+router.all('*', aggregate.setOpenRosaHeaders, authenticate);
 
 function handleHeadRequest(req, res) {
-  res.status(200).send();
+  res.status(401).send('');
 }
 
 function escapeRegExp(str) {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
 }
 
+/**
+ * To mimic the ODK Aggregate server this web server masks, the XML responses
+ * with URLs for that original server must be altered to report this app's URL
+ * in place of the original ODK Aggregate URL. This ensures that all requests
+ * from the client arrive to this application first.
+ *
+ * @param  {string} xml      Original XML from Aggregate
+ * @param  {string} fromHost URL to hide
+ * @param  {string} toHost   URL to display
+ * @return {string}          Altered XML
+ */
 function swapHostnames(xml, fromHost, toHost) {
   return new BPromise((resolve) => {
     resolve(xml.replace(new RegExp(escapeRegExp(fromHost), 'g'), toHost));
@@ -42,8 +56,8 @@ function swapHostnames(xml, fromHost, toHost) {
 const ODK_MASK_HOST = config.server.HOSTNAME + '/odk';
 
 router.head('/formList', handleHeadRequest);
+
 router.get('/formList',
-  aggregate.setOpenRosaHeaders,
   sttmiddleware.normalizeParams,
   (req, res) => {
     var formId = req.query.formid;
@@ -64,6 +78,11 @@ router.get('/formList',
     });
   }
 );
+
+function setOpenRosaAcceptLenghtHeaders(req, res, next) {
+  res.append('X-OpenRosa-Accept-Content-Length', '10485760');
+  next();
+}
 
 router.head('view/submissionList',
   setOpenRosaAcceptLenghtHeaders,
@@ -89,7 +108,7 @@ router.get('/view/submissionList',
       })
       .catch(err => next(err));
     } else {
-      res.status(500).json({'error': 'Missing formid parameter'});
+      res.status(500).send('Error: Missing formid parameter');
     }
   }
 );
@@ -121,7 +140,7 @@ const SUBMISSION_PART_NAME = 'xml_submission_file';
 
 function handleSubmissionPart(form, part) {
   if (part.name !== SUBMISSION_PART_NAME) {
-    log.debug('formidable handling part.name=%s', part.name);
+    log.debug(`formidable handling part name - ${part.name}`);
     form.handlePart(part);
     return;
   }
@@ -164,7 +183,7 @@ router.head('/submission',
 router.post('/submission',
   setOpenRosaAcceptLenghtHeaders,
   parseSubmissionFormData,
-  (req, res) => {
+  (req, res, next) => {
     log.debug('Received new ODK form submission, body=%s', req.body);
     log.debug('ODK form submission formData=%s', req.form);
 
@@ -175,7 +194,8 @@ router.post('/submission',
 
       prepareXMLResponse(res, odkRes.statusCode, body);
       res.send(body);
-    });
+    })
+    .catch(err => next(err));
   }
 );
 
@@ -187,7 +207,7 @@ function handlePassthroughGet(req, res, next) {
     swapHostnames(body, config.odk.aggregate.HOST, ODK_MASK_HOST)
   ))
   .spread((odkRes, body) => {
-    log.debug('Got passthroughGet response', body);
+    log.debug('Got passthrough GET response', body);
 
     prepareXMLResponse(res, odkRes.statusCode, body);
     res.send(body);
@@ -197,10 +217,8 @@ function handlePassthroughGet(req, res, next) {
 
 router.head('/xformsManifest', handleHeadRequest);
 router.get('/xformsManifest', handlePassthroughGet);
-
 router.head('/formXml', handleHeadRequest);
-router.get('/formXml', handlePassthroughGet);
-
+router.get('/formXml',handlePassthroughGet);
 router.head('/xformsDownload', handleHeadRequest);
 router.get('/xformsDownload', handlePassthroughGet);
 

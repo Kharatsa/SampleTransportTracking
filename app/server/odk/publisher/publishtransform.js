@@ -1,7 +1,7 @@
 'use strict';
 
 const BPromise = require('bluebird');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 
 /** @module publiser/publishtransform */
 

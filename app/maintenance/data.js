@@ -5,8 +5,9 @@
 const BPromise = require('bluebird');
 const config = require('app/config');
 const log = require('app/server/util/log.js');
-const sttModels = require('app/server/stt/models');
-const authModels = require('app/server/auth/models');
+// const sttModels = require('app/server/stt/models');
+const authmodels = require('app/server/auth/models');
+const sttmodels = require('app/server/stt/models');
 const storage = require('app/server/storage');
 const sttclient = require('app/server/stt/sttclient.js');
 const cli = require('commander');
@@ -17,11 +18,15 @@ function before() {
   // process.NODE_ENV = 'development';
   storage.init({config: config.db});
 
-  Object.keys(sttModels).forEach(modelName =>
-    storage.loadModel(sttModels[modelName])
+  // Object.keys(sttModels).forEach(modelName =>
+  //   storage.loadModel(sttModels[modelName])
+  // );
+  Object.keys(authmodels).forEach(modelName =>
+    storage.loadModel(authmodels[modelName])
   );
-  Object.keys(authModels).forEach(modelName =>
-    storage.loadModel(authModels[modelName])
+  // TODO: cleanup
+  Object.keys(sttmodels).forEach(modelName =>
+    storage.loadModel(sttmodels[modelName])
   );
 
   client = sttclient.create({db: storage.db, models: storage.models});
@@ -63,7 +68,7 @@ function rebuild() {
   .tap(forms => log.info('Finished synchronizing forms', forms))
   .map(form => form.get('form_id'))
   .map(formId => (
-    BPromise.props({ formId, ids: aggregatesync.getAllSubmissionIds(formId)})
+    BPromise.props({formId, ids: aggregatesync.getAllSubmissionIds(formId)})
   ))
   .tap(results => log.info('Finished fetching submission ids', results))
   .map(formSubs =>

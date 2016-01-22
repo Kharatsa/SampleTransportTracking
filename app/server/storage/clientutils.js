@@ -2,94 +2,86 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
+const datadb = require('app/server/util/datadb.js');
 
-/**
- * Converts Sequelize instances to plain objects. Empty objects passed to this
- * function will be returned as null. Plain objects passed to this function are
- * returned unmodified.
- *
- * @param  {!Sequelize.Instance|Object} obj [description]
- * @return {Object|null}
- */
-function getSimpleInstance(obj) {
-  // If it's a Sequelize instance object, return a plain object
-  if (obj && obj.get) {
-    return obj.get({plain: true});
-  }
+// /**
+//  * [findAllOfModel description]
+//  * @param  {!Object} options [description]
+//  * @param {!Sequelize.Model} options.model [description]
+//  * @param {!string} options.column [description]
+//  * @param {Array.<string>} options.values [description]
+//  * @param {?boolean} [options.simple] [description]
+//  * @param {?number} [options.limit] [description]
+//  * @return {Promise.<Sequelize.Instance|Object>} [description]
+//  * @throws {Error} If [this condition is met]
+//  */
+// const findAllOfModel = function(options) {
+//   if (!options || !options.model) {
+//     throw new Error('Missing paramter model');
+//   }
+//   if (!options || !options.column) {
+//     throw new Error('Missing parameter column');
+//   }
 
-  // Empty objects are truthy, making it difficult to easily spot whether a
-  // query returned any results. This returns `null` when obj is `{}`.
-  if (obj && !Object.keys(obj).length) {
-    return null;
-  }
+//   options = _.defaultsDeep(options || {}, {
+//     values: [],
+//     simple: true
+//   });
 
-  // If obj is already a plain, non-empty object, just return it unaltered.
-  return obj;
-}
+//   const valuesInClause = {};
+//   if (options.values && options.values.length) {
+//     valuesInClause[options.column] = {$in: options.values};
+//   }
 
-/**
- * Return the first result from an Array of results.
- *
- * @param  {!Array} results
- * @return {Object}
- */
-function getOneResult(results) {
-  if (results.length > 0) {
-    return results[0];
-  }
-  return {};
-}
-
-const CREATED_COLUMN_NAME = 'created_at';
-const UPDATED_COLUMN_NAME = 'updated_at';
-const omitDateDBCols = function(obj) {
-  return _.omit.call(null, obj, CREATED_COLUMN_NAME, UPDATED_COLUMN_NAME);
-};
-
-const ID_COLUMN_NAME = 'id';
-const omitDBCols = function(obj) {
-  return _.omit.call(null, obj, ID_COLUMN_NAME, CREATED_COLUMN_NAME,
-                     UPDATED_COLUMN_NAME);
-};
-
-function areCommonPropsEqual(target, other) {
-  // Other should share all of target's properties
-  return Object.keys(target).every(key => {
-    if (typeof other[key] === 'undefined') {
-      return false;
-    }
-    // For Date objects, compare the valueOf to ensure identical values
-    // evaluate to true for the equals check.
-    return (
-      (_.isDate(target[key]) ? target[key].getTime() : target[key]) ===
-      (_.isDate(other[key]) ? other[key].getTime() : other[key])
-    );
-  });
-}
+//   return options.model.findAll({
+//     where: valuesInClause,
+//     limit: options.limit
+//   })
+//   .then(results => {
+//     if (options && options.simple) {
+//       return results.map(datadb.makePlain);
+//     }
+//     return results;
+//   });
+// };
 
 /**
  * [_saveBulk description]
  *
  * @method
- * @param  {Sequelize.Model} model [description]
- * @param  {Array.<Object>} items [description]
- * @param  {Sequelize.Transaction} tran  [description]
+ * @param {Object} options [description]
+ * @param  {!Sequelize.Model} options.model [description]
+ * @param  {!Array.<Object>} options.items [description]
+ * @param  {?Sequelize.Transaction} [options.tran]  [description]
+ * @param {boolean} [options.simple] [description]
  * @return {Promise.<Array.<Sequelize.Instance>>}
  * @throws {Error} If [!items || !items.length]
  */
-const saveBulk = BPromise.method(function(model, items, tran) {
-  if (!(items && items.length)) {
+const saveBulk = BPromise.method(function(options) {
+  if (!options || !(options.items && options.items.length)) {
     throw new Error('Items are a required parameter');
   }
-  return model.bulkCreate(items, {transaction: tran});
+
+  options = _.defaultsDeep(options || {}, {
+    simple: true
+  });
+
+  return options.model.bulkCreate(options.items, {transaction: options.tran})
+  .then(results => {
+    if (options && options.simple) {
+      return BPromise.map(results, datadb.makePlain);
+    }
+    return results;
+  });
 });
 
 /**
  * [_updateBulk description]
  *
  * @method
- * @param  {!Sequelize.Model} model [description]
- * @param  {!Array.<object>} items [description]
+ * @param {!Object} options [description]
+ * @param  {!Sequelize.Model} options.model [description]
+ * @param  {!Array.<Object>} options.items [description]
  * @param  {?Sequelize.Transaction} tran  [description]
  * @return {Promise.<Array.<number, number>>} The promise returns an array with
  *                                            one or two elements. The first
@@ -99,22 +91,22 @@ const saveBulk = BPromise.method(function(model, items, tran) {
  *                                            rows (only supported in postgres
  *                                            with options.returning true.)
  * http://docs.sequelizejs.com/en/latest/api/model/#updatevalues-options-promisearrayaffectedcount-affectedrows
-
-
  * @throws {Error} If [item.id undefined for any item in items]
  */
-const updateBulk = BPromise.method(function(model, items, tran) {
-  if (items.length > 0) {
+const updateBulk = BPromise.method(function(options) {
+  if (options && options.items.length > 0) {
 
     // Ensure each object in items has an id property
-    return BPromise.filter(items, item => !(typeof item.id === 'undefined'))
+    return BPromise.filter(options.items,
+      item => !(typeof item.id === 'undefined')
+    )
     .then(result => {
 
-      if (result.length === items.length) {
-        return BPromise.map(items, item => {
-          return model.update(item, {
+      if (result.length === options.items.length) {
+        return BPromise.map(options.items, item => {
+          return options.model.update(item, {
             where: {id: item.id},
-            transaction: tran
+            transaction: options.tran
           });
         });
       } else {
@@ -130,11 +122,7 @@ const updateBulk = BPromise.method(function(model, items, tran) {
 });
 
 module.exports = {
-  getSimpleInstance,
-  getOneResult,
-  omitDateDBCols,
-  omitDBCols,
-  areCommonPropsEqual,
+  // findAllOfModel,
   saveBulk,
   updateBulk
 };

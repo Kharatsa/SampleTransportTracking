@@ -2,6 +2,8 @@
 
 const chai = require('chai');
 const expect = chai.expect;
+const chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
 const config = require('app/config');
 const credentials = require('app/server/auth/credentials.js');
 const users = require('app/server/auth/models/users.js');
@@ -77,8 +79,8 @@ describe('Authentication Components', () => {
 
     it('should not allow long usernames', done => {
       var invalid = [];
-      var char_count = authclient.USERNAME_MAX_LENGTH + 1;
-      for (var i=0; i<char_count; i++) {
+      var charCount = authclient.USERNAME_MAX_LENGTH + 1;
+      for (var i = 0; i < charCount; i++) {
         invalid.push('a');
       }
 
@@ -93,7 +95,14 @@ describe('Authentication Components', () => {
       .then(() => done());
     });
 
-    it('should not allow empty usernames');
+    it('should not allow empty usernames', () =>
+      expect(
+        credentials.protect('password')
+        .then(result => client.createUser({
+          username: '', salt: result.salt, digest: result.digest
+        }))
+      ).to.eventually.be.rejectedWith(Error)
+    );
 
     it('should get existing users', done => {
       client.getUser({username})

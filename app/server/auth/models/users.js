@@ -45,7 +45,7 @@ const users = modelwrapper({
           }
         },
         {
-          tableName: 'stt_users'
+          tableName: 'sys_Users'
         });
     };
   }

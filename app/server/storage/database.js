@@ -1,7 +1,7 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 
 /**
  * Maintains the database connection and models
@@ -17,7 +17,7 @@ function Database(options) {
   this.Sequelize = Sequelize;
 
   if (!options.config) {
-    throw new Error('Database requires an options.config parameter');
+    throw new Error('Missing required paramater options.config');
   }
   // Initialize the database instance given the config params
   var config = options.config;
@@ -29,7 +29,7 @@ function Database(options) {
   // Load any models provided up front
   this.models = {};
   var modelSpecs = options.models || [];
-  log.debug('Importing ' + modelSpecs.length + ' models with database');
+  log.debug(`Connecting to database with ${modelSpecs.length} models`);
   modelSpecs.forEach(spec => this.loadModel(spec));
 }
 
@@ -40,10 +40,10 @@ function Database(options) {
  */
 Database.prototype.loadModel = function(modelSpec) {
   if (!modelSpec) {
-    throw new Error('modelSpec is a required parameter');
+    throw new Error('Missing required parameter options.modelSpec');
   }
 
-  log.info('Importing Sequelize model: `' + modelSpec.name + '`');
+  log.info(`Importing Sequelize model: "${modelSpec.name}"`);
   var model = this.connection.import(modelSpec.name, modelSpec.import);
   if (model.hasOwnProperty('associate')) {
     model.associate(this.models);
@@ -69,6 +69,10 @@ module.exports = {
       throw new Error('Database must be initialized before loading models');
     }
     return sequelize.loadModel(modelSpec);
+  },
+
+  loadModels: function(models) {
+    Object.keys(models).forEach(modelName => this.loadModel(models[modelName]));
   },
 
   init: function(options) {

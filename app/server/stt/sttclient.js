@@ -2,7 +2,8 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
+const datadb = require('app/server/util/datadb.js');
 const clientutils = require('app/server/storage/clientutils.js');
 
 /** @module stt/sttclient */
@@ -35,94 +36,96 @@ function STTClient(options) {
   }
   this.db = options.db;
 
-  if (!options.models.Forms) {
-    throw new Error('Forms model is a required parameter');
-  }
-  if (!options.models.Samples) {
-    throw new Error('Samples model is a required parameter');
-  }
-  if (!options.models.Submissions) {
-    throw new Error('Submissions model is a required parameter');
-  }
-  if (!options.models.Facilities) {
-    throw new Error('Facilities model is a required parameter');
-  }
-  if (!options.models.People) {
-    throw new Error('People model is a required parameter');
-  }
-  if (!options.models.Updates) {
-    throw new Error('Updates model is a required parameter');
-  }
-  if (!options.models.Metadata) {
-    throw new Error('Metadata model is a required parameter');
-  }
+  // if (!options.models.Forms) {
+  //   throw new Error('Forms model is a required parameter');
+  // }
+  // if (!options.models.Samples) {
+  //   throw new Error('Samples model is a required parameter');
+  // }
+  // if (!options.models.Submissions) {
+  //   throw new Error('Submissions model is a required parameter');
+  // }
+  // if (!options.models.Facilities) {
+  //   throw new Error('Facilities model is a required parameter');
+  // }
+  // if (!options.models.People) {
+  //   throw new Error('People model is a required parameter');
+  // }
+  // if (!options.models.Updates) {
+  //   throw new Error('Updates model is a required parameter');
+  // }
+  // if (!options.models.Metadata) {
+  //   throw new Error('Metadata model is a required parameter');
+  // }
   this.models = options.models || {};
 }
 
 function handleSimpleOption(options, results) {
   if (options && options.simple) {
-    return results.map(clientutils.getSimpleInstance);
+    return results.map(datadb.makePlain);
   }
   return results;
 }
 
-/**
- * [getForms description]
- * @param  {?Object} options [description]
- * @param {?Array.<string>} options.formIds [description]
- * @param {?number} [options.limit] [description]
- * @param {?boolean} [options.simple=true] [description]
- * @return {Promise.<Sequelize.Instance|Object>}
- */
-STTClient.prototype.getForms = function(options) {
-  options = _.defaultsDeep(options || {}, {
-    formIds: [],
-    simple: true
-  });
+// /**
+//  * [getForms description]
+//  * @param  {?Object} options [description]
+//  * @param {?Array.<string>} options.formIds [description]
+//  * @param {?number} [options.limit] [description]
+//  * @param {?boolean} [options.simple=true] [description]
+//  * @return {Promise.<Sequelize.Instance|Object>}
+//  */
+// STTClient.prototype.getForms = function(options) {
+//   options = _.defaultsDeep(options || {}, {
+//     formIds: [],
+//     simple: true
+//   });
 
-  var formsWhere;
-  if (!(options && options.formIds && options.formIds.length)) {
-    log.debug('Get ALL forms');
-  } else {
-    log.debug('getForms with formIds', options.formIds);
-    formsWhere = {formId: {in: options.formIds}};
-  }
+//   var formsWhere;
+//   if (!(options && options.formIds && options.formIds.length)) {
+//     log.debug('Get ALL forms');
+//   } else {
+//     log.debug('getForms with formIds', options.formIds);
+//     formsWhere = {formId: {in: options.formIds}};
+//   }
 
-  return this.models.Forms.findAll({
-    where: formsWhere,
-    limit: options.limit
-  })
-  .then(results => handleSimpleOption(options, results));
-};
+//   return this.models.Forms.findAll({
+//     where: formsWhere,
+//     limit: options.limit
+//   })
+//   .then(results => handleSimpleOption(options, results));
+// };
 
-/**
- * [getForm description]
- *
- * @param {!Object} options
- * @param {!string} [options.formId] - The form Id
- * @param {?boolean} [options.simple=true] [description]
- * @return {Form|Sequelize.Instance}
- */
-STTClient.prototype.getForm = function(options) {
-  return this.getForms({
-    formIds: [options.formId],
-    simple: options.simple
-  })
-  .then(clientutils.getOneResult);
-};
+// /**
+//  * [getForm description]
+//  *
+//  * @param {!Object} options
+//  * @param {!string} [options.formId] - The form Id
+//  * @param {?boolean} [options.simple=true] [description]
+//  * @return {Form|Sequelize.Instance}
+//  */
+// STTClient.prototype.getForm = function(options) {
+//   return this.getForms({
+//     formIds: [options.formId],
+//     simple: options.simple
+//   })
+//   .then(datadb.getOneResult);
+// };
 
-/**
- * [saveForms description]
- *
- * @param  {!Array.<Form>} forms [description]
- * @param  {?Sequelize.Transaction} tran  [description]
- * @return {Promise.<Array.<Sequelize.Instance>>}
- */
-STTClient.prototype.saveForms = function(forms, tran) {
-  log.info('CREATING ' + forms.length + ' forms', forms);
+// /**
+//  * [saveForms description]
+//  *
+//  * @param  {!Array.<Form>} forms [description]
+//  * @param  {?Sequelize.Transaction} tran  [description]
+//  * @return {Promise.<Array.<Sequelize.Instance>>}
+//  */
+// STTClient.prototype.saveForms = function(forms, tran) {
+//   log.info('CREATING ' + forms.length + ' forms', forms);
 
-  return clientutils.saveBulk(this.models.Forms, forms, tran);
-};
+//   return clientutils.saveBulk({
+//     model: this.models.Forms, items: forms, tran
+//   });
+// };
 
 /**
  * [prepareSamplesWhere description]
@@ -223,19 +226,23 @@ STTClient.prototype.getSample = function(options) {
     simple: options.simple,
     limit: 1
   })
-  .then(clientutils.getOneResult);
+  .then(datadb.getOneResult);
 };
 
 /**
  * [_saveSamples description]
  *
- * @param  {!Array.<Sample>} samples [description]
- * @param  {?Sequelize.Transaction} [tran]    [description]
+ * @param {Object} options [description]
+ * @param  {!Array.<Sample>} options.samples [description]
+ * @param  {?Sequelize.Transaction} [options.tran]    [description]
  * @return {Promise.<Array.<Sequelize.Instance>>}
  */
-STTClient.prototype.saveSamples = function(samples, tran) {
-  log.info('CREATING ' + samples.length + ' samples\n\t' + samples);
-  return clientutils.saveBulk(this.models.Samples, samples, tran);
+STTClient.prototype.saveSamples = function(options) {
+  log.info('CREATING ' + options.samples.length + ' samples\n\t' +
+           options.samples);
+  return clientutils.saveBulk({
+    model: this.models.Samples, items: options.samples, tran: options.tran
+  });
 };
 
 /**
@@ -249,7 +256,7 @@ STTClient.prototype.saveSamples = function(samples, tran) {
 STTClient.prototype.updateSamples = function(options) {
   log.info('Update %s samples ', options.samples.length);
   return clientutils.updateBulk(
-    this.models.Samples, options.samples, options.tran
+    {model: this.models.Samples, items: options.samples, tran: options.tran}
   );
 };
 
@@ -305,7 +312,7 @@ STTClient.prototype.getSubmission = function(options) {
     limit: 1,
     simple: options.simple
   })
-  .then(clientutils.getOneResult);
+  .then(datadb.getOneResult);
 };
 
 /**
@@ -317,7 +324,9 @@ STTClient.prototype.getSubmission = function(options) {
  */
 STTClient.prototype.saveSubmissions = function(submissions, tran) {
   log.info('CREATING ' + submissions.length + ' submissions\n\t' + submissions);
-  return clientutils.saveBulk(this.models.Submissions, submissions, tran);
+  return clientutils.saveBulk({
+    model: this.models.Submissions, items: submissions, tran
+  });
 };
 
 /**
@@ -373,7 +382,7 @@ STTClient.prototype.getFacility = function(options) {
     limit: 1,
     simple: options.simple
   })
-  .then(clientutils.getOneResult);
+  .then(datadb.getOneResult);
 };
 
 /**
@@ -385,7 +394,9 @@ STTClient.prototype.getFacility = function(options) {
  */
 STTClient.prototype.saveFacilities = function(facilities, tran) {
   log.info('CREATING ' + facilities.length + ' facilities', facilities);
-  return clientutils.saveBulk(this.models.Facilities, facilities, tran);
+  return clientutils.saveBulk({
+    model: this.models.Facilities, items: facilities, tran
+  });
 };
 
 /**
@@ -426,7 +437,7 @@ STTClient.prototype.getPeople = function(options) {
   })
   .then(results => {
     if (options.simple) {
-      return results.map(clientutils.getSimpleInstance);
+      return results.map(datadb.makePlain);
     }
     return results;
   });
@@ -446,7 +457,7 @@ STTClient.prototype.getPerson = function(options) {
     limit: 1,
     simple: options.simple
   })
-  .then(clientutils.getOneResult);
+  .then(datadb.getOneResult);
 };
 
 /**
@@ -458,7 +469,9 @@ STTClient.prototype.getPerson = function(options) {
  */
 STTClient.prototype.savePeople = function(people, tran) {
   log.info('CREATING ' + people.length + ' people', people);
-  return clientutils.saveBulk(this.models.People, people, tran);
+  return clientutils.saveBulk({
+    model: this.models.People, items: people, tran
+  });
 };
 
 /**
@@ -533,7 +546,7 @@ STTClient.prototype.getUpdate = function(options) {
     limit: 1,
     simple: options.simple
   })
-  .then(clientutils.getOneResult);
+  .then(datadb.getOneResult);
 };
 
 /**
@@ -545,7 +558,9 @@ STTClient.prototype.getUpdate = function(options) {
  */
 STTClient.prototype.saveUpdates = function(updates, tran) {
   log.info('CREATING ' + updates.length + ' updates', updates);
-  return clientutils.saveBulk(this.models.Updates, updates, tran);
+  return clientutils.saveBulk({
+    model: this.models.Updates, items: updates, tran
+  });
 };
 
 /**
@@ -601,7 +616,9 @@ STTClient.prototype.getMetadata = function(options) {
  */
 STTClient.prototype.saveMetadata = function(metadata, tran) {
   log.info('CREATING ' + metadata.length + ' metadata entries', metadata);
-  return clientutils.saveBulk(this.models.Metadata, metadata, tran);
+  return clientutils.saveBulk({
+    model: this.models.Metadata, items: metadata, tran
+  });
 };
 
 /**
@@ -621,7 +638,7 @@ STTClient.prototype.updateMetadata = function() {
  */
 // function submissionEventCombine(stEvent) {
 //   var submissionAttribs = Object.keys(
-//     clientutils.getSimpleInstance(stEvent.formSubmission)
+//     datadb.makePlain(stEvent.formSubmission)
 //   );
 
 //   return BPromise.each(submissionAttribs, function(key) {
@@ -705,7 +722,7 @@ STTClient.prototype.updateMetadata = function() {
 //       ['submission_num', 'DESC']
 //     ]
 //   })
-//   .map(clientutils.getSimpleInstance)
+//   .map(datadb.makePlain)
 //   .map(submissionEventCombine);
 // };
 
@@ -733,7 +750,7 @@ STTClient.prototype.updateMetadata = function() {
 //     attributes: {exclude: ['id']},
 //     where: makeSampleWhere(id)
 //   })
-//   .then(clientutils.getSimpleInstance);
+//   .then(datadb.makePlain);
 // }
 
 // function getSampleUpdates(sampleId, updatesModel, submissionModel) {
@@ -749,7 +766,7 @@ STTClient.prototype.updateMetadata = function() {
 //       attributes: {exclude: SUBMISSION_FIELDS_EXCLUDE}
 //     }]
 //   })
-//   .map(clientutils.getSimpleInstance)
+//   .map(datadb.makePlain)
 //   .map(submissionEventCombine);
 // }
 

@@ -31,16 +31,6 @@ const tabs = function(state=defaultTabs, action) {
   }
 };
 
-// const updatePath = function(state, action) {
-//   switch (action.type) {
-//   case UPDATE_LOCATION:
-//     // do something here
-//     return state;
-//   default:
-//     return state;
-//   }
-// };
-
 const defaultTab = '0';
 const selectedTab = function(state=defaultTab, action) {
   switch (action.type) {

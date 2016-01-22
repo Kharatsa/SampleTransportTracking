@@ -4,7 +4,7 @@ const BPromise = require('bluebird');
 const request = require('request');
 const FormData = require('form-data');
 const Auth = require('request/lib/auth').Auth;
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 const aggregateConfig = require('app/config').odk.aggregate;
 
 /**
@@ -12,6 +12,8 @@ const aggregateConfig = require('app/config').odk.aggregate;
  *
  * https://github.com/opendatakit/opendatakit/wiki/Briefcase-Aggregate-API
  */
+
+// TODO: re-add authentication to these routes
 
 /**
  * Headers required by the OpenRosa API.
@@ -212,10 +214,14 @@ const SUBMISSION_OPTIONS = Object.assign({}, ODK_REQUEST_OPTIONS, {
  *
  * TODO: Make this less hacky
  *
- * @param  {string} submission [description]
+ * @param  {string} submission Form submission XML
  * @return {Promise.<Array.<http.IncomingMessage, string>>}
  */
 function makeSubmission(submission) {
+  if (!submission) {
+    let err = new Error('Missing submission XML');
+    BPromise.reject(err);
+  }
   log.debug('Making ODK Aggregate form submission', submission);
 
   return new BPromise((resolve, reject) => {

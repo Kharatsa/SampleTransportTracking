@@ -2,13 +2,14 @@
 
 const path = require('path');
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const IS_PRODUCTION = NODE_ENV === 'production';
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'development';
+}
+const isProduction = () => process.env.NODE_ENV === 'production';
 const PUBLIC_PATH = path.join(__dirname, '..', '/public');
-const LISTEN_PORT = 8081;
-const LISTEN_HOST = '0.0.0.0';
-const HOSTNAME = IS_PRODUCTION ? 'kharatsa.com' : '108.30.53.92:8081';
+const LISTEN_PORT = process.env.STT_LISTEN_PORT || 8081;
+const LISTEN_HOST = process.env.STT_LISTEN_HOST || 'localhost';
 
 module.exports = {
-  LISTEN_PORT, LISTEN_HOST, HOSTNAME, PUBLIC_PATH, IS_PRODUCTION, NODE_ENV
+  LISTEN_PORT, LISTEN_HOST, PUBLIC_PATH, isProduction
 };

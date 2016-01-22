@@ -3,7 +3,7 @@
 const BPromise = require('bluebird');
 const storage = require('app/server/storage');
 const sttclient = require('app/server/stt/sttclient.js');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 
 /** @module publiser/publishsync */
 

@@ -9,6 +9,8 @@ SAMPLE_TRACK_PATH="$SAMPLE_TRACK_BASEDIR/$SAMPLE_TRACK_DIR"
 SAMPLE_TRACK_USER="strack"
 SAMPLE_TRACK_USER_GROUP="$SAMPLE_TRACK_USER:$SAMPLE_TRACK_USER"
 
+source ./nodeupdate.sh
+
 echo "----------------------------------------------"
 echo "------------ Pull repo updates ---------------"
 echo "----------------------------------------------"

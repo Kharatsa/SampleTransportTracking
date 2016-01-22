@@ -3,7 +3,7 @@
 const BPromise = require('bluebird');
 
 /**
- * @callback shouldLoopCallback
+ * @callback shouldLoop
  * @return {boolean} Returns true when the halting condition has not been met
  */
 
@@ -29,7 +29,6 @@ function promiseWhile(condition, action) {
   };
   return BPromise.resolve().then(loop);
 }
-
 
 module.exports = {
   promiseWhile

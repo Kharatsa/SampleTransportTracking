@@ -4,23 +4,14 @@ const express = require('express');
 const helmet = require('helmet');
 const favicon = require('serve-favicon');
 const config = require('app/config');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 const requestLog = require('app/server/util/logrequest.js');
 const storage = require('app/server/storage');
 storage.init({config: config.db});
-const sttModels = require('app/server/stt/models');
-const newModels = require('app/server/stt/modelsnew');
-const authModels = require('app/server/auth/models');
-Object.keys(sttModels).forEach(modelName =>
-  storage.loadModel(sttModels[modelName])
-);
-Object.keys(authModels).forEach(modelName =>
-  storage.loadModel(authModels[modelName])
-);
-// TODO: cleanup
-Object.keys(newModels).forEach(modelName =>
-  storage.loadModel(newModels[modelName])
-);
+const sttmodels = require('app/server/stt/models');
+const authmodels = require('app/server/auth/models');
+storage.loadModels(authmodels);
+storage.loadModels(sttmodels);
 const sttmiddleware = require('app/server/sttmiddleware.js');
 const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
@@ -32,8 +23,8 @@ shutdownhandler.init();
 
 const app = express();
 
-log.info('NODE_ENV=%s', config.server.NODE_ENV);
-if (config.server.IS_PRODUCTION) {
+log.info('NODE_ENV=%s', process.env.NODE_ENV);
+if (config.server.isProduction()) {
   log.info('Running PRODUCTION server');
   app.set('trust proxy', 'loopback'); // specify a single subnet
 } else {

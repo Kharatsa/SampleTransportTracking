@@ -8,7 +8,7 @@ const aggregatetransform = require('app/server/odk/sync/aggregatetransform.js');
 
 describe('Aggregate XML Data Transforms', () => {
 
-  describe('form list tranform', () => {
+  describe.skip('form list tranform', () => {
     const formListXML = (
       '<xforms xmlns="http://openrosa.org/xforms/xformsList">' +
         '<xform>' +

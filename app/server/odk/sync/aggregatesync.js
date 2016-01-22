@@ -1,16 +1,16 @@
 'use strict';
 
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 const aggregate = require('app/server/odk/aggregateapi.js');
 const transform = require('app/server/odk/sync/aggregatetransform.js');
-const promisehelpers = require('app/server/util/promisehelpers.js');
+const promiseloop = require('app/server/util/promiseloop.js');
 
 /**
  * Fetches the form list XML from ODK Aggregate, converts the XML to JSON,
  * transforms the JSON to {@link Form} models, then inserts these forms in
  * the database.
  *
- * @return {Promise.<Array.<Form>} Resolves with an array of
+ * @return {Promise.<Array.<Form>>} Resolves with an array of
  *                                               Sequelize Form instances.
  */
 function getFormList() {
@@ -60,7 +60,7 @@ function getAllSubmissionIds(formId) {
   var currentCursor;
   var empty;
   var count = 0;
-  return promisehelpers.promiseWhile(
+  return promiseloop.promiseWhile(
     () => {
       if (empty) {
         return false;

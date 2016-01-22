@@ -1,6 +1,8 @@
 'use strict';
 
 const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
 const expect = chai.expect;
 const BPromise = require('bluebird');
 const _ = require('lodash');
@@ -8,9 +10,9 @@ const config = require('app/config');
 const storage = require('app/server/storage');
 const sttModels = require('app/server/stt/models');
 const sttclient = require('app/server/stt/sttclient.js');
-const clientutils = require('app/server/storage/clientutils.js');
+const datadb = require('app/server/util/datadb.js');
 
-describe('Sample Transport Tracking Client', () => {
+describe.skip('Sample Transport Tracking Client', () => {
   var client;
 
   before(done => {
@@ -26,20 +28,22 @@ describe('Sample Transport Tracking Client', () => {
 
   describe('empty database, empty parameter queries', () => {
 
-    it('should fetch an empty people array', done => {
-      return client.getPeople()
-      .then(result => {
-        expect(result).to.be.empty;
-        done();
-      });
+    it('should fetch an empty people array', () => {
+      return expect(client.getPeople())
+        .to.eventually.be.empty;
+      // .then(result => {
+      //   expect(result).to.be.empty;
+      //   done();
+      // });
     });
 
-    it('should fetch an empty facilities array', done => {
-      return client.getFacilities()
-      .then(result => {
-        expect(result).to.be.empty;
-        done();
-      });
+    it('should fetch an empty facilities array', () => {
+      return expect(client.getFacilities())
+        .to.eventually.be.empty;
+      // .then(result => {
+      //   expect(result).to.be.empty;
+      //   done();
+      // });
     });
 
   });
@@ -54,14 +58,17 @@ describe('Sample Transport Tracking Client', () => {
 
   describe('sample entity methods', () => {
 
-    it('should save new samples', done => {
-      client.db.transaction(tran => {
-        return client.saveSamples(goodSamples, tran)
-        .then(results => {
-          expect(results).to.have.length(5);
-          done();
-        });
-      });
+    it('should save new samples', () => {
+      return expect(client.db.transaction(
+        tran => client.saveSamples(goodSamples, tran)
+      )).to.eventually.have.length(5);
+      // client.db.transaction(tran => {
+      //   return client.saveSamples(goodSamples, tran)
+      //   .then(results => {
+      //     expect(results).to.have.length(5);
+      //     done();
+      //   });
+      // });
     });
 
     it('should retrieve individual samples by stId', done => {
@@ -72,7 +79,7 @@ describe('Sample Transport Tracking Client', () => {
         })
       )
       .each(item => {
-        expect(item.sample).to.deep.equal(clientutils.omitDBCols(item.result));
+        expect(item.sample).to.deep.equal(datadb.omitDBCols(item.result));
       }).then(() => done());
     });
 
@@ -89,7 +96,7 @@ describe('Sample Transport Tracking Client', () => {
         })
       )
       .each(item =>
-        expect(item.sample).to.deep.equal(clientutils.omitDBCols(item.result))
+        expect(item.sample).to.deep.equal(datadb.omitDBCols(item.result))
       ).then(() => done());
     });
 
@@ -107,7 +114,7 @@ describe('Sample Transport Tracking Client', () => {
         })
       )
       .each(item =>
-        expect(item.sample).to.deep.equal(clientutils.omitDBCols(item.result))
+        expect(item.sample).to.deep.equal(datadb.omitDBCols(item.result))
       ).then(() => done());
     });
 
@@ -115,7 +122,7 @@ describe('Sample Transport Tracking Client', () => {
       var updateSample;
       client.getSample({stId: goodSamples[0].stId})
       .then(sample => {
-        updateSample = clientutils.omitDateDBCols(sample);
+        updateSample = datadb.omitDateDBCols(sample);
         updateSample.type = 'blood';
         return client.updateSamples({samples: [updateSample]})
         .then(counts => {
@@ -125,8 +132,8 @@ describe('Sample Transport Tracking Client', () => {
         })
         .then(() => client.getSample({stId: updateSample.stId}))
         .then(sample =>
-          expect(clientutils.omitDateDBCols(sample))
-          .to.deep.equal(clientutils.omitDateDBCols(updateSample),
+          expect(datadb.omitDateDBCols(sample))
+          .to.deep.equal(datadb.omitDateDBCols(updateSample),
             'sample record was not updated')
         )
         .then(() => done());
@@ -193,7 +200,7 @@ describe('Sample Transport Tracking Client', () => {
       .map(matchFormPair)
       .each(pair => {
         expect(pair.match).to.be.defined;
-        expect(pair.match).to.deep.equal(clientutils.omitDBCols(pair.form));
+        expect(pair.match).to.deep.equal(datadb.omitDBCols(pair.form));
       }).then(() => done());
     });
 
@@ -204,7 +211,7 @@ describe('Sample Transport Tracking Client', () => {
       .map(matchFormPair)
       .each(pair => {
         expect(pair.match).to.be.defined;
-        expect(pair.match).to.deep.equal(clientutils.omitDBCols(pair.form));
+        expect(pair.match).to.deep.equal(datadb.omitDBCols(pair.form));
       }).then(() => done());
     });
 
@@ -212,7 +219,7 @@ describe('Sample Transport Tracking Client', () => {
       var targetForm = goodForms[0];
       return client.getForm({formId: targetForm.formId})
       .then(form =>
-        expect(clientutils.omitDBCols(form)).to.deep.equal(targetForm)
+        expect(datadb.omitDBCols(form)).to.deep.equal(targetForm)
       ).then(() => done());
     });
 
@@ -246,7 +253,7 @@ describe('Sample Transport Tracking Client', () => {
       .map(matchFacilityPair)
       .each(pair => {
         expect(pair.match).to.be.defined;
-        expect(pair.match).to.deep.equal(clientutils.omitDBCols(pair.facility));
+        expect(pair.match).to.deep.equal(datadb.omitDBCols(pair.facility));
       })
       .then(() => done());
     });
@@ -284,7 +291,7 @@ describe('Sample Transport Tracking Client', () => {
       .map(matchPeoplePair)
       .each(pair => {
         expect(pair.match).to.be.defined;
-        expect(pair.match).to.deep.equal(clientutils.omitDBCols(pair.person));
+        expect(pair.match).to.deep.equal(datadb.omitDBCols(pair.person));
       }).then(() => done());
     });
 
@@ -354,7 +361,7 @@ describe('Sample Transport Tracking Client', () => {
       .each(pair => {
         expect(pair.match).to.be.defined;
         expect(pair.match).to.deep.equal(
-          clientutils.omitDBCols(pair.submission)
+          datadb.omitDBCols(pair.submission)
         );
       })
       .then(() => done());
@@ -367,7 +374,7 @@ describe('Sample Transport Tracking Client', () => {
       .then(pair => {
         expect(pair.match).to.be.defined;
         expect(pair.match).to.deep.equal(
-          clientutils.omitDBCols(pair.submission)
+          datadb.omitDBCols(pair.submission)
         );
       })
       .then(() => done());

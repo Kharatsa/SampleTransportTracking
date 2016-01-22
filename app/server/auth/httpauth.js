@@ -2,7 +2,7 @@
 
 const passport = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 const storage = require('app/server/storage');
 const authclient = require('./authclient.js');
 const credentials = require('./credentials.js');

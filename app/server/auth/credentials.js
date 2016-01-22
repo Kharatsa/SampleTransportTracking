@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const BPromise = require('bluebird');
 BPromise.promisifyAll(crypto);
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 
 const ITERATIONS = 500;
 const KEYLEN = 512;

@@ -57,13 +57,14 @@ function convertToString(value, type) {
 }
 
 const METADATA_TYPES = [
-  'artifact',
-  'status',
+  'stype',
+  'condition',
   'person',
   'facility',
   'region',
   'labtest',
-  'rejection'
+  'labstatus',
+  'labreject'
 ];
 
 const VALUE_DATA_TYPES = [
@@ -76,8 +77,6 @@ const metadata = modelwrapper({
 
   name: modelName,
 
-  references: [],
-
   import: function() {
     return function(sequelize, DataTypes) {
       return sequelize.define(modelName,
@@ -85,15 +84,19 @@ const metadata = modelwrapper({
           type: {
             type: DataTypes.ENUM,
             values: METADATA_TYPES,
-            allowNull: false
+            allowNull: false,
+            unique: 'metadataKey',
+            field: 'type'
           },
           key: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
+            unique: 'metadataKey',
+            field: 'key'
           },
           value: {
             type: DataTypes.STRING,
+            field: 'value',
             allowNull: false,
             get: function()  {
               var dataType = this.getDataValue('valueType');
@@ -106,15 +109,20 @@ const metadata = modelwrapper({
               );
             }
           },
+          valueLabel: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            field: 'value_label'
+          },
           valueType: {
             type: DataTypes.ENUM,
             values: VALUE_DATA_TYPES,
             allowNull: false,
-            defaultValue: 'string'
+            field: 'value_type'
           }
         },
         {
-          indexes: [{name: 'metaPair', unique: true, fields: ['type', 'key']}]
+          tableName: 'stt_metadata'
         });
     };
   }

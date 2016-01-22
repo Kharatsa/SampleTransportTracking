@@ -79,9 +79,9 @@ cli.command('remove <username>')
   .description('remove an existing user')
   .action(remove);
 
-// TODO: Change user's password
 // TODO: List existing users
-// TODO: Rehash passwords?
-// TODO: Load users from CSV or JSON
+// TODO: Change user's password
+// TODO: Maybe rehash passwords?
+// TODO: Load users from secret CSV or JSON
 
 cli.parse(process.argv);

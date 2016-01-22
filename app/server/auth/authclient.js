@@ -2,8 +2,8 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const log = require('app/server/util/log.js');
-const clientutils = require('app/server/storage/clientutils.js');
+const log = require('app/server/util/logapp.js');
+const datadb = require('app/server/util/datadb.js');
 
 /**
  * [AuthClient description]
@@ -66,7 +66,7 @@ AuthClient.prototype.getUser = BPromise.method(function(options) {
   .then(username => this.models.Users.findOne({where: {username}}))
   .then(result => {
     if (options.simple) {
-      return clientutils.getSimpleInstance(result);
+      return datadb.makePlain(result);
     }
     return result;
   });
@@ -113,7 +113,7 @@ AuthClient.prototype.createUser = BPromise.method(function(options) {
   })
   .then(result => {
     if (options.simple) {
-      return clientutils.getSimpleInstance(result);
+      return datadb.makePlain(result);
     }
     return result;
   });

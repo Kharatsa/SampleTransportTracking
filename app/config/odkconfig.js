@@ -1,24 +1,21 @@
 'use strict';
 
-var secrets;
-try {
-  secrets = require('./secret/secrets.js');
-} catch (err) {
-  throw new Error('Could not load secrets.js file');
-}
+// ODK Aggregate settings
+const ODK_PROTOCOL = process.env.ODK_PROTOCOL || 'http';
+const ODK_HOSTNAME = process.env.ODK_HOSTNAME || 'odk.kharatsa.com';
+const ODK_USERNAME = process.env.ODK_USERNAME || '';
+const ODK_PASSWORD = process.env.ODK_PASSWORD || '';
+const ODK_PUBLISHER_TOKEN = process.env.ODK_PUBLISHER_TOKEN || '';
 
-// ODK Aggregate
-const ODK_PROTOCOL = 'http';
-const ODK_HOSTNAME = 'odk.kharatsa.com';
 const aggregate = {
   PROTOCOL: ODK_PROTOCOL,
   HOST: ODK_HOSTNAME,
   URL: ODK_PROTOCOL + '://' + ODK_HOSTNAME,
-  USERNAME: 'cornelltech',
-  PASSWORD: secrets.ODK_PASSWORD
+  USERNAME: ODK_USERNAME,
+  PASSWORD: ODK_PASSWORD
 };
 
 // ODK Aggregate simple JSON publisher config
-const PUBLISHER_TOKEN = secrets.ODK_PUBLISHER_TOKEN;
+const PUBLISHER_TOKEN = ODK_PUBLISHER_TOKEN;
 
 module.exports = {aggregate, PUBLISHER_TOKEN};

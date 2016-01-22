@@ -2,8 +2,8 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const clientutils = require('app/server/storage/clientutils.js');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
+const datadb = require('app/server/util/datadb.js');
 
 /** @module publiser/publishmerge */
 
@@ -19,8 +19,8 @@ const log = require('app/server/util/log.js');
  * @param  {Object} target A plain Object
  * @return {boolean}
  */
-function areCommonPropsEqual(local, target) {
-  return Object.keys(clientutils.omitDBCols(target)).every(key => {
+function commonPropsEqual(local, target) {
+  return Object.keys(datadb.omitDBCols(target)).every(key => {
     if (typeof local[key] === 'undefined') {
       return false;
     }
@@ -138,7 +138,7 @@ function mergeSubmission(local, submission) {
   if (!local || Object.keys(local).length === 0) {
     log.info('NEW submission submissionId=' + submissionId);
     merged.insert.push(submission);
-  } else if (!areCommonPropsEqual(local, submission)) {
+  } else if (!commonPropsEqual(local, submission)) {
     log.info('UPDATE submission submissionId=' + submissionId);
     merged.update.push(addIdForUpdate(local, submission));
   } else {
@@ -156,7 +156,7 @@ function mergeMetadata(local, metadata) {
   if (_.isEmpty(local)) {
     log.info('NEW metadata Id=' + metaId);
     merged.insert.push(metadata);
-  } else if (!areCommonPropsEqual(local, metadata)) {
+  } else if (!commonPropsEqual(local, metadata)) {
     log.info('UPDATE metadata Id=' + metaId);
     merged.update.push(addIdForUpdate(local, metadata));
   } else {

@@ -1,21 +1,11 @@
 'use strict';
 
-const forms = require('./forms.js');
-const people = require('./people.js');
-const facilities = require('./facilities.js');
-const submissions = require('./submissions.js');
-const samples = require('./samples.js');
-const updates = require('./updates.js');
-const testrequests = require('./testrequests.js');
-const metadata = require('./metadata.js');
+const sampleids = require('./sampleids.js');
+const metadata = require('./metadata');
+const artifacts = require('./artifacts.js');
+const labtests = require('./labtests.js');
+const changes = require('./changes');
 
 module.exports = {
-  forms,
-  people,
-  facilities,
-  submissions,
-  samples,
-  updates,
-  testrequests,
-  metadata
+  metadata, sampleids, artifacts, labtests, changes
 };

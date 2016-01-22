@@ -1,7 +1,6 @@
 'use strict';
 
 import {Map as ImmutableMap} from 'immutable';
-// import {UPDATE_LOCATION as ROUTER_UPDATE_LOCATION} from 'redux-simple-router';
 
 // https://github.com/acdlite/flux-standard-action
 // http://rackt.org/redux/docs/basics/Actions.html
@@ -10,8 +9,6 @@ import {Map as ImmutableMap} from 'immutable';
  * action types
  */
 export const RECEIVE_TABS = 'RECEIVE_TABS';
-// UPDATE_LOCATION via https://github.com/rackt/redux-simple-router#api
-// export const UPDATE_LOCATION = ROUTER_UPDATE_LOCATION;
 export const SELECT_TAB = 'SELECT_TAB';
 
 export const FETCH_UPDATES = 'FETCH_UPDATES';

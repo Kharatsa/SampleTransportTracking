@@ -35,10 +35,6 @@ if (global.DEBUG) {
 }
 
 const store = createStoreWithMiddleware(reducers);
-// const store = createStoreWithMiddleware(combineReducers(Object.assign({},
-//   reducers,
-//   {routing: routeReducer}
-// )));
 
 render(
   <Provider store={store}>

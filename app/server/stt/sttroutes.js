@@ -2,8 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
-const log = require('app/server/util/log.js');
-const normalizeParams = require('app/server/middleware.js').normalizeParams;
+const log = require('app/server/util/logapp.js');
+const normalizeParams = require('app/server/sttmiddleware.js').normalizeParams;
 const storage = require('app/server/storage');
 const sttclient = require('app/server/stt/sttclient.js');
 

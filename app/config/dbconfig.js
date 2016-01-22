@@ -3,8 +3,7 @@
 const path = require('path');
 const BPromise = require('bluebird');
 const statAsync = BPromise.promisify(require('fs').stat);
-const log = require('app/server/util/log.js');
-const serverconfig = require('./serverconfig.js');
+const log = require('app/server/util/logapp.js');
 
 const databasePath = '/var/lib/strack';
 statAsync(databasePath)
@@ -27,8 +26,7 @@ const sqlitePath = path.join(databasePath, 'stracker.sqlite');
 const defaultConfig = {
   dialect: 'sqlite',
   storage: sqlitePath,
-  logging: log.debug,
-  define: {underscored: true}
+  logging: log.debug
 };
 
 // Define additional configuration objects here, and add to databaseConfigs
@@ -39,9 +37,8 @@ const databaseConfigs = {
   test: {
     dialect: 'sqlite',
     storage: ':memory:',
-    logging: function() {},
-    define: {underscored: true}
+    logging: function() {}
   }
 };
 
-module.exports = databaseConfigs[serverconfig.NODE_ENV];
+module.exports = databaseConfigs[process.env.NODE_ENV || 'development'];

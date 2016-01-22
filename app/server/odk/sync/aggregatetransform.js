@@ -3,7 +3,7 @@
 const BPromise = require('bluebird');
 const xml2js = require('xml2js');
 BPromise.promisifyAll(xml2js);
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 const parse = require('app/common/parse.js');
 
 function getElemText(parent, textNode) {
