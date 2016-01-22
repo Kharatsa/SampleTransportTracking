@@ -11,7 +11,8 @@ supervisor/
 etc/
 docs/
 .nvmrc
-*.sublime-project
+*sublime-project
+*sublime-workspace
 *.pem
 *secret*
 app/public/*

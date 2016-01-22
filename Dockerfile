@@ -1,4 +1,4 @@
-FROM node:4.2
+FROM node:4.2-slim
 MAINTAINER Sean Herman <sjh293@cornell.edu>
 
 ENV BUILD_DEPS='git' \
@@ -12,28 +12,29 @@ RUN apt-get update && apt-get install -y \
 RUN npm install -g ${NODE_DEPS}
 
 ENV STT_DATA_PATH='/var/lib/strack' \
-    STT_BASE_PATH='/var/www/strack' \
-    STT_PORT='8080'
+    STT_APP_PATH='/var/www/strack' \
+    STT_LISTEN_PORT='8081' \
+    STT_LISTEN_HOST='0.0.0.0'
 
 RUN mkdir -p ${STT_DATA_PATH}
-RUN mkdir -p ${STT_BASE_PATH}
-WORKDIR ${STT_BASE_PATH}
+RUN mkdir -p ${STT_APP_PATH}
 
-COPY . ${STT_BASE_PATH}
-# RUN git clone https://github.com/Kharatsa/sample-tracking.git ${STT_BASE_PATH}
+COPY . ${STT_APP_PATH}
+# RUN git clone https://github.com/Kharatsa/sample-tracking.git ${STT_APP_PATH}
 
+WORKDIR ${STT_APP_PATH}
 RUN npm install \
     && npm prune \
     && npm cache clean
 WORKDIR node_modules
 RUN ln -s ../app app
-WORKDIR ${STT_BASE_PATH}
+WORKDIR ${STT_APP_PATH}
 RUN gulp build
 
 RUN adduser --system --no-create-home --group strack
-RUN chown -R strack:strack ${STT_BASE_PATH}
-USER strack
+# RUN chown -R strack:strack ${STT_APP_PATH}
+# USER strack
 
-EXPOSE ${STT_PORT}
+EXPOSE ${STT_LISTEN_PORT}
 
-CMD ['npm', 'start']
+CMD chown -R strack:strack ${STT_APP_PATH} && npm start
