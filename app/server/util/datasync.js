@@ -4,6 +4,16 @@ const BPromise = require('bluebird');
 // const log = require('app/server/util/logapp.js');
 const datadb = require('app/server/util/datadb.js');
 
+const findAllWhere = (Model, where) => {
+  let query;
+  if (where.then) {
+    query = where.then(result => Model.findAll({where: result}));
+  } else {
+    query = Model.findAll({where});
+  }
+  return query.map(datadb.makePlain).map(datadb.omitDateDBCols);
+};
+
 /**
  * [fetchLocalWithColAndRef description]
  *
@@ -159,13 +169,13 @@ const persistMergedData = BPromise.method(options => {
   if (options.merged && options.merged.length) {
 
     const doInserts = incomingForInsert(options.merged)
-      .then(filtered => options.model.bulkCreate(filtered, {validate: true}))
-      .map(datadb.makePlain);
+    .then(filtered => options.model.bulkCreate(filtered, {validate: true}))
+    .map(datadb.makePlain);
 
     const doUpdates = mergedForUpdate(options.merged)
-      .then(filtered => persistMergedUpdates({
-        model: options.model, modelPKs: options.modelPKs, items: filtered
-      }));
+    .then(filtered => persistMergedUpdates(
+      {model: options.model, modelPKs: options.modelPKs, items: filtered}
+    ));
 
     return BPromise.join(
       doInserts, doUpdates, localToSkip(options.merged),
@@ -177,6 +187,7 @@ const persistMergedData = BPromise.method(options => {
 });
 
 module.exports = {
+  findAllWhere,
   fetchLocalWithColAndRef,
   persistMergedData
 };

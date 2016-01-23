@@ -1,21 +1,15 @@
 'use strict';
 
 // ODK Aggregate settings
-const ODK_PROTOCOL = process.env.ODK_PROTOCOL || 'http';
-const ODK_HOSTNAME = process.env.ODK_HOSTNAME || 'odk.kharatsa.com';
-const ODK_USERNAME = process.env.ODK_USERNAME || '';
-const ODK_PASSWORD = process.env.ODK_PASSWORD || '';
-const ODK_PUBLISHER_TOKEN = process.env.ODK_PUBLISHER_TOKEN || '';
+const PROTOCOL = process.env.ODK_PROTOCOL || 'http';
+const HOST = process.env.ODK_HOSTNAME || 'odk.kharatsa.com';
+const URL = PROTOCOL + '://' + HOST;
+const USERNAME = process.env.ODK_USERNAME || '';
+const PASSWORD = process.env.ODK_PASSWORD || '';
+const PUBLISHER_TOKEN = process.env.ODK_PUBLISHER_TOKEN || '';
+const SUBMISSION_MAX_LENGTH = process.env.SUBMISSION_MAX_LENGTH || 10485760;
 
-const aggregate = {
-  PROTOCOL: ODK_PROTOCOL,
-  HOST: ODK_HOSTNAME,
-  URL: ODK_PROTOCOL + '://' + ODK_HOSTNAME,
-  USERNAME: ODK_USERNAME,
-  PASSWORD: ODK_PASSWORD
+module.exports = {
+  PROTOCOL, HOST, URL, USERNAME, PASSWORD, PUBLISHER_TOKEN,
+  SUBMISSION_MAX_LENGTH
 };
-
-// ODK Aggregate simple JSON publisher config
-const PUBLISHER_TOKEN = ODK_PUBLISHER_TOKEN;
-
-module.exports = {aggregate, PUBLISHER_TOKEN};

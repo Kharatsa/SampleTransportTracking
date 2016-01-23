@@ -4,8 +4,8 @@ const BPromise = require('bluebird');
 const request = require('request');
 const FormData = require('form-data');
 const Auth = require('request/lib/auth').Auth;
+const config = require('app/config');
 const log = require('app/server/util/logapp.js');
-const aggregateConfig = require('app/config').odk.aggregate;
 
 /**
  * This module replicates the pull functions of the Briefcase Aggregate API.
@@ -44,13 +44,13 @@ function setOpenRosaHeaders(req, res, next) {
  * @type {Object}
  */
 const ODK_REQUEST_AUTH = {
-  user: aggregateConfig.USERNAME,
-  pass: aggregateConfig.PASSWORD,
+  user: config.odk.USERNAME,
+  pass: config.odk.PASSWORD,
   sendImmediately: false
 };
 
 const ODK_REQUEST_OPTIONS = {
-  baseUrl: aggregateConfig.URL,
+  baseUrl: config.odk.URL,
   headers: OPEN_ROSA_HEADERS,
   gzip: true,
   time: true

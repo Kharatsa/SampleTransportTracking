@@ -72,7 +72,7 @@ describe('Data Merge Utilities', () => {
 
   it('should pair objects in arrays by prop values', () =>
     expect(
-      merge.pairLocalByPropKeys(incoming1, local1, mapProps2)
+      merge.pairByProps(incoming1, local1, mapProps2)
     ).to.eventually.deep.equal(merged1)
   );
 

@@ -16,36 +16,35 @@ if (config.server.isProduction()) {
   passport = require('app/server/auth/httpauth.js');
   authenticate = passport.authenticate('basic', {session: false});
 } else {
-  authenticate = (req, res, next) => next();
+  authenticate = (req, res, next) => next(); // noop
 }
 
 // parse XML text
 const textParser = bodyParser.text({type: '*/xml'});
 
-function requireMIMETypeXML(req, res, next) {
+const requireXML = (req, res, next) => {
   if (req.is('*/xml')) {
     return next();
   }
-  var err = new Error('Unsupported MIME type "' +
-                      req.get('Content-Type') + '"');
+  let err = new Error(`Unsupported MIME type '${req.get('Content-Type')}`);
   err.status = 415;
   next(err);
-}
+};
 
-function requireBody(req, res, next) {
+const requireBody = (req, res, next) => {
   if (req.body && req.body.length) {
     return next();
   }
-  const err = new Error('POST request body cannot be empty');
+  const err = new Error('Request body cannot be empty');
   err.status = 422;
   next(err);
-}
+};
 
 const SUBMISSION_SUCCESS = 'Submission successful';
 
 router.post('/status',
   authenticate,
-  requireMIMETypeXML,
+  requireXML,
   textParser,
   requireBody,
   (req, res, next) => {
@@ -60,49 +59,36 @@ router.post('/status',
         labTests: disatransform.parseLabTests(parsed),
         changes: disatransform.parseChanges(parsed)
       })
-    )
-    .catch(err => {
-      log.error('Disa Labs parse entities Error', err.message, err.stack);
-      throw err;
-    });
+    );
+    const saveSubmission = parseEntities.then(disasubmission.handleSubmission);
 
-    const saveSubmission = parseEntities.then(disasubmission.handleSubmission)
-    .catch(err => {
-      log.error('Disa Labs save submission Error', err, err.stack);
-      throw err;
-    });
-
-    const submitODK = parseEntities.then(entities =>
+    const backup = parseEntities.then(entities =>
       disatransform.buildLabFormSubmission(
-        entities.sampleIds,
-        entities.statusDate,
-        entities.changes
+        entities.sampleIds, entities.statusDate, entities.changes
       )
     )
     .then(aggregate.makeSubmission)
     .spread((odkRes, body) => {
+      const resMessage = `${odkRes.statusCode} - ${odkRes.statusMessage}`;
       if (odkRes.statusCode === 201 || odkRes.statusCode === 202) {
-        log.info(`Successful ODK lab status submission: ${odkRes.statusCode}
-                 - ${odkRes.statusMessage}`);
+        log.info(`Successful ODK lab status submission: ${resMessage}`);
       } else {
-        log.error(`Error with ODK lab status submission: ${odkRes.statusCode}
-                 - ${odkRes.statusMessage}`);
+        log.error(`Error with ODK lab status submission: ${resMessage}`);
       }
-      log.info(`Disa Labs submission ODK response body\n${body}`);
       return body;
     })
     .catch(err => {
-      log.error('Disa Labs ODK Aggregate submission Error', err.message, err.stack);
-      throw err;
+      log.error(`Aggregate submission failed - ${err.message}\n${err.stack}`);
     });
 
-    return BPromise.join(saveSubmission, submitODK, (results, odkBody) => {
+    return BPromise.join(saveSubmission, backup, (results, odkBody) => {
       log.debug(`Finished saving lab submission: ${results}`);
       log.debug(`ODK Aggregate submission response: ${odkBody}`);
       // TODO: send a meaningful message
       res.status(201).send(SUBMISSION_SUCCESS);
     })
     .catch(err => {
+      log.error(err);
       err.status = 500;
       next(err);
     });

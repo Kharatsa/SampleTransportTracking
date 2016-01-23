@@ -1,2 +1,0 @@
-# Supervisor congifuration
-[Supervisor](http://supervisord.org/) is a process control system used to administer the Sample Transport Tracking web server. This folder includes configuration files ([docs](http://supervisord.org/configuration.html)) for the process control system.

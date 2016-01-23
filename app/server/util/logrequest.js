@@ -3,11 +3,6 @@
 const expressWinston = require('express-winston');
 const appLogger = require('app/server/util/logapp.js');
 
-// expressWinston.requestWhitelist.push('session');
-// expressWinston.bodyWhitelist.push('secretid', 'secretproperty');
-// expressWinston.bodyBlacklist.push('secretid', 'secretproperty');
-// expressWinston.responseWhitelist.push('secretid', 'secretproperty');
-
 var requestLogger = expressWinston.logger({
   winstonInstance: appLogger,
   expressFormat: true,

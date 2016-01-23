@@ -20,7 +20,6 @@ RUN mkdir -p ${STT_DATA_PATH}
 RUN mkdir -p ${STT_APP_PATH}
 
 COPY . ${STT_APP_PATH}
-# RUN git clone https://github.com/Kharatsa/sample-tracking.git ${STT_APP_PATH}
 
 WORKDIR ${STT_APP_PATH}
 RUN npm install \
@@ -32,8 +31,6 @@ WORKDIR ${STT_APP_PATH}
 RUN gulp build
 
 RUN adduser --system --no-create-home --group strack
-# RUN chown -R strack:strack ${STT_APP_PATH}
-# USER strack
 
 EXPOSE ${STT_LISTEN_PORT}
 

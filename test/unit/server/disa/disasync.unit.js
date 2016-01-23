@@ -8,6 +8,7 @@ const config = require('app/config');
 const storage = require('app/server/storage');
 const sttmodels = require('app/server/stt/models');
 const disasync = require('app/server/disa/disasync.js');
+const disatransform = require('app/server/disa/disatransform.js');
 
 const artifactMeta = [
   {
@@ -199,12 +200,10 @@ const changes = [
 
 describe('Disa Labs Status Sync', () => {
   let models;
-  // let Sequelize;
   before(done => {
     storage.init({config: config.db});
     storage.loadModels(sttmodels);
     models = storage.models;
-    // Sequelize = storage.Sequelize;
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
     .then(() => models.Metadata.bulkCreate(artifactMeta))
@@ -220,7 +219,10 @@ describe('Disa Labs Status Sync', () => {
     .then(() => done());
   });
 
-  const s1 = Object.assign({}, sampleIds[0], {labId: 'LAB0000002'});
+  const s1 = {
+    stId: 'stt1',
+    labId: null
+  };
   const expectedS1 = sampleIds[0];
 
   it('should fetch existing sample ids', () =>
@@ -289,7 +291,8 @@ describe('Disa Labs Status Sync', () => {
 
   it('should fetch existing all lab tests for sample ids', () =>
     expect(
-      disasync.fetchLocalLabTests(t2SampleIds, t2)
+      disatransform.fillLabTestsSampleIdsRef(t2, t2SampleIds)
+      .then(filled => disasync.fetchLocalLabTests(filled))
     ).to.eventually.deep.equal(expectedT2)
   );
 
@@ -297,14 +300,14 @@ describe('Disa Labs Status Sync', () => {
     {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx14',
       statusDate: new Date('2016-01-01T11:00:00.000Z'),
-      labTest: labTests[0].uuid,
+      labTestType: 'TESTA',
       facility: 'FACILITY1',
       person: 'PERSON1',
       status: 'OK'
     }, {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx15',
       statusDate: new Date('2016-01-01T11:00:00.000Z'),
-      labTest: labTests[1].uuid,
+      labTestType: 'TESTB',
       facility: 'FACILITY1',
       person: 'PERSON1',
       status: 'OK'
@@ -318,8 +321,25 @@ describe('Disa Labs Status Sync', () => {
 
   it('should fetch existing lab status changes', () =>
     expect(
-      disasync.fetchLocalChanges(c1)
+      disatransform.fillChangesLabTestRefs(c1, labTests)
+      .then(filled => disasync.fetchLocalChanges(filled))
     ).to.eventually.deep.equal(expectedC1)
+  );
+
+  it('should fetch empty metadata results given no input', () =>
+    expect(disasync.fetchLocalMeta([])).to.eventually.deep.equal([])
+  );
+
+  it('should fetch empty sampleIds results given no input', () =>
+    expect(disasync.fetchLocalSampleIds({})).to.eventually.deep.equal({})
+  );
+
+  it('should fetch empty labTests results given no input', () =>
+    expect(disasync.fetchLocalLabTests([])).to.eventually.deep.equal([])
+  );
+
+  it('should fetch empty changes results given no input', () =>
+    expect(disasync.fetchLocalChanges([])).to.eventually.deep.equal([])
   );
 
 });

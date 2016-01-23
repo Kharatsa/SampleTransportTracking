@@ -18,23 +18,16 @@ if (config.server.isProduction()) {
   authenticate = (req, res, next) => next();
 }
 
-function prepareXMLResponse(res, statusCode, body) {
-  res.set({
-    'Content-Type': 'text/xml',
-    'Content-Length': body.length
-  });
+const prepareXMLResponse = (res, statusCode, body) => {
+  res.set({'Content-Type': 'text/xml', 'Content-Length': body.length});
   res.status(statusCode);
-}
+};
 
-router.all('*', aggregate.setOpenRosaHeaders, authenticate);
+const handleHeadRequest = (req, res) => res.status(401).send('');
 
-function handleHeadRequest(req, res) {
-  res.status(401).send('');
-}
-
-function escapeRegExp(str) {
+const escapeRegExp = str => {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-}
+};
 
 /**
  * To mimic the ODK Aggregate server this web server masks, the XML responses
@@ -47,28 +40,31 @@ function escapeRegExp(str) {
  * @param  {string} toHost   URL to display
  * @return {string}          Altered XML
  */
-function swapHostnames(xml, fromHost, toHost) {
+const swapHostnames = (xml, fromHost, toHost) => {
   return new BPromise((resolve) => {
     resolve(xml.replace(new RegExp(escapeRegExp(fromHost), 'g'), toHost));
   });
-}
+};
 
-const ODK_MASK_HOST = config.server.HOSTNAME + '/odk';
+const ODK_MASK_URL = config.server.PUBLIC_URL + '/odk';
+log.info(`Masking ODK Aggregate with url ${ODK_MASK_URL}`);
+
+router.all('*', aggregate.setOpenRosaHeaders, authenticate);
 
 router.head('/formList', handleHeadRequest);
 
 router.get('/formList',
   sttmiddleware.normalizeParams,
   (req, res) => {
-    var formId = req.query.formid;
-    var verbose = req.query.verbose;
-    var allVersions = req.query.listallversions;
+    let formId = req.query.formid;
+    let verbose = req.query.verbose;
+    let allVersions = req.query.listallversions;
 
     return aggregate.formList({formId, verbose, allVersions})
     .spread((odkRes, body) => {
       return BPromise.join(
         odkRes,
-        swapHostnames(body, config.odk.aggregate.HOST, ODK_MASK_HOST)
+        swapHostnames(body, config.odk.URL, ODK_MASK_URL)
       );
     })
     .spread((odkRes, body) => {
@@ -79,25 +75,28 @@ router.get('/formList',
   }
 );
 
-function setOpenRosaAcceptLenghtHeaders(req, res, next) {
-  res.append('X-OpenRosa-Accept-Content-Length', '10485760');
+const openRosaAcceptLength = (req, res, next) => {
+  res.append(
+    'X-OpenRosa-Accept-Content-Length',
+    config.odk.SUBMISSION_MAX_LENGTH
+  );
   next();
-}
+};
 
 router.head('view/submissionList',
-  setOpenRosaAcceptLenghtHeaders,
+  openRosaAcceptLength,
   handleHeadRequest
 );
 
 router.get('/view/submissionList',
-  setOpenRosaAcceptLenghtHeaders,
+  openRosaAcceptLength,
   sttmiddleware.normalizeParams,
   (req, res, next) => {
-    log.debug('SUBMISSION LIST with body', req.body);
+    log.debug(`Requesting ODK submission list`);
 
-    var formId = req.query.formid;
-    var numEntries = req.query.numentries;
-    var cursor = req.query.cursor;
+    let formId = req.query.formid;
+    let numEntries = req.query.numentries;
+    let cursor = req.query.cursor;
     if (typeof formId !== 'undefined') {
       return aggregate.submissionList({formId, numEntries, cursor})
       .spread((odkRes, body) => {
@@ -114,12 +113,13 @@ router.get('/view/submissionList',
 );
 
 router.head('/view/downloadSubmission', handleHeadRequest);
+
 router.get('/view/downloadSubmission',
   sttmiddleware.normalizeParams,
   (req, res, next) => {
-    var formId = req.query.formid;
-    var topElement = req.query.topelement || formId;
-    var submissionId = (
+    let formId = req.query.formid;
+    let topElement = req.query.topelement || formId;
+    let submissionId = (
       req.query.submissionid ||
       req.query.idvalue ||
       req.query.instanceid
@@ -138,59 +138,50 @@ router.get('/view/downloadSubmission',
 
 const SUBMISSION_PART_NAME = 'xml_submission_file';
 
-function handleSubmissionPart(form, part) {
+const parseXMLPart = (form, part) => {
   if (part.name !== SUBMISSION_PART_NAME) {
-    log.debug(`formidable handling part name - ${part.name}`);
+    log.debug(`default formidable handler for part named "${part.name}"`);
     form.handlePart(part);
     return;
   }
 
-  log.debug('handling ODK XML submission');
-  var value = '';
-  part.on('data', function(buff) {
-    value += buff.toString('utf-8');
-  });
+  let value = '';
+  part.on('data', buff => value += buff.toString('utf-8'));
+  part.on('end', () => form.emit('field', part.name, value));
+};
 
-  part.on('end', function() {
-    form.emit('field', part.name, value);
-  });
-}
-
-function parseSubmissionFormData(req, res, next) {
-  log.debug('parseSubmissionFormData');
+const parseSubmissionFormData = (req, res, next) => {
   const form = new formidable.IncomingForm();
-
-  form.parse(req, function(err, fields, files) {
+  form.parse(req, (err, fields, files) => {
     if (err) {
       return next(err);
     }
     req.form = {fields, files};
     next();
   });
-
-  form.onPart = handleSubmissionPart.bind(null, form);
-}
+  form.onPart = parseXMLPart.bind(null, form);
+};
 
 // Responses to the /submission route with status code `200` are not considered
 // successful. For this reason, the submission route requires a custom status
 // code of `204` sent with its response
 // https://groups.google.com/d/msg/opendatakit-developers/PFWsIb3nnTk/e4DyVsWCnZYJ
 router.head('/submission',
-  setOpenRosaAcceptLenghtHeaders,
-  (req, res) => res.status(204).send()
+  openRosaAcceptLength, (req, res) => res.status(204).send()
 );
 
 router.post('/submission',
-  setOpenRosaAcceptLenghtHeaders,
+  openRosaAcceptLength,
   parseSubmissionFormData,
   (req, res, next) => {
-    log.debug('Received new ODK form submission, body=%s', req.body);
-    log.debug('ODK form submission formData=%s', req.form);
+    log.debug(`Received new ODK form submission`);
+
+    let submission = req.form.fields[SUBMISSION_PART_NAME];
+    log.debug(`ODK submission ${SUBMISSION_PART_NAME}:\n${submission}`);
 
     return aggregate.makeSubmission(req.form.fields[SUBMISSION_PART_NAME])
     .spread((odkRes, body) => {
-      log.debug('Got submission response with statusCode=%s',
-        odkRes.statusCode, body);
+      log.debug(`ODK submission response=${odkRes.statusCode}, body:\n${body}`);
 
       prepareXMLResponse(res, odkRes.statusCode, body);
       res.send(body);
@@ -199,12 +190,12 @@ router.post('/submission',
   }
 );
 
-function handlePassthroughGet(req, res, next) {
-  log.debug('%s, query:', req.originalUrl, req.query);
+const passthroughGet = (req, res, next) => {
+  log.debug(`${req.originalUrl}, query=${req.query}`);
   return aggregate.passthroughGet({url: req.path, query: req.query})
   .spread((odkRes, body) => BPromise.join(
     odkRes,
-    swapHostnames(body, config.odk.aggregate.HOST, ODK_MASK_HOST)
+    swapHostnames(body, config.odk.URL, ODK_MASK_URL)
   ))
   .spread((odkRes, body) => {
     log.debug('Got passthrough GET response', body);
@@ -213,17 +204,17 @@ function handlePassthroughGet(req, res, next) {
     res.send(body);
   })
   .catch(err => next(err));
-}
+};
 
 router.head('/xformsManifest', handleHeadRequest);
-router.get('/xformsManifest', handlePassthroughGet);
+router.get('/xformsManifest', passthroughGet);
 router.head('/formXml', handleHeadRequest);
-router.get('/formXml',handlePassthroughGet);
+router.get('/formXml',passthroughGet);
 router.head('/xformsDownload', handleHeadRequest);
-router.get('/xformsDownload', handlePassthroughGet);
+router.get('/xformsDownload', passthroughGet);
 
 router.all('/*', (req, res, next) => {
-  var error = new Error('Not allowed');
+  let error = new Error('Not allowed');
   error.status = 405;
   next(error);
 });

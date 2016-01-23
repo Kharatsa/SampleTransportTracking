@@ -219,6 +219,15 @@ function parseLabTests(status) {
   .filter(test => test.testType !== '*');
 }
 
+const fillLabTestsSampleIdsRef = BPromise.method((labTests, sampleIdsRef) => {
+  if (!sampleIdsRef) {
+    throw new Error('Missing required parameter sampleIdsRef');
+  }
+  return BPromise.map(labTests, test =>
+    Object.assign({}, test, {sampleId: sampleIdsRef})
+  );
+});
+
 function getOneMeta(change, metaType, keyPath, descPath) {
   const metaKey = _.get(change, keyPath);
 
@@ -338,5 +347,6 @@ module.exports = {
   parseLabTests,
   parseChanges,
   fillChangesLabTestRefs,
+  fillLabTestsSampleIdsRef,
   buildLabFormSubmission
 };

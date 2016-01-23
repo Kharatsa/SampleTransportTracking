@@ -6,16 +6,16 @@ const winstonConfig = require('winston/lib/winston/config');
 const transports = require('winston/lib/winston/transports');
 const common = require('winston/lib/winston/common');
 
-const LOG_LEVEL = (function() {
+const logLevel = () => {
   if (process.env.NODE_ENV === 'production') {
     return 'info';
   } else if (process.env.NODE_ENV === 'test') {
     return 'warn';
   }
   return 'debug';
-}());
+};
 
-winston.level = LOG_LEVEL;
+winston.level = logLevel();
 
 var customLevels = {
   levels: {
@@ -33,27 +33,20 @@ var customLevels = {
 };
 winston.addColors(customLevels.colors);
 
-function getTimeStamp(timestamp) {
-  return '[' + timestamp.toISOString() + '] ';
-}
+const logDatePart = datetime => '[' + datetime.toISOString() + '] ';
 
-function getLogLevel(level) {
-  return winstonConfig.colorize(level, ' [' + level.toUpperCase() + '] ');
-}
+const logLevelPart = level => winstonConfig.colorize(
+  level, ' [' + level.toUpperCase() + '] '
+);
 
-function getLogMessage(message) {
-  if (typeof message !== 'undefined') {
-    return message;
-  }
-  return '';
-}
+const logMessagePart = msg => typeof msg === 'undefined' ? '' : msg;
 
-function getLogMeta(meta) {
+const logMetaPart = meta => {
   if (meta && Object.keys(meta).length > 0) {
     return '\n\t' + util.format('%j', meta);
   }
   return '';
-}
+};
 
 var STTConsoleTransport = transports.stt = function(options) {
   transports.Console.call(this, options);
@@ -98,7 +91,7 @@ STTConsoleTransport.prototype.log = function(level, msg, meta, callback) {
     humanReadableUnhandledException: this.humanReadableUnhandledException
   });
 
-  if (this.stderrLevels[level]) {
+  if (this.stderrLevels && this.stderrLevels[level]) {
     process.stderr.write(output + '\n');
   } else {
     process.stdout.write(output + this.eol);
@@ -113,20 +106,18 @@ STTConsoleTransport.prototype.log = function(level, msg, meta, callback) {
 };
 
 var stttransport = new STTConsoleTransport({
-  level: LOG_LEVEL,
+  level: logLevel(),
   levels: customLevels.levels,
   depth: 2,
   colorize: true,
-  timestamp: function() { return new Date(); },
-  formatter: function(options) {
-    // Return string will be passed to logger.
-    return (
-      getTimeStamp(options.timestamp()) + ' ' +
-      getLogLevel(options.level) +
-      getLogMessage(options.message) +
-      getLogMeta(options.meta)
-    );
-  }
+  timestamp: () => new Date(),
+  // Return string will be passed to logger.
+  formatter: options => (
+    logDatePart(options.timestamp()) + ' ' +
+    logLevelPart(options.level) +
+    logMessagePart(options.message) +
+    logMetaPart(options.meta)
+  )
 });
 
 var logger = new (winston.Logger)({

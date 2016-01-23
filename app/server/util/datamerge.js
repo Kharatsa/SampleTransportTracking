@@ -65,29 +65,30 @@ function pairOne(target, reduced, propNames) {
  * @param  {Array.<string>} propNames    [description]
  * @return {Promise.<Array.<MergedData>>}
  */
-function pairReduced(incoming, localReduced, propNames) {
-  return BPromise.map(incoming, item => pairOne(item, localReduced, propNames));
+function pairReduced(sources, localReduced, propNames) {
+  return BPromise.map(sources, item => pairOne(item, localReduced, propNames));
 }
 
 /**
  * Merge serves to pair individual objects together from 2 separate collections
- * of objects (incoming and local). The objective is to match objects in the
- * incoming collection to similar or identical objects in the local collection.
- * This pairing is accomplished by reducing the local collection into a lookup
- * object, arranged with keys derived from the values of each object extracted
- * from the specified properties in propNames.
+ * of objects (sources and targets). The objective is to match objects in the
+ * sources collection to corresponding objects in the targets collection.
  *
- * In effect, the incoming objects are matched to local objects with the values
+ * This pairing is accomplished by reducing the targets collection into a lookup
+ * object, arranged with "keys" consisting of the value of each property from
+ * propNames.
+ *
+ * In effect, the source objects are matched to target objects with the values
  * of the properties specified in propNames, and only the properties in
  * propNames.
  *
- * @param  {Array.<Object>} incoming [description]
- * @param  {Array.<Object>} local    [description]
+ * @param  {Array.<Object>} sources [description]
+ * @param  {Array.<Object>} targets [description]
  * @param {Array.<string>} propNames [description]
  * @return {Promise.<Array.<MergedData>>}          [description]
  */
-function pairLocalByPropKeys(incoming, local, propNames) {
-  if (!(Array.isArray(incoming) && Array.isArray(local))) {
+function pairByProps(sources, targets, propNames) {
+  if (!(Array.isArray(sources) && Array.isArray(targets))) {
     return BPromise.reject(new Error('Cannot merge Array with non-Array'));
   }
   if (!(propNames && propNames.length)) {
@@ -95,12 +96,12 @@ function pairLocalByPropKeys(incoming, local, propNames) {
   }
 
   return BPromise.join(
-    incoming, propKeyReduce(local, propNames), propNames,
+    sources, propKeyReduce(targets, propNames), propNames,
     pairReduced
   );
 }
 
 module.exports = {
-  pairLocalByPropKeys,
+  pairByProps,
   propKeyReduce
 };
