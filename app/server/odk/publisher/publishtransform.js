@@ -34,7 +34,7 @@ const sampleFields = {
  * @param  {Object} data - The published form submission
  * @return {Promise.<Sample>}
  */
-function parseSamples(data) {
+function parseSampleIds(data) {
   log.debug('Parse samples');
 
   var sampleData = data[sampleFields.SAMPLE_REPEAT];
@@ -296,7 +296,7 @@ const parsePublished = function(published) {
   var formId = published[formFields.FORM_ID];
   return BPromise.map(published.data, submission =>
     BPromise.props({
-      samples: parseSamples(submission),
+      samples: parseSampleIds(submission),
       submission: parseSubmission(formId, submission),
       facility: parseFacility(submission),
       person: parsePerson(submission),

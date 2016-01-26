@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 // import * as actions from '../actions/actioncreators.js';
 import Paper from 'material-ui/lib/paper';
 
-const Samples = React.createClass({
+const SampleIds = React.createClass({
   componentDidMount: function() {
     // TODO
   },
@@ -12,7 +12,7 @@ const Samples = React.createClass({
   render: function() {
     return (
       <div className='flexitem'>
-        <Paper>Samples</Paper>
+        <Paper>Sample IDs</Paper>
       </div>
     );
   }
@@ -21,4 +21,4 @@ const Samples = React.createClass({
 export default connect(
   state => ({})
   // dispatch => ({actions: {})
-)(Samples);
+)(SampleIds);

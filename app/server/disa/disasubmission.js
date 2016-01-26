@@ -8,15 +8,15 @@ const disatransform = require('app/server/disa/disatransform.js');
 const disasync = require('app/server/disa/disasync.js');
 
 // TODO: remove
-const DEBUG = (message, value) => {
-  if (process.env.NODE_ENV === 'test') {
-    console.log(`DEBUG ${message}`);
-    console.dir(value, {depth: 10});
-  }
-};
+// const DEBUG = (message, value) => {
+//   if (process.env.NODE_ENV === 'test') {
+//     console.log(`DEBUG ${message}`);
+//     console.dir(value, {depth: 10});
+//   }
+// };
 
-const handleSamplesIds = sampleIds => {
-  return disasync.fetchLocalSampleIds(sampleIds)
+const handleSampleIds = sampleIds => {
+  return disasync.localSampleIds(sampleIds)
   .then(local => datamerge.pairByProps([sampleIds], [local], ['stId']))
   .then(merged => sync.persistMergedData({
     model: storage.models.SampleIds, merged, modelPKs: ['uuid']
@@ -24,7 +24,7 @@ const handleSamplesIds = sampleIds => {
 };
 
 const handleMetadata = incoming => {
-  return disasync.fetchLocalMeta(incoming)
+  return disasync.localMeta(incoming)
   .then(local => datamerge.pairByProps(incoming, local, ['type', 'key']))
   .then(merged => sync.persistMergedData({
     model: storage.models.Metadata, merged, modelPKs: ['id']
@@ -32,7 +32,7 @@ const handleMetadata = incoming => {
 };
 
 const handleLabTests = (incoming, local, sampleRef) => {
-  const fillRefs = disatransform.fillLabTestsSampleIdsRef(incoming, sampleRef);
+  const fillRefs = disatransform.fillSampleIdRefs(incoming, sampleRef);
   const mergeTests = fillRefs.then(filled =>
     datamerge.pairByProps(filled, local, ['testType'])
   );
@@ -43,8 +43,8 @@ const handleLabTests = (incoming, local, sampleRef) => {
 };
 
 const handleChanges = (changes, tests) => {
-  const fillRefs = disatransform.fillChangesLabTestRefs(changes, tests);
-  const fetchLocal = fillRefs.then(disasync.fetchLocalChanges);
+  const fillRefs = disatransform.fillTestRefs(changes, tests);
+  const fetchLocal = fillRefs.then(disasync.localChanges);
   const mergeChanges = BPromise.join(fillRefs, fetchLocal, (filled, local) =>
     datamerge.pairByProps(filled, local, ['labTest', 'status'])
   );
@@ -55,16 +55,16 @@ const handleChanges = (changes, tests) => {
 };
 
 const handleSubmission = incoming => {
-  const samples = handleSamplesIds(incoming.sampleIds);
+  const sampleIds = handleSampleIds(incoming.sampleIds);
   const metadata = handleMetadata(incoming.metadata);
 
-  // Pull the sample id UUID from the samples results for labTests lookups
-  const sampleRef = samples.then(result => {
+  // Pull the sample id UUID from the sampleIds results for labTests lookups
+  const sampleRef = sampleIds.then(result => {
     const s = result.inserted[0] || result.updated[0] || result.skipped[0];
     return s.uuid;
   });
 
-  const localTests = sampleRef.then(disasync.sampleIdsLabTests);
+  const localTests = sampleRef.then(disasync.sampleIdLabTests);
   const labTests = BPromise.join(sampleRef, localTests, (ref, local) =>
     handleLabTests(incoming.labTests, local, ref)
   );
@@ -81,8 +81,8 @@ const handleSubmission = incoming => {
     handleChanges(incoming.changes, tests)
   );
 
-  return BPromise.props({samples, metadata, labTests, changes})
-  .tap(r => DEBUG('handleSubmission results', r));
+  return BPromise.props({sampleIds, metadata, labTests, changes});
+  // .tap(r => DEBUG('handleSubmission results', r));
 };
 
 module.exports = {

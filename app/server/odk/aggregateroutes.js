@@ -6,15 +6,21 @@ const BPromise = require('bluebird');
 const formidable = require('formidable');
 const config = require('app/config');
 const log = require('app/server/util/logapp.js');
+const string = require('app/common/string.js');
 const sttmiddleware = require('app/server/sttmiddleware.js');
 const aggregate = require('app/server/odk/aggregateapi.js');
+const collecttransform = require('app/server/odk/collect/collecttransform.js');
+const collectsubmission = require('app/server/odk/collect/' +
+                                  'collectsubmission.js');
 
 let passport = null;
 let authenticate = null;
 if (config.server.isProduction()) {
+  log.info('Aggregate routes require authentication');
   passport = require('app/server/auth/httpauth.js');
   authenticate = passport.authenticate('basic', {session: false});
 } else {
+  log.info('Aggregate routes authentication disabled');
   authenticate = (req, res, next) => next();
 }
 
@@ -24,10 +30,6 @@ const prepareXMLResponse = (res, statusCode, body) => {
 };
 
 const handleHeadRequest = (req, res) => res.status(401).send('');
-
-const escapeRegExp = str => {
-  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-};
 
 /**
  * To mimic the ODK Aggregate server this web server masks, the XML responses
@@ -42,7 +44,9 @@ const escapeRegExp = str => {
  */
 const swapHostnames = (xml, fromHost, toHost) => {
   return new BPromise((resolve) => {
-    resolve(xml.replace(new RegExp(escapeRegExp(fromHost), 'g'), toHost));
+    resolve(xml.replace(
+      new RegExp(string.escapeRegExp(fromHost), 'g'), toHost)
+    );
   });
 };
 
@@ -136,60 +140,6 @@ router.get('/view/downloadSubmission',
   }
 );
 
-const SUBMISSION_PART_NAME = 'xml_submission_file';
-
-const parseXMLPart = (form, part) => {
-  if (part.name !== SUBMISSION_PART_NAME) {
-    log.debug(`default formidable handler for part named "${part.name}"`);
-    form.handlePart(part);
-    return;
-  }
-
-  let value = '';
-  part.on('data', buff => value += buff.toString('utf-8'));
-  part.on('end', () => form.emit('field', part.name, value));
-};
-
-const parseSubmissionFormData = (req, res, next) => {
-  const form = new formidable.IncomingForm();
-  form.parse(req, (err, fields, files) => {
-    if (err) {
-      return next(err);
-    }
-    req.form = {fields, files};
-    next();
-  });
-  form.onPart = parseXMLPart.bind(null, form);
-};
-
-// Responses to the /submission route with status code `200` are not considered
-// successful. For this reason, the submission route requires a custom status
-// code of `204` sent with its response
-// https://groups.google.com/d/msg/opendatakit-developers/PFWsIb3nnTk/e4DyVsWCnZYJ
-router.head('/submission',
-  openRosaAcceptLength, (req, res) => res.status(204).send()
-);
-
-router.post('/submission',
-  openRosaAcceptLength,
-  parseSubmissionFormData,
-  (req, res, next) => {
-    log.debug(`Received new ODK form submission`);
-
-    let submission = req.form.fields[SUBMISSION_PART_NAME];
-    log.debug(`ODK submission ${SUBMISSION_PART_NAME}:\n${submission}`);
-
-    return aggregate.makeSubmission(req.form.fields[SUBMISSION_PART_NAME])
-    .spread((odkRes, body) => {
-      log.debug(`ODK submission response=${odkRes.statusCode}, body:\n${body}`);
-
-      prepareXMLResponse(res, odkRes.statusCode, body);
-      res.send(body);
-    })
-    .catch(err => next(err));
-  }
-);
-
 const passthroughGet = (req, res, next) => {
   log.debug(`${req.originalUrl}, query=${req.query}`);
   return aggregate.passthroughGet({url: req.path, query: req.query})
@@ -212,6 +162,95 @@ router.head('/formXml', handleHeadRequest);
 router.get('/formXml',passthroughGet);
 router.head('/xformsDownload', handleHeadRequest);
 router.get('/xformsDownload', passthroughGet);
+
+const SUBMISSION_PART_NAME = 'xml_submission_file';
+
+const parseXMLPart = (form, part) => {
+  if (part.name !== SUBMISSION_PART_NAME) {
+    log.debug(`default formidable handler for part named "${part.name}"`);
+    form.handlePart(part);
+    return;
+  }
+
+  // let value = '';
+  let parts = [];
+  part.on('data', buff => parts.push(buff.toString('utf-8')));
+  part.on('end', () => form.emit('field', part.name, parts.join('')));
+};
+
+const parseSubmissionFormData = (req, res, next) => {
+  const form = new formidable.IncomingForm();
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      return next(err);
+    }
+    req.form = {fields, files};
+    next();
+  });
+  form.onPart = parseXMLPart.bind(null, form);
+};
+
+// Responses to the /submission route with status code `200` are not considered
+// successful. For this reason, the submission route requires a custom status
+// code of `204` sent with its response
+// https://groups.google.com/d/msg/opendatakit-developers/PFWsIb3nnTk/e4DyVsWCnZYJ
+router.head('/submission',
+  openRosaAcceptLength, (req, res) => res.status(204).send()
+);
+
+const SUBMISSION_SUCCESS = 'Submission successful';
+
+router.post('/submission',
+  openRosaAcceptLength,
+  parseSubmissionFormData,
+  (req, res, next) => {
+    let submission = req.form.fields[SUBMISSION_PART_NAME];
+    log.info(`ODK submission ${SUBMISSION_PART_NAME}:\n${submission}`);
+
+    const parseXML = collecttransform.collectSubmission(submission);
+    const parseEntities = parseXML.then(parsed =>
+      BPromise.props({
+        sampleIds: collecttransform.sampleIds(parsed),
+        // statusDate: disatransform.labStatusDate(parsed),
+        metadata: collecttransform.metadata(parsed),
+        artifacts: collecttransform.artifacts(parsed),
+        changes: collecttransform.changes(parsed)
+      })
+    );
+
+    const saveSubmission = parseEntities.then(
+      collectsubmission.handleSubmission
+    );
+
+    const backup = aggregate.makeSubmission(submission)
+    .spread((odkRes, body) => {
+      const resMessage = `${odkRes.statusCode} - ${odkRes.statusMessage}`;
+      if (odkRes.statusCode === 201 || odkRes.statusCode === 202) {
+        log.info(`Successful ODK lab status submission: ${resMessage}`);
+      } else {
+        log.error(`Error with ODK lab status submission: ${resMessage}`);
+        log.error(body);
+      }
+      return body;
+    })
+    .catch(err => {
+      log.error(`Aggregate submission failed - ${err.message}\n${err.stack}`);
+    });
+
+    return BPromise.join(saveSubmission, backup, (results, odkBody) => {
+      log.debug(`Finished saving lab submission: ${results}`);
+      log.debug(`ODK Aggregate submission response: ${odkBody}`);
+      // TODO: maybe send a meaningful message
+      res.status(201).send(SUBMISSION_SUCCESS);
+    })
+    .catch(err => {
+      log.error(err);
+      console.error('aggregate submission error', err.message, err.stack);
+      err.status = 500;
+      next(err);
+    });
+  }
+);
 
 router.all('/*', (req, res, next) => {
   let error = new Error('Not allowed');

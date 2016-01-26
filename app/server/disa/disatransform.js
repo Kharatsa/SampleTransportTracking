@@ -6,7 +6,7 @@ const xml2js = require('xml2js');
 BPromise.promisifyAll(xml2js);
 const xmlBuilder = new xml2js.Builder({renderOpts: {pretty: false}});
 const log = require('app/server/util/logapp.js');
-const parse = require('app/common/parse.js');
+const string = require('app/common/string.js');
 const datatransform = require('app/server/util/datatransform.js');
 const datamerge = require('app/server/util/datamerge.js');
 const firstText = datatransform.firstText;
@@ -22,14 +22,14 @@ const firstText = datatransform.firstText;
 
 /**
  * @typedef {LabStatus}
- * @property {string} stid The Sample Tracking ID for the sample
- * @property {string} labid The Disa Labs ID for the sample
+ * @property {string} stid The STT ID
+ * @property {string} labid The Disa Labs ID
  * @property {string} labtime The timestamp of the submission in ISO 8601 format
  * @property {Array.<LabTest>} srepeat The laboratory test request updates
  */
 
 /**
- * Enum for Disa Labs sample status updates
+ * Enum for Disa Labs sampleId status updates
  * @enum {string}
  */
 const commonFields = {
@@ -44,7 +44,7 @@ const commonFields = {
 };
 
 /**
- * Enum for Disa Labs sample status test requests
+ * Enum for Disa Labs sampleId status test requests
  * @enum {string}
  */
 const testFields = {
@@ -56,11 +56,11 @@ const testFields = {
   REJECTION_CODE: 'RejectionCode'
 };
 
-function parseStatusDate(status) {
-  return parse.parseText(firstText(status, commonFields.STATUS_TIME));
+function labStatusDate(status) {
+  return string.parseText(firstText(status, commonFields.STATUS_TIME));
 }
 
-function parseSampleIds(status) {
+function sampleId(status) {
   return BPromise.props({
     stId: firstText(status, commonFields.ST_ID),
     labId: firstText(status, commonFields.LAB_ID)
@@ -83,7 +83,7 @@ const LAB_PREFIX_CODE_PATH = [
  * @return {string}
  * @throws {Error} If [labId does not match pattern /([a-zA-Z]{3})([0-9]{7})/]
  */
-const getLabPrefix = BPromise.method(function(options) {
+const labPrefix = BPromise.method(function(options) {
   const result = options.labId.match(LAB_ID_REGEX);
   if (result === null) {
     throw new Error('unrecognized pattern for ' + commonFields.LAB_ID);
@@ -91,7 +91,7 @@ const getLabPrefix = BPromise.method(function(options) {
 
   const labPrefixText = _.get(options.status, LAB_PREFIX_CODE_PATH);
   if (labPrefixText !== result[1]) {
-    // TODO: Is is an error? Maybe a sample can move between different labs
+    // TODO: Is is an error? Maybe a sampleId can move between different labs
     log.warn(`LabId lab prefix ${result[1]} does not match LabPrefix
              ${labPrefixText}`);
   }
@@ -133,12 +133,12 @@ const CHANGE_STAGE = 'labstatus';
  * @param  {Object} status [description]
  * @return {Promise.<Array.<Object>>}
  */
-function parseChanges(status) {
+function labChanges(status) {
   const commonProps = BPromise.props({
-    facility: getLabPrefix({
+    facility: labPrefix({
       status, labId: firstText(status, commonFields.LAB_ID)
     }),
-    statusDate: parseStatusDate(status),
+    statusDate: labStatusDate(status),
     stage: CHANGE_STAGE
   });
 
@@ -154,7 +154,7 @@ function parseChanges(status) {
 
 const needsExpansion = labTestType => labTestType === '*';
 
-const labTestRefFromTestType = BPromise.method((testType, testMap) => {
+const testTypeRefs = BPromise.method((testType, testMap) => {
   const labTestRef = testMap[testType] ? testMap[testType].uuid : null;
   if (!labTestRef) {
     throw new Error(`Missing lab test reference for test type "${testType}"`);
@@ -176,7 +176,7 @@ const expandChanges = (change, labTests) => {
  * @param  {Array.<Object>} labTests [description]
  * @return {Promise.<Array.<Object>>}          [description]
  */
-function fillChangesLabTestRefs(changes, labTests) {
+function fillTestRefs(changes, labTests) {
   const filterAsterisks = BPromise.filter(changes,
     change => needsExpansion(change.labTestType)
   )
@@ -190,14 +190,14 @@ function fillChangesLabTestRefs(changes, labTests) {
   const consolidateFilters = BPromise.join(filterAsterisks, filterNormal)
   .spread((asterisks, normal) => [].concat([], asterisks, normal));
 
-  const prepareMapper = BPromise.join(
+  const testMapper = BPromise.join(
     consolidateFilters,
     datamerge.propKeyReduce(labTests, ['testType'])
   );
 
-  return prepareMapper.spread((expanded, testMap) =>
+  return testMapper.spread((expanded, testMap) =>
     BPromise.map(expanded, change =>
-      BPromise.join(change, labTestRefFromTestType(change.labTestType, testMap))
+      BPromise.join(change, testTypeRefs(change.labTestType, testMap))
       .spread((change, labRef) =>
         Object.assign({}, _.omit(change, 'labTestType'), labRef)
       )
@@ -205,11 +205,11 @@ function fillChangesLabTestRefs(changes, labTests) {
 }
 
 /**
- * [parseLabTests description]
+ * [labTests description]
  * @param  {Object} status [description]
  * @return {Promise.<Array.<Object>>}
  */
-function parseLabTests(status) {
+function labTests(status) {
   return BPromise.map(
     status[commonFields.UPDATES],
     change => BPromise.props({
@@ -219,7 +219,7 @@ function parseLabTests(status) {
   .filter(test => test.testType !== '*');
 }
 
-const fillLabTestsSampleIdsRef = BPromise.method((labTests, sampleIdsRef) => {
+const fillSampleIdRefs = BPromise.method((labTests, sampleIdsRef) => {
   if (!sampleIdsRef) {
     throw new Error('Missing required parameter sampleIdsRef');
   }
@@ -227,20 +227,6 @@ const fillLabTestsSampleIdsRef = BPromise.method((labTests, sampleIdsRef) => {
     Object.assign({}, test, {sampleId: sampleIdsRef})
   );
 });
-
-function getOneMeta(change, metaType, keyPath, descPath) {
-  const metaKey = _.get(change, keyPath);
-
-  if (metaKey) {
-    return {
-      type: metaType,
-      key: metaKey,
-      value: _.get(change, descPath),
-      valueType: 'string'
-    };
-  }
-  return null;
-}
 
 // Paths to metadata description elements from a LabStatus element
 const DESC_PATH = [commonFields.DESCRIPTION, '0'];
@@ -250,24 +236,31 @@ const LAB_TEST_DESC_PATH = [testFields.TEST_ELEM, '0'].concat(DESC_PATH);
 const LAB_REJECT_DESC_PATH = [testFields.REJECTION_ELEM, '0'].concat(DESC_PATH);
 
 /**
- * [parseMetadata description]
+ * [metadata description]
  * @param  {Object} status [description]
  * @return {Promise.<Object>}        [description]
  */
-function parseMetadata(status) {
+function metadata(status) {
   const changes = status[commonFields.UPDATES];
 
   return BPromise.join(
-    getOneMeta(status, 'facility', LAB_PREFIX_CODE_PATH, LAB_PREFIX_DESC_PATH),
-    BPromise.map(changes, change =>
-      getOneMeta(change, 'status', LAB_STATUS_CODE_PATH, LAB_STATUS_DESC_PATH)
+    datatransform.oneMeta(
+      status, 'facility', LAB_PREFIX_CODE_PATH, LAB_PREFIX_DESC_PATH
     ),
     BPromise.map(changes, change =>
-      getOneMeta(change, 'labtest', LAB_TEST_CODE_PATH, LAB_TEST_DESC_PATH)
+      datatransform.oneMeta(
+        change, 'status', LAB_STATUS_CODE_PATH, LAB_STATUS_DESC_PATH
+      )
+    ),
+    BPromise.map(changes, change =>
+      datatransform.oneMeta(
+        change, 'labtest', LAB_TEST_CODE_PATH, LAB_TEST_DESC_PATH
+      )
     ).filter(meta => meta.key !== '*'),
     BPromise.map(changes, change =>
-      getOneMeta(change, 'rejection',
-                 LAB_REJECT_CODE_PATH, LAB_REJECT_DESC_PATH)
+      datatransform.oneMeta(
+        change, 'rejection',LAB_REJECT_CODE_PATH, LAB_REJECT_DESC_PATH
+      )
     )
   )
   .then(_.flatten)
@@ -281,7 +274,7 @@ function parseMetadata(status) {
  * @param  {string} status Disa Labs status XML
  * @return {Promise.<Object>}
  */
-function parseLabStatusXML(xml) {
+function labStatus(xml) {
   log.debug('Transorming Lab Status XML', xml);
   return xml2js.parseStringAsync(xml)
   .then(parsed => parsed[commonFields.STATUS]);
@@ -316,7 +309,7 @@ const LAB_STATUS_FORM_ID = 'labstatus';
  * @param {Array.<Object>} changes [description]
  * @return {string} labstatus form submission XML
  */
-function buildLabFormSubmission(sampleIds, statusDate, changes) {
+function buildLabXForm(sampleIds, statusDate, changes) {
   log.debug('Building lab status submission XML', changes);
 
   return BPromise.map(changes, change => ({
@@ -340,13 +333,13 @@ function buildLabFormSubmission(sampleIds, statusDate, changes) {
 }
 
 module.exports = {
-  parseLabStatusXML,
-  parseStatusDate,
-  parseMetadata,
-  parseSampleIds,
-  parseLabTests,
-  parseChanges,
-  fillChangesLabTestRefs,
-  fillLabTestsSampleIdsRef,
-  buildLabFormSubmission
+  labStatus,
+  labStatusDate,
+  metadata,
+  sampleId,
+  labTests,
+  labChanges,
+  fillTestRefs,
+  fillSampleIdRefs,
+  buildLabXForm
 };

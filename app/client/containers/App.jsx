@@ -15,8 +15,8 @@ const appName = 'Sample Transport Tracking';
 
 const App = React.createClass({
   propTypes: {
-    isFetchingSamples: PropTypes.bool,
-    samples: PropTypes.instanceOf(List),
+    isFetchingSampleIds: PropTypes.bool,
+    sampleIds: PropTypes.instanceOf(List),
     samplesById: PropTypes.instanceOf(ImmutableMap)
     // TODO: fix/re-enable this
     // routing: PropTypes.shape({
@@ -65,7 +65,7 @@ const App = React.createClass({
           <div>
             <Tabs onChange={this.handleTabClick} value={selectedTab}>
               <Tab label='Updates' value='0'></Tab>
-              <Tab label='Samples' value='1'></Tab>
+              <Tab label='SampleIds' value='1'></Tab>
               <Tab label='Facilities' value='2'></Tab>
               <Tab label='Riders' value='3'></Tab>
             </Tabs>

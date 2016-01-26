@@ -53,7 +53,7 @@ function fetchLocal(data) {
   .map(function(ids) {
     log.debug('fetchLocal ids', ids);
     return BPromise.props({
-      samples: client.getSamples({sampleIds: ids.sampleIds}),
+      samples: client.getSampleIds({sampleIds: ids.sampleIds}),
       submission: client.getSubmission({submissionId: ids.submissionId}),
       facility: client.getFacility({facilityKey: ids.facilityId}),
       person: client.getPerson({personKey: ids.personId}),
@@ -78,8 +78,8 @@ function handleSync(client, syncMethod, data, tran) {
 
 // TODO: finish implementing update methods
 const empty = {noop: () => log.debug('noop')};
-const saveSamples = handleSync.bind(null, client, client.saveSamples);
-const updateSamples = handleSync.bind(null, client, client.updateSamples);
+const saveSampleIds = handleSync.bind(null, client, client.saveSampleIds);
+const updateSampleIds = handleSync.bind(null, client, client.updateSampleIds);
 const saveSubmission = handleSync.bind(null, client, client.saveSubmissions);
 const updateSubmission = handleSync.bind(null, empty, empty.noop);
 const saveFacility = handleSync.bind(null, client, client.saveFacilities);
@@ -109,8 +109,8 @@ function syncMerged(merged) {
         updateFacility(data.facility.update, tran),
         savePerson(data.person.insert, tran),
         updatePerson(data.person.update, tran),
-        saveSamples(data.samples.insert, tran),
-        updateSamples(data.samples.update, tran)
+        saveSampleIds(data.samples.insert, tran),
+        updateSampleIds(data.samples.update, tran)
       ])
       .then(() => log.debug('Finished merging facility, person, & samples'))
       .then(() =>

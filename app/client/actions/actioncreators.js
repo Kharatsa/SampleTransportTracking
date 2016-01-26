@@ -2,7 +2,7 @@
 
 import {
     RECEIVE_TABS, SELECT_TAB,
-    FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
+    FETCH_SAMPLE_IDS, FETCH_SAMPLE_IDS_FAILURE, RECEIVE_SAMPLE_IDS,
     FETCH_UPDATES, FETCH_UPDATES_FAILURE, RECEIVE_UPDATES
 } from '../actions/actions.js';
 import request from '../util/request.js';
@@ -21,36 +21,36 @@ export function selectTab(tabId) {
   };
 }
 
-function requestSamples() {
+function requestSampleIds() {
   return {
-    type: FETCH_SAMPLES,
+    type: FETCH_SAMPLE_IDS,
     requestedAt: Date.now()
   };
 }
 
-export function fetchSamples() {
+export function fetchSampleIds() {
   return function(dispatch) {
-    dispatch(requestSamples());
+    dispatch(requestSampleIds());
     return request('/track/ids', function(err, res) {
       if (err) {
-        return dispatch(fetchSamplesFailure(err));
+        return dispatch(fetchSampleIdsFailure(err));
       }
-      dispatch(receiveSamples(res.json));
+      dispatch(receiveSampleIds(res.json));
     });
   };
 }
 
-function fetchSamplesFailure(err) {
+function fetchSampleIdsFailure(err) {
   return {
-    type: FETCH_SAMPLES_FAILURE,
+    type: FETCH_SAMPLE_IDS_FAILURE,
     error: err
   };
 }
 
-function receiveSamples(samples) {
+function receiveSampleIds(sampleIds) {
   return {
-    type: RECEIVE_SAMPLES,
-    samples,
+    type: RECEIVE_SAMPLE_IDS,
+    sampleIds,
     receivedAt: Date.now()
   };
 }

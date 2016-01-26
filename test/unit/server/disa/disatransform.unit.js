@@ -39,8 +39,8 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should parse single lab update sample ids', () =>
     expect(
-      disatransform.parseLabStatusXML(singleUpdate)
-      .then(disatransform.parseSampleIds)
+      disatransform.labStatus(singleUpdate)
+      .then(disatransform.sampleId)
     ).to.eventually.deep.equal(expectedSampleIds)
   );
 
@@ -48,8 +48,8 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should parse single lab update lab tests', () =>
     expect(
-      disatransform.parseLabStatusXML(singleUpdate)
-      .then(disatransform.parseLabTests)
+      disatransform.labStatus(singleUpdate)
+      .then(disatransform.labTests)
     ).to.eventually.deep.equal(expectedLabTests)
   );
 
@@ -64,8 +64,8 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should parse single lab update changes', () =>
     expect(
-      disatransform.parseLabStatusXML(singleUpdate)
-      .then(disatransform.parseChanges)
+      disatransform.labStatus(singleUpdate)
+      .then(disatransform.labChanges)
     ).to.eventually.deep.equal(expectedChanges)
   );
 
@@ -85,8 +85,8 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should parse single lab update metadata', () =>
     expect(
-      disatransform.parseLabStatusXML(singleUpdate)
-      .then(disatransform.parseMetadata)
+      disatransform.labStatus(singleUpdate)
+      .then(disatransform.metadata)
     ).to.eventually.deep.equal(expectedMetadata)
   );
 
@@ -137,8 +137,8 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should parse multiple lab updates sample ids', () =>
     expect(
-      disatransform.parseLabStatusXML(manyUpdates)
-      .then(disatransform.parseSampleIds)
+      disatransform.labStatus(manyUpdates)
+      .then(disatransform.sampleId)
     ).to.eventually.deep.equal(expectedSampleIds2)
   );
 
@@ -150,8 +150,8 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should parse multiple lab updates lab tests', () =>
     expect(
-      disatransform.parseLabStatusXML(manyUpdates)
-      .then(disatransform.parseLabTests)
+      disatransform.labStatus(manyUpdates)
+      .then(disatransform.labTests)
     ).to.eventually.deep.equal(expectedLabTests2)
   );
 
@@ -173,8 +173,8 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should parse multiple lab update changes', () =>
     expect(
-      disatransform.parseLabStatusXML(manyUpdates)
-      .then(disatransform.parseChanges)
+      disatransform.labStatus(manyUpdates)
+      .then(disatransform.labChanges)
     ).to.eventually.deep.equal(expectedChanges2)
   );
 
@@ -214,8 +214,8 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should parse multiple lab update metadata', () =>
     expect(
-      disatransform.parseLabStatusXML(manyUpdates)
-      .then(disatransform.parseMetadata)
+      disatransform.labStatus(manyUpdates)
+      .then(disatransform.metadata)
     ).to.eventually.deep.equal(expectedMetadata2)
   );
 
@@ -269,7 +269,7 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should add lab references to changes given lab tests', () =>
     expect(
-      disatransform.fillChangesLabTestRefs(c1, labTests)
+      disatransform.fillTestRefs(c1, labTests)
     ).to.eventually.deep.equal(expectedFilledChanges)
   );
 
@@ -293,7 +293,7 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should throw an error for unrecognized change lab test types', () =>
     expect(
-      disatransform.fillChangesLabTestRefs(c2, labTests)
+      disatransform.fillTestRefs(c2, labTests)
     ).to.eventually.be.rejectedWith(Error)
   );
 
@@ -312,13 +312,13 @@ describe('Disa Labs Status Tranforms', () => {
 
   it('should convert lab status objects to form submission XML', () =>
     expect(
-      disatransform.parseLabStatusXML(manyUpdates)
+      disatransform.labStatus(manyUpdates)
       .then(parsed => BPromise.join(
-        disatransform.parseSampleIds(parsed),
-        disatransform.parseStatusDate(parsed),
-        disatransform.parseChanges(parsed)
+        disatransform.sampleId(parsed),
+        disatransform.labStatusDate(parsed),
+        disatransform.labChanges(parsed)
       ))
-      .spread(disatransform.buildLabFormSubmission)
+      .spread(disatransform.buildLabXForm)
     ).to.eventually.equal(expectedXML)
   );
 

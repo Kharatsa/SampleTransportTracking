@@ -4,6 +4,12 @@ const BPromise = require('bluebird');
 // const log = require('app/server/util/logapp.js');
 const datadb = require('app/server/util/datadb.js');
 
+const skipEmpty = wrapped => {
+  return BPromise.method(items =>
+    !(items && items.length) ? [] : wrapped(items)
+  );
+};
+
 const findAllWhere = (Model, where) => {
   let query;
   if (where.then) {
@@ -187,6 +193,7 @@ const persistMergedData = BPromise.method(options => {
 });
 
 module.exports = {
+  skipEmpty,
   findAllWhere,
   fetchLocalWithColAndRef,
   persistMergedData

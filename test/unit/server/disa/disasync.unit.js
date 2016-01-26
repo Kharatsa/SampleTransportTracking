@@ -227,7 +227,7 @@ describe('Disa Labs Status Sync', () => {
 
   it('should fetch existing sample ids', () =>
     expect(
-      disasync.fetchLocalSampleIds(s1)
+      disasync.localSampleIds(s1)
     ).to.eventually.deep.equal(expectedS1)
   );
 
@@ -274,7 +274,7 @@ describe('Disa Labs Status Sync', () => {
 
   it('should fetch existing metadata', () =>
     expect(
-      disasync.fetchLocalMeta(m1)
+      disasync.localMeta(m1)
     ).to.eventually.deep.equal(expectedM1)
   );
 
@@ -291,8 +291,8 @@ describe('Disa Labs Status Sync', () => {
 
   it('should fetch existing all lab tests for sample ids', () =>
     expect(
-      disatransform.fillLabTestsSampleIdsRef(t2, t2SampleIds)
-      .then(filled => disasync.fetchLocalLabTests(filled))
+      disatransform.fillSampleIdRefs(t2, t2SampleIds)
+      .then(filled => disasync.localLabTests(filled))
     ).to.eventually.deep.equal(expectedT2)
   );
 
@@ -321,25 +321,25 @@ describe('Disa Labs Status Sync', () => {
 
   it('should fetch existing lab status changes', () =>
     expect(
-      disatransform.fillChangesLabTestRefs(c1, labTests)
-      .then(filled => disasync.fetchLocalChanges(filled))
+      disatransform.fillTestRefs(c1, labTests)
+      .then(filled => disasync.localChanges(filled))
     ).to.eventually.deep.equal(expectedC1)
   );
 
   it('should fetch empty metadata results given no input', () =>
-    expect(disasync.fetchLocalMeta([])).to.eventually.deep.equal([])
+    expect(disasync.localMeta([])).to.eventually.deep.equal([])
   );
 
   it('should fetch empty sampleIds results given no input', () =>
-    expect(disasync.fetchLocalSampleIds({})).to.eventually.deep.equal({})
+    expect(disasync.localSampleIds({})).to.eventually.deep.equal({})
   );
 
   it('should fetch empty labTests results given no input', () =>
-    expect(disasync.fetchLocalLabTests([])).to.eventually.deep.equal([])
+    expect(disasync.localLabTests([])).to.eventually.deep.equal([])
   );
 
   it('should fetch empty changes results given no input', () =>
-    expect(disasync.fetchLocalChanges([])).to.eventually.deep.equal([])
+    expect(disasync.localChanges([])).to.eventually.deep.equal([])
   );
 
 });

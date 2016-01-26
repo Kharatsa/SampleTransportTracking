@@ -7,21 +7,15 @@ const storage = require('app/server/storage');
 const datasync = require('app/server/util/datasync.js');
 const datadb = require('app/server/util/datadb.js');
 
-const skipEmpty = wrapped => {
-  return BPromise.method(items =>
-    !(items && items.length) ? [] : wrapped(items)
-  );
-};
-
 const sampleRefsWhere = sampleRef => ({sampleId: sampleRef});
 
 /**
- * Return all lab tests for a given sample id record (by reference/uuid)
+ * Return all lab tests for a given SampleIds reference
  *
  * @param  {string} sampleRef [description]
  * @return {Promise.<Array.<string>>}           [description]
  */
-const sampleIdsLabTests = skipEmpty(sampleRef => {
+const sampleIdLabTests = datasync.skipEmpty(sampleRef => {
   if (!sampleRef) {
     log.error();
     throw new Error(`Missing required parameter sampleRef - ${sampleRef}`);
@@ -37,11 +31,11 @@ const metaWhere = meta => BPromise.map(meta, one =>
 .then(ands => ({$or: ands}));
 
 /**
- * [fetchLocalMeta description]
+ * [localMeta description]
  * @param  {Object} meta [description]
  * @return {Promise.<Object>}      [description]
  */
-const fetchLocalMeta = skipEmpty(meta => {
+const localMeta = datasync.skipEmpty(meta => {
   if (!_.every(meta, one => !!one.key && !!one.type)) {
     throw new Error(`Missing required type or key property ${meta}`);
   }
@@ -51,11 +45,11 @@ const fetchLocalMeta = skipEmpty(meta => {
 const sampleIdsWhere = sampleIds => ({stId: sampleIds.stId});
 
 /**
- * [fetchLocalSampleIds description]
+ * [localSampleIds description]
  * @param  {Object} sampleIds [description]
  * @return {Promise.<Object>}           [description]
  */
-const fetchLocalSampleIds = BPromise.method(sampleIds => {
+const localSampleIds = BPromise.method(sampleIds => {
   if (!sampleIds) {
     throw new Error(`Missing required sampleIds parameter - ${sampleIds}`);
   }
@@ -70,12 +64,11 @@ const testsWhere = tests => BPromise.map(tests, test =>
 .then(ands => ({$or: ands}));
 
 /**
- * [fetchLocalLabTests description]
- * @param  {string} sampleIdsRef [description]
+ * [localLabTests description]
  * @param  {Array.<Object>} labTests     [description]
  * @return {Promise.<Array.<Object>>}              [description]
  */
-const fetchLocalLabTests = skipEmpty(labTests => {
+const localLabTests = datasync.skipEmpty(labTests => {
   if (!_.every(labTests, test => !!test.testType && !!test.sampleId)) {
     throw new Error(`Missing testType or sampleId property - ${labTests}`);
   }
@@ -88,11 +81,11 @@ const changesWhere = changes => BPromise.map(changes, change =>
 .then(ands => ({$or: ands}));
 
 /**
- * [fetchLocalChanges description]
+ * [localChanges description]
  * @param  {Array.<Object>} changes    [description]
  * @return {Promise.<Array.<Object>>}            [description]
  */
-const fetchLocalChanges = skipEmpty(changes => {
+const localChanges = datasync.skipEmpty(changes => {
   if (!_.every(changes, change => !!change.labTest && !!change.statusDate)) {
     throw new Error(`Missing required labTest or statusDate parameter
                     ${changes}`);
@@ -101,9 +94,9 @@ const fetchLocalChanges = skipEmpty(changes => {
 });
 
 module.exports = {
-  sampleIdsLabTests,
-  fetchLocalMeta,
-  fetchLocalSampleIds,
-  fetchLocalLabTests,
-  fetchLocalChanges
+  sampleIdLabTests,
+  localMeta,
+  localSampleIds,
+  localLabTests,
+  localChanges
 };

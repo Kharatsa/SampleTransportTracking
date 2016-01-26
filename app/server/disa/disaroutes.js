@@ -50,23 +50,25 @@ router.post('/status',
   (req, res, next) => {
     log.info('Received Disa Labs status\n\t', req.body);
 
-    const parseXML = disatransform.parseLabStatusXML(req.body);
+    const parseXML = disatransform.labStatus(req.body);
 
     const parseEntities = parseXML.then(parsed =>
       BPromise.props({
-        sampleIds: disatransform.parseSampleIds(parsed),
-        metadata: disatransform.parseMetadata(parsed),
-        labTests: disatransform.parseLabTests(parsed),
-        changes: disatransform.parseChanges(parsed)
+        sampleIds: disatransform.sampleId(parsed),
+        statusDate: disatransform.labStatusDate(parsed),
+        metadata: disatransform.metadata(parsed),
+        labTests: disatransform.labTests(parsed),
+        changes: disatransform.labChanges(parsed)
       })
     );
     const saveSubmission = parseEntities.then(disasubmission.handleSubmission);
 
     const backup = parseEntities.then(entities =>
-      disatransform.buildLabFormSubmission(
+      disatransform.buildLabXForm(
         entities.sampleIds, entities.statusDate, entities.changes
       )
     )
+    .tap(xform => log.info('Built lab status xform', xform))
     .then(aggregate.makeSubmission)
     .spread((odkRes, body) => {
       const resMessage = `${odkRes.statusCode} - ${odkRes.statusMessage}`;
@@ -84,7 +86,7 @@ router.post('/status',
     return BPromise.join(saveSubmission, backup, (results, odkBody) => {
       log.debug(`Finished saving lab submission: ${results}`);
       log.debug(`ODK Aggregate submission response: ${odkBody}`);
-      // TODO: send a meaningful message
+      // TODO: maybe send a meaningful message
       res.status(201).send(SUBMISSION_SUCCESS);
     })
     .catch(err => {

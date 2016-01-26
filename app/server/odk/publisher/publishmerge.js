@@ -54,7 +54,7 @@ function commonPropsEqual(local, target) {
  * @param  {Array.<Sample>} samples - [description]
  * @return {PublishMerged}
  */
-function mergeAllSamples(local, samples) {
+function mergeAllSampleIds(local, samples) {
   var localBySampleId = {};
   var localByLabId = {};
 
@@ -241,7 +241,7 @@ function merge(locals, published) {
     log.debug('Merging submission %d of %d', index + 1, published.length);
     var local = locals[index];
     return BPromise.props({
-      samples: mergeAllSamples(local.samples, data.samples),
+      samples: mergeAllSampleIds(local.samples, data.samples),
       submission: mergeSubmission(local.submission, data.submission),
       facility: mergeMetadata(local.facility, data.facility),
       person: mergeMetadata(local.person, data.person),

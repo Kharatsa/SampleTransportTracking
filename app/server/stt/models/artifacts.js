@@ -1,12 +1,10 @@
 'use strict';
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
-const sampleids = require('./sampleids');
-const metadata = require('./metadata');
+const sampleids = require('./sampleids.js');
+const metadata = require('./metadata.js');
 
 const modelName = 'Artifacts';
-
-// const ARTIFACT_TYPES = ['form', 'blood', 'sputum', 'urine', 'dbs', 'other'];
 
 const artifacts = modelwrapper({
   name: modelName,
@@ -31,8 +29,6 @@ const artifacts = modelwrapper({
         },
         artifactType: {
           type: DataTypes.STRING,
-          // type: DataTypes.ENUM,
-          // values: ARTIFACT_TYPES,
           allowNull: false,
           references: {
             model: Metadata,

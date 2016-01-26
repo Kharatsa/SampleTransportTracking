@@ -4,7 +4,7 @@
 
 const BPromise = require('bluebird');
 const config = require('app/config');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 // const sttModels = require('app/server/stt/models');
 const authmodels = require('app/server/auth/models');
 const sttmodels = require('app/server/stt/models');

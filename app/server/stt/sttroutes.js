@@ -19,7 +19,7 @@ router.get('/updates', normalizeParams, function(req, res, next) {
 });
 
 router.get('/ids', function(req, res, next) {
-  return sttClient.getSamples()
+  return sttClient.getSampleIds()
   .then(ids => res.json(ids))
   .catch(err => next(err));
 });

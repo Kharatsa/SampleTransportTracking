@@ -94,7 +94,7 @@ const metadata = modelwrapper({
           },
           value: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             get: function()  {
               var dataType = this.getDataValue('valueType');
               return convertFromString(this.getDataValue('value'), dataType);

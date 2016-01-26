@@ -1,8 +1,8 @@
 'use strict';
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
-const sampleids = require('./sampleids');
-const metadata = require('./metadata');
+const sampleids = require('./sampleids.js');
+const metadata = require('./metadata.js');
 
 // const TEST_TYPES = ['testa', 'testb', 'testc'];
 

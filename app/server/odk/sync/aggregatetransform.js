@@ -4,7 +4,7 @@ const BPromise = require('bluebird');
 const xml2js = require('xml2js');
 BPromise.promisifyAll(xml2js);
 const log = require('app/server/util/logapp.js');
-const parse = require('app/common/parse.js');
+const string = require('app/common/string.js');
 
 function getElemText(parent, textNode) {
   return parent[textNode] ? parent[textNode][0] : null;
@@ -37,10 +37,10 @@ function parseXForm(xform) {
   return {
     formID: getElemText(xform, xformFields.ID),
     name: getElemText(xform, xformFields.NAME),
-    majorMinorVersion: parse.parseText(
+    majorMinorVersion: string.parseText(
       getElemText(xform, xformFields.MAJOR_VERSION)
     ),
-    version: parse.parseText(getElemText(xform, xformFields.VERSION)),
+    version: string.parseText(getElemText(xform, xformFields.VERSION)),
     hash: getElemText(xform, xformFields.HASH),
     downloadUrl: getElemText(xform, xformFields.DOWNLOAD_URL),
     manifestUrl: getElemText(xform, xformFields.MANIFEST_URL)

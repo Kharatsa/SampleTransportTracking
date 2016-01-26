@@ -1,5 +1,14 @@
 'use strict';
 
+const stripInner = strings => {
+  const str = strings.join(' ');
+  return str.split(/\s/).filter(s => !!s).join(' ');
+};
+
+const escapeRegExp = str => {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+};
+
 // via MDN
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt#A_stricter_parse_function
 function filterInt(value) {
@@ -11,12 +20,12 @@ function filterInt(value) {
 
 // via MDN
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat#A_stricter_parse_function
-function filterFloat(value) {
+const filterFloat = value => {
   if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
     return Number(value);
   }
   return NaN;
-}
+};
 
 /**
  * Converts a String value to its underlying primitive type.
@@ -64,6 +73,8 @@ function parseText(text) {
 }
 
 module.exports = {
+  stripInner,
+  escapeRegExp,
   parseText,
   filterInt,
   filterFloat

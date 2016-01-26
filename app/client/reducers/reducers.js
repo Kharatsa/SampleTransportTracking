@@ -5,7 +5,7 @@ import {routeReducer} from 'redux-simple-router';
 import {List, Map as ImmutableMap} from 'immutable';
 import {
     defaultTabsById, RECEIVE_TABS, SELECT_TAB,
-    FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
+    FETCH_SAMPLE_IDS, FETCH_SAMPLE_IDS_FAILURE, RECEIVE_SAMPLE_IDS,
     FETCH_UPDATES, FETCH_UPDATES_FAILURE, RECEIVE_UPDATES
 } from '../actions/actions.js';
 
@@ -43,13 +43,13 @@ const selectedTab = function(state=defaultTab, action) {
 
 const isFetchingData = function(state=false, action) {
   switch (action.type) {
-  case RECEIVE_SAMPLES:
+  case RECEIVE_SAMPLE_IDS:
   case RECEIVE_UPDATES:
     return false;
-  case FETCH_SAMPLES:
+  case FETCH_SAMPLE_IDS:
   case FETCH_UPDATES:
     return true;
-  case FETCH_SAMPLES_FAILURE:
+  case FETCH_SAMPLE_IDS_FAILURE:
   case FETCH_UPDATES_FAILURE:
     return false;
   default:
@@ -61,12 +61,12 @@ function listArrayItemsWithId(items) {
   return List(items.map(item => item.id));
 }
 
-const defaultSamples = List([]);
-const samples = function(state=defaultSamples, action) {
+const defaultSampleIds = List([]);
+const sampleIds = function(state=defaultSampleIds, action) {
   switch (action.type) {
-  case RECEIVE_SAMPLES:
-    return listArrayItemsWithId(action.samples);
-    // return List(action.samples.map(sample => sample.id));
+  case RECEIVE_SAMPLE_IDS:
+    return listArrayItemsWithId(action.sampleIds);
+    // return List(action.sampleIds.map(sampleId => sampleId.id));
   default:
     return state;
   }
@@ -80,12 +80,12 @@ function transformArrayItemsWithId(items, _collection) {
   }, {}));
 }
 
-const defaultSamplesById = ImmutableMap({});
-const samplesById = function(state=defaultSamplesById, action) {
+const defaultSampleIdById = ImmutableMap({});
+const samplesById = function(state=defaultSampleIdById, action) {
   switch (action.type) {
-  case RECEIVE_SAMPLES:
-    return transformArrayItemsWithId(action.samples);
-    // return ImmutableMap(action.samples.reduce(function(previous, current) {
+  case RECEIVE_SAMPLE_IDS:
+    return transformArrayItemsWithId(action.sampleIds);
+    // return ImmutableMap(action.sampleIds.reduce(function(previous, current) {
     //   previous[current.id] = current;
     //   return previous;
     // }, {}));
@@ -122,6 +122,6 @@ export default combineReducers({
   isFetchingData,
   updates,
   updatesById,
-  samples,
+  sampleIds,
   samplesById
 });

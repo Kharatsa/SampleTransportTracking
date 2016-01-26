@@ -15,9 +15,9 @@ export const FETCH_UPDATES = 'FETCH_UPDATES';
 export const FETCH_UPDATES_FAILURE = 'FETCH_UPDATES_FAILURE';
 export const RECEIVE_UPDATES = 'RECEIVE_UPDATES';
 
-export const FETCH_SAMPLES = 'FETCH_SAMPLES';
-export const FETCH_SAMPLES_FAILURE = 'FETCH_SAMPLES_FAILURE';
-export const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
+export const FETCH_SAMPLE_IDS = 'FETCH_SAMPLE_IDS';
+export const FETCH_SAMPLE_IDS_FAILURE = 'FETCH_SAMPLE_IDS_FAILURE';
+export const RECEIVE_SAMPLE_IDS = 'RECEIVE_SAMPLE_IDS';
 
 /*
  * other constants
@@ -29,8 +29,8 @@ export const defaultTabsById = ImmutableMap({
     'route': '/'
   },
   '1': {
-    name: 'Samples',
-    route: '/samples'
+    name: 'SampleIds',
+    route: '/sampleids'
   },
   '2': {
     name: 'Facilities',

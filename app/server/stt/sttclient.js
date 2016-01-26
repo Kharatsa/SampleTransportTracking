@@ -21,7 +21,7 @@ const clientutils = require('app/server/storage/clientutils.js');
  * @param {!Object} options [description]
  * @param {!Database} options.db [description]
  * @param {!Object} options.models [description]
- * @param {!Sequelize.Model} options.models.Samples [description]
+ * @param {!Sequelize.Model} options.models.SampleIds [description]
  * @param {!Sequelize.Model} options.models.Submissions [description]
  * @param {!Sequelize.Model} options.models.Facilities [description]
  * @param {!Sequelize.Model} options.models.People [description]
@@ -39,8 +39,8 @@ function STTClient(options) {
   // if (!options.models.Forms) {
   //   throw new Error('Forms model is a required parameter');
   // }
-  // if (!options.models.Samples) {
-  //   throw new Error('Samples model is a required parameter');
+  // if (!options.models.SampleIds) {
+  //   throw new Error('SampleIds model is a required parameter');
   // }
   // if (!options.models.Submissions) {
   //   throw new Error('Submissions model is a required parameter');
@@ -128,12 +128,12 @@ function handleSimpleOption(options, results) {
 // };
 
 /**
- * [prepareSamplesWhere description]
+ * [prepareSampleIdsWhere description]
  *
  * @param  {!SampleIds} sampleIds [description]
  * @return {Object}           [description]
  */
-function prepareSamplesWhere(sampleIds) {
+function prepareSampleIdsWhere(sampleIds) {
   var stIds = sampleIds.stId.length ? sampleIds.stId : [];
   var labIds = sampleIds.labId.length ? sampleIds.labId : [];
   var anyIds = sampleIds.anyId.length ? sampleIds.anyId : [];
@@ -161,7 +161,7 @@ function prepareSamplesWhere(sampleIds) {
  */
 
 /**
- * [getSamples description]
+ * [getSampleIds description]
  *
  * @method
  * @param {?Object} options
@@ -176,13 +176,13 @@ function prepareSamplesWhere(sampleIds) {
  * @throws {Error} If [!sampleIds.stId.length && !sampleIds.labId.length &&
  *                     !sampleIds.anyId.length]
  */
-STTClient.prototype.getSamples = BPromise.method(function(options) {
+STTClient.prototype.getSampleIds = BPromise.method(function(options) {
   options = _.defaultsDeep(options || {}, {
     sampleIds: {stId: [], labId: [], anyId: []},
     simple: true
   });
   var sampleIds = options.sampleIds;
-  log.debug('getSamples with sampleIds', sampleIds);
+  log.debug('getSampleIds with sampleIds', sampleIds);
 
   var samplesWhere;
   if (sampleIds.stId.length === 0 &&
@@ -190,10 +190,10 @@ STTClient.prototype.getSamples = BPromise.method(function(options) {
       sampleIds.anyId.length === 0) {
     samplesWhere = {};
   } else {
-    samplesWhere = prepareSamplesWhere(sampleIds);
+    samplesWhere = prepareSampleIdsWhere(sampleIds);
   }
 
-  return this.models.Samples.findAll({
+  return this.models.SampleIds.findAll({
     where: samplesWhere,
     limit: options.limit
   })
@@ -217,7 +217,7 @@ STTClient.prototype.getSamples = BPromise.method(function(options) {
  * @throws {Error} If [!options.stId && !options.labId && !options.anyId]
  */
 STTClient.prototype.getSample = function(options) {
-  return this.getSamples({
+  return this.getSampleIds({
     sampleIds: {
       stId: options.stId ? [options.stId] : [],
       labId: options.labId ? [options.labId] : [],
@@ -230,33 +230,33 @@ STTClient.prototype.getSample = function(options) {
 };
 
 /**
- * [_saveSamples description]
+ * [_saveSampleIds description]
  *
  * @param {Object} options [description]
  * @param  {!Array.<Sample>} options.samples [description]
  * @param  {?Sequelize.Transaction} [options.tran]    [description]
  * @return {Promise.<Array.<Sequelize.Instance>>}
  */
-STTClient.prototype.saveSamples = function(options) {
+STTClient.prototype.saveSampleIds = function(options) {
   log.info('CREATING ' + options.samples.length + ' samples\n\t' +
            options.samples);
   return clientutils.saveBulk({
-    model: this.models.Samples, items: options.samples, tran: options.tran
+    model: this.models.SampleIds, items: options.samples, tran: options.tran
   });
 };
 
 /**
- * [updateSamples description]
+ * [updateSampleIds description]
  *
  * @param {!Object} options [description]
  * @param {!Array.<Sample>} options.samples [description]
  * @param {?Sequelize.Transaction} [options.tran]    [description]
  * @return {Promise.<Array.<affectedCount, affectedRows>>}
  */
-STTClient.prototype.updateSamples = function(options) {
+STTClient.prototype.updateSampleIds = function(options) {
   log.info('Update %s samples ', options.samples.length);
   return clientutils.updateBulk(
-    {model: this.models.Samples, items: options.samples, tran: options.tran}
+    {model: this.models.SampleIds, items: options.samples, tran: options.tran}
   );
 };
 
@@ -727,9 +727,9 @@ STTClient.prototype.updateMetadata = function() {
 // };
 
 // STTClient.prototype.listSampleIds = function() {
-//   var SamplesModel = this.models.Samples;
+//   var SampleIdsModel = this.models.SampleIds;
 
-//   return SamplesModel.findAll({
+//   return SampleIdsModel.findAll({
 //     // attributes: {exclude: ['id']}
 //   })
 //   .catch(function(err) {
@@ -745,7 +745,7 @@ STTClient.prototype.updateMetadata = function() {
 //   ]};
 // }
 
-// function getSamples(id, samplesModel) {
+// function getSampleIds(id, samplesModel) {
 //   return samplesModel.findOne({
 //     attributes: {exclude: ['id']},
 //     where: makeSampleWhere(id)
@@ -772,11 +772,11 @@ STTClient.prototype.updateMetadata = function() {
 
 // STTClient.prototype.allSampleUpdates = function(id) {
 //   log.info('Fetching all sample updates for Id "' + id + '"');
-//   var SamplesModel = this.models.Samples;
+//   var SampleIdsModel = this.models.SampleIds;
 //   var UpdatesModel = this.models.Updates;
 //   var SubmissionsModel = this.models.Submissions;
 
-//   return getSamples(id, SamplesModel)
+//   return getSampleIds(id, SampleIdsModel)
 //   .then(function(sampleId) {
 //     if (sampleId) {
 //       log.debug('Retrieved sampleId', sampleId);
