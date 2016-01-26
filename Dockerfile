@@ -32,6 +32,7 @@ RUN gulp build
 
 RUN adduser --system --no-create-home --group strack
 
+VOLUME ${STT_DATA_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
 CMD chown -R strack:strack ${STT_APP_PATH} && npm start
