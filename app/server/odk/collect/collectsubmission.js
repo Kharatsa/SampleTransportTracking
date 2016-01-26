@@ -10,12 +10,12 @@ const disasync = require('app/server/disa/disasync.js');
 const collectsync = require('app/server/odk/collect/collectsync.js');
 
 // TODO: remove
-const DEBUG = (message, value) => {
-  if (process.env.NODE_ENV === 'test') {
-    console.log(`DEBUG ${message}`);
-    console.dir(value, {depth: 10});
-  }
-};
+// const DEBUG = (message, value) => {
+//   if (process.env.NODE_ENV === 'test') {
+//     console.log(`DEBUG ${message}`);
+//     console.dir(value, {depth: 10});
+//   }
+// };
 
 // TODO: duplicated with disa
 const handleSampleIds = sampleIds => {
@@ -105,8 +105,8 @@ const handleSubmission = incoming => {
   });
   // .tap(r => DEBUG('changes results', r));
 
-  return BPromise.props({sampleIds, metadata, artifacts, changes})
-  .tap(r => DEBUG('handleSubmission results', r));
+  return BPromise.props({sampleIds, metadata, artifacts, changes});
+  // .tap(r => DEBUG('handleSubmission results', r));
 };
 
 module.exports = {handleSubmission};
