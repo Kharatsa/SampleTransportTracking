@@ -6,6 +6,7 @@
   "main": "app/server/server.js",
   "scripts": {
     "start": "NODE_ENV=production node --harmony app/server/server.js",
+    "syncdb": "node app/maintenance/data.js sync",
     "test": "NODE_ENV=test npm run test-unit && NODE_ENV=test npm run test-integration",
     "test-unit": "npm run test-unit-server",
     "test-unit-server": "mocha --harmony --reporter spec 'test/unit/server/**/*.js'",

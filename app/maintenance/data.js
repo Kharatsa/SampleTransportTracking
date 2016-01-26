@@ -5,7 +5,6 @@
 const BPromise = require('bluebird');
 const config = require('app/config');
 const log = require('app/server/util/logapp.js');
-// const sttModels = require('app/server/stt/models');
 const authmodels = require('app/server/auth/models');
 const sttmodels = require('app/server/stt/models');
 const storage = require('app/server/storage');
@@ -15,20 +14,10 @@ const cli = require('commander');
 var client;
 
 function before() {
-  // process.NODE_ENV = 'development';
   storage.init({config: config.db});
-
-  // Object.keys(sttModels).forEach(modelName =>
-  //   storage.loadModel(sttModels[modelName])
-  // );
-  Object.keys(authmodels).forEach(modelName =>
-    storage.loadModel(authmodels[modelName])
-  );
-  // TODO: cleanup
-  Object.keys(sttmodels).forEach(modelName =>
-    storage.loadModel(sttmodels[modelName])
-  );
-
+  storage.loadModels(authmodels);
+  storage.loadModels(sttmodels);
+  storage.db.sync();
   client = sttclient.create({db: storage.db, models: storage.models});
 }
 
@@ -36,8 +25,8 @@ function purge() {
   log.info('Purging database');
   before();
 
-  return client.db.dropAllSchemas()
-  .then(() => client.db.sync())
+  return storage.db.dropAllSchemas()
+  .then(() => storage.db.sync())
   .then(() => log.info('Finished purging database'));
 }
 
@@ -48,8 +37,7 @@ cli.command('purge')
 function sync() {
   log.info('Syncing the local database');
   before();
-
-  return client.db.sync();
+  return storage.db.sync();
 }
 
 cli.command('sync')

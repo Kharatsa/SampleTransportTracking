@@ -1,7 +1,7 @@
 FROM node:4.2-slim
 MAINTAINER Sean Herman <sjh293@cornell.edu>
 
-ENV BUILD_DEPS='git' \
+ENV BUILD_DEPS='sqlite3' \
     NODE_DEPS='gulp mocha jsdoc'
 
 RUN apt-get update && apt-get install -y \
@@ -30,9 +30,7 @@ RUN ln -s ../app app
 WORKDIR ${STT_APP_PATH}
 RUN gulp build
 
-RUN adduser --system --no-create-home --group strack
-
 VOLUME ${STT_DATA_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
-CMD chown -R strack:strack ${STT_APP_PATH} && npm start
+CMD npm run syncdb && npm start
