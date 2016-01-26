@@ -3,7 +3,7 @@
 'use strict';
 
 const config = require('app/config');
-const log = require('app/server/util/log.js');
+const log = require('app/server/util/logapp.js');
 const storage = require('app/server/storage');
 const authModels = require('app/server/auth/models');
 const authclient = require('app/server/auth/authclient.js');
