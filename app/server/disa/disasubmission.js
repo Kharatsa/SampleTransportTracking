@@ -9,12 +9,12 @@ const sttclient = require('app/server/stt/sttclient.js');
 const client = sttclient({db: storage.db, models: storage.models});
 
 // TODO: remove
-const DEBUG = (message, value) => {
-  if (process.env.NODE_ENV === 'test') {
-    console.log(`DEBUG ${message}`);
-    console.dir(value, {depth: 10});
-  }
-};
+// const DEBUG = (message, value) => {
+//   if (process.env.NODE_ENV === 'test') {
+//     console.log(`DEBUG ${message}`);
+//     console.dir(value, {depth: 10});
+//   }
+// };
 
 const handleSubmission = incoming => {
   const sampleIds = sttsubmission.sampleIds([incoming.sampleIds]);
@@ -48,7 +48,7 @@ const handleSubmission = incoming => {
   .then(sttsubmission.labChanges);
 
   return BPromise.props({sampleIds, metadata, labTests, changes})
-  .tap(r => DEBUG('disasubmission results', r));
+  // .tap(r => DEBUG('disasubmission results', r));
 };
 
 module.exports = {

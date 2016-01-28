@@ -112,10 +112,16 @@ const persistMergedData = BPromise.method(options => {
       {model: options.model, modelPKs: options.modelPKs, items: filtered}
     ));
 
-    return BPromise.join(
-      doInserts, doUpdates, datamerge.skips(options.merged), //localToSkip(options.merged),
-      (inserted, updated, skipped) => ({inserted, updated, skipped})
-    );
+    return BPromise.props({
+      inserted: doInserts,
+      updated: doUpdates,
+      skipped: datamerge.skips(options.merged)
+    });
+
+    // return BPromise.join(
+    //   doInserts, doUpdates, datamerge.skips(options.merged), //localToSkip(options.merged),
+    //   (inserted, updated, skipped) => ({inserted, updated, skipped})
+    // );
   } else {
     return BPromise.resolve({inserted: [], updated: [], skipped: []});
   }

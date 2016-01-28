@@ -59,15 +59,15 @@ const omitDBCols = result =>  {
  * @return {boolean}
  */
 const commonPropsEqual = (source, target) => {
-  return Object.keys(omitDBCols(target)).every(key => {
-    if (typeof source[key] === 'undefined') {
+  return Object.keys(source).every(prop => {
+    if (typeof target[prop] === 'undefined') {
       return false;
     }
     // For Date objects, compare the valueOf to ensure identical values
     // evaluate to true for the equals check.
     return (
-      (_.isDate(target[key]) ? target[key].getTime() : target[key]) ===
-      (_.isDate(source[key]) ? source[key].getTime() : source[key])
+      (_.isDate(target[prop]) ? target[prop].getTime() : target[prop]) ===
+      (_.isDate(source[prop]) ? source[prop].getTime() : source[prop])
     );
   });
 };
