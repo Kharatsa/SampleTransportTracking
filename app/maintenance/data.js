@@ -18,7 +18,7 @@ function before() {
   storage.loadModels(authmodels);
   storage.loadModels(sttmodels);
   storage.db.sync();
-  client = sttclient.create({db: storage.db, models: storage.models});
+  client = sttclient({db: storage.db, models: storage.models});
 }
 
 function purge() {

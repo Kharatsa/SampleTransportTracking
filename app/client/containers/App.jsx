@@ -3,7 +3,7 @@
 import React, {PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {routeActions as routerActions} from 'redux-simple-router';
+import {routeActions as routerActions} from 'react-router-redux';
 import {List, Map as ImmutableMap} from 'immutable';
 import * as actions from '../actions/actioncreators.js';
 import AppBar from 'material-ui/lib/app-bar';

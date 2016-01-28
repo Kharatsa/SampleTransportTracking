@@ -8,7 +8,7 @@ const BPromise = require('bluebird');
 const config = require('app/config');
 const storage = require('app/server/storage');
 const sttmodels = require('app/server/stt/models');
-const datadb = require('app/server/util/datadb.js');
+const dbresult = require('app/server/storage/dbresult.js');
 
 describe('Sample Transport Tracking Database', () => {
   var models;
@@ -34,8 +34,8 @@ describe('Sample Transport Tracking Database', () => {
     it('should save single sample ids', () =>
       expect(
         models.SampleIds.create(s1)
-        .then(datadb.makePlain)
-        .then(datadb.omitDBCols)
+        .then(dbresult.plain)
+        .then(dbresult.omitDateDBCols)
       ).to.eventually.deep.equal(s1)
     );
 
@@ -99,8 +99,8 @@ describe('Sample Transport Tracking Database', () => {
     it('should save metadata', () =>
       expect(
         BPromise.map(meta1, meta => models.Metadata.create(meta))
-        .map(datadb.makePlain)
-        .map(datadb.omitDBCols)
+        .map(dbresult.plain)
+        .map(dbresult.omitDBCols)
       ).to.eventually.deep.equal(meta1)
     );
 
@@ -132,8 +132,8 @@ describe('Sample Transport Tracking Database', () => {
           {include: [models.Artifacts]}
         )
         .then(result => result.Artifacts)
-        .map(datadb.makePlain)
-        .map(datadb.omitDBCols)
+        .map(dbresult.plain)
+        .map(dbresult.omitDateDBCols)
       ).to.eventually.deep.equal(expectedA1)
     );
 
@@ -167,8 +167,8 @@ describe('Sample Transport Tracking Database', () => {
           {include: models.LabTests}
         )
         .then(result => result.LabTests)
-        .map(datadb.makePlain)
-        .map(datadb.omitDBCols)
+        .map(dbresult.plain)
+        .map(dbresult.omitDateDBCols)
       ).to.eventually.deep.equal(expectedTest1)
     );
 
@@ -190,8 +190,8 @@ describe('Sample Transport Tracking Database', () => {
           )
         )
         .spread(sampleIds => sampleIds.getArtifacts())
-        .map(datadb.makePlain)
-        .map(datadb.omitDBCols)
+        .map(dbresult.plain)
+        .map(dbresult.omitDateDBCols)
       ).to.eventually.deep.equal(expectedA3)
     );
 
@@ -214,8 +214,8 @@ describe('Sample Transport Tracking Database', () => {
       expect(
         models.Changes.create(c1)
         .then(instance => instance.reload())
-        .then(datadb.makePlain)
-        .then(datadb.omitDBCols)
+        .then(dbresult.plain)
+        .then(dbresult.omitDateDBCols)
       ).to.eventually.deep.equal(expectedC1)
     );
 

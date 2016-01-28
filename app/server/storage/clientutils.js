@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const datadb = require('app/server/util/datadb.js');
+const dbresult = require('app/server/storage/dbresult.js');
 
 // /**
 //  * [findAllOfModel description]
@@ -39,7 +39,7 @@ const datadb = require('app/server/util/datadb.js');
 //   })
 //   .then(results => {
 //     if (options && options.simple) {
-//       return results.map(datadb.makePlain);
+//       return results.map(dbresult.plain);
 //     }
 //     return results;
 //   });
@@ -69,7 +69,7 @@ const saveBulk = BPromise.method(function(options) {
   return options.model.bulkCreate(options.items, {transaction: options.tran})
   .then(results => {
     if (options && options.simple) {
-      return BPromise.map(results, datadb.makePlain);
+      return BPromise.map(results, dbresult.plain);
     }
     return results;
   });

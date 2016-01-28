@@ -2,7 +2,8 @@
 
 const BPromise = require('bluebird');
 // const log = require('app/server/util/logapp.js');
-const datadb = require('app/server/util/datadb.js');
+const datamerge = require('app/server/util/datamerge.js');
+const dbresult = require('app/server/storage/dbresult.js');
 
 const skipEmpty = wrapped => {
   return BPromise.method(items =>
@@ -17,42 +18,9 @@ const findAllWhere = (Model, where) => {
   } else {
     query = Model.findAll({where});
   }
-  return query.map(datadb.makePlain).map(datadb.omitDateDBCols);
+  return query.map(dbresult.plain)
+  .map(dbresult.omitDateDBCols);
 };
-
-/**
- * [fetchLocalWithColAndRef description]
- *
- * @method fetchLocalWithColAndRef
- * @param {!Object} options [description]
- * @param  {!Sequelize.Model} options.model [description]
- * @param  {!string} options.refKey    [description]
- * @param  {!string} options.refVal    [description]
- * @param  {!string} options.itemKey   [description]
- * @param  {!Array.<Object>} items     [description]
- * @return {Promise.<Array.<Object>>}           [description]
- * @throws {Error} If [missing required parameter]
- */
-const fetchLocalWithColAndRef = BPromise.method(options => {
-  if (!(options && options.refKey && options.refVal && options.itemKey &&
-        options.items)) {
-    throw new Error('Missing required options parameter');
-  }
-
-  return BPromise.map(options.items, item => {
-    let refClause = {};
-    refClause[options.refKey] = options.refVal;
-
-    let keyClause = {};
-    keyClause[options.itemKey] = item[options.itemKey];
-
-    return {$and: [refClause, keyClause]};
-  })
-  .then(ands => ({$or: ands}))
-  .then(where => options.model.findAll({where}))
-  .map(datadb.makePlain)
-  .map(datadb.omitDateDBCols);
-});
 
 /**
  * [description]
@@ -108,49 +76,10 @@ const persistMergedUpdates = BPromise.method(options => {
     return BPromise.join(makeWheres, doUpdates,
       wheres => options.model.findAll({where: {$or: wheres}})
     )
-    .map(datadb.makePlain);
+    .map(dbresult.plain);
   }
   return [];
 });
-
-/**
- * Returns a collection of Objects from merged that should be updated in the
- * database. In these cases, there is a value present in the local property of
- * the merged object, but the values props do not match the value props in the
- * merged incoming object.
- *
- * @param  {Array.<MergedData>} merged [description]
- * @return {Promise.<Array.<MergedData>>}        [description]
- */
-const mergedForUpdate = merged => {
-  return BPromise.filter(merged, item => !!item.local)
-  .filter(item => !datadb.commonPropsEqual(item.incoming, item.local));
-};
-
-/**
- * Returns a collection of Objects from merged that should be inserted in the
- * database, given that the paired/merged local parameter is falsy. The absense
- * of a value in the local property indicates that the object in incoming has
- * no version already present in the local database.
- *
- * @param  {Array.<MergedData>} merged [description]
- * @return {Promise.<Array.<Object>>}        [description]
- */
-const incomingForInsert = merged => {
-  return BPromise.filter(merged, item => !item.local)
-  .map(item => item.incoming);
-};
-
-/**
- * [description]
- * @param  {Array.<MergedData>} merged [description]
- * @return {Promise.<Array.<Object>>}        [description]
- */
-const localToSkip = merged => {
-  return BPromise.filter(merged, item => !!item.local)
-  .filter(item => datadb.commonPropsEqual(item.incoming, item.local))
-  .map(item => item.local);
-};
 
 /**
  * Conducts inserts and updates for the incoming property objects in the merged
@@ -174,17 +103,17 @@ const persistMergedData = BPromise.method(options => {
 
   if (options.merged && options.merged.length) {
 
-    const doInserts = incomingForInsert(options.merged)
+    const doInserts = datamerge.inserts(options.merged)
     .then(filtered => options.model.bulkCreate(filtered, {validate: true}))
-    .map(datadb.makePlain);
+    .map(dbresult.plain);
 
-    const doUpdates = mergedForUpdate(options.merged)
+    const doUpdates = datamerge.updates(options.merged)
     .then(filtered => persistMergedUpdates(
       {model: options.model, modelPKs: options.modelPKs, items: filtered}
     ));
 
     return BPromise.join(
-      doInserts, doUpdates, localToSkip(options.merged),
+      doInserts, doUpdates, datamerge.skips(options.merged), //localToSkip(options.merged),
       (inserted, updated, skipped) => ({inserted, updated, skipped})
     );
   } else {
@@ -195,6 +124,5 @@ const persistMergedData = BPromise.method(options => {
 module.exports = {
   skipEmpty,
   findAllWhere,
-  fetchLocalWithColAndRef,
   persistMergedData
 };

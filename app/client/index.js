@@ -7,7 +7,7 @@ import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import {Router, browserHistory} from 'react-router';
-import {syncHistory} from 'redux-simple-router';
+import {syncHistory} from 'react-router-redux';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import reducers from './reducers/reducers.js';
 import routes from './routes.js';

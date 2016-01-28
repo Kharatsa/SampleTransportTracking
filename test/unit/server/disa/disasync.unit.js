@@ -10,6 +10,8 @@ const sttmodels = require('app/server/stt/models');
 const disasync = require('app/server/disa/disasync.js');
 const disatransform = require('app/server/disa/disatransform.js');
 
+// TODO: move these to the client tests?
+
 const artifactMeta = [
   {
     id: 1,
@@ -198,7 +200,7 @@ const changes = [
   }
 ];
 
-describe('Disa Labs Status Sync', () => {
+describe.skip('Disa Labs Status Sync', () => {
   let models;
   before(done => {
     storage.init({config: config.db});

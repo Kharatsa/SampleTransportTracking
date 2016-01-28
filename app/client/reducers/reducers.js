@@ -1,7 +1,7 @@
 'use strict';
 
 import {combineReducers} from 'redux';
-import {routeReducer} from 'redux-simple-router';
+import {routeReducer} from 'react-router-redux';
 import {List, Map as ImmutableMap} from 'immutable';
 import {
     defaultTabsById, RECEIVE_TABS, SELECT_TAB,

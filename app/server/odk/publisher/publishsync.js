@@ -7,7 +7,7 @@ const log = require('app/server/util/logapp.js');
 
 /** @module publiser/publishsync */
 
-const client = sttclient.create({db: storage.db, models: storage.models});
+const client = sttclient({db: storage.db, models: storage.models});
 
 function sampleIdsReducer(ids, sample) {
   if (sample.stId) {

@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
-const datadb = require('app/server/util/datadb.js');
+const dbresult = require('app/server/storage/dbresult.js');
 
 /** @module publiser/publishmerge */
 
@@ -20,7 +20,7 @@ const datadb = require('app/server/util/datadb.js');
  * @return {boolean}
  */
 function commonPropsEqual(local, target) {
-  return Object.keys(datadb.omitDBCols(target)).every(key => {
+  return Object.keys(dbresult.omitDBCols(target)).every(key => {
     if (typeof local[key] === 'undefined') {
       return false;
     }

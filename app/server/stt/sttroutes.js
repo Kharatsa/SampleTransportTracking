@@ -7,7 +7,7 @@ const normalizeParams = require('app/server/sttmiddleware.js').normalizeParams;
 const storage = require('app/server/storage');
 const sttclient = require('app/server/stt/sttclient.js');
 
-const sttClient = sttclient.create({
+const sttClient = sttclient({
   db: storage.db,
   models: storage.models
 });
