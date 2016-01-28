@@ -15,7 +15,6 @@ storage.loadModels(sttmodels);
 const sttmiddleware = require('app/server/sttmiddleware.js');
 const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
-const PublishRoutes = require('app/server/odk/publisher/publishroutes.js');
 const STTRoutes = require('app/server/stt/sttroutes.js');
 const DisaRoutes = require('app/server/disa/disaroutes.js');
 
@@ -41,7 +40,6 @@ app.use(requestLog.requestLogger);
 
 // App routes
 app.use('/odk', AggregateRoutes);
-app.use('/publish', PublishRoutes);
 app.use('/track', STTRoutes);
 app.use('/disa', DisaRoutes);
 
