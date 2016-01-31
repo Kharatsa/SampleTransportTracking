@@ -14,7 +14,7 @@ describe('Sample Transport Tracking Query Builders', () => {
     {type: 'person', key: 'GHI', value: 'SALADBOWL', valueType: 'string'}
   ];
 
-  const expectedWhere1 = {$or: [
+  const expectedMeta1 = {$or: [
     {$and: [{type: 'artifact'}, {key: 'ABC'}]},
     {$and: [{type: 'artifact'}, {key: 'DEF'}]},
     {$and: [{type: 'person'}, {key: 'GHI'}]}
@@ -23,7 +23,7 @@ describe('Sample Transport Tracking Query Builders', () => {
   it('should build metadata w/ keys and types query where clause', () =>
     expect(
       sttquery.metadata.typesAndKeys(meta1)
-    ).to.eventually.deep.equal(expectedWhere1)
+    ).to.eventually.deep.equal(expectedMeta1)
   );
 
   const meta2 = [
@@ -38,8 +38,31 @@ describe('Sample Transport Tracking Query Builders', () => {
     ).to.eventually.be.rejectedWith(Error)
   );
 
+  const metaType = 'artifact';
+  const expectedMeta2 = {type: 'artifact'};
+
+  it('should build metadata w/ types query where clause', () =>
+    expect(
+      sttquery.metadata.type(metaType)
+    ).to.eventually.deep.equal(expectedMeta2)
+  );
+
   it('should build sampleIds w/ stIds query where clause');
   it('should throw an error for missing sampleIds props');
+
+  const ids = ['abc', 'def', null, undefined, '', [], {}];
+  const expectedEitherIdsWhere = {$or: [
+    {stId: 'abc'},
+    {stId: 'def'},
+    {labId: 'abc'},
+    {labId: 'def'}
+  ]};
+
+  it('should build sampleIds w/ eitherId query where clause', () =>
+    expect(
+      sttquery.sampleIds.eitherIds(ids)
+    ).to.eventually.deep.equal(expectedEitherIdsWhere)
+  );
 
   it('should build labTests w/ types and sampleIds query where clause');
   it('should build labTests w/ sampleIds query where clause');

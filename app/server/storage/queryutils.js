@@ -31,6 +31,27 @@ const requireProps = (propNames, wrappedFunc) => {
   };
 };
 
+const deepTruthy = value => {
+  if (value === null) {
+    return false;
+  } else if (typeof value === 'undefined') {
+    return false;
+  } else if (typeof value === 'boolean') {
+    return value;
+  } else if (typeof value === 'number') {
+    return !!value;
+  } else if (Array.isArray(value)) {
+    return !!value.length;
+  } else if (typeof value === 'string') {
+    return !!value;
+  } else if (_.isObject(value)) {
+    return !!Object.keys(value).length;
+  }
+  return !!value;
+};
+
+// TODO: add offset handler
+
 /**
  * @typedef {Object} QueryOptions
  * @property {Array.<Object>} data [description]
@@ -45,6 +66,11 @@ const requireProps = (propNames, wrappedFunc) => {
  * @param {QueryOptions} options [description]
  */
 
+const DEFAULT_LIMIT = 30;
+const STT_OPTIONS = [
+  'omitDateDBCols', 'omitDBCols', 'plain', 'allowEmpty'
+];
+
 /**
  * [description]
  * @param  {Function} wrappedFunc [description]
@@ -53,16 +79,20 @@ const requireProps = (propNames, wrappedFunc) => {
 const sttOptions = wrappedFunc => {
   return function(options) {
     _.defaultsDeep(options || {}, {
+      limit: DEFAULT_LIMIT,
+      offset: 0,
       plain: true,
       omitDateDBCols: false,
       omitDBCols: false,
       allowEmpty: false
     });
 
+    const sequelizeOptions = _.omit(options, STT_OPTIONS);
+
     let query = null;
     if (options.allowEmpty || (options.data && options.data.length)) {
       // Wrap with resolve in case wrappedFunc doesn't return a Promise
-      query = BPromise.resolve(wrappedFunc.call(this, options));
+      query = BPromise.resolve(wrappedFunc.call(this, sequelizeOptions));
     } else {
       // When allow empty queries is false, and no data option parameter is
       // provided, resolve with an empty result array.
@@ -71,6 +101,7 @@ const sttOptions = wrappedFunc => {
 
     return query
     .then(instances => {
+      // TODO: support non-array (i.e., object) results
       // TODO: warn if omit settings enabled for non-plain results?
       const results = (options.plain ?
         BPromise.map(instances, dbresult.plain) :
@@ -85,12 +116,6 @@ const sttOptions = wrappedFunc => {
       return results;
     });
   };
-};
-
-const skipEmpty = wrappedFunc => {
-  return BPromise.method(items =>
-    !(items && items.length) ? [] : wrappedFunc(items)
-  );
 };
 
 /**
@@ -108,6 +133,6 @@ const findAllWhere = (Model, where) => {
 module.exports = {
   requireProps,
   sttOptions,
-  skipEmpty,
-  findAllWhere
+  findAllWhere,
+  deepTruthy
 };

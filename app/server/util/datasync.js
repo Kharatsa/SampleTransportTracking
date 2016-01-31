@@ -5,23 +5,6 @@ const BPromise = require('bluebird');
 const datamerge = require('app/server/util/datamerge.js');
 const dbresult = require('app/server/storage/dbresult.js');
 
-const skipEmpty = wrapped => {
-  return BPromise.method(items =>
-    !(items && items.length) ? [] : wrapped(items)
-  );
-};
-
-const findAllWhere = (Model, where) => {
-  let query;
-  if (where.then) {
-    query = where.then(result => Model.findAll({where: result}));
-  } else {
-    query = Model.findAll({where});
-  }
-  return query.map(dbresult.plain)
-  .map(dbresult.omitDateDBCols);
-};
-
 /**
  * [description]
  *
@@ -118,17 +101,11 @@ const persistMergedData = BPromise.method(options => {
       skipped: datamerge.skips(options.merged)
     });
 
-    // return BPromise.join(
-    //   doInserts, doUpdates, datamerge.skips(options.merged), //localToSkip(options.merged),
-    //   (inserted, updated, skipped) => ({inserted, updated, skipped})
-    // );
   } else {
     return BPromise.resolve({inserted: [], updated: [], skipped: []});
   }
 });
 
 module.exports = {
-  skipEmpty,
-  findAllWhere,
   persistMergedData
 };

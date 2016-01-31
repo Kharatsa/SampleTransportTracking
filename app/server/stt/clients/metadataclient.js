@@ -11,7 +11,14 @@ util.inherits(MetadataClient, ModelClient);
 
 MetadataClient.prototype.byTypeAndKey = function(options) {
   return sttquery.metadata.typesAndKeys(options.data)
-  .then(where => this.Model.findAll({where}));
+  .then(where => this.Model.findAll({where}))
+  .map(meta => meta.normalized());
+};
+
+MetadataClient.prototype.byType = function(options) {
+  return sttquery.metadata.type(options.data)
+  .then(where => this.Model.findAll({where}))
+  .map(meta => meta.normalized());
 };
 
 module.exports = function(options) {

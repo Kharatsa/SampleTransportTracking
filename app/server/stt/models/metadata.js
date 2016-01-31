@@ -114,7 +114,18 @@ const metadata = modelwrapper({
           }
         },
         {
-          indexes: [{name: 'metaPair', unique: true, fields: ['type', 'key']}]
+          indexes: [{name: 'metaPair', unique: true, fields: ['type', 'key']}],
+          instanceMethods: {
+            normalized: function() {
+              return {
+                id: this.getDataValue('id'),
+                key: this.getDataValue('key'),
+                value: this.getDataValue('value'),
+                createdAt: this.getDataValue('createdAt'),
+                updatedAt: this.getDataValue('updatedAt')
+              };
+            }
+          }
         });
     };
   }

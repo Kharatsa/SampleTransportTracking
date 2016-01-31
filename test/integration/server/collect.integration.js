@@ -6,7 +6,6 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 const express = require('express');
-// const BPromise = require('bluebird');
 
 const config = require('app/config');
 const sttmodels = require('app/server/stt/models');

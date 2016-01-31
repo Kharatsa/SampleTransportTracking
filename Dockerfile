@@ -29,8 +29,9 @@ WORKDIR node_modules
 RUN ln -s ../app app
 WORKDIR ${STT_APP_PATH}
 RUN gulp build
+RUN node app/maintenance/data.js sync
 
 VOLUME ${STT_DATA_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
-CMD npm run syncdb && npm start
+CMD npm start

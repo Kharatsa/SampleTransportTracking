@@ -40,7 +40,7 @@ app.use(requestLog.requestLogger);
 
 // App routes
 app.use('/odk', AggregateRoutes);
-app.use('/track', STTRoutes);
+app.use('/stt', STTRoutes);
 app.use('/disa', DisaRoutes);
 
 // app.use(requestLog.errorLogger);
