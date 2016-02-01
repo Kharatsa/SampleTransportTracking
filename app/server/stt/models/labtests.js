@@ -34,7 +34,7 @@ const labtests = modelwrapper({
             model: Metadata,
             key: 'key'
           },
-          validate: {is: /[A-Za-z]{5}/}
+          validate: {is: /[A-Z0-9]{1,5}/}
         }
       }, {
 
