@@ -37,8 +37,8 @@ const META_TYPE = {
   REJECTION: 'rejection'
 };
 
-const getStatus = getMetaType(META_TYPE.FACILITY);
-const getStatusKey = getMetaKey(META_TYPE.FACILITY);
+const getStatus = getMetaType(META_TYPE.STATUS);
+const getStatusKey = getMetaKey(META_TYPE.STATUS);
 router.get('/meta/status', getStatus);
 router.get('/meta/status/:key', getStatusKey);
 

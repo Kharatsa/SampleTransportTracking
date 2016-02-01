@@ -12,9 +12,16 @@
     body {
       padding-top: 5rem;
     }
-    .starter-template {
+    .annouce {
       padding: 3rem 1.5rem;
       text-align: center;
+    }
+    .collection {
+      position: relative;
+      padding: 1rem;
+      margin: 1rem -1rem;
+      border: solid #f7f7f9;
+      border-width: .2rem 0 0;
     }
     </style>
   </head>
@@ -24,9 +31,69 @@
     </nav>
     <div class="container">
 
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+      <div class="annouce">
+        <h1>Sample IDs</h1>
+
+        <div class="collection">
+          <p>Retrieve all existing Sample IDs</p>
+          <form class="form-inline">
+            <button type="submit" class="btn btn-primary" id="allids" >All IDs</button>
+          </form>
+          </br>
+
+          <p>Search Sample IDs by either ST ID or Lab ID</p>
+          <form class="form-inline">
+            <div class="form-group">
+              <label for="stid">ST ID</label>
+              <input type="text" class="form-control" id="stid" placeholder="ABC">
+            </div>
+            <div class="form-group">
+              <label for="labid">Lab ID</label>
+              <input type="text" class="form-control" id="labid" placeholder="ABC">
+            </div>
+            <button type="submit" class="btn btn-primary" id="oneid" >Search</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="annouce">
+        <h1>Changes</h1>
+        <div class="collection">
+          <p>Retrieve latest existing Changes</p>
+          <form class="form-inline">
+            <button type="submit" class="btn btn-primary" id="changes" >Latest Changes</button>
+          </form>
+          </br>
+        </div>
+      </div>
+
+      <div class="annouce">
+        <h1>Metadata</h1>
+        <div class="collection">
+          <form class="form-inline" action="/stt/meta/facilities" >
+            <button type="submit" class="btn btn-primary" >Facilities</button>
+          </form></br>
+          <form class="form-inline" action="/stt/meta/regions" >
+            <button type="submit" class="btn btn-primary" >Regions</button>
+          </form></br>
+          <form class="form-inline" action="/stt/meta/people" >
+            <button type="submit" class="btn btn-primary" >People</button>
+          </form></br>
+          <form class="form-inline" action="/stt/meta/artifacts" >
+            <button type="submit" class="btn btn-primary" >Artifacts</button>
+          </form></br>
+          <form class="form-inline" action="/stt/meta/status" >
+            <button type="submit" class="btn btn-primary" >Status</button>
+          </form></br>
+          <form class="form-inline" action="/stt/meta/labtest" >
+            <button type="submit" class="btn btn-primary" >Lab Tests</button>
+          </form></br>
+          <form class="form-inline" action="/stt/meta/rejections" >
+            <button type="submit" class="btn btn-primary" >Lab Rejections</button>
+          </form></br>
+
+        </div>
       </div>
 
     </div>
@@ -35,5 +102,38 @@
     <!-- jQuery first, then Bootstrap JS. -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    var oneIdButton = document.getElementById('oneid');
+    oneIdButton.onclick = function(e) {
+      e.preventDefault();
+      var id = stIdField.value;
+      if (id) {
+        window.location = '/stt/ids/' + id;
+        return;
+      }
+      id = labIdField.value;
+      if (id) {
+        window.location = '/stt/ids/' + id;
+        return;
+      }
+    };
+
+    var stIdField = document.getElementById('stid');
+    stIdField.onfocus = function() {labIdField.value = '';};
+    var labIdField = document.getElementById('labid');
+    labIdField.onfocus = function() {stIdField.value = '';};
+
+    var allIdsButton = document.getElementById('allids');
+    allIdsButton.onclick = function(e) {
+      e.preventDefault();
+      window.location = '/stt/ids';
+    };
+
+    var latestChanges = document.getElementById('changes');
+    latestChanges.onclick = function(e) {
+      e.preventDefault();
+      window.location = '/stt/changes';
+    };
+    </script>
   </body>
 </html>
