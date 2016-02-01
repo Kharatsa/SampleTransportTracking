@@ -29,9 +29,22 @@
   </xs:restriction>
 </xs:simpleType>
 
+<xs:simpleType name="OriginFacilityCodeType">
+  <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Z]{1,5}" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="OriginType">
+  <xs:all minOccurs="1" maxOccurs="1">
+    <xs:element name="Facility" type="OriginFacilityCodeType"/>
+    <xs:element name="Description" type="DescriptionType"/>
+  </xs:all>
+</xs:complexType>
+
 <xs:simpleType name="LabPrefixCodeType">
   <xs:restriction base="xs:token">
-      <xs:pattern value="[A-Za-z]{3}" />
+      <xs:pattern value="[A-Z]{3}" />
   </xs:restriction>
 </xs:simpleType>
 
@@ -57,7 +70,7 @@
 
 <xs:simpleType name="TestCodeType">
   <xs:restriction base="xs:token">
-      <xs:pattern value="[A-Z]{5}|[\*]{1}" />
+      <xs:pattern value="[A-Z0-9]{1,5}" />
   </xs:restriction>
 </xs:simpleType>
 
@@ -94,6 +107,7 @@
     <xs:element name="STID" type="STIDType" maxOccurs="1"/>
     <xs:element name="LabID" type="LabIDType" maxOccurs="1"/>
     <xs:element name="StatusTimestamp" type="StatusTimestampType" maxOccurs="1"/>
+    <xs:element name="Origin" type="OriginType" maxOccurs="1"/>
     <xs:element name="LabPrefix" type="LabPrefixType" maxOccurs="1"/>
     <xs:element name="SampleTest" type="SampleTestType" maxOccurs="unbounded"/>
   </xs:sequence>
