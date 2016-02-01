@@ -1,5 +1,6 @@
 'use strict';
 
+const _ = require('lodash');
 const BPromise = require('bluebird');
 const request = require('supertest-as-promised')(BPromise.Promise);
 const chai = require('chai');
@@ -27,21 +28,11 @@ describe('STT Metadata API', () => {
     .then(() => done());
   });
 
-  const expectedFacilities = [
-    {
-      type: 'facility',
-      key: 'ABC',
-      value: 'Duis autem vel eum'
-    }, {
-      type: 'facility',
-      key: 'DEF',
-      value: 'Ut wisi enim ad minim veniam'
-    }, {
-      type: 'facility',
-      key: 'GHI',
-      value: 'Ut wisi enim ad minim veniam'
-    }
-  ];
+  const omitValueType = meta => _.omit(meta, ['valueType']);
+
+  const expectedFacilities = metadata
+    .filter(item => item.type === 'facility')
+    .map(omitValueType);
 
   it('should get all facilities', done => {
     request(app)
@@ -50,7 +41,7 @@ describe('STT Metadata API', () => {
     .toPromise()
     .then(res => res.body)
     .map(dbresult.omitDBCols)
-    .tap(body => expect(body).to.deep.equal(expectedFacilities))
+    .tap(body => expect(body).to.deep.include.members(expectedFacilities))
     .then(() => done())
     .catch(err => done(err));
   });
@@ -67,17 +58,9 @@ describe('STT Metadata API', () => {
     .catch(err => done(err));
   });
 
-  const expectedRegions = [
-    {
-      type: 'region',
-      key: 'BB',
-      value: 'Butha-Buthe'
-    }, {
-      type: 'region',
-      key: 'BR',
-      value: 'Berea'
-    }
-  ];
+  const expectedRegions = metadata
+    .filter(item => item.type === 'region')
+    .map(omitValueType);
 
   it('should get all regions', done => {
     request(app)
@@ -86,7 +69,7 @@ describe('STT Metadata API', () => {
     .toPromise()
     .then(res => res.body)
     .map(dbresult.omitDBCols)
-    .tap(body => expect(body).to.deep.equal(expectedRegions))
+    .tap(body => expect(body).to.deep.include.members(expectedRegions))
     .then(() => done())
     .catch(err => done(err));
   });
@@ -103,19 +86,143 @@ describe('STT Metadata API', () => {
     .catch(err => done(err));
   });
 
-  it('should get all statuses');
-  it('should get single statuses');
+  const expectedStatus = metadata
+    .filter(item => item.type === 'status')
+    .map(omitValueType);
 
-  it('should get all artifacts');
-  it('should get single artifacts');
+  it('should get all statuses', done => {
+    request(app)
+    .get('/stt/meta/status')
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .map(dbresult.omitDBCols)
+    .then(body => expect(body).deep.include.members(expectedStatus))
+    .then(() => done())
+    .catch(err => done(err));
+  });
 
-  it('should get all people');
-  it('should get single people');
+  it('should get single statuses', done => {
+    request(app)
+    .get(`/stt/meta/status/${expectedStatus[0].key}`)
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .then(dbresult.omitDBCols)
+    .tap(body => expect(body).to.deep.equal(expectedStatus[0]))
+    .then(() => done())
+    .catch(err => done(err));
+  });
 
-  it('should get all lab tests');
-  it('should get single lab tests');
+  const expectedArtifacts = metadata
+    .filter(item => item.type === 'artifact')
+    .map(omitValueType);
 
-  it('should get all lab rejections');
-  it('should get single lab rejections');
+  it('should get all artifacts', done => {
+    request(app)
+    .get('/stt/meta/artifacts')
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .map(dbresult.omitDBCols)
+    .then(body => expect(body).deep.include.members(expectedArtifacts))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  it('should get single artifacts', done => {
+    request(app)
+    .get(`/stt/meta/artifacts/${expectedArtifacts[0].key}`)
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .then(dbresult.omitDBCols)
+    .tap(body => expect(body).to.deep.equal(expectedArtifacts[0]))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  const expectedPeople = metadata
+    .filter(item => item.type === 'person')
+    .map(omitValueType);
+
+  it('should get all people', done => {
+    request(app)
+    .get('/stt/meta/people')
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .map(dbresult.omitDBCols)
+    .then(body => expect(body).deep.include.members(expectedPeople))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  it('should get single people', done => {
+    request(app)
+    .get(`/stt/meta/people/${expectedPeople[0].key}`)
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .then(dbresult.omitDBCols)
+    .tap(body => expect(body).to.deep.equal(expectedPeople[0]))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  const expectedLabTests = metadata
+    .filter(item => item.type === 'labtest')
+    .map(omitValueType);
+
+  it('should get all lab tests', done => {
+    request(app)
+    .get('/stt/meta/labtests')
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .map(dbresult.omitDBCols)
+    .then(body => expect(body).deep.include.members(expectedLabTests))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+  it('should get single lab tests', done => {
+    request(app)
+    .get(`/stt/meta/labtests/${expectedLabTests[0].key}`)
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .then(dbresult.omitDBCols)
+    .tap(body => expect(body).to.deep.equal(expectedLabTests[0]))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  const expectedRejections = metadata
+    .filter(item => item.type === 'rejection')
+    .map(omitValueType);
+
+  it('should get all lab rejections', done => {
+    request(app)
+    .get('/stt/meta/rejections')
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .map(dbresult.omitDBCols)
+    .then(body => expect(body).deep.include.members(expectedRejections))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  it('should get single lab rejections', done => {
+    request(app)
+    .get(`/stt/meta/rejections/${expectedRejections[0].key}`)
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .then(dbresult.omitDBCols)
+    .tap(body => expect(body).to.deep.equal(expectedRejections[0]))
+    .then(() => done())
+    .catch(err => done(err));
+  });
 
 });

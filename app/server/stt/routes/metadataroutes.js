@@ -64,8 +64,8 @@ router.get('/meta/artifacts/:key', getArtifactsKey);
 
 const getLabTests = getMetaType(META_TYPE.LAB_TEST);
 const getLabTestsKey = getMetaKey(META_TYPE.LAB_TEST);
-router.get('/meta/labtest', getLabTests);
-router.get('/meta/labtest/:key', getLabTestsKey);
+router.get('/meta/labtests', getLabTests);
+router.get('/meta/labtests/:key', getLabTestsKey);
 
 const getRejections = getMetaType(META_TYPE.REJECTION);
 const getRejectionsKey = getMetaKey(META_TYPE.REJECTION);
