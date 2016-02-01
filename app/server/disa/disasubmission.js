@@ -47,7 +47,7 @@ const handleSubmission = incoming => {
   .then(tests => disatransform.fillTestRefs(incoming.changes, tests))
   .then(sttsubmission.labChanges);
 
-  return BPromise.props({sampleIds, metadata, labTests, changes})
+  return BPromise.props({sampleIds, metadata, labTests, changes});
   // .tap(r => DEBUG('disasubmission results', r));
 };
 

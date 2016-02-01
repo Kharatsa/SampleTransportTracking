@@ -31,7 +31,7 @@ function requestSampleIds() {
 export function fetchSampleIds() {
   return function(dispatch) {
     dispatch(requestSampleIds());
-    return request('/track/ids', function(err, res) {
+    return request('/stt/ids', function(err, res) {
       if (err) {
         return dispatch(fetchSampleIdsFailure(err));
       }
@@ -65,7 +65,7 @@ function requestUpdates() {
 export function fetchUpdates() {
   return function(dispatch) {
     dispatch(requestUpdates());
-    return request('/track/updates', function(err, res) {
+    return request('/stt/changes', function(err, res) {
       if (err) {
         dispatch(fetchUpdatesFailure(err));
       }

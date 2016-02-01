@@ -119,6 +119,7 @@ const metadata = modelwrapper({
             normalized: function() {
               return {
                 id: this.getDataValue('id'),
+                type: this.getDataValue('type'),
                 key: this.getDataValue('key'),
                 value: this.getDataValue('value'),
                 createdAt: this.getDataValue('createdAt'),

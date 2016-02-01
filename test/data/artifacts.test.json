@@ -1,0 +1,23 @@
+[
+  {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx4",
+    "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
+    "artifactType": "form"
+  }, {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx5",
+    "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
+    "artifactType": "dbs"
+  }, {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx6",
+    "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
+    "artifactType": "blood"
+  }, {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx8",
+    "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2",
+    "artifactType": "form"
+  }, {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx9",
+    "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2",
+    "artifactType": "blood"
+  }
+]

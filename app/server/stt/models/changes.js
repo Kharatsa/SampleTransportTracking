@@ -102,42 +102,6 @@ const changes = modelwrapper({
               foreignKey: 'labTest'
             });
 
-            // changes.model.belongsTo(Metadata, {
-            //   as: 'FacilityMeta',
-            //   targetKey: 'key',
-            //   foreignKey: 'facility',
-            //   scope: {
-            //     type: 'facility'
-            //   }
-            // });
-
-            // changes.model.belongsTo(Metadata, {
-            //   as: 'PersonMeta',
-            //   targetKey: 'key',
-            //   foreignKey: 'person',
-            //   scope: {
-            //     type: 'person'
-            //   }
-            // });
-
-            // changes.model.belongsTo(Metadata, {
-            //   as: 'StatusMeta',
-            //   targetKey: 'key',
-            //   foreignKey: 'status',
-            //   scope: {
-            //     type: 'status'
-            //   }
-            // });
-
-            // changes.model.belongsTo(Metadata, {
-            //   as: 'RejectionMeta',
-            //   targetKey: 'key',
-            //   foreignKey: 'labRejection',
-            //   scope: {
-            //     type: 'rejection'
-            //   }
-            // });
-
           }
         },
 

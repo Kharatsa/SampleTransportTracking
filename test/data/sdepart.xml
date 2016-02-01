@@ -1,0 +1,29 @@
+<?xml version='1.0' ?>
+<sdepart id="sdepart" version="3">
+  <start>2016-01-22T22:15:40.838-05</start>
+  <end>2016-01-22T22:17:49.495-05</end>
+  <deviceid>867979020085780</deviceid>
+  <simserial>8901260971103975692</simserial>
+  <person>md563</person>
+  <region>MSR</region>
+  <facility>SPR</facility>
+  <srepeat>
+    <stid>9781933988696</stid>
+    <stype>form</stype>
+    <condition>ok</condition>
+  </srepeat>
+  <srepeat>
+    <stid>1c92a4637</stid>
+    <stype>blood</stype>
+    <condition>soiled</condition>
+  </srepeat>
+  <srepeat>
+    <stid>9781933988696</stid>
+    <stype>dbs</stype>
+    <condition>ok</condition>
+  </srepeat>
+  <store_gps>40.76310203 -73.9617425 171.0 23.0</store_gps>
+  <meta>
+    <instanceID>uuid:dbd663ba-10ed-4b36-bbc1-f61557477646</instanceID>
+  </meta>
+</sdepart>

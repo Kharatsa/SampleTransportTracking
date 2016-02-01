@@ -17,52 +17,37 @@ const dbresult = require('app/server/storage/dbresult.js');
 const app = express();
 app.use('/stt', STTRoutes);
 
-describe('STT Metadata API', () => {
+describe('', () => {
   const sampleIds = require('../../data/sampleids.test.json');
+  const metadata = require('../../data/metadata.test.json');
+  const artifacts = require('../../data/artifacts.test.json');
+  const labTests = require('../../data/labtests.test.json');
+  const changes = require('../../data/changes.test.json');
 
   before(done => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
     .then(() => storage.models.SampleIds.bulkCreate(sampleIds))
+    .then(() => storage.models.Metadata.bulkCreate(metadata))
+    .then(() => storage.models.Artifacts.bulkCreate(artifacts))
+    .then(() => storage.models.LabTests.bulkCreate(labTests))
+    .then(() => storage.models.Changes.bulkCreate(changes))
     .then(() => done());
   });
 
-  it('should get all sample ids', done => {
+  const expectedChanges = [
+    // Object.assign({}, changes[0], {Artifact: },
+  ];
+
+  it.skip('should get all changes', done => {
     request(app)
-    .get('/stt/ids')
+    .get('/stt/changes')
     .expect(200)
     .toPromise()
     .then(res => res.body)
     .map(dbresult.omitDateDBCols)
-    .tap(body => expect(body).to.deep.equal(sampleIds))
-    .then(() => done())
-    .catch(err => done(err));
-  });
-
-  const stId = sampleIds[0].stId;
-
-  it('should single sample ids by stId', done => {
-    request(app)
-    .get(`/stt/ids/${stId}`)
-    .expect(200)
-    .toPromise()
-    .then(res => res.body)
-    .then(dbresult.omitDateDBCols)
-    .tap(body => expect(body).to.deep.equal(sampleIds[0]))
-    .then(() => done())
-    .catch(err => done(err));
-  });
-
-  const labId = sampleIds[2].labId;
-
-  it('should single sample ids by lab id', done => {
-    request(app)
-    .get(`/stt/ids/${labId}`)
-    .expect(200)
-    .toPromise()
-    .then(res => res.body)
-    .then(dbresult.omitDateDBCols)
-    .tap(body => expect(body).to.deep.equal(sampleIds[2]))
+    .tap(console.log)
+    .tap(body => expect(body).to.deep.equal(changes))
     .then(() => done())
     .catch(err => done(err));
   });

@@ -18,106 +18,32 @@ const app = express();
 app.use('/stt', STTRoutes);
 
 describe('STT Metadata API', () => {
-  const initialMetadata = [
-    {
-      type: 'artifact',
-      key: 'blood',
-      value: 'Blood vial',
-      valueType: 'string'
-    }, {
-      type: 'artifact',
-      key: 'dbs',
-      value: 'Dried blood spot',
-      valueType: 'string'
-    }, {
-      type: 'person',
-      key: 'PER1',
-      value: 'Some Person 1',
-      valueType: 'string'
-    }, {
-      type: 'person',
-      key: 'PER2',
-      value: 'Some Person 2',
-      valueType: 'string'
-    }, {
-      type: 'facility',
-      key: 'ABC',
-      value: 'Duis autem vel eum',
-      valueType: 'string'
-    }, {
-      type: 'facility',
-      key: 'DEF',
-      value: 'Ut wisi enim ad minim veniam',
-      valueType: 'string'
-    }, {
-      type: 'facility',
-      key: 'GHI',
-      value: 'Ut wisi enim ad minim veniam',
-      valueType: 'string'
-    }, {
-      type: 'region',
-      key: 'BR',
-      value: 'Berea',
-      valueType: 'string'
-    }, {
-      type: 'region',
-      key: 'BB',
-      value: 'Butha-Buthe',
-      valueType: 'string'
-    }, {
-      type: 'labtest',
-      key: 'TESTA',
-      value: 'A test of type A',
-      valueType: 'string'
-    }, {
-      type: 'labtest',
-      key: 'TESTB',
-      value: 'A type B test',
-      valueType: 'string'
-    }, {
-      type: 'labtest',
-      key: 'TESTC',
-      value: 'A test of type C',
-      valueType: 'string'
-    }, {
-      type: 'rejection',
-      key: 'SOBAD',
-      value: 'This thing was really bad',
-      valueType: 'string'
-    }, {
-      type: 'rejection',
-      key: 'OHNOE',
-      value: 'Something melted',
-      valueType: 'string'
-    }, {
-      type: 'rejection',
-      key: 'SMELL',
-      value: 'Smells odd',
-      valueType: 'string'
-    }
-  ];
+  const metadata = require('../../data/metadata.test.json');
 
   before(done => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
-    .then(() => storage.models.Metadata.bulkCreate(initialMetadata))
+    .then(() => storage.models.Metadata.bulkCreate(metadata))
     .then(() => done());
   });
 
   const expectedFacilities = [
     {
+      type: 'facility',
       key: 'ABC',
       value: 'Duis autem vel eum'
     }, {
+      type: 'facility',
       key: 'DEF',
       value: 'Ut wisi enim ad minim veniam'
     }, {
+      type: 'facility',
       key: 'GHI',
       value: 'Ut wisi enim ad minim veniam'
     }
   ];
 
-  it('should get facilities', done => {
+  it('should get all facilities', done => {
     request(app)
     .get('/stt/meta/facilities')
     .expect(200)
@@ -129,11 +55,9 @@ describe('STT Metadata API', () => {
     .catch(err => done(err));
   });
 
-  const facilityKey = expectedFacilities[0].key;
-
   it('should get single facilities', done => {
     request(app)
-    .get('/stt/meta/facilities/' + facilityKey)
+    .get(`/stt/meta/facilities/${expectedFacilities[0].key}`)
     .expect(200)
     .toPromise()
     .then(res => res.body)
@@ -142,5 +66,56 @@ describe('STT Metadata API', () => {
     .then(() => done())
     .catch(err => done(err));
   });
+
+  const expectedRegions = [
+    {
+      type: 'region',
+      key: 'BB',
+      value: 'Butha-Buthe'
+    }, {
+      type: 'region',
+      key: 'BR',
+      value: 'Berea'
+    }
+  ];
+
+  it('should get all regions', done => {
+    request(app)
+    .get('/stt/meta/regions')
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .map(dbresult.omitDBCols)
+    .tap(body => expect(body).to.deep.equal(expectedRegions))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  it('should get single regions', done => {
+    request(app)
+    .get(`/stt/meta/regions/${expectedRegions[0].key}`)
+    .expect(200)
+    .toPromise()
+    .then(res => res.body)
+    .then(dbresult.omitDBCols)
+    .tap(body => expect(body).to.deep.equal(expectedRegions[0]))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  it('should get all statuses');
+  it('should get single statuses');
+
+  it('should get all artifacts');
+  it('should get single artifacts');
+
+  it('should get all people');
+  it('should get single people');
+
+  it('should get all lab tests');
+  it('should get single lab tests');
+
+  it('should get all lab rejections');
+  it('should get single lab rejections');
 
 });

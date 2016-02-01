@@ -1,0 +1,108 @@
+[
+  {
+    "type": "artifact",
+    "key": "form",
+    "value": "Request Form",
+    "valueType": "string"
+  }, {
+    "type": "artifact",
+    "key": "blood",
+    "value": "Blood vial",
+    "valueType": "string"
+  }, {
+    "type": "artifact",
+    "key": "dbs",
+    "value": "Dried blood spot",
+    "valueType": "string"
+  }, {
+    "type": "person",
+    "key": "PER1",
+    "value": "Some Person 1",
+    "valueType": "string"
+  }, {
+    "type": "person",
+    "key": "PER2",
+    "value": "Some Person 2",
+    "valueType": "string"
+  }, {
+    "type": "facility",
+    "key": "ABC",
+    "value": "Duis autem vel eum",
+    "valueType": "string"
+  }, {
+    "type": "facility",
+    "key": "DEF",
+    "value": "Ut wisi enim ad minim veniam",
+    "valueType": "string"
+  }, {
+    "type": "facility",
+    "key": "GHI",
+    "value": "Ut wisi enim ad minim veniam",
+    "valueType": "string"
+  }, {
+    "type": "region",
+    "key": "BR",
+    "value": "Berea",
+    "valueType": "string"
+  }, {
+    "type": "region",
+    "key": "BB",
+    "value": "Butha-Buthe",
+    "valueType": "string"
+  }, {
+    "type": "labtest",
+    "key": "TESTA",
+    "value": "A test of type A",
+    "valueType": "string"
+  }, {
+    "type": "labtest",
+    "key": "TESTB",
+    "value": "A type B test",
+    "valueType": "string"
+  }, {
+    "type": "labtest",
+    "key": "TESTC",
+    "value": "A test of type C",
+    "valueType": "string"
+  }, {
+    "type": "rejection",
+    "key": "SOBAD",
+    "value": "This thing was really bad",
+    "valueType": "string"
+  }, {
+    "type": "rejection",
+    "key": "OHNOE",
+    "value": "Something melted",
+    "valueType": "string"
+  }, {
+    "type": "rejection",
+    "key": "SMELL",
+    "value": "Smells odd",
+    "valueType": "string"
+  }, {
+    "type": "status",
+    "key": "OK",
+    "value": "A-OK",
+    "valueType": "string"
+  }, {
+    "type": "status",
+    "key": "BRK",
+    "value": "Broken",
+    "valueType": "string"
+  }, {
+    "type": "status",
+    "key": "RVW",
+    "value": "Lab Test Reviewed",
+    "valueType": "string"
+  }, {
+    "type": "status",
+    "key": "PRT",
+    "value": "Lab Report Printed",
+    "valueType": "string"
+  }, {
+    "type": "status",
+    "key": "REJ",
+    "value": "Lab Test Rejected",
+    "valueType": "string"
+  }
+]

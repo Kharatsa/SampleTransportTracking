@@ -1,0 +1,18 @@
+[
+  {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
+    "stId": "stt1",
+    "labId": null,
+    "outstanding": true
+  }, {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2",
+    "stId": "stt2",
+    "labId": null,
+    "outstanding": true
+  }, {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx3",
+    "stId": "stt3",
+    "labId": "LAB0000001",
+    "outstanding": true
+  }
+]

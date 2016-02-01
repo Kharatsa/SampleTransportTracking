@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<LabStatus xmlns="https://kharatsa.com/schemas/labstatus.xsd" >
+  <STID>ABCD12345</STID>
+  <LabID>ABC1234567</LabID>
+  <StatusTimestamp>2015-01-01T00:00:00</StatusTimestamp>
+  <LabPrefix>
+    <LabPrefixCode>ABC</LabPrefixCode>
+    <Description>Duis autem vel</Description>
+  </LabPrefix>
+  <SampleTest>
+    <Status>
+      <StatusCode>PRT</StatusCode>
+      <Description>Lorem ipsum dolor sit amet</Description>
+    </Status>
+    <Test>
+      <TestCode>*</TestCode>
+      <Description></Description>
+    </Test>
+  </SampleTest>
+</LabStatus>

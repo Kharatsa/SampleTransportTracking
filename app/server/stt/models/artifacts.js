@@ -56,7 +56,6 @@ const artifacts = modelwrapper({
             });
 
             artifacts.model.belongsTo(Metadata, {
-              // as: 'ArtifactTypeMeta',
               targetKey: 'key',
               foreignKey: 'artifactType',
               scope: {

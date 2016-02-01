@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<LabStatus xmlns="https://kharatsa.com/schemas/labstatus.xsd" >
+  <STID>ABCD12345</STID>
+  <LabID>ABC1234567</LabID>
+  <StatusTimestamp>2015-01-01T00:00:00</StatusTimestamp>
+  <LabPrefix>
+    <LabPrefixCode>ABC</LabPrefixCode>
+    <Description>A different location</Description>
+  </LabPrefix>
+  <SampleTest>
+    <Status>
+      <StatusCode>RVW</StatusCode>
+      <Description>Fusce vulputate faucibus lectus, et lacinia urna'
+      </Description>
+    </Status>
+    <Test>
+      <TestCode>TESTB</TestCode>
+      <Description>Ut wisi enim ad minim veniam'
+      </Description>
+    </Test>
+  </SampleTest>
+  <SampleTest>
+    <Status>
+      <StatusCode>REJ</StatusCode>
+      <Description>Changes rejected description</Description>
+    </Status>
+    <Test>
+      <TestCode>TESTC</TestCode>
+      <Description>This one also changed</Description>
+    </Test>
+    <Rejection>
+      <RejectionCode>SOBAD</RejectionCode>
+      <Description>Morbi elementum erat quis pretium sodales'
+      </Description>
+    </Rejection>
+  </SampleTest>
+</LabStatus>
