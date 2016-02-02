@@ -1,7 +1,5 @@
 'use strict';
 
-const log = require('app/server/util/logapp.js');
-
 /**
  * [description]
  * @param  {Object} obj [description]
@@ -9,7 +7,6 @@ const log = require('app/server/util/logapp.js');
  * @param  {Array.<string>} methods   [description]
  */
 const classMethods = (obj, wrapFunc, methods) => {
-  log.debug(`Wrapping ${obj} class methods:\n\t${methods}`);
   for (let method of methods) {
     const original = obj[method].bind(obj);
     if (typeof original === 'function') {
