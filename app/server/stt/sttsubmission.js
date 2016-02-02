@@ -34,6 +34,15 @@ const doUpdate = (merged, modelName, PKs) => {
   .then(data => client.modelUpdates({modelName, data, PKs}));
 };
 
+const updateAndInsert = (merged, modelName, updatePKs) => {
+  return BPromise.props({
+    inserted: doInsert(merged, modelName),
+    updated: doUpdate(merged, modelName, updatePKs),
+    skipped: datamerge.skips(merged),
+    deleted: []
+  });
+};
+
 /**
  * [description]
  * @param  {Array.<Object>} ids [description]
@@ -45,12 +54,7 @@ const sampleIds = incoming => {
   })
   .then(local => datamerge.pairByProps(incoming, local, ['stId']));
 
-  return BPromise.props({
-    inserted: merge.then(merged => doInsert(merged, 'SampleIds')),
-    updated: merge.then(merged => doUpdate(merged, 'SampleIds', ['uuid'])),
-    skipped: merge.then(datamerge.skips),
-    deleted: []
-  });
+  return merge.then(merged => updateAndInsert(merged, 'SampleIds', ['uuid']));
 };
 
 /**
@@ -64,12 +68,7 @@ const metadata = incoming => {
   })
   .then(local => datamerge.pairByProps(incoming, local, ['type', 'key']));
 
-  return BPromise.props({
-    inserted: merge.then(merged => doInsert(merged, 'Metadata')),
-    updated: merge.then(merged => doUpdate(merged, 'Metadata', ['id'])),
-    skipped: merge.then(datamerge.skips),
-    deleted: []
-  });
+  return merge.then(merged => updateAndInsert(merged, 'Metadata', ['id']));
 };
 
 /**
@@ -83,12 +82,7 @@ const artifacts = incoming => {
   })
   .then(local => datamerge.pairByProps(incoming, local, ['artifactType']));
 
-  return BPromise.props({
-    inserted: merge.then(merged => doInsert(merged, 'Artifacts')),
-    updated: merge.then(merged => doUpdate(merged, 'Artifacts', ['uuid'])),
-    skipped: merge.then(datamerge.skips),
-    deleted: []
-  });
+  return merge.then(merged => updateAndInsert(merged, 'Artifacts', ['uuid']));
 };
 
 /**
@@ -102,19 +96,7 @@ const labTests = incoming => {
   })
   .then(local => datamerge.pairByProps(incoming, local, ['testType']));
 
-  return BPromise.props({
-    inserted: merge.then(merged => doInsert(merged, 'LabTests')),
-    updated: merge.then(merged => doUpdate(merged, 'LabTests', ['uuid'])),
-    skipped: merge.then(datamerge.skips),
-    deleted: []
-  });
-  // return client.labTests.byTypesAndSampleIds({
-  //   data: incoming, omitDateDBCols: true
-  // })
-  // .then(local => datamerge.pairByProps(incoming, local, ['testType']))
-  // .then(merged => datasync.persistMergedData({
-  //   model: storage.models.LabTests, merged, modelPKs: ['uuid']
-  // }));
+  return merge.then(merged => updateAndInsert(merged, 'LabTests', ['uuid']));
 };
 
 /**
@@ -130,12 +112,7 @@ const scanChanges = incoming => {
     datamerge.pairByProps(incoming, local, ['artifact', 'status'])
   );
 
-  return BPromise.props({
-    inserted: merge.then(merged => doInsert(merged, 'Changes')),
-    updated: merge.then(merged => doUpdate(merged, 'Changes', ['uuid'])),
-    skipped: merge.then(datamerge.skips),
-    deleted: []
-  });
+  return merge.then(merged => updateAndInsert(merged, 'Changes', ['uuid']));
 };
 
 /**
@@ -149,12 +126,7 @@ const labChanges = incoming => {
   })
   .then(local => datamerge.pairByProps(incoming, local, ['labTest', 'status']));
 
-  return BPromise.props({
-    inserted: merge.then(merged => doInsert(merged, 'Changes')),
-    updated: merge.then(merged => doUpdate(merged, 'Changes', ['uuid'])),
-    skipped: merge.then(datamerge.skips),
-    deleted: []
-  });
+  return merge.then(merged => updateAndInsert(merged, 'Changes', ['uuid']));
 };
 
 module.exports = {
