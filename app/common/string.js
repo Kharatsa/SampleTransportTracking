@@ -1,10 +1,5 @@
 'use strict';
 
-const stripInner = strings => {
-  const str = strings.join(' ');
-  return str.split(/\s/).filter(s => !!s).join(' ');
-};
-
 const escapeRegExp = str => {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
 };
@@ -73,7 +68,6 @@ function parseText(text) {
 }
 
 module.exports = {
-  stripInner,
   escapeRegExp,
   parseText,
   filterInt,

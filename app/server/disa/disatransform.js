@@ -152,8 +152,6 @@ function labChanges(status) {
   );
 }
 
-const needsExpansion = labTestType => labTestType === '*';
-
 const testTypeRefs = BPromise.method((testType, testMap) => {
   const labTestRef = testMap[testType] ? testMap[testType].uuid : null;
   if (!labTestRef) {
@@ -161,12 +159,6 @@ const testTypeRefs = BPromise.method((testType, testMap) => {
   }
   return {labTest: labTestRef};
 });
-
-const expandChanges = (change, labTests) => {
-  return BPromise.map(labTests, test =>
-    Object.assign({}, change, {labTestType: test.testType})
-  );
-};
 
 /**
  * Supplements the labTestType values contained in each change with the
@@ -177,31 +169,15 @@ const expandChanges = (change, labTests) => {
  * @return {Promise.<Array.<Object>>}          [description]
  */
 function fillTestRefs(changes, labTests) {
-  const filterAsterisks = BPromise.filter(changes,
-    change => needsExpansion(change.labTestType)
-  )
-  .map(change => expandChanges(change, labTests))
-  .then(_.flatten);
-
-  const filterNormal = BPromise.filter(changes,
-    change => !needsExpansion(change.labTestType)
-  );
-
-  const consolidateFilters = BPromise.join(filterAsterisks, filterNormal)
-  .spread((asterisks, normal) => [].concat([], asterisks, normal));
-
-  const testMapper = BPromise.join(
-    consolidateFilters,
-    datamerge.propKeyReduce(labTests, ['testType'])
-  );
-
-  return testMapper.spread((expanded, testMap) =>
-    BPromise.map(expanded, change =>
-      BPromise.join(change, testTypeRefs(change.labTestType, testMap))
-      .spread((change, labRef) =>
-        Object.assign({}, _.omit(change, 'labTestType'), labRef)
-      )
-  ));
+  return datamerge.propKeyReduce(labTests, ['testType'])
+  .then(testMap => {
+    return BPromise.map(changes, change => {
+      const labTestRef = testTypeRefs(change.labTestType, testMap);
+      return labTestRef.then(ref =>
+        Object.assign({}, _.omit(change, 'labTestType'), ref)
+      );
+    });
+  });
 }
 
 /**

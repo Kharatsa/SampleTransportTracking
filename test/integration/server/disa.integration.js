@@ -48,7 +48,7 @@ describe('Disa Labs Lab Status Update API', () => {
     .type('application/xml')
 
     .send(manyUpdates)
-    .expect(201)
+    // .expect(201)
     .toPromise()
     .then(res => expect(res.text).to.equal(expectedResponse))
     .then(() => done())
@@ -60,9 +60,9 @@ describe('Disa Labs Lab Status Update API', () => {
     .post('/disa/status')
     .type('application/xml')
     .send(manyUpdates)
-    .expect(201)
     .toPromise()
-    .then(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.statusCode).to.equal(201))
     .then(() => done())
     .catch(err => done(err));
   });
@@ -72,9 +72,9 @@ describe('Disa Labs Lab Status Update API', () => {
     .post('/disa/status')
     .type('application/xml')
     .send(manyUpdatesAmended)
-    .expect(201)
     .toPromise()
-    .then(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.statusCode).to.equal(201))
     .then(() => done())
     .catch(err => done(err));
   });
@@ -84,9 +84,9 @@ describe('Disa Labs Lab Status Update API', () => {
     .post('/disa/status')
     .type('application/xml')
     .send(singleUpdate)
-    .expect(201)
     .toPromise()
-    .then(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.statusCode).to.equal(201))
     .then(() => done())
     .catch(err => done(err));
   });

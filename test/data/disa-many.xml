@@ -2,7 +2,7 @@
 <LabStatus xmlns="https://kharatsa.com/schemas/labstatus.xsd" >
   <STID>ABCD12345</STID>
   <LabID>MHL1234567</LabID>
-  <StatusTimestamp>2015-01-01T00:00:00</StatusTimestamp>
+  <StatusTimestamp>2016-01-01T00:00:00</StatusTimestamp>
   <LabPrefix>
     <LabPrefixCode>MHL</LabPrefixCode>
     <Description>Duis autem vel</Description>
@@ -10,13 +10,11 @@
   <SampleTest>
     <Status>
       <StatusCode>RVW</StatusCode>
-      <Description>Fusce vulputate faucibus lectus, et lacinia urna'
-      </Description>
+      <Description>Fusce vulputate faucibus lectus, et lacinia urna</Description>
     </Status>
     <Test>
       <TestCode>TESTB</TestCode>
-      <Description>Ut wisi enim ad minim veniam'
-      </Description>
+      <Description>Ut wisi enim ad minim veniam</Description>
     </Test>
   </SampleTest>
   <SampleTest>
@@ -30,8 +28,7 @@
     </Test>
     <Rejection>
       <RejectionCode>SOBAD</RejectionCode>
-      <Description>Morbi elementum erat quis pretium sodales'
-      </Description>
+      <Description>Morbi elementum erat quis pretium sodales</Description>
     </Rejection>
   </SampleTest>
 </LabStatus>

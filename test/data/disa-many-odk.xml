@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><labstatus id="labstatus"><stid>ABCD12345</stid><labid>MHL1234567</labid><labtime>2016-01-01T00:00:00.000Z</labtime><srepeat><labstatus>RVW</labstatus><labtest>TESTB</labtest><labreject/></srepeat><srepeat><labstatus>REJ</labstatus><labtest>TESTC</labtest><labreject>SOBAD</labreject></srepeat></labstatus>

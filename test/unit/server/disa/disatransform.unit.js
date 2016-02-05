@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+const fs = require('fs');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
@@ -9,27 +11,19 @@ const disatransform = require('app/server/disa/disatransform.js');
 
 describe('Disa Labs Status Tranforms', () => {
 
-  const singleUpdate = (
-    '<?xml version="1.0"?>' +
-    '<LabStatus xmlns="http://kharatsa.com/schemas/labstatus.xsd" >' +
-      '<STID>ABCD12345</STID>' +
-      '<LabID>MHL1234567</LabID>' +
-      '<StatusTimestamp>2016-01-01T10:00:00</StatusTimestamp>' +
-      '<LabPrefix>' +
-        '<LabPrefixCode>MHL</LabPrefixCode>' +
-        '<Description>Duis autem vel</Description>' +
-      '</LabPrefix>' +
-      '<SampleTest>' +
-        '<Status>' +
-          '<StatusCode>PRT</StatusCode>' +
-          '<Description>Lorem ipsum dolor sit amet</Description>' +
-        '</Status>' +
-        '<Test>' +
-          '<TestCode>*</TestCode>' +
-          '<Description></Description>' +
-        '</Test>' +
-      '</SampleTest>' +
-    '</LabStatus>'
+  const singleUpdate = fs.readFileSync(
+    `${path.join(__dirname, '..', '..', '..', 'data', 'disa-single.xml')}`,
+    'utf-8'
+  );
+
+  const manyUpdates = fs.readFileSync(
+    `${path.join(__dirname, '..', '..', '..', 'data', 'disa-many.xml')}`,
+    'utf-8'
+  );
+
+  const expectedXML = fs.readFileSync(
+    `${path.join(__dirname, '..', '..', '..', 'data', 'disa-many-odk.xml')}`,
+    'utf-8'
   );
 
   const expectedSampleIds = {
@@ -44,7 +38,9 @@ describe('Disa Labs Status Tranforms', () => {
     ).to.eventually.deep.equal(expectedSampleIds)
   );
 
-  const expectedLabTests = [];
+  const expectedLabTests = [
+    {testType: 'TESTA'}
+  ];
 
   it('should parse single lab update lab tests', () =>
     expect(
@@ -54,11 +50,11 @@ describe('Disa Labs Status Tranforms', () => {
   );
 
   const expectedChanges = [{
-    statusDate: new Date('2016-01-01T10:00:00.000Z'),
+    statusDate: new Date('2016-01-01T00:00:00.000Z'),
     stage: 'labstatus',
     facility: 'MHL',
     status: 'PRT',
-    labTestType: '*',
+    labTestType: 'TESTA',
     labRejection: null
   }];
 
@@ -80,6 +76,11 @@ describe('Disa Labs Status Tranforms', () => {
       key: 'PRT',
       value: 'Lorem ipsum dolor sit amet',
       valueType: 'string'
+    }, {
+      type: 'labtest',
+      key: 'TESTA',
+      value: 'A test of type A',
+      valueType: 'string'
     }
   ];
 
@@ -88,46 +89,6 @@ describe('Disa Labs Status Tranforms', () => {
       disatransform.labStatus(singleUpdate)
       .then(disatransform.metadata)
     ).to.eventually.deep.equal(expectedMetadata)
-  );
-
-  const manyUpdates = (
-    '<?xml version="1.0"?>' +
-    '<LabStatus xmlns="http://kharatsa.com/schemas/labstatus.xsd" >' +
-      '<STID>ABCD12345</STID>' +
-      '<LabID>MHL1234567</LabID>' +
-      '<StatusTimestamp>2016-01-01T10:00:00</StatusTimestamp>' +
-      '<LabPrefix>' +
-        '<LabPrefixCode>MHL</LabPrefixCode>' +
-        '<Description>Duis autem vel</Description>' +
-      '</LabPrefix>' +
-      '<SampleTest>' +
-        '<Status>' +
-          '<StatusCode>RVW</StatusCode>' +
-          '<Description>Fusce vulputate faucibus lectus, et lacinia urna' +
-          '</Description>' +
-        '</Status>' +
-        '<Test>' +
-          '<TestCode>TESTB</TestCode>' +
-          '<Description>Ut wisi enim ad minim veniam' +
-          '</Description>' +
-        '</Test>' +
-      '</SampleTest>' +
-      '<SampleTest>' +
-        '<Status>' +
-          '<StatusCode>REJ</StatusCode>' +
-          '<Description>Cras nec tristique enim</Description>' +
-        '</Status>' +
-        '<Test>' +
-          '<TestCode>TESTC</TestCode>' +
-          '<Description>Just another test</Description>' +
-        '</Test>' +
-        '<Rejection>' +
-          '<RejectionCode>SOBAD</RejectionCode>' +
-          '<Description>Morbi elementum erat quis pretium sodales' +
-          '</Description>' +
-        '</Rejection>' +
-      '</SampleTest>' +
-    '</LabStatus>'
   );
 
   const expectedSampleIds2 = {
@@ -156,14 +117,14 @@ describe('Disa Labs Status Tranforms', () => {
   );
 
   const expectedChanges2 = [{
-    statusDate: new Date('2016-01-01T10:00:00.000Z'),
+    statusDate: new Date('2016-01-01T00:00:00.000Z'),
     stage: 'labstatus',
     facility: 'MHL',
     status: 'RVW',
     labTestType: 'TESTB',
     labRejection: null
   }, {
-    statusDate: new Date('2016-01-01T10:00:00.000Z'),
+    statusDate: new Date('2016-01-01T00:00:00.000Z'),
     stage: 'labstatus',
     facility: 'MHL',
     status: 'REJ',
@@ -240,25 +201,32 @@ describe('Disa Labs Status Tranforms', () => {
 
   const c1 = [
     {
-      statusDate: new Date('2016-01-01T10:00:00.000Z'),
+      statusDate: new Date('2016-01-01T00:00:00.000Z'),
       stage: 'labstatus',
       facility: 'MHL',
       status: 'PRT',
-      labTestType: '*',
+      labTestType: 'TESTA',
+      labRejection: null
+    }, {
+      statusDate: new Date('2016-01-01T00:00:00.000Z'),
+      stage: 'labstatus',
+      facility: 'MHL',
+      status: 'PRT',
+      labTestType: 'TESTB',
       labRejection: null
     }
   ];
 
   const expectedFilledChanges = [
     {
-      statusDate: new Date('2016-01-01T10:00:00.000Z'),
+      statusDate: new Date('2016-01-01T00:00:00.000Z'),
       stage: 'labstatus',
       facility: 'MHL',
       status: 'PRT',
       labTest: labTests[0].uuid,
       labRejection: null
     }, {
-      statusDate: new Date('2016-01-01T10:00:00.000Z'),
+      statusDate: new Date('2016-01-01T00:00:00.000Z'),
       stage: 'labstatus',
       facility: 'MHL',
       status: 'PRT',
@@ -275,14 +243,14 @@ describe('Disa Labs Status Tranforms', () => {
 
   const c2 = [
     {
-      statusDate: new Date('2016-01-01T10:00:00.000Z'),
+      statusDate: new Date('2016-01-01T00:00:00.000Z'),
       stage: 'labstatus',
       facility: 'MHL',
       status: 'PRT',
-      labTestType: '*',
+      labTestType: 'TESTA',
       labRejection: null
     }, {
-      statusDate: new Date('2016-01-01T10:00:00.000Z'),
+      statusDate: new Date('2016-01-01T00:00:00.000Z'),
       stage: 'labstatus',
       facility: 'MHL',
       status: 'PRT',
@@ -295,19 +263,6 @@ describe('Disa Labs Status Tranforms', () => {
     expect(
       disatransform.fillTestRefs(c2, labTests)
     ).to.eventually.be.rejectedWith(Error)
-  );
-
-  var expectedXML = (
-    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-    '<labstatus id="labstatus">' +
-    '<stid>ABCD12345</stid><labid>MHL1234567</labid>' +
-    '<labtime>2016-01-01T10:00:00.000Z</labtime>' +
-    '<srepeat><labstatus>RVW</labstatus><labtest>TESTB</labtest><labreject/>' +
-    '</srepeat>' +
-    '<srepeat><labstatus>REJ</labstatus><labtest>TESTC</labtest>' +
-    '<labreject>SOBAD</labreject>' +
-    '</srepeat>' +
-    '</labstatus>'
   );
 
   it('should convert lab status objects to form submission XML', () =>
