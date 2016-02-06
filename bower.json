@@ -1,0 +1,24 @@
+{
+  "name": "kharatsa",
+  "description": "Sample Transport Tracking",
+  "main": "app/server/server.js",
+  "authors": [
+    "Sean Herman <sjh293@cornell.edu>"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://kharatsa.com",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pure": "~0.6.0"
+  }
+}

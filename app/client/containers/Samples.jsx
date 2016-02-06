@@ -4,15 +4,15 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {connect} from 'react-redux';
 // import * as actions from '../actions/actioncreators.js';
 
-const Facilities = React.createClass({
+const Samples = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <div className='panel'>TODO FACILITIES</div>;
+    return <div className='panel'>TODO SAMPLES</div>;
   }
 });
 
 export default connect(
   state => ({})
   // dispatch => ({actions: {})
-)(Facilities);
+)(Samples);

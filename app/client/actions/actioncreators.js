@@ -1,90 +1,77 @@
 'use strict';
 
 import {
-    RECEIVE_TABS, SELECT_TAB,
-    FETCH_SAMPLE_IDS, FETCH_SAMPLE_IDS_FAILURE, RECEIVE_SAMPLE_IDS,
-    FETCH_UPDATES, FETCH_UPDATES_FAILURE, RECEIVE_UPDATES
-} from '../actions/actions.js';
-import request from '../util/request.js';
+  FETCHING_DATA,
+  FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
+  RECEIVE_ARTIFACTS, RECEIVE_LAB_TESTS,
+  FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES
+} from './actions.js';
+import {Set as ImmutableSet} from 'immutable';
+import {getChanges, getSamples} from '../api';
 
-export function receiveTabs(tabs) {
-  return {
-    type: RECEIVE_TABS,
-    tabs
-  };
-}
+export const fetchingData = isFetching => ({type: FETCHING_DATA, isFetching});
 
-export function selectTab(tabId) {
-  return {
-    type: SELECT_TAB,
-    tabId
-  };
-}
+const requestSamples = () => ({type: FETCH_SAMPLES});
 
-function requestSampleIds() {
-  return {
-    type: FETCH_SAMPLE_IDS,
-    requestedAt: Date.now()
-  };
-}
-
-export function fetchSampleIds() {
-  return function(dispatch) {
-    dispatch(requestSampleIds());
-    return request('/stt/ids', function(err, res) {
+export const fetchSamples = () => {
+  return dispatch => {
+    dispatch(fetchingData(true));
+    dispatch(requestSamples());
+    return getSamples((err, data) => {
       if (err) {
-        return dispatch(fetchSampleIdsFailure(err));
+        dispatch(fetchSamplesFailure(err));
+      } else {
+        dispatch(receiveSamples(data.samples, data.sampleIds));
       }
-      dispatch(receiveSampleIds(res.json));
+      dispatch(fetchingData(false));
     });
   };
-}
+};
 
-function fetchSampleIdsFailure(err) {
-  return {
-    type: FETCH_SAMPLE_IDS_FAILURE,
-    error: err
-  };
-}
+const fetchSamplesFailure = err => ({type: FETCH_SAMPLES_FAILURE, error: err});
 
-function receiveSampleIds(sampleIds) {
-  return {
-    type: RECEIVE_SAMPLE_IDS,
-    sampleIds,
-    receivedAt: Date.now()
-  };
-}
+const receiveSamples = (samples, sampleIds=ImmutableSet()) => ({
+  type: RECEIVE_SAMPLES,
+  samples,
+  sampleIds
+});
 
-function requestUpdates() {
-  return {
-    type: FETCH_UPDATES,
-    requestedAt: Date.now()
-  };
-}
+const requestChanges = () => ({type: FETCH_CHANGES});
 
-export function fetchUpdates() {
-  return function(dispatch) {
-    dispatch(requestUpdates());
-    return request('/stt/changes', function(err, res) {
+export const fetchChanges = () => {
+  return dispatch => {
+    dispatch(fetchingData(true));
+    dispatch(requestChanges());
+    return getChanges((err, data) => {
       if (err) {
-        dispatch(fetchUpdatesFailure(err));
+        dispatch(fetchChangesFailure(err));
+      } else {
+        dispatch(receiveChanges(data.changes, data.changeIds));
+        dispatch(receiveSamples(data.samples));
+        dispatch(receiveArtifacts(data.artifacts));
+        dispatch(receiveLabTests(data.labTests));
       }
-      dispatch(receiveUpdates(res.json));
+      dispatch(fetchingData(false));
     });
   };
-}
+};
 
-function fetchUpdatesFailure(err) {
-  return {
-    type: FETCH_UPDATES_FAILURE,
-    error: err
-  };
-}
+const fetchChangesFailure = err => ({type: FETCH_CHANGES_FAILURE, error: err});
 
-function receiveUpdates(updates) {
-  return {
-    type: RECEIVE_UPDATES,
-    updates,
-    receivedAt: Date.now()
-  };
-}
+const receiveChanges = (changes, changeIds=ImmutableSet()) => ({
+  type: RECEIVE_CHANGES,
+  changes,
+  changeIds
+});
+
+const receiveLabTests = (labTests, labTestIds=ImmutableSet()) => ({
+  type: RECEIVE_LAB_TESTS,
+  labTests,
+  labTestIds
+});
+
+const receiveArtifacts = (artifacts, artifactIds=ImmutableSet()) => ({
+  type: RECEIVE_ARTIFACTS,
+  artifacts,
+  artifactIds
+});

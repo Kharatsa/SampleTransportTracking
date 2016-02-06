@@ -1,20 +1,14 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 // import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 // import * as actions from '../actions/actioncreators.js';
-import Paper from 'material-ui/lib/paper';
 
 const Riders = React.createClass({
-  componentDidMount: function() {
-    // TODO
-  },
+  mixins: [PureRenderMixin],
 
   render: function() {
-    return (
-      <div className='flexitem'>
-        <Paper>Riders</Paper>
-      </div>
-    );
+    return <div className='panel'>TODO RIDERS</div>;
   }
 });
 

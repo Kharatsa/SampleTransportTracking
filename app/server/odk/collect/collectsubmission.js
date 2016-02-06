@@ -30,7 +30,7 @@ const handleSubmission = incoming => {
 
   const changes = artifactsWithRefs.then(sttsubmission.scanChanges);
 
-  return BPromise.props({sampleIds, metadata, artifacts, changes})
+  return BPromise.props({sampleIds, metadata, artifacts, changes});
   // .tap(r => DEBUG('collectsubmission results', r));
 };
 

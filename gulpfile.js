@@ -6,6 +6,7 @@ const nodemon = require('gulp-nodemon');
 const watchify = require('watchify');
 const browserify = require('browserify');
 const babelify = require('babelify');
+const envify = require('envify/custom');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const config = require('app/config');
@@ -14,23 +15,22 @@ var IS_DEVELOPMENT = !config.server.isProduction();
 
 // add custom browserify options here
 const browserifyOptions = {
-  entries: [
-    'app/client/index.js'
-  ],
-  debug: IS_DEVELOPMENT,
-  extensions: ['.jsx']
+  entries: ['app/client/index.js'],
+  extensions: ['.jsx'],
+  debug: IS_DEVELOPMENT
 };
 const opts = Object.assign({}, watchify.args, browserifyOptions);
 var bundler = browserify(opts);
 bundler.transform(babelify.configure({presets: [
-  'react',
-  'es2015'
+  'react', 'es2015'
 ]}));
 
+bundler.transform(envify({
+  NODE_ENV: process.env.NODE_ENV || 'development'
+}));
+
 var uglify = function() {
-  return $.uglify({compress: {
-    'global_defs': {DEBUG: false}
-  }}).on('error', $.util.log);
+  return $.uglify().on('error', $.util.log);
 };
 
 function bundle() {
@@ -38,12 +38,10 @@ function bundle() {
     .on('error', $.util.log.bind($.util, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(buffer())
+      .pipe(IS_DEVELOPMENT ?
+        $.sourcemaps.init({loadMaps: true}) : $.util.noop())
       .pipe(IS_DEVELOPMENT ? $.util.noop() : uglify())
       .pipe($.filesize())
-      .pipe(IS_DEVELOPMENT ?
-        $.sourcemaps.init({loadMaps: true}) :
-        $.util.noop()
-      )
       .pipe(IS_DEVELOPMENT ? $.sourcemaps.write('./') : $.util.noop())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 }
@@ -106,7 +104,23 @@ gulp.task('nodemon', ['lint'], function(cb) {
   });
 });
 
-const clientCSS = 'app/client/**/*.css';
+const vendors = [
+  'bower_components/pure/pure-min.css'
+];
+
+const vendorsDev = [
+  'bower_components/pure/pure.css'
+];
+
+gulp.task('static:vendors', () => {
+  const vendorsSource = IS_DEVELOPMENT ? vendorsDev : vendors;
+  gulp.src(vendorsSource)
+    .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
+});
+
+const clientCSS = [
+  'app/client/styles/**/*.css'
+];
 gulp.task('styles', function() {
   return gulp.src(clientCSS)
   .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
@@ -118,8 +132,9 @@ gulp.task('styles', function() {
 const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
 const fonts = 'app/assets/fonts';
-gulp.task('static', ['static:schemas'], () => {
-  return gulp.src([html, favicon, fonts])
+const robots = 'app/assets/robots.txt';
+gulp.task('static', ['static:schemas', 'static:vendors'], () => {
+  return gulp.src([html, favicon, fonts, robots])
     .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });

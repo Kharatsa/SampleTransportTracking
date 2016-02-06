@@ -12,15 +12,12 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import reducers from './reducers/reducers.js';
 import routes from './routes.js';
 
-//Needed for onTouchTap
-//Can go away when react 1.0 release
-//Check this repo:
 //https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
 
 const reduxRouterMiddleware = syncHistory(browserHistory);
 let createStoreWithMiddleware;
-if (global.DEBUG) {
+if (process.env.NODE_ENV !== 'production') {
   const logger = createLogger();
   createStoreWithMiddleware = applyMiddleware(
     thunk, // lets us dispatch() functions

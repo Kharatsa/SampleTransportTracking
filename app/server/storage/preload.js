@@ -21,12 +21,14 @@ const transform = (meta, type, keyProp, valueProp) => {
 const maybeCreate = meta => {
   const model = storage.models.Metadata;
 
-  return storage.db.transaction(tran => {
+  return storage.db.transaction({logging: false})
+  .then(tran => {
     return BPromise.map(meta, incoming => {
       return model.findOrCreate({
         where: {type: incoming.type, key: incoming.key},
         defaults: incoming,
-        transaction: tran
+        transaction: tran,
+        logging: false
       });
     })
     .map(dbresult.plain);

@@ -39,8 +39,7 @@ BPromise.mapSeries([
   {filename: 'regions.csv', type: 'region', key: 'region_key', value: 'region'},
   {filename: 'stypes.csv', type: 'artifact', key: 'stype_key', value: 'stype'}
 ], preload.metadata)
-.tap(() => log.info('Preload metadata complete'))
-.map(results => log.debug(results));
+.then(() => log.info('Metadata preload completed'));
 
 app.use(express.static(config.server.PUBLIC_PATH));
 log.info('Serving static files from', config.server.PUBLIC_PATH);

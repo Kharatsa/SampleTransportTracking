@@ -1,43 +1,25 @@
 'use strict';
 
-import {Map as ImmutableMap} from 'immutable';
-
 // https://github.com/acdlite/flux-standard-action
 // http://rackt.org/redux/docs/basics/Actions.html
 
 /*
  * action types
  */
-export const RECEIVE_TABS = 'RECEIVE_TABS';
-export const SELECT_TAB = 'SELECT_TAB';
 
-export const FETCH_UPDATES = 'FETCH_UPDATES';
-export const FETCH_UPDATES_FAILURE = 'FETCH_UPDATES_FAILURE';
-export const RECEIVE_UPDATES = 'RECEIVE_UPDATES';
+export const FETCHING_DATA = 'FETCHING_DATA';
 
-export const FETCH_SAMPLE_IDS = 'FETCH_SAMPLE_IDS';
-export const FETCH_SAMPLE_IDS_FAILURE = 'FETCH_SAMPLE_IDS_FAILURE';
-export const RECEIVE_SAMPLE_IDS = 'RECEIVE_SAMPLE_IDS';
+export const FETCH_CHANGES = 'FETCH_CHANGES';
+export const FETCH_CHANGES_FAILURE = 'FETCH_CHANGES_FAILURE';
+export const RECEIVE_CHANGES = 'RECEIVE_CHANGES';
+
+export const RECEIVE_ARTIFACTS = 'RECEIVE_ARTIFACTS';
+export const RECEIVE_LAB_TESTS = 'RECEIVE_LAB_TESTS';
+
+export const FETCH_SAMPLES = 'FETCH_SAMPLES';
+export const FETCH_SAMPLES_FAILURE = 'FETCH_SAMPLES_FAILURE';
+export const RECEIVE_SAMPLES = 'RECEIVE_SAMPLES';
 
 /*
  * other constants
  */
-// TODO: Use records here
-export const defaultTabsById = ImmutableMap({
-  '0': {
-    label: 'Updates',
-    'route': '/'
-  },
-  '1': {
-    name: 'SampleIds',
-    route: '/sampleids'
-  },
-  '2': {
-    name: 'Facilities',
-    route: '/facilities'
-  },
-  '3': {
-    name: 'Riders',
-    route: 'riders'
-  }
-});

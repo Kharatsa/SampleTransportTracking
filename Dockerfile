@@ -28,7 +28,7 @@ RUN npm install \
 WORKDIR node_modules
 RUN ln -s ../app app
 WORKDIR ${STT_APP_PATH}
-RUN gulp build
+RUN npm run build
 RUN node app/maintenance/data.js sync
 
 VOLUME ${STT_DATA_PATH}
