@@ -3,7 +3,7 @@
 const BPromise = require('bluebird');
 const queryutils = require('app/server/storage/queryutils.js');
 
-const wrapOr = ands =>  ({$or: ands});
+const wrapOr = ands => ({$or: ands});
 
 /**
  * [description]

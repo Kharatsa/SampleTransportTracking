@@ -3,6 +3,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const favicon = require('serve-favicon');
+const BPromise = require('bluebird');
 const config = require('app/config');
 const log = require('app/server/util/logapp.js');
 const requestLog = require('app/server/util/logrequest.js');
@@ -12,6 +13,7 @@ const sttmodels = require('app/server/stt/models');
 const authmodels = require('app/server/auth/models');
 storage.loadModels(authmodels);
 storage.loadModels(sttmodels);
+const preload = require('app/server/storage/preload.js');
 const sttmiddleware = require('app/server/sttmiddleware.js');
 const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
@@ -30,6 +32,15 @@ if (config.server.isProduction()) {
   log.info('Running DEVELOPMENT server');
   app.set('json spaces', 2);
 }
+
+BPromise.mapSeries([
+  {filename: 'riders.csv', type: 'person', key: 'rider_key', value: 'rider'},
+  {filename: 'conditions.csv', type: 'status', key: 'cond_key', value: 'cond'},
+  {filename: 'regions.csv', type: 'region', key: 'region_key', value: 'region'},
+  {filename: 'stypes.csv', type: 'artifact', key: 'stype_key', value: 'stype'}
+], preload.metadata)
+.tap(() => log.info('Preload metadata complete'))
+.map(results => log.debug(results));
 
 app.use(express.static(config.server.PUBLIC_PATH));
 log.info('Serving static files from', config.server.PUBLIC_PATH);

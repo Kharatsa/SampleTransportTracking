@@ -1,0 +1,3 @@
+[submodule "app/assets/xforms"]
+	path = app/assets/xforms
+	url = https://github.com/Kharatsa/STT-ODK-XForms.git
