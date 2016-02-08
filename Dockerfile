@@ -24,7 +24,7 @@ COPY . ${STT_APP_PATH}
 WORKDIR ${STT_APP_PATH}
 RUN npm install \
     && npm prune \
-    && npm cache clean
+    && npm cache clean \
     && bower install
 WORKDIR node_modules
 RUN ln -s ../app app
