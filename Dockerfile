@@ -1,15 +1,15 @@
 FROM node:4.2-slim
 MAINTAINER Sean Herman <sjh293@cornell.edu>
 
-ENV BUILD_DEPS='sqlite3' \
-    NODE_DEPS='gulp mocha jsdoc bower'
+ENV BUILD_DEPS='sqlite3 git' \
+    NODE_DEPS='gulp bower mocha jsdoc'
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get -q update && apt-get -q -y install \
     ${BUILD_DEPS} --no-install-recommends \
-    && apt-get clean \
+    && apt-get -q clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g ${NODE_DEPS}
+RUN npm install -q -g ${NODE_DEPS}
 
 ENV STT_DATA_PATH='/var/lib/strack' \
     STT_APP_PATH='/var/www/strack' \
@@ -21,11 +21,12 @@ RUN mkdir -p ${STT_APP_PATH}
 
 COPY . ${STT_APP_PATH}
 
-# Install node packages
 WORKDIR ${STT_APP_PATH}
-RUN npm install \
-    && npm prune \
-    && npm cache clean \
+
+# Install node packages
+RUN npm install -q \
+    && npm prune -q \
+    && npm cache clean -q
 
 # Install bower packages
 RUN bower install --allow-root \
@@ -39,6 +40,7 @@ WORKDIR ${STT_APP_PATH}
 # Run the build & database sync scripts
 RUN npm run build
 RUN node app/maintenance/data.js sync
+RUN npm prune -q --production
 
 VOLUME ${STT_DATA_PATH}
 EXPOSE ${STT_LISTEN_PORT}

@@ -131,22 +131,31 @@ gulp.task('styles', ['styles:vendors'], function() {
   .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
 
+gulp.task('static:schemas', () => {
+  return gulp.src(schemas)
+  .pipe($.filesize())
+  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/schemas'));
+});
+
+const xforms = 'app/assets/xforms';
+
+gulp.task('static:xforms', () => {
+  return gulp.src(schemas)
+  .pipe($.filesize())
+  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/xforms'));
+});
+
 const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
-const fonts = 'app/assets/fonts';
 const robots = 'app/assets/robots.txt';
-gulp.task('static', ['static:schemas'], () => {
+const fonts = 'app/assets/fonts';
+gulp.task('static', ['static:schemas', 'static:xforms'], () => {
   return gulp.src([html, favicon, fonts, robots])
     .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
 
 const schemas = 'app/assets/schemas/**/*';
-gulp.task('static:schemas', () => {
-  return gulp.src(schemas)
-  .pipe($.filesize())
-  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/schemas'));
-});
 
 gulp.task('styles:watch', () => gulp.watch(clientCSS, ['styles']));
 
@@ -160,8 +169,9 @@ gulp.task('clean', () =>
   gulp.src([
     'app/public/**/*+(js|map|css|html|ico|txt)',
     'app/public/schemas',
+    'app/public/xforms',
     'app/public/fonts',
-    'app/public/lib'
+    'app/public/lib',
   ], {read: false})
     .pipe($.rimraf())
 );

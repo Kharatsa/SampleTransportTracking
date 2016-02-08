@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ $(docker images -q --filter "dangling=true") ]; then
+  docker rmi $(docker images -q --filter "dangling=true")
+fi
+
 docker pull kharatsa/strack
 docker stop strack
 docker rm strack
