@@ -21,14 +21,22 @@ RUN mkdir -p ${STT_APP_PATH}
 
 COPY . ${STT_APP_PATH}
 
+# Install node packages
 WORKDIR ${STT_APP_PATH}
 RUN npm install \
     && npm prune \
     && npm cache clean \
-    && bower install
+
+# Install bower packages
+RUN bower install --allow-root \
+    && bower cache clean --allow-root
+
+# Create a symlink in node modules for easier require()s
 WORKDIR node_modules
 RUN ln -s ../app app
 WORKDIR ${STT_APP_PATH}
+
+# Run the build & database sync scripts
 RUN npm run build
 RUN node app/maintenance/data.js sync
 
