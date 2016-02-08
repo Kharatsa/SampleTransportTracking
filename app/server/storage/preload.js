@@ -31,7 +31,12 @@ const maybeCreate = meta => {
         logging: false
       });
     })
-    .map(dbresult.plain);
+    .map(dbresult.plain)
+    .then(() => tran.commit())
+    .catch(err => {
+      tran.rollback();
+      throw err;
+    });
   });
 };
 
@@ -60,7 +65,11 @@ const metadata = BPromise.method((options) => {
   return fs.readFileAsync(path.join(metapath, options.filename), 'utf-8')
   .then(csv.parse)
   .then(parsed => transform(parsed, options.type, options.key, options.value))
-  .then(maybeCreate);
+  .then(maybeCreate)
+  .then(() => log.info(`Finished metadata preload for "${options.filename}"`))
+  .catch(err =>
+    log.error(`Failed metadata preload for "${options.filename}"`, err)
+  );
 });
 
 module.exports = {

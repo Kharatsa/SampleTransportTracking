@@ -33,13 +33,13 @@ if (config.server.isProduction()) {
   app.set('json spaces', 2);
 }
 
-log.info('Beginning metadata preload');
-BPromise.mapSeries([
+BPromise.resolve([
   {filename: 'riders.csv', type: 'person', key: 'rider_key', value: 'rider'},
   {filename: 'conditions.csv', type: 'status', key: 'cond_key', value: 'cond'},
   {filename: 'regions.csv', type: 'region', key: 'region_key', value: 'region'},
   {filename: 'stypes.csv', type: 'artifact', key: 'stype_key', value: 'stype'}
-], preload.metadata)
+])
+.mapSeries(preload.metadata)
 .then(() => log.info('Metadata preload completed'))
 .catch(err => log.error(err, err.stack));
 
