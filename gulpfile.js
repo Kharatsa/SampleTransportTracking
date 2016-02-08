@@ -104,27 +104,29 @@ gulp.task('nodemon', ['lint'], function(cb) {
   });
 });
 
-const vendors = [
-  'bower_components/pure/pure-min.css'
-];
+const vendors = ['bower_components/pure/pure-min.css'];
+const vendorsDev = ['bower_components/pure/pure.css'];
 
-const vendorsDev = [
-  'bower_components/pure/pure.css'
-];
-
-gulp.task('static:vendors', () => {
+gulp.task('styles:vendors', () => {
   const vendorsSource = IS_DEVELOPMENT ? vendorsDev : vendors;
-  gulp.src(vendorsSource)
+  return gulp.src(vendorsSource)
+    // .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
+    .pipe($.concat('vendor.css'))
+    .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
 });
 
 const clientCSS = [
   'app/client/styles/**/*.css'
 ];
-gulp.task('styles', function() {
+
+gulp.task('styles', ['styles:vendors'], function() {
   return gulp.src(clientCSS)
+  .pipe(IS_DEVELOPMENT ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
   .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
   .pipe($.concat('app.css'))
+  .pipe(IS_DEVELOPMENT ? $.util.noop() : $.cssnano())
+  .pipe(IS_DEVELOPMENT ? $.sourcemaps.write() : $.util.noop())
   .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
@@ -133,7 +135,7 @@ const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
 const fonts = 'app/assets/fonts';
 const robots = 'app/assets/robots.txt';
-gulp.task('static', ['static:schemas', 'static:vendors'], () => {
+gulp.task('static', ['static:schemas'], () => {
   return gulp.src([html, favicon, fonts, robots])
     .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
@@ -156,9 +158,10 @@ gulp.task('watch', ['static:watch', 'styles:watch']);
 
 gulp.task('clean', () =>
   gulp.src([
-    'app/public/**/*+(js|map|css|html|ico)',
+    'app/public/**/*+(js|map|css|html|ico|txt)',
     'app/public/schemas',
-    'app/public/fonts'
+    'app/public/fonts',
+    'app/public/lib'
   ], {read: false})
     .pipe($.rimraf())
 );
