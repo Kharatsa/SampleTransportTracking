@@ -2,7 +2,7 @@ FROM node:4.2-slim
 MAINTAINER Sean Herman <sjh293@cornell.edu>
 
 ENV BUILD_DEPS='sqlite3' \
-    NODE_DEPS='gulp mocha jsdoc'
+    NODE_DEPS='gulp mocha jsdoc bower'
 
 RUN apt-get update && apt-get install -y \
     ${BUILD_DEPS} --no-install-recommends \
@@ -25,6 +25,7 @@ WORKDIR ${STT_APP_PATH}
 RUN npm install \
     && npm prune \
     && npm cache clean
+    && bower install
 WORKDIR node_modules
 RUN ln -s ../app app
 WORKDIR ${STT_APP_PATH}
