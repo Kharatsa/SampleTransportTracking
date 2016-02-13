@@ -3,7 +3,6 @@
 const express = require('express');
 const helmet = require('helmet');
 const favicon = require('serve-favicon');
-const BPromise = require('bluebird');
 const config = require('app/config');
 const log = require('app/server/util/logapp.js');
 const requestLog = require('app/server/util/logrequest.js');
@@ -19,6 +18,7 @@ const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
 const STTRoutes = require('app/server/stt/sttroutes.js');
 const DisaRoutes = require('app/server/disa/disaroutes.js');
+const fakedata = require('../../test/data/fakedata.js');
 
 shutdownhandler.init();
 
@@ -33,7 +33,8 @@ if (config.server.isProduction()) {
   app.set('json spaces', 2);
 }
 
-BPromise.resolve([
+const preloadMetadata = storage.db.sync()
+.then(() => [
   {filename: 'riders.csv', type: 'person', key: 'rider_key', value: 'rider'},
   {filename: 'conditions.csv', type: 'status', key: 'cond_key', value: 'cond'},
   {filename: 'regions.csv', type: 'region', key: 'region_key', value: 'region'},
@@ -42,6 +43,23 @@ BPromise.resolve([
 .mapSeries(preload.metadata)
 .then(() => log.info('Metadata preload completed'))
 .catch(err => log.error(err, err.stack));
+
+if (process.env.NODE_ENV !== 'production') {
+  const fake = fakedata();
+  const noLog = {logging: false};
+
+  log.info('Loading fake data');
+
+  preloadMetadata
+  .then(() => storage.db.dropAllSchemas())
+  .then(() => storage.db.sync())
+  .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
+  .then(() => storage.models.Metadata.bulkCreate(fake.metadata, noLog))
+  .then(() => storage.models.Artifacts.bulkCreate(fake.artifacts, noLog))
+  .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
+  .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog))
+  .then(() => log.info('Finished loading fake data'));
+}
 
 app.use(express.static(config.server.PUBLIC_PATH));
 log.info('Serving static files from', config.server.PUBLIC_PATH);

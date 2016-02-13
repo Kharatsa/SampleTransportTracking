@@ -37,6 +37,12 @@ const META_TYPE = {
   REJECTION: 'rejection'
 };
 
+router.get('/meta', (req, res, next) => {
+  return client.metadata.all({allowEmpty: true})
+  .then(results => res.json(results))
+  .catch(err => next(err));
+});
+
 const getStatus = getMetaType(META_TYPE.STATUS);
 const getStatusKey = getMetaKey(META_TYPE.STATUS);
 router.get('/meta/status', getStatus);

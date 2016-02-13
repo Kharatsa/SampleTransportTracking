@@ -9,6 +9,11 @@ function MetadataClient(options) {
 }
 util.inherits(MetadataClient, ModelClient);
 
+MetadataClient.prototype.all = function() {
+  return this.Model.findAll()
+  .map(meta => meta.normalized());
+};
+
 MetadataClient.prototype.byTypeAndKey = function(options) {
   return sttquery.metadata.typesAndKeys(options.data)
   .then(where => this.Model.findAll({where}))

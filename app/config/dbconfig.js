@@ -14,6 +14,7 @@ statAsync(databasePath)
     throw err;
   }
 });
+
 const sqlitePath = path.join(databasePath, 'stracker.sqlite');
 
 
@@ -33,7 +34,11 @@ const defaultConfig = {
 
 const databaseConfigs = {
   production: defaultConfig,
-  development: defaultConfig,
+  development: {
+    dialect: 'sqlite',
+    storage: path.join(databasePath, 'dev-stracker.sqlite'),
+    logging: log.debug
+  },
   test: {
     dialect: 'sqlite',
     storage: ':memory:',

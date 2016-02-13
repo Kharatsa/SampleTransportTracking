@@ -21,3 +21,5 @@ docker run -d \
   -e "ODK_PASSWORD=$ODK_PASSWORD" \
   -e "ODK_PUBLISHER_TOKEN=$ODK_PUBLISHER_TOKEN" \
   kharatsa/strack@latest
+
+docker logs -f strack

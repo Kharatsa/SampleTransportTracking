@@ -4,13 +4,9 @@ const _ = require('lodash');
 const BPromise = require('bluebird');
 const xml2js = require('xml2js');
 BPromise.promisifyAll(xml2js);
-// const xmlBuilder = new xml2js.Builder({renderOpts: {pretty: false}});
 const log = require('app/server/util/logapp.js');
-// const string = require('app/common/string.js');
 const datamerge = require('app/server/util/datamerge.js');
 const datatransform = require('app/server/util/datatransform.js');
-// const datamerge = require('app/server/util/datamerge.js');
-// const firstText = datatransform.firstText;
 
 // TODO: remove
 // const DEBUG = (message, value) => {
@@ -98,8 +94,8 @@ const metadata = form => {
     facilityMeta, personMeta, regionMeta, statusMeta, artifactMeta
   )
   .then(_.flatten)
-  .then(results => _.uniqBy(results, meta => meta.key))
-  .filter(item => item !== null);
+  .filter(item => item !== null)
+  .then(results => _.uniqBy(results, meta => meta.key));
 };
 
 const artifacts = form => (
@@ -122,6 +118,7 @@ const parseDate = value => {
 
 const FORM_TYPE_PATH = ['$', 'id'];
 const END_DATE_PATH = ['end', 0];
+const DEFAULT_STATUS = 'ok';
 
 const changes = form => {
   const commonProps = BPromise.props({
@@ -142,7 +139,7 @@ const changes = form => {
       region: common.region,
       facility: common.facility,
       person: common.person,
-      status: _.get(repeat, STATUS_REPEAT_PATH)
+      status: _.get(repeat, STATUS_REPEAT_PATH, DEFAULT_STATUS)
     }))
   );
 };
@@ -154,38 +151,17 @@ const fillSampleIdRefs = BPromise.method((artifacts, sampleIds) => {
   if (!_.every(sampleIds, sampleId => !!sampleId.uuid)) {
     throw new Error('Missing required sampleIds uuid');
   }
-  // const sampleIdsMap = datamerge.propKeyReduce(sampleIds, ['stId']);
   return datamerge.propKeyReduce(sampleIds, ['stId'])
   .then(idMap => {
-    // console.log('idMap');
-    // console.dir(idMap, {depth: 10});
     return BPromise.map(artifacts, artifact => {
       const sampleMatch = idMap[artifact.stId];
-      // console.log('artifact for match');
-      // console.dir(artifact, {depth: 10});
-      // console.log('sampleMatch', sampleMatch);
-      // console.dir(sampleMatch, {depth: 10});
       return Object.assign({},
-        // artifact,
         _.omit(artifact, ['stId', 'labId']),
         {sampleId: sampleMatch.uuid}
       );
     });
   });
 });
-
-// const artifactTypeRef = BPromise.method((artifactType, artifactMap) => {
-//   const artifactTypeRef = (
-//     artifactMap[artifactType] ?
-//     artifactMap[artifactType].uuid :
-//     null
-//   );
-//   if (!artifactTypeRef) {
-//     throw new Error(`Missing artifact reference for test type
-//                     "${artifactType}"`);
-//   }
-//   return {artifactType: artifactTypeRef};
-// });
 
 const fillArtifactRefs = (changes, sampleIds, artifacts) => {
   // create map stId -> sampleIds (get uuid for sampleIdRef)
@@ -197,30 +173,15 @@ const fillArtifactRefs = (changes, sampleIds, artifacts) => {
   );
   return BPromise.join(mapSamples, mapArtifacts)
   .spread((smapper, amapper) => {
-    // console.log('sample ids mapper');
-    // console.dir(smapper, {depth: 10});
-    // console.log('artifacts mapper');
-    // console.dir(amapper, {depth: 10});
-
     return BPromise.map(changes, change => {
-      // console.log('change for match');
-      // console.dir(change, {depth: 10});
       const sampleIdRef = smapper[change.stId];
-      // console.log('change sampleIdRef', sampleIdRef);
       const artifactRef = amapper[sampleIdRef.uuid][change.artifactType];
-      // console.log('change artifactRef', artifactRef);
       return Object.assign({},
         _.omit(change, ['stId', 'labId', 'artifactType']),
         {artifact: artifactRef.uuid}
       );
     });
-    // TODO
   });
-  // const mapArtifacts = mapSamples.then(mapper => );
-  // return datamerge.propKeyReduce(artifacts, ['artifactType'])
-  // .then(mapper => BPromise.map(change =>
-  //   BPromise.join(change, artifactTypeRef(change.))
-  // ))
 };
 
 module.exports = {
