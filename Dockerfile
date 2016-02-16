@@ -1,4 +1,4 @@
-FROM node:4.2-slim
+FROM node:argon-slim
 MAINTAINER Sean Herman <sjh293@cornell.edu>
 
 ENV BUILD_DEPS='sqlite3 git' \

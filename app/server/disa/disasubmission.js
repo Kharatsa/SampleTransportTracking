@@ -1,16 +1,9 @@
 'use strict';
 
 const BPromise = require('bluebird');
+const log = require('app/server/util/logapp.js');
 const sttsubmission = require('app/server/stt/sttsubmission.js');
 const disatransform = require('app/server/disa/disatransform.js');
-
-// TODO: remove
-// const DEBUG = (message, value) => {
-//   if (process.env.NODE_ENV === 'test') {
-//     console.log(`DEBUG ${message}`);
-//     console.dir(value, {depth: 10});
-//   }
-// };
 
 const handleSubmission = incoming => {
   const sampleIds = sttsubmission.sampleIds([incoming.sampleIds]);
@@ -33,8 +26,8 @@ const handleSubmission = incoming => {
   .then(tests => disatransform.fillTestRefs(incoming.changes, tests))
   .then(sttsubmission.labChanges);
 
-  return BPromise.props({sampleIds, metadata, labTests, changes});
-  // .tap(r => DEBUG('disasubmission results', r));
+  return BPromise.props({sampleIds, metadata, labTests, changes})
+  .tap(log.info);
 };
 
 module.exports = {

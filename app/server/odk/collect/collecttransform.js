@@ -5,6 +5,7 @@ const BPromise = require('bluebird');
 const xml2js = require('xml2js');
 BPromise.promisifyAll(xml2js);
 const log = require('app/server/util/logapp.js');
+const dates = require('app/server/util/dates.js');
 const datamerge = require('app/server/util/datamerge.js');
 const datatransform = require('app/server/util/datatransform.js');
 
@@ -90,33 +91,25 @@ const metadata = form => {
   .then(results => _.uniqBy(results, meta => meta.key));
 };
 
+const upperCaseKey = key => key ? key.toUpperCase() : key;
+
 const artifacts = form => (
   repeats(form)
   .map(repeat => ({
     stId: _.get(repeat, ST_ID_REPEAT_PATH) || null,
     labId: _.get(repeat, LAB_ID_REPEAT_PATH) || null,
-    artifactType: _.get(repeat, ARTIFACT_REPEAT_PATH)
+    artifactType: upperCaseKey(_.get(repeat, ARTIFACT_REPEAT_PATH))
   }))
   .then(results => _.uniqBy(results, artifact => artifact.artifactType))
 );
-
-const TIMEZONE_PARTIAL_PATTERN = /-\d{2}$/;
-const parseDate = value => {
-  if (value.search(TIMEZONE_PARTIAL_PATTERN) === -1) {
-    return new Date(value);
-  }
-  return new Date(value + ':00');
-};
 
 const FORM_TYPE_PATH = ['$', 'id'];
 const END_DATE_PATH = ['end', 0];
 const DEFAULT_STATUS = 'ok';
 
-const upperCaseKey = key => key ? key.toUpperCase() : key;
-
 const changes = form => {
   const commonProps = BPromise.props({
-    statusDate: parseDate(_.get(form, END_DATE_PATH)),
+    statusDate: dates.parseXMLDate(_.get(form, END_DATE_PATH)),
     stage: _.get(form, FORM_TYPE_PATH),
     person: upperCaseKey(_.get(form, PERSON_PATH)),
     region: upperCaseKey(_.get(form, REGION_PATH)),

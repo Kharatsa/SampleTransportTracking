@@ -30,7 +30,7 @@ function oneMeta(parentElem, metaType, keyPath, descPath) {
   if (metaKey) {
     return {
       type: metaType,
-      key: metaKey,
+      key: metaKey.toUpperCase(),
       value: descPath ? _.get(parentElem, descPath) : null,
       valueType: 'string'
     };

@@ -26,9 +26,6 @@ describe('ODK Collect Submission API', () => {
     .then(() => storage.db.sync())
     .then(() => storage.models.SampleIds.bulkCreate(sampleIds))
     .then(() => storage.models.Metadata.bulkCreate(metadata))
-    .then(() => storage.models.Metadata.findAll())
-    .map(r => r.get({plain: true}))
-    .then(r => console.dir(r, {depth: 5}))
     .then(() => done());
   });
 
