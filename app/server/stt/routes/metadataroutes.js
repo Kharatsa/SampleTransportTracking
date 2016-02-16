@@ -11,7 +11,7 @@ const client = sttclient({db: storage.db, models: storage.models});
 const getMetaType = type => (req, res, next) => {
   return client.metadata.byType({data: type})
   .then(results => res.json(results))
-  .catch(err => next(err));
+  .catch(next);
 };
 
 const getMetaKey = type => (req, res, next) => {
@@ -20,7 +20,7 @@ const getMetaKey = type => (req, res, next) => {
   })
   .then(dbresult.oneResult)
   .then(results => res.json(results))
-  .catch(err => next(err));
+  .catch(next);
 };
 
 /**
@@ -40,7 +40,7 @@ const META_TYPE = {
 router.get('/meta', (req, res, next) => {
   return client.metadata.all({allowEmpty: true})
   .then(results => res.json(results))
-  .catch(err => next(err));
+  .catch(next);
 });
 
 const getStatus = getMetaType(META_TYPE.STATUS);

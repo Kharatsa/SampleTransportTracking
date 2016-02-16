@@ -104,8 +104,15 @@ gulp.task('nodemon', ['lint'], function(cb) {
   });
 });
 
-const vendors = ['bower_components/pure/pure-min.css'];
-const vendorsDev = ['bower_components/pure/pure.css'];
+const vendors = [
+  'bower_components/pure/pure-min.css',
+  'node_modules/fixed-data-table/dist/fixed-data-table.css'
+];
+
+const vendorsDev = [
+  'bower_components/pure/pure.css',
+  'node_modules/fixed-data-table/dist/fixed-data-table.min.css'
+];
 
 gulp.task('styles:vendors', () => {
   const vendorsSource = IS_DEVELOPMENT ? vendorsDev : vendors;
@@ -137,19 +144,29 @@ gulp.task('static:schemas', () => {
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/schemas'));
 });
 
-const xforms = 'app/assets/xforms';
+const xforms = 'app/assets/xforms/*';
 
 gulp.task('static:xforms', () => {
-  return gulp.src(schemas)
+  return gulp.src(xforms)
   .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/xforms'));
+});
+
+const stats = 'bower_components/memory-stats/memory-stats.js';
+
+gulp.task('static:debug', () => {
+  return gulp.src([stats])
+  .pipe($.concat('debug.js'))
+  .pipe(uglify())
+  .pipe($.filesize())
+  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
 });
 
 const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
 const robots = 'app/assets/robots.txt';
 const fonts = 'app/assets/fonts';
-gulp.task('static', ['static:schemas', 'static:xforms'], () => {
+gulp.task('static', ['static:schemas', 'static:xforms', 'static:debug'], () => {
   return gulp.src([html, favicon, fonts, robots])
     .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
@@ -171,7 +188,7 @@ gulp.task('clean', () =>
     'app/public/schemas',
     'app/public/xforms',
     'app/public/fonts',
-    'app/public/lib',
+    'app/public/lib'
   ], {read: false})
     .pipe($.rimraf())
 );

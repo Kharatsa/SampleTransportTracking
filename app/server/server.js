@@ -73,14 +73,18 @@ app.use('/odk', AggregateRoutes);
 app.use('/stt', STTRoutes);
 app.use('/disa', DisaRoutes);
 
+app.get('/*', (req, res) => {
+  res.sendFile(`${config.server.PUBLIC_PATH}/index.html`);
+});
+
 // app.use(requestLog.errorLogger);
 
 // catch 404 and forward to error handler
-app.use((req, res, next) => {
-  var err = new Error('Not Found ' + req.originalUrl);
-  err.status = 404;
-  next(err);
-});
+// app.use((req, res, next) => {
+//   var err = new Error('Not Found ' + req.originalUrl);
+//   err.status = 404;
+//   next(err);
+// });
 
 app.use(sttmiddleware.handleErrors);
 

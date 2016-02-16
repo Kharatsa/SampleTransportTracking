@@ -6,6 +6,7 @@ export const change = new Schema('changes', {idAttribute: 'uuid'});
 export const sample = new Schema('samples', {idAttribute: 'uuid'});
 export const labTest = new Schema('labTests', {idAttribute: 'uuid'});
 export const artifact = new Schema('artifacts', {idAttribute: 'uuid'});
+export const metadata = new Schema('metadata', {idAttribute: 'key'});
 
 change.define({
   LabTest: labTest,

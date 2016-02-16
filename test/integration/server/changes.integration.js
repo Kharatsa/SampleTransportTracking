@@ -17,7 +17,7 @@ const dbresult = require('app/server/storage/dbresult.js');
 const app = express();
 app.use('/stt', STTRoutes);
 
-describe('', () => {
+describe('STT Changes API', () => {
   const sampleIds = require('../../data/sampleids.test.json');
   const metadata = require('../../data/metadata.test.json');
   const artifacts = require('../../data/artifacts.test.json');
@@ -83,7 +83,7 @@ describe('', () => {
     .get('/stt/changes')
     .expect(200)
     .toPromise()
-    .then(res => res.body)
+    .then(res => res.body.data)
     .map(change => {
       let include;
       let sampleId;

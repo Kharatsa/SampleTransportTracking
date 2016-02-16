@@ -2,25 +2,24 @@
 
 const express = require('express');
 const router = express.Router();
+const offset = require('app/server/stt/routes/pageoffset.js');
 const storage = require('app/server/storage');
 const sttclient = require('app/server/stt/sttclient.js');
 const dbresult = require('app/server/storage/dbresult.js');
 
 const client = sttclient({db: storage.db, models: storage.models});
 
-router.get('/ids', (req, res, next) => {
-  const offset = req.query.offset;
-  return client.sampleIds.latest({offset: offset, allowEmpty: true})
+router.get('/ids', offset(client.sampleIds.limit), (req, res, next) => {
+  return client.sampleIds.latest({offset: req.offset, allowEmpty: true})
   .then(results => res.json(results))
-  .catch(err => next(err));
+  .catch(next);
 });
 
 router.get('/ids/:id', (req, res, next) => {
-  const offset = req.query.offset;
-  return client.sampleIds.eitherIds({offset: offset, data: [req.params.id]})
+  return client.sampleIds.eitherIds({data: [req.params.id]})
   .then(dbresult.oneResult)
   .then(results => res.json(results))
-  .catch(err => next(err));
+  .catch(next);
 });
 
 module.exports = router;

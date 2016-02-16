@@ -1,33 +1,52 @@
 'use strict';
 
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {fetchChanges} from '../actions/actioncreators.js';
 import LatestChanges from '../components/LatestChanges.jsx';
 
 const Changes = React.createClass({
-  mixins: [PureRenderMixin],
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.isFetchingData) {
+      return false;
+    }
 
-  componentDidMount: function() {
+    // Uses strict equality for speed
+    return (!(
+      this.props.isFetchingData === nextProps.isFetchingData &&
+      this.props.changesById === nextProps.changesById &&
+      this.props.samplesById === nextProps.samplesById &&
+      this.props.artifactsById === nextProps.artifactsById &&
+      this.props.labTestsById === nextProps.labTestsById &&
+      this.props.metadata === nextProps.metadata
+    ));
+  },
+
+  componentWillMount() {
     const {fetchChanges} = this.props.actions;
     fetchChanges();
   },
 
-  render: function() {
-    const {changes, changesById} = this.props;
-
+  render() {
     return (
       <div>
-        <LatestChanges changes={changes} changesById={changesById} />
+        <LatestChanges {...this.props} />
       </div>
     );
   }
 });
 
 export default connect(
-  state => ({changes: state.changes, changesById: state.changesById}),
+  state => ({
+    changes: state.changes,
+    changesById: state.changesById,
+    samplesById: state.samplesById,
+    artifactsById: state.artifactsById,
+    labTestsById: state.labTestsById,
+    isFetchingData: state.isFetchingData,
+    metadata: state.metadata
+  }),
   dispatch => ({
     actions: bindActionCreators({fetchChanges}, dispatch)
   })

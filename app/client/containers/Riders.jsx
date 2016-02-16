@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 const Riders = React.createClass({
   mixins: [PureRenderMixin],
 
-  render: function() {
+  render() {
     return <div className='panel'>TODO RIDERS</div>;
   }
 });

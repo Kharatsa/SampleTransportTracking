@@ -1,11 +1,12 @@
 'use strict';
 
 import {combineReducers} from 'redux';
-import {routeReducer} from 'react-router-redux';
-import {Set as ImmutableSet, Map as ImmutableMap} from 'immutable';
+import {OrderedSet, Map as ImmutableMap} from 'immutable';
 import {
-    FETCHING_DATA, RECEIVE_SAMPLES, RECEIVE_CHANGES
+    FETCHING_DATA, RECEIVE_SAMPLES, RECEIVE_CHANGES,
+    RECEIVE_METADATA, CHANGE_WINDOW_SIZE
 } from '../actions/actions.js';
+import {WindowSize} from '../api/records.js';
 
 const isFetchingData = (state=false, action) => {
   switch (action.type) {
@@ -16,10 +17,10 @@ const isFetchingData = (state=false, action) => {
   }
 };
 
-const samples = (state=ImmutableSet(), action) => {
+const samples = (state=OrderedSet(), action) => {
   switch (action.type) {
   case RECEIVE_SAMPLES:
-    return action.samples;
+    return action.entities.sampleIds.keySeq().toOrderedSet();
   default:
     return state;
   }
@@ -28,13 +29,15 @@ const samples = (state=ImmutableSet(), action) => {
 const samplesById = (state=ImmutableMap(), action) => {
   switch (action.type) {
   case RECEIVE_SAMPLES:
-    return action.sampleIds;
+    return action.samples;
+  case RECEIVE_CHANGES:
+    return action.entities.samples;
   default:
     return state;
   }
 };
 
-const changes = (state=ImmutableSet(), action) => {
+const changes = (state=OrderedSet(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.changeIds;
@@ -46,17 +49,77 @@ const changes = (state=ImmutableSet(), action) => {
 const changesById = (state=ImmutableMap(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
-    return action.changes;
+    return action.entities.changes;
+  default:
+    return state;
+  }
+};
+
+const artifacts = (state=OrderedSet(), action) => {
+  switch (action.type) {
+  case RECEIVE_CHANGES:
+    return action.entities.artifacts.keySeq().toOrderedSet();
+  default:
+    return state;
+  }
+};
+
+const artifactsById = (state=ImmutableMap(), action) => {
+  switch (action.type) {
+  case RECEIVE_CHANGES:
+    return action.entities.artifacts;
+  default:
+    return state;
+  }
+};
+
+const labTests = (state=OrderedSet(), action) => {
+  switch (action.type) {
+  case RECEIVE_CHANGES:
+    return action.entities.labTests.keySeq().toOrderedSet();
+  default:
+    return state;
+  }
+};
+
+const labTestsById = (state=ImmutableMap(), action) => {
+  switch (action.type) {
+  case RECEIVE_CHANGES:
+    return action.entities.labTests;
+
+  default:
+    return state;
+  }
+};
+
+const metadata = (state=ImmutableMap(), action) => {
+  switch (action.type) {
+  case RECEIVE_METADATA:
+    return action.metadata;
+  default:
+    return state;
+  }
+};
+
+const windowSize = (state=new WindowSize({}), action) => {
+  switch (action.type) {
+  case CHANGE_WINDOW_SIZE:
+    return action.size;
   default:
     return state;
   }
 };
 
 export default combineReducers({
-  routing: routeReducer,
+  windowSize,
   isFetchingData,
+  metadata,
   changes,
   changesById,
   samples,
-  samplesById
+  samplesById,
+  artifacts,
+  artifactsById,
+  labTests,
+  labTestsById
 });

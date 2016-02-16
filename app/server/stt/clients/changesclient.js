@@ -6,6 +6,7 @@ const sttquery = require('app/server/stt/sttquery.js');
 
 function ChangesClient(options) {
   ModelClient.call(this, options);
+
   if (!(options.includes && options.includes.Artifacts)) {
     throw new Error('Artifacts Model is a required parameter');
   }
@@ -25,9 +26,9 @@ util.inherits(ChangesClient, ModelClient);
  * @return {Promise.<Array.<Object>>}          [description]
  */
 ChangesClient.prototype.latest = function(options) {
-  return this.Model.findAll({
+  return this.Model.findAndCountAll({
     offset: options.offset,
-    limit: options.limit,
+    limit: options.limit || this.limit,
     include: [
       {
         model: this.includes.Artifacts,
@@ -37,7 +38,7 @@ ChangesClient.prototype.latest = function(options) {
         include: [{model: this.includes.SampleIds}]
       }
     ],
-    order: [['createdAt', 'DESC']]
+    order: [['statusDate', 'DESC']]
   });
 };
 

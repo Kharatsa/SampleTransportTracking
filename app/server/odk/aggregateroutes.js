@@ -109,7 +109,7 @@ router.get('/view/submissionList',
         prepareXMLResponse(res, odkRes.statusCode, body);
         res.send(body);
       })
-      .catch(err => next(err));
+      .catch(next);
     } else {
       res.status(500).send('Error: Missing formid parameter');
     }
@@ -136,7 +136,7 @@ router.get('/view/downloadSubmission',
       prepareXMLResponse(res, odkRes.statusCode, body);
       res.send(body);
     })
-    .catch(err => next(err));
+    .catch(next);
   }
 );
 
@@ -153,7 +153,7 @@ const passthroughGet = (req, res, next) => {
     prepareXMLResponse(res, odkRes.statusCode, body);
     res.send(body);
   })
-  .catch(err => next(err));
+  .catch(next);
 };
 
 router.head('/xformsManifest', handleHeadRequest);

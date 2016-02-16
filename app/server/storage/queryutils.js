@@ -66,7 +66,7 @@ const deepTruthy = value => {
  * @param {QueryOptions} options [description]
  */
 
-const DEFAULT_LIMIT = 30;
+// const DEFAULT_LIMIT = 30;
 const STT_OPTIONS = [
   'omitDateDBCols', 'omitDBCols', 'plain', 'allowEmpty'
 ];
@@ -79,7 +79,7 @@ const STT_OPTIONS = [
 const sttOptions = wrappedFunc => {
   return function(options) {
     _.defaultsDeep(options || {}, {
-      limit: DEFAULT_LIMIT,
+      // limit: DEFAULT_LIMIT,
       offset: 0,
       plain: true,
       omitDateDBCols: false,
@@ -100,20 +100,32 @@ const sttOptions = wrappedFunc => {
     }
 
     return query
-    .then(instances => {
+    .then(result => {
+      const hasCount = !!result.count;
+      const data = hasCount ? result.rows : result;
+
       // TODO: support non-array (i.e., object) results
       // TODO: warn if omit settings enabled for non-plain results?
-      const results = (options.plain ?
-        BPromise.map(instances, dbresult.plain) :
-        BPromise.resolve(instances)
+
+      const sanitized = (options.plain ?
+        BPromise.map(data, dbresult.plain) :
+        BPromise.resolve(data)
       );
 
+      let filtered;
       if (options.omitDBCols) {
-        return results.map(dbresult.omitDBCols);
+        filtered = sanitized.map(dbresult.omitDBCols);
       } else if (options.omitDateDBCols) {
-        return results.map(dbresult.omitDateDBCols);
+        filtered = sanitized.map(dbresult.omitDateDBCols);
+      } else {
+        filtered = sanitized;
       }
-      return results;
+
+      return (
+        hasCount ?
+        filtered.then(rows => ({data: rows, count: result.count})) :
+        filtered
+      );
     });
   };
 };

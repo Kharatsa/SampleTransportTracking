@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 const Samples = React.createClass({
   mixins: [PureRenderMixin],
 
-  render: function() {
+  render() {
     return <div className='panel'>TODO SAMPLES</div>;
   }
 });

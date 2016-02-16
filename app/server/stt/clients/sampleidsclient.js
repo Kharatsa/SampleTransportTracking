@@ -6,6 +6,17 @@ const sttquery = require('app/server/stt/sttquery.js');
 
 function SampleIdsClient(options) {
   ModelClient.call(this, options);
+
+  if (!(options.includes && options.includes.Artifacts)) {
+    throw new Error('Artifacts Model is a required parameter');
+  }
+  if (!(options.includes && options.includes.LabTests)) {
+    throw new Error('LabTests Model is a required parameter');
+  }
+  if (!(options.includes && options.includes.Changes)) {
+    throw new Error('Changes Model is a required parameter');
+  }
+  this.includes = options.includes;
 }
 util.inherits(SampleIdsClient, ModelClient);
 
@@ -15,17 +26,29 @@ util.inherits(SampleIdsClient, ModelClient);
  * @return {Promise.<Array.<Object>>}          [description]
  */
 SampleIdsClient.prototype.latest = function(options) {
-  return this.Model.findAll({
+  return this.Model.findAndCountAll({
     offset: options.offset,
-    limit: options.limit,
+    limit: options.limit || this.limit,
     order: [['createdAt', 'DESC']]
   });
 };
 
 SampleIdsClient.prototype.eitherIds = function(options) {
   return sttquery.sampleIds.eitherIds(options.data)
-  .then(where => Object.assign({}, options, {where}))
-  .then(options => this.Model.findAll(options));
+  .then(where => this.Model.findAll({
+    where,
+    offset: options.offset,
+    limit: options.limit || this.limit,
+    include: [
+      {
+        model: this.includes.Artifacts,
+        include: [{model: this.includes.Changes}]
+      }, {
+        model: this.includes.LabTests,
+        include: [{model: this.includes.Changes}]
+      }
+    ]
+  }));
 };
 
 /**

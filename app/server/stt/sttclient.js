@@ -34,7 +34,14 @@ function STTClient(options) {
 
   this.models = options.models;
 
-  this.sampleIds = sampleidsclient({model: this.models.SampleIds});
+  this.sampleIds = sampleidsclient({
+    model: this.models.SampleIds,
+    includes: {
+      Changes: this.models.Changes,
+      Artifacts: this.models.Artifacts,
+      LabTests: this.models.LabTests
+    }
+  });
   this.metadata = metadataclient({model: this.models.Metadata});
   this.artifacts = artifactsclient({model: this.models.Artifacts});
   this.labTests = labtestsclient({model: this.models.LabTests});

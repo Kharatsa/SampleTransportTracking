@@ -3,12 +3,12 @@
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
+import Link from 'react-router/lib/Link';
 
 export default React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    changeRoute: PropTypes.func.isRequired,
     route: PropTypes.string,
     text: PropTypes.string.isRequired,
     disabled: PropTypes.bool
@@ -32,7 +32,7 @@ export default React.createClass({
   },
 
   render: function() {
-    const {disabled, text} = this.props;
+    const {disabled, text, route} = this.props;
 
     const itemClass = classNames({
       'pure-menu-item': true,
@@ -42,7 +42,7 @@ export default React.createClass({
 
     return (
       <li className={itemClass}>
-        <a onClick={this.navigate} className='pure-menu-link'>{text}</a>
+        <Link to={route} className='pure-menu-link'>{text}</Link>
       </li>
     );
   }

@@ -3,21 +3,52 @@
 import {
   FETCHING_DATA,
   FETCH_SAMPLES, FETCH_SAMPLES_FAILURE, RECEIVE_SAMPLES,
-  RECEIVE_ARTIFACTS, RECEIVE_LAB_TESTS,
-  FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES
+  FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA,
+  FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
+  CHANGE_WINDOW_SIZE
 } from './actions.js';
 import {Set as ImmutableSet} from 'immutable';
-import {getChanges, getSamples} from '../api';
+import * as api from '../api';
+import {WindowSize} from '../api/records.js';
 
 export const fetchingData = isFetching => ({type: FETCHING_DATA, isFetching});
 
+const requestMetadata = () => ({type: FETCH_METADATA});
+
+const fetchMetadataFailure = err => ({
+  type: FETCH_METADATA_FAILURE, error: err
+});
+
+const receiveMetadata = metadata => ({type: RECEIVE_METADATA, metadata});
+
+export const fetchMetadata = () => {
+  return dispatch => {
+    dispatch(requestMetadata());
+    return api.getMetadata((err, data) => {
+      if (err) {
+        dispatch(fetchMetadataFailure(err));
+      } else {
+        dispatch(receiveMetadata(data));
+      }
+    });
+  };
+};
+
 const requestSamples = () => ({type: FETCH_SAMPLES});
+
+const fetchSamplesFailure = err => ({type: FETCH_SAMPLES_FAILURE, error: err});
+
+const receiveSamples = (samples, sampleIds=ImmutableSet()) => ({
+  type: RECEIVE_SAMPLES,
+  samples,
+  sampleIds
+});
 
 export const fetchSamples = () => {
   return dispatch => {
     dispatch(fetchingData(true));
     dispatch(requestSamples());
-    return getSamples((err, data) => {
+    return api.getSamples((err, data) => {
       if (err) {
         dispatch(fetchSamplesFailure(err));
       } else {
@@ -28,28 +59,17 @@ export const fetchSamples = () => {
   };
 };
 
-const fetchSamplesFailure = err => ({type: FETCH_SAMPLES_FAILURE, error: err});
-
-const receiveSamples = (samples, sampleIds=ImmutableSet()) => ({
-  type: RECEIVE_SAMPLES,
-  samples,
-  sampleIds
-});
-
 const requestChanges = () => ({type: FETCH_CHANGES});
 
 export const fetchChanges = () => {
   return dispatch => {
     dispatch(fetchingData(true));
     dispatch(requestChanges());
-    return getChanges((err, data) => {
+    return api.getChanges((err, data) => {
       if (err) {
         dispatch(fetchChangesFailure(err));
       } else {
-        dispatch(receiveChanges(data.changes, data.changeIds));
-        dispatch(receiveSamples(data.samples));
-        dispatch(receiveArtifacts(data.artifacts));
-        dispatch(receiveLabTests(data.labTests));
+        dispatch(receiveChanges(data, data.changeIds));
       }
       dispatch(fetchingData(false));
     });
@@ -58,20 +78,13 @@ export const fetchChanges = () => {
 
 const fetchChangesFailure = err => ({type: FETCH_CHANGES_FAILURE, error: err});
 
-const receiveChanges = (changes, changeIds=ImmutableSet()) => ({
+const receiveChanges = (entities, changeIds) => ({
   type: RECEIVE_CHANGES,
-  changes,
+  entities,
   changeIds
 });
 
-const receiveLabTests = (labTests, labTestIds=ImmutableSet()) => ({
-  type: RECEIVE_LAB_TESTS,
-  labTests,
-  labTestIds
-});
-
-const receiveArtifacts = (artifacts, artifactIds=ImmutableSet()) => ({
-  type: RECEIVE_ARTIFACTS,
-  artifacts,
-  artifactIds
+export const changeWindowSize = (innerWidth, innerHeight) => ({
+  type: CHANGE_WINDOW_SIZE,
+  size: new WindowSize({innerWidth, innerHeight})
 });

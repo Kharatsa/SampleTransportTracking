@@ -185,6 +185,7 @@ describe('STT Metadata API', () => {
     .then(() => done())
     .catch(err => done(err));
   });
+
   it('should get single lab tests', done => {
     request(app)
     .get(`/stt/meta/labtests/${expectedLabTests[0].key}`)

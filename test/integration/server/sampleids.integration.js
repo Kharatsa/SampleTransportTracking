@@ -17,7 +17,7 @@ const dbresult = require('app/server/storage/dbresult.js');
 const app = express();
 app.use('/stt', STTRoutes);
 
-describe('STT Metadata API', () => {
+describe('STT Samples API', () => {
   const sampleIds = require('../../data/sampleids.test.json');
 
   before(done => {
@@ -27,12 +27,19 @@ describe('STT Metadata API', () => {
     .then(() => done());
   });
 
+  // const expectedAllSamples = .map(
+  //   result => Object.assign({}, result, {
+  //     Artifacts: [],
+  //     LabTests: []
+  //   })
+  // );
+
   it('should get all sample ids', done => {
     request(app)
     .get('/stt/ids')
     .expect(200)
     .toPromise()
-    .then(res => res.body)
+    .then(res => res.body.data)
     .map(dbresult.omitDateDBCols)
     .tap(body => expect(body).to.deep.equal(sampleIds))
     .then(() => done())
@@ -41,6 +48,11 @@ describe('STT Metadata API', () => {
 
   const stId = sampleIds[0].stId;
 
+  const expecteSample1 = Object.assign({}, sampleIds[0], {
+    Artifacts: [],
+    LabTests: []
+  });
+
   it('should single sample ids by stId', done => {
     request(app)
     .get(`/stt/ids/${stId}`)
@@ -48,21 +60,25 @@ describe('STT Metadata API', () => {
     .toPromise()
     .then(res => res.body)
     .then(dbresult.omitDateDBCols)
-    .tap(body => expect(body).to.deep.equal(sampleIds[0]))
+    .tap(body => expect(body).to.deep.equal(expecteSample1))
     .then(() => done())
     .catch(err => done(err));
   });
 
   const labId = sampleIds[2].labId;
+  const expecteSample2 = Object.assign({}, sampleIds[2], {
+    Artifacts: [],
+    LabTests: []
+  });
 
-  it('should single sample ids by lab id', done => {
+  it('should single sample ids by labId', done => {
     request(app)
     .get(`/stt/ids/${labId}`)
     .expect(200)
     .toPromise()
     .then(res => res.body)
     .then(dbresult.omitDateDBCols)
-    .tap(body => expect(body).to.deep.equal(sampleIds[2]))
+    .tap(body => expect(body).to.deep.equal(expecteSample2))
     .then(() => done())
     .catch(err => done(err));
   });

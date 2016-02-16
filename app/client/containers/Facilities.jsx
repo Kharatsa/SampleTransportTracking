@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 const Facilities = React.createClass({
   mixins: [PureRenderMixin],
 
-  render: function() {
+  render() {
     return <div className='panel'>TODO FACILITIES</div>;
   }
 });
