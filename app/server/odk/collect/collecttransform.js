@@ -8,14 +8,6 @@ const log = require('app/server/util/logapp.js');
 const datamerge = require('app/server/util/datamerge.js');
 const datatransform = require('app/server/util/datatransform.js');
 
-// TODO: remove
-// const DEBUG = (message, value) => {
-//   if (process.env.NODE_ENV === 'test') {
-//     console.log(`DEBUG ${message}`);
-//     console.dir(value, {depth: 10});
-//   }
-// };
-
 const metaField = {
   START_DATE: 'start',
   END_DATE: 'end',
@@ -120,13 +112,15 @@ const FORM_TYPE_PATH = ['$', 'id'];
 const END_DATE_PATH = ['end', 0];
 const DEFAULT_STATUS = 'ok';
 
+const upperCaseKey = key => key ? key.toUpperCase() : key;
+
 const changes = form => {
   const commonProps = BPromise.props({
     statusDate: parseDate(_.get(form, END_DATE_PATH)),
     stage: _.get(form, FORM_TYPE_PATH),
-    person: _.get(form, PERSON_PATH),
-    region: _.get(form, REGION_PATH),
-    facility: _.get(form, FACILITY_PATH)
+    person: upperCaseKey(_.get(form, PERSON_PATH)),
+    region: upperCaseKey(_.get(form, REGION_PATH)),
+    facility: upperCaseKey(_.get(form, FACILITY_PATH))
   });
 
   return BPromise.join(commonProps, repeats(form), (common, repeatEls) =>
@@ -135,15 +129,24 @@ const changes = form => {
       labId: _.get(repeat, LAB_ID_REPEAT_PATH) || null,
       statusDate: common.statusDate,
       stage: common.stage,
-      artifactType: _.get(repeat, ARTIFACT_REPEAT_PATH),
+      artifactType: upperCaseKey(_.get(repeat, ARTIFACT_REPEAT_PATH)),
       region: common.region,
       facility: common.facility,
       person: common.person,
-      status: _.get(repeat, STATUS_REPEAT_PATH, DEFAULT_STATUS)
+      status: upperCaseKey(_.get(repeat, STATUS_REPEAT_PATH, DEFAULT_STATUS))
     }))
   );
 };
 
+/**
+ * Replaces the stId/labId value pair with the corresponding sampleId reference
+ * (uuid).
+ *
+ * @method [fillSampleIdRefs]
+ * @param {Array.<Object>} artifacts [description]
+ * @param {Array.<Object>} sampleIds [description]
+ * @return {Array.<Object>}          Array of artifacts with sampleId uuids
+ */
 const fillSampleIdRefs = BPromise.method((artifacts, sampleIds) => {
   if (!sampleIds) {
     throw new Error('Missing required parameter sampleIds');
@@ -163,20 +166,34 @@ const fillSampleIdRefs = BPromise.method((artifacts, sampleIds) => {
   });
 });
 
+/**
+ * Replaces the stId/labId value pair with the corresponding sampleId reference
+ * (uuid). Using this sample reference, this function replaces the artifactType
+ * value with the correct artifact reference (uuid).
+ *
+ * @param  {Array.<Object>} changes   [description]
+ * @param  {Array.<Object>} sampleIds [description]
+ * @param  {Array.<Object>} artifacts [description]
+ * @return {Array.<Object>}           Array of changes with artifact uuids
+ */
 const fillArtifactRefs = (changes, sampleIds, artifacts) => {
-  // create map stId -> sampleIds (get uuid for sampleIdRef)
-  // create map like sampleRef -> artifactType -> artifact
+  // Lookup samples by the STT IDs
   const mapSamples = datamerge.propKeyReduce(sampleIds, ['stId']);
-  // map of sampleId (uuid ref) --> artifact
+
+  // Lookup artifacts by sampleId (uuid) and artifactType (metadata key)
   const mapArtifacts = datamerge.propKeyReduce(
     artifacts, ['sampleId', 'artifactType']
   );
+
   return BPromise.join(mapSamples, mapArtifacts)
   .spread((smapper, amapper) => {
     return BPromise.map(changes, change => {
       const sampleIdRef = smapper[change.stId];
       const artifactRef = amapper[sampleIdRef.uuid][change.artifactType];
       return Object.assign({},
+        // Change objects do include stId, labId, and artifactType values
+        // directly. Instead, it holds references artifacts (which themselves
+        // reference a sample).
         _.omit(change, ['stId', 'labId', 'artifactType']),
         {artifact: artifactRef.uuid}
       );

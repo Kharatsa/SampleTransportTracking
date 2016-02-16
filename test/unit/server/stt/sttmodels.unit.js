@@ -48,19 +48,19 @@ describe('Sample Transport Tracking Database', () => {
     const meta1 = [
       {
         type: 'artifact',
-        key: 'form',
+        key: 'FORM',
         value: 'Form',
         valueType: 'string'
       },
       {
         type: 'artifact',
-        key: 'blood',
+        key: 'BLOOD',
         value: 'Blood',
         valueType: 'string'
       },
       {
         type: 'artifact',
-        key: 'dbs',
+        key: 'DBS',
         value: 'Dried Blood Spot',
         valueType: 'string'
       },
@@ -113,11 +113,11 @@ describe('Sample Transport Tracking Database', () => {
 
     const a1 = {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx3',
-      artifactType: 'blood'
+      artifactType: 'BLOOD'
     };
     const a2 = {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx4',
-      artifactType: 'form'
+      artifactType: 'FORM'
     };
 
     const expectedA1 = [
@@ -174,7 +174,7 @@ describe('Sample Transport Tracking Database', () => {
 
     const a3 = {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx8',
-      artifactType: 'blood'
+      artifactType: 'BLOOD'
     };
 
     const expectedA3 = [Object.assign({}, a3, {sampleId: s1.uuid})];

@@ -34,6 +34,9 @@ const labtests = modelwrapper({
             model: Metadata,
             key: 'key'
           },
+          set: function(val) {
+            this.setDataValue('testType', val ? val.toUpperCase() : val);
+          },
           validate: {is: /[A-Z0-9]{1,5}/}
         }
       }, {

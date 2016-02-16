@@ -90,7 +90,8 @@ const metadata = modelwrapper({
           key: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
+            unique: true,
+            set: function(val) {this.setDataValue('key', val.toUpperCase());}
           },
           value: {
             type: DataTypes.STRING,

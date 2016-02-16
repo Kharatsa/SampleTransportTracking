@@ -33,6 +33,9 @@ const artifacts = modelwrapper({
           references: {
             model: Metadata,
             key: 'key'
+          },
+          set: function(val) {
+            this.setDataValue('artifactType', val ? val.toUpperCase() : val);
           }
         }
       }, {

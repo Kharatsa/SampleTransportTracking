@@ -63,23 +63,35 @@ const changes = modelwrapper({
         facility: {
           type: DataTypes.STRING,
           allowNull: true,
-          references: metadataKeyCol
+          references: metadataKeyCol,
+          set: function(val) {
+            this.setDataValue('facility', val ? val.toUpperCase() : val);
+          }
         },
         person: {
           type: DataTypes.STRING,
           allowNull: true,
-          references: metadataKeyCol
+          references: metadataKeyCol,
+          set: function(val) {
+            this.setDataValue('person', val ? val.toUpperCase() : val);
+          }
         },
         status: {
           type: DataTypes.STRING,
           allowNull: false,
-          references: metadataKeyCol
+          references: metadataKeyCol,
+          set: function(val) {
+            this.setDataValue('status', val ? val.toUpperCase() : val);
+          }
         },
         labRejection: {
           type: DataTypes.STRING,
           allowNull: true,
           references: metadataKeyCol,
-          validate: {is: /[A-Za-z]{5}/}
+          set: function(val) {
+            this.setDataValue('labRejection', val ? val.toUpperCase() : val);
+          },
+          validate: {is: /[A-Z]{5}/}
         }
       }, {
 

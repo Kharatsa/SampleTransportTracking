@@ -19,11 +19,16 @@ app.use('/odk', AggregateRoutes);
 
 describe('ODK Collect Submission API', () => {
   const sampleIds = require('../../data/sampleids.test.json');
+  const metadata = require('../../data/metadata.test.json');
 
   before(done => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
     .then(() => storage.models.SampleIds.bulkCreate(sampleIds))
+    .then(() => storage.models.Metadata.bulkCreate(metadata))
+    .then(() => storage.models.Metadata.findAll())
+    .map(r => r.get({plain: true}))
+    .then(r => console.dir(r, {depth: 5}))
     .then(() => done());
   });
 

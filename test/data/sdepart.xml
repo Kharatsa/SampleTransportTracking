@@ -4,9 +4,9 @@
   <end>2016-01-22T22:17:49.495-05</end>
   <deviceid>867979020085780</deviceid>
   <simserial>8901260971103975692</simserial>
-  <person>md563</person>
-  <region>MSR</region>
-  <facility>SPR</facility>
+  <person>per1</person>
+  <region>br</region>
+  <facility>ghi</facility>
   <srepeat>
     <stid>9781933988696</stid>
     <stype>form</stype>
@@ -15,7 +15,7 @@
   <srepeat>
     <stid>1c92a4637</stid>
     <stype>blood</stype>
-    <condition>soiled</condition>
+    <condition>brk</condition>
   </srepeat>
   <srepeat>
     <stid>9781933988696</stid>

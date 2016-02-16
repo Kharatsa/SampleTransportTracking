@@ -1,17 +1,17 @@
 [
   {
     "type": "artifact",
-    "key": "form",
+    "key": "FORM",
     "value": "Request Form",
     "valueType": "string"
   }, {
     "type": "artifact",
-    "key": "blood",
+    "key": "BLOOD",
     "value": "Blood vial",
     "valueType": "string"
   }, {
     "type": "artifact",
-    "key": "dbs",
+    "key": "DBS",
     "value": "Dried blood spot",
     "valueType": "string"
   }, {
