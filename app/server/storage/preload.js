@@ -25,7 +25,7 @@ const maybeCreate = meta => {
   .then(tran => {
     return BPromise.map(meta, incoming => {
       return model.findOrCreate({
-        where: {type: incoming.type, key: incoming.key},
+        where: {type: incoming.type, key: incoming.key.toUpperCase()},
         defaults: incoming,
         transaction: tran,
         logging: false
@@ -35,7 +35,7 @@ const maybeCreate = meta => {
     .then(() => tran.commit())
     .catch(err => {
       tran.rollback();
-      throw err;
+      log.error(err.message, err);
     });
   });
 };

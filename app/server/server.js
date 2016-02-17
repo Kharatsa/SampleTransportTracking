@@ -45,20 +45,17 @@ const preloadMetadata = storage.db.sync()
 .catch(err => log.error(err, err.stack));
 
 if (process.env.NODE_ENV !== 'production') {
-  const fake = fakedata();
-  const noLog = {logging: false};
+  // TODO: remove when facilities list is completed
+  const preloadTestMetadata = preloadMetadata.then(() =>
+    preload.metadata({
+      filename: 'facilities.csv',
+      type: 'facility',
+      key: 'facility_key',
+      value: 'facility'
+    })
+  );
 
-  log.info('Loading fake data');
-
-  preloadMetadata
-  .then(() => storage.db.dropAllSchemas())
-  .then(() => storage.db.sync())
-  .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
-  .then(() => storage.models.Metadata.bulkCreate(fake.metadata, noLog))
-  .then(() => storage.models.Artifacts.bulkCreate(fake.artifacts, noLog))
-  .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
-  .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog))
-  .then(() => log.info('Finished loading fake data'));
+  preloadTestMetadata.then(() => fakedata.load());
 }
 
 app.use(express.static(config.server.PUBLIC_PATH));

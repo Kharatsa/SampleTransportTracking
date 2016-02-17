@@ -50,8 +50,13 @@ function convertFromString(value, type) {
 }
 
 function convertToString(value, type) {
+  // null and undefined shouldn't be converted to a string
   if (type === 'object') {
     return JSON.stringify(value);
+  } else if (value === null) {
+    return value;
+  } else if (typeof value === 'undefined') {
+    return null;
   }
   return value + '';
 }

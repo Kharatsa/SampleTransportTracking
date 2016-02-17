@@ -9,9 +9,10 @@ docker stop strack
 docker rm strack
 docker run -d \
   --name strack \
-  -p $STT_LISTEN_PORT:$STT_LISTEN_PORT \
   --restart on-failure:10 \
   -v /var/lib/strack:/var/lib/strack \
+  -p $STT_LISTEN_PORT:$STT_LISTEN_PORT \
+  --log-driver=json-file --log-opt max-size=50m \
   -e "STT_LISTEN_PORT=$STT_LISTEN_PORT" \
   -e "STT_LISTEN_HOST=$STT_LISTEN_HOST" \
   -e "STT_PUBLIC_URL=$STT_PUBLIC_URL" \

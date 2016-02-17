@@ -1,6 +1,7 @@
 'use strict';
 
 const BPromise = require('bluebird');
+const log = require('app/server/util/logapp.js');
 const sttsubmission = require('app/server/stt/sttsubmission.js');
 const collecttransform = require('app/server/odk/collect/collecttransform.js');
 
@@ -21,7 +22,8 @@ const handleSubmission = incoming => {
 
   const changes = artifactsWithRefs.then(sttsubmission.scanChanges);
 
-  return BPromise.props({sampleIds, artifacts, changes});
+  return BPromise.props({sampleIds, artifacts, changes})
+  .tap(log.info);
 };
 
 module.exports = {handleSubmission};

@@ -1,5 +1,12 @@
 'use strict';
 
+const config = require('app/config');
+const log = require('app/server/util/logapp.js');
+const storage = require('app/server/storage');
+storage.init({config: config.db});
+const sttmodels = require('app/server/stt/models');
+storage.loadModels(sttmodels);
+
 const lorem = ['lorem', 'ipsum', 'dolor', 'sit', 'amet, ', 'consectetur',
 'adipisicing', 'elit, ', 'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut',
 'labore', 'et', 'dolore', 'magna', 'aliqua.', 'enim', 'ad', 'minim',
@@ -258,4 +265,22 @@ const make = () => {
   };
 };
 
-module.exports = make;
+const load = () => {
+  const fake = make();
+  const noLog = {logging: false};
+
+  log.info('Loading fake data');
+
+  storage.db.sync()
+  .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
+  .then(() => storage.models.Metadata.bulkCreate(fake.metadata, noLog))
+  .then(() => storage.models.Artifacts.bulkCreate(fake.artifacts, noLog))
+  .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
+  .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog))
+  .then(() => log.info('Finished loading fake data'));
+};
+
+module.exports = {
+  make,
+  load
+};

@@ -144,12 +144,20 @@ gulp.task('static:schemas', () => {
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/schemas'));
 });
 
-const xforms = 'app/assets/xforms/*';
+const xforms = ['app/assets/xforms/*.xml'];
 
 gulp.task('static:xforms', () => {
   return gulp.src(xforms)
   .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/xforms'));
+});
+
+const metadata = ['app/assets/xforms/metadata/*.csv'];
+
+gulp.task('static:metadata', () => {
+  return gulp.src(metadata)
+  .pipe($.filesize())
+  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/xforms/metadata'));
 });
 
 const stats = 'bower_components/memory-stats/memory-stats.js';
@@ -166,7 +174,12 @@ const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
 const robots = 'app/assets/robots.txt';
 const fonts = 'app/assets/fonts';
-gulp.task('static', ['static:schemas', 'static:xforms', 'static:debug'], () => {
+
+const preStatic = [
+  'static:schemas', 'static:xforms', 'static:metadata', 'static:debug'
+];
+
+gulp.task('static', preStatic, () => {
   return gulp.src([html, favicon, fonts, robots])
     .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
