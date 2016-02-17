@@ -1,10 +1,13 @@
 'use strict';
 
+const path = require('path');
+const fs = require('fs');
 const util = require('util');
 const winston = require('winston');
 const winstonConfig = require('winston/lib/winston/config');
 const transports = require('winston/lib/winston/transports');
 const common = require('winston/lib/winston/common');
+const config = require('app/config');
 
 const logLevel = () => {
   if (process.env.NODE_ENV === 'production') {
@@ -120,8 +123,22 @@ var stttransport = new STTConsoleTransport({
   )
 });
 
+const LOG_PATH = '/var/log/strack';
+
 var logger = new (winston.Logger)({
-  transports: [stttransport]
+  transports: [
+    stttransport,
+    new (winston.transports.File)({
+      name: 'info-file',
+      filename: `${LOG_PATH}/info-${Date.now()}.log`,
+      level: 'info'
+    }),
+    new (winston.transports.File)({
+      name: 'error-file',
+      filename: `${LOG_PATH}/error-${Date.now()}.log`,
+      level: 'error'
+    })
+  ]
 });
 
 module.exports = logger;

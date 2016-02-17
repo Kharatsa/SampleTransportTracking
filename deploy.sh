@@ -11,6 +11,7 @@ docker run -d \
   --name strack \
   --restart on-failure:10 \
   -v /var/lib/strack:/var/lib/strack \
+  -v /var/log/strack:/var/log/strack \
   -p $STT_LISTEN_PORT:$STT_LISTEN_PORT \
   --log-driver=json-file --log-opt max-size=50m \
   -e "STT_LISTEN_PORT=$STT_LISTEN_PORT" \

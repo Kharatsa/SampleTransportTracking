@@ -13,11 +13,13 @@ RUN npm install -q -g ${NODE_DEPS}
 
 ENV STT_DATA_PATH='/var/lib/strack' \
     STT_APP_PATH='/var/www/strack' \
+    STT_LOG_PATH='/var/log/strack' \
     STT_LISTEN_PORT='8081' \
     STT_LISTEN_HOST='0.0.0.0'
 
-RUN mkdir -p ${STT_DATA_PATH}
-RUN mkdir -p ${STT_APP_PATH}
+RUN mkdir -p ${STT_DATA_PATH} \
+    && mkdir -p ${STT_APP_PATH} \
+    && mkdir -p ${STT_LOG_PATH}
 
 COPY . ${STT_APP_PATH}
 
