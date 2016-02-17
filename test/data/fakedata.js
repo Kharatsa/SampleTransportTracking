@@ -158,8 +158,8 @@ const makeMeta = (type, valueLength) => {
 
   return {
     type,
+    key: 'FAKE-' + makeRandomString('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4),
     value,
-    key: makeRandomString('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4),
     valueType: 'string'
   };
 };
@@ -235,7 +235,7 @@ const fakeChanges = (num, artifacts, tests, meta) => {
 const make = () => {
   const meta = {
     artifact: fakeMetadata(5, 'artifact', 2),
-    labtest: fakeMetadata(5, 'labtest', 2),
+    labtest: fakeMetadata(20, 'labtest', 2),
     facility: fakeMetadata(50, 'facility', 2),
     region: fakeMetadata(10, 'region', 1),
     status: fakeMetadata(10, 'status', 2),

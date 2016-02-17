@@ -169,7 +169,20 @@ textarea {
   padding-bottom: 40px;
 }
 
+/*.public_fixedDataTableCell_main {
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}*/
 
+
+.public_fixedDataTableCell_cellContent {
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* ==========================================================================
    Helper classes

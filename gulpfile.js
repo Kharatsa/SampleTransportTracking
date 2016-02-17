@@ -128,15 +128,23 @@ const clientCSS = [
 ];
 
 gulp.task('styles', ['styles:vendors'], function() {
+  const loadSourceMaps = (
+    IS_DEVELOPMENT ? $.sourcemaps.init.bind({loadMaps: true}) : $.util.noop
+  );
+  const cssMinify = IS_DEVELOPMENT ? $.util.noop : $.cssnano;
+  const writeSourceMaps = IS_DEVELOPMENT ? $.sourcemaps.write : $.util.noop;
+
   return gulp.src(clientCSS)
-  .pipe(IS_DEVELOPMENT ? $.sourcemaps.init({loadMaps: true}) : $.util.noop())
+  .pipe(loadSourceMaps())
   .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
   .pipe($.concat('app.css'))
-  .pipe(IS_DEVELOPMENT ? $.util.noop() : $.cssnano())
-  .pipe(IS_DEVELOPMENT ? $.sourcemaps.write() : $.util.noop())
+  .pipe(cssMinify())
+  .pipe(writeSourceMaps())
   .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
+
+gulp.task('styles:watch', () => gulp.watch(clientCSS, ['styles']));
 
 gulp.task('static:schemas', () => {
   return gulp.src(schemas)
@@ -162,7 +170,7 @@ gulp.task('static:metadata', () => {
 
 const stats = 'bower_components/memory-stats/memory-stats.js';
 
-gulp.task('static:debug', () => {
+gulp.task('static:debugstats', () => {
   return gulp.src([stats])
   .pipe($.concat('debug.js'))
   .pipe(uglify())
@@ -174,9 +182,10 @@ const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
 const robots = 'app/assets/robots.txt';
 const fonts = 'app/assets/fonts';
+const schemas = 'app/assets/schemas/**/*';
 
 const preStatic = [
-  'static:schemas', 'static:xforms', 'static:metadata', 'static:debug'
+  'static:schemas', 'static:xforms', 'static:metadata', 'static:debugstats'
 ];
 
 gulp.task('static', preStatic, () => {
@@ -184,10 +193,6 @@ gulp.task('static', preStatic, () => {
     .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
-
-const schemas = 'app/assets/schemas/**/*';
-
-gulp.task('styles:watch', () => gulp.watch(clientCSS, ['styles']));
 
 gulp.task('static:watch', () =>
   gulp.watch([html, favicon, fonts, schemas], ['static'])

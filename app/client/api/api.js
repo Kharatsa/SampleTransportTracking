@@ -17,37 +17,6 @@ const makeImmutable = (obj, ImmutableRecord) => {
   return null;
 };
 
-export const getSamples = callback => {
-  return request('/stt/ids', (err, res) => {
-    if (err) {
-      return callback(err);
-    }
-
-    const {data, count} = res.json;
-    const {entities, result} = normalize(data, arrayOf(sample));
-    const samples = makeImmutable(entities.samples, SampleRecord);
-    const sampleIds = OrderedSet(result);
-    callback(null, {samples, sampleIds, count});
-  });
-};
-
-export const getChanges = callback => {
-  return request('/stt/changes', (err, res) => {
-    if (err) {
-      return callback(err);
-    }
-
-    const {data, count} = res.json;
-    const {entities, result} = normalize(data, arrayOf(change));
-    const changes = makeImmutable(entities.changes, ChangeRecord);
-    const changeIds = OrderedSet(result);
-    const artifacts = makeImmutable(entities.artifacts, ArtifactRecord);
-    const labTests = makeImmutable(entities.labTests, LabTestRecord);
-    const samples = makeImmutable(entities.samples, SampleRecord);
-    callback(null, {changes, changeIds, artifacts, labTests, samples, count});
-  });
-};
-
 const keyReduce = metadata => {
   return metadata.reduce((previous, current) => {
     const type = current.type;
@@ -66,7 +35,44 @@ const normalizeMetaType = (data, typeName) => {
   return normalized;
 };
 
-export const getMetadata = callback => {
+const pagedURL = (url, page) => `${url}?page=${page}`;
+
+export const getSamples = (options, callback) => {
+  callback = typeof options === 'function' ? options : callback;
+  return request('/stt/ids', (err, res) => {
+    if (err) {
+      return callback(err);
+    }
+
+    const {data, count} = res.json;
+    const {entities, result} = normalize(data, arrayOf(sample));
+    const samples = makeImmutable(entities.samples, SampleRecord);
+    const sampleIds = OrderedSet(result);
+    callback(null, {samples, sampleIds, count});
+  });
+};
+
+export const getChanges = (options, callback) => {
+  callback = typeof options === 'function' ? options : callback;
+  let {page} = options;
+  return request(pagedURL('/stt/changes', page), (err, res) => {
+    if (err) {
+      return callback(err);
+    }
+
+    const {data, count} = res.json;
+    const {entities, result} = normalize(data, arrayOf(change));
+    const changes = makeImmutable(entities.changes, ChangeRecord);
+    const changeIds = OrderedSet(result);
+    const artifacts = makeImmutable(entities.artifacts, ArtifactRecord);
+    const labTests = makeImmutable(entities.labTests, LabTestRecord);
+    const samples = makeImmutable(entities.samples, SampleRecord);
+    callback(null, {changes, changeIds, artifacts, labTests, samples, count});
+  });
+};
+
+export const getMetadata = (options, callback) => {
+  callback = typeof options === 'function' ? options : callback;
   return request('/stt/meta', (err, res) => {
     if (err) {
       return callback(err);
@@ -76,7 +82,7 @@ export const getMetadata = callback => {
 
     const people = normalizeMetaType(types.person, 'person');
     const facilities = normalizeMetaType(types.facility, 'facility');
-    // TODO: needed?
+    // TODO: are region codes needed at all?
     // const regions = normalizeMetaType(types.region, 'regions');
     const labTests = normalizeMetaType(types.labtest, 'labTest');
     const artifacts = normalizeMetaType(types.artifact, 'artifact');

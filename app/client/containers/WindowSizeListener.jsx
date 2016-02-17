@@ -1,17 +1,21 @@
 'use strict';
 
-import React from 'react';
+import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {Table} from 'fixed-data-table';
 import {changeWindowSize} from '../actions/actioncreators.js';
 
 const DEBOUNCE_MILLIS = 16;
 
-const resizeListener = Component => {
-  return React.createClass({
+const windowSizeListen = Component => {
+  const Wrapped = React.createClass({
     mixins: [PureRenderMixin],
+
+    propTypes: {
+      width: PropTypes.number.isRequired,
+      height: PropTypes.number.isRequired
+    },
 
     componentDidMount() {
       this._update();
@@ -54,9 +58,14 @@ const resizeListener = Component => {
       return <Component {...this.props} {...this.state} />;
     }
   });
+
+  return connect(
+    state => ({
+      width: state.windowSize.get('innerWidth'),
+      height: state.windowSize.get('innerHeight')
+    }),
+    dispatch => ({actions: bindActionCreators({changeWindowSize}, dispatch)})
+  )(Wrapped);
 };
 
-export default connect(
-  state => ({width: state.windowSize.get('innerWidth')}),
-  dispatch => ({actions: bindActionCreators({changeWindowSize}, dispatch)})
-)(resizeListener(Table));
+export default windowSizeListen;

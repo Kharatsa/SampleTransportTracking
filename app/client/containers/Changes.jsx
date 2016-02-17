@@ -4,7 +4,7 @@ import React from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {fetchChanges} from '../actions/actioncreators.js';
-import LatestChanges from '../components/LatestChanges.jsx';
+import ChangesTable from '../components/ChangesTable.jsx';
 
 const Changes = React.createClass({
   shouldComponentUpdate(nextProps) {
@@ -31,7 +31,7 @@ const Changes = React.createClass({
   render() {
     return (
       <div>
-        <LatestChanges {...this.props} />
+        <ChangesTable {...this.props} />
       </div>
     );
   }
@@ -39,7 +39,7 @@ const Changes = React.createClass({
 
 export default connect(
   state => ({
-    changes: state.changes,
+    changeIds: state.changeIds,
     changesById: state.changesById,
     samplesById: state.samplesById,
     artifactsById: state.artifactsById,

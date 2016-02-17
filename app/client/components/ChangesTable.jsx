@@ -3,26 +3,31 @@
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {OrderedSet, Map as ImmutableMap} from 'immutable';
-import {Column, Cell} from 'fixed-data-table';
+import {Table, Column, Cell} from 'fixed-data-table';
 import {TextCell, DateCell, MetadataCell} from './CellTypes.jsx';
-import FlexTable from '../containers/FlexTable.jsx';
+import WindowSizeListener from '../containers/WindowSizeListener.jsx';
+
+const FlexTable = WindowSizeListener(Table);
 
 const ROW_HEIGHT = 40;
 const HEADER_HEIGHT = 50;
+const CELL_WIDTH = 150;
+// const MIN_CELL_WIDTH = 50;
+// const MAX_CELL_WIDTH = 250;
 
 export default React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    changes: PropTypes.instanceOf(OrderedSet),
+    changeIds: PropTypes.instanceOf(OrderedSet),
     changesById: PropTypes.instanceOf(ImmutableMap)
   },
 
   render() {
-    const {changes, changesById} = this.props;
+    const {changeIds, changesById} = this.props;
     const {samplesById, artifactsById, labTestsById, metadata} = this.props;
 
-    const data = changes.map(changeRef => {
+    const data = changeIds.map(changeRef => {
       const change = changesById.get(changeRef);
       const labTestRef = change.get('labTest');
       const artifactRef = change.get('artifact');
@@ -44,6 +49,10 @@ export default React.createClass({
       };
     }).toArray();
 
+    // const cellStyle = {
+    //     maxWidth: '100px';
+    // }
+
     return (
       <div className='panel'>
         <FlexTable
@@ -55,52 +64,77 @@ export default React.createClass({
           {...this.props}>
           <Column
             header={<Cell>ST ID</Cell>}
-            cell={<TextCell data={data} col='stId' />}
             fixed={true}
-            width={120} />
+            width={CELL_WIDTH}
+            cell={<TextCell data={data} col='stId' />} />
           <Column
             header={<Cell>Lab ID</Cell>}
-            cell={<TextCell data={data} col='labId' />}
             fixed={true}
-            width={120} />
+            width={CELL_WIDTH}
+            cell={<TextCell data={data} col='labId' />} />
           <Column
             header={<Cell>Stage</Cell>}
-            cell={<TextCell data={data} col='stage' />}
-            width={150} />
+            width={CELL_WIDTH}
+            flexGrow={1}
+            cell={<TextCell data={data} col='stage' />} />
           <Column
             header={<Cell>Status</Cell>}
-            cell={<MetadataCell data={data} col='status' meta={metadata} type='status' />}
-            // cell={<TextCell data={data} col='status' />}
-            width={150} />
+            width={CELL_WIDTH}
+            flexGrow={1}
+            cell={<MetadataCell
+                  data={data}
+                  col='status'
+                  meta={metadata}
+                  type='status' />} />
           <Column
             header={<Cell>Artifact</Cell>}
-            cell={<MetadataCell data={data} col='artifactType' meta={metadata} type='artifact' />}
-            // cell={<TextCell data={data} col='artifactType' />}
-            width={150} />
+            flexGrow={1}
+            width={CELL_WIDTH}
+            cell={<MetadataCell
+                    data={data}
+                    col='artifactType'
+                    meta={metadata}
+                    type='artifact' />} />
           <Column
             header={<Cell>Test</Cell>}
-            cell={<MetadataCell data={data} col='testType' meta={metadata} type='labTest' />}
-            // cell={<TextCell data={data} col='testType' />}
-            width={150} />
+            flexGrow={1}
+            width={CELL_WIDTH}
+            cell={<MetadataCell
+                    data={data}
+                    col='testType'
+                    meta={metadata}
+                    type='labTest' />} />
           <Column
             header={<Cell>Rejection</Cell>}
-            cell={<MetadataCell data={data} col='labRejection' meta={metadata} type='rejection' />}
-            // cell={<TextCell data={data} col='labRejection' />}
-            width={150} />
+            flexGrow={1}
+            width={CELL_WIDTH}
+            cell={<MetadataCell
+                    data={data}
+                    col='labRejection'
+                    meta={metadata}
+                    type='rejection' />} />
           <Column
             header={<Cell>Person</Cell>}
-            // cell={<TextCell data={data} col='person' />}
-            cell={<MetadataCell data={data} col='person' meta={metadata} type='person' />}
-            width={150} />
+            flexGrow={1}
+            width={CELL_WIDTH}
+            cell={<MetadataCell
+                    data={data}
+                    col='person'
+                    meta={metadata}
+                    type='person' />} />
           <Column
             header={<Cell>Facility</Cell>}
-            cell={<MetadataCell data={data} col='facility' meta={metadata} type='facility' />}
-            // cell={<TextCell data={data} col='facility' />}
-            width={150} />
+            flexGrow={1}
+            width={CELL_WIDTH}
+            cell={<MetadataCell
+                    data={data}
+                    col='facility'
+                    meta={metadata}
+                    type='facility' />} />
           <Column
             header={<Cell>Date</Cell>}
-            cell={<DateCell data={data} col='statusDate' />}
-            width={210} />
+            width={200}
+            cell={<DateCell data={data} col='statusDate' />} />
         </FlexTable>
       </div>
     );

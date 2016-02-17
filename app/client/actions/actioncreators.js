@@ -36,7 +36,7 @@ export const fetchMetadata = () => {
 
 const requestSamples = () => ({type: FETCH_SAMPLES});
 
-const fetchSamplesFailure = err => ({type: FETCH_SAMPLES_FAILURE, error: err});
+const fetchSamplesFailure = error => ({type: FETCH_SAMPLES_FAILURE, error});
 
 const receiveSamples = (samples, sampleIds=ImmutableSet()) => ({
   type: RECEIVE_SAMPLES,
@@ -59,28 +59,34 @@ export const fetchSamples = () => {
   };
 };
 
-const requestChanges = () => ({type: FETCH_CHANGES});
+const requestChanges = page => ({type: FETCH_CHANGES, page});
 
-export const fetchChanges = () => {
+export const fetchChanges = page => {
+  page = page || 1;
   return dispatch => {
     dispatch(fetchingData(true));
-    dispatch(requestChanges());
-    return api.getChanges((err, data) => {
+    dispatch(requestChanges(page));
+    return api.getChanges({page: page}, (err, data) => {
       if (err) {
-        dispatch(fetchChangesFailure(err));
+        dispatch(fetchChangesFailure(err, page));
       } else {
-        dispatch(receiveChanges(data, data.changeIds));
+        dispatch(receiveChanges(data, data.count, data.changeIds));
       }
       dispatch(fetchingData(false));
     });
   };
 };
 
-const fetchChangesFailure = err => ({type: FETCH_CHANGES_FAILURE, error: err});
+const fetchChangesFailure = (error, page) => ({
+  type: FETCH_CHANGES_FAILURE,
+  error,
+  prevPageNumber: page
+});
 
-const receiveChanges = (entities, changeIds) => ({
+const receiveChanges = (entities, count, changeIds) => ({
   type: RECEIVE_CHANGES,
   entities,
+  count,
   changeIds
 });
 

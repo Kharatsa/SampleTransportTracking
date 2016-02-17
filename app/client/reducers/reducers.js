@@ -3,10 +3,12 @@
 import {combineReducers} from 'redux';
 import {OrderedSet, Map as ImmutableMap} from 'immutable';
 import {
-    FETCHING_DATA, RECEIVE_SAMPLES, RECEIVE_CHANGES,
+    FETCHING_DATA,
+    FETCH_CHANGES, FETCH_CHANGES_FAILURE,
+    RECEIVE_SAMPLES, RECEIVE_CHANGES,
     RECEIVE_METADATA, CHANGE_WINDOW_SIZE
 } from '../actions/actions.js';
-import {WindowSize} from '../api/records.js';
+import {WindowSize, Page} from '../api/records.js';
 
 const isFetchingData = (state=false, action) => {
   switch (action.type) {
@@ -17,10 +19,21 @@ const isFetchingData = (state=false, action) => {
   }
 };
 
-const samples = (state=OrderedSet(), action) => {
+const metadata = (state=ImmutableMap(), action) => {
+  switch (action.type) {
+  case RECEIVE_METADATA:
+    return action.metadata;
+  default:
+    return state;
+  }
+};
+
+const sampleIds = (state=OrderedSet(), action) => {
   switch (action.type) {
   case RECEIVE_SAMPLES:
-    return action.entities.sampleIds.keySeq().toOrderedSet();
+    return action.entities.sampleIds;
+  case RECEIVE_CHANGES:
+    return action.entities.samples.keySeq().toOrderedSet();
   default:
     return state;
   }
@@ -37,7 +50,7 @@ const samplesById = (state=ImmutableMap(), action) => {
   }
 };
 
-const changes = (state=OrderedSet(), action) => {
+const changeIds = (state=OrderedSet(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.changeIds;
@@ -55,7 +68,16 @@ const changesById = (state=ImmutableMap(), action) => {
   }
 };
 
-const artifacts = (state=OrderedSet(), action) => {
+const totalChanges = (state=null, action) => {
+  switch (action.type) {
+  case RECEIVE_CHANGES:
+    return action.count;
+  default:
+    return state;
+  }
+};
+
+const artifactIds = (state=OrderedSet(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.entities.artifacts.keySeq().toOrderedSet();
@@ -73,7 +95,7 @@ const artifactsById = (state=ImmutableMap(), action) => {
   }
 };
 
-const labTests = (state=OrderedSet(), action) => {
+const labTestIds = (state=OrderedSet(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.entities.labTests.keySeq().toOrderedSet();
@@ -92,15 +114,6 @@ const labTestsById = (state=ImmutableMap(), action) => {
   }
 };
 
-const metadata = (state=ImmutableMap(), action) => {
-  switch (action.type) {
-  case RECEIVE_METADATA:
-    return action.metadata;
-  default:
-    return state;
-  }
-};
-
 const windowSize = (state=new WindowSize({}), action) => {
   switch (action.type) {
   case CHANGE_WINDOW_SIZE:
@@ -110,16 +123,29 @@ const windowSize = (state=new WindowSize({}), action) => {
   }
 };
 
+const page = (state=Page({}), action) => {
+  switch (action.type) {
+  case FETCH_CHANGES:
+    return Page({last: state.current, current: action.page});
+  case FETCH_CHANGES_FAILURE:
+    return Page({current: state.last});
+  default:
+    return state;
+  }
+};
+
 export default combineReducers({
+  page,
   windowSize,
   isFetchingData,
   metadata,
-  changes,
-  changesById,
-  samples,
+  sampleIds,
   samplesById,
-  artifacts,
+  changeIds,
+  changesById,
+  totalChanges,
+  artifactIds,
   artifactsById,
-  labTests,
+  labTestIds,
   labTestsById
 });
