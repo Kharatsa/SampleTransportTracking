@@ -82,16 +82,7 @@ const artifacts = form => {
     labId: _.get(repeat, LAB_ID_REPEAT_PATH) || null,
     artifactType: upperCaseKey(_.get(repeat, ARTIFACT_REPEAT_PATH))
   }))
-  .tap(results => {
-    console.log('artifacts pre-filtered results');
-    console.dir(results, {depth: 3});
-  })
-  .then(results => _.uniqBy(results, item => item.artifactType + item.stId)
-  )
-  .tap(results => {
-    console.log('artifacts post-filtered results');
-    console.dir(results, {depth: 3});
-  });
+  .then(results => _.uniqBy(results, item => item.artifactType + item.stId));
 };
 
 const FORM_TYPE_PATH = ['$', 'id'];
@@ -172,14 +163,8 @@ const fillArtifactRefs = (changes, sampleIds, artifacts) => {
 
   return BPromise.join(mapSamples, mapArtifacts)
   .spread((smapper, amapper) => {
-    log.debug('sampleId mapper', smapper);
-    log.debug('artifacts mapper', amapper);
     return BPromise.map(changes, change => {
-      log.debug('Filling refs for change', change);
-      log.debug(`Pulling sampleId for stId=${change.stId}`);
       const sampleIdRef = smapper[change.stId];
-      log.debug('Matched sampleId', sampleIdRef);
-      log.debug('Artifacts for sampleId', amapper[sampleIdRef.uuid]);
       const artifactRef = amapper[sampleIdRef.uuid][change.artifactType];
       return Object.assign({},
         // Change objects do include stId, labId, and artifactType values
