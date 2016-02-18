@@ -14,7 +14,7 @@ const makeImmutable = (obj, ImmutableRecord) => {
       key => [key, new ImmutableRecord(obj[key])]
     ));
   }
-  return null;
+  return ImmutableMap({});
 };
 
 const keyReduce = metadata => {

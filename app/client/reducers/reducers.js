@@ -68,7 +68,7 @@ const changesById = (state=ImmutableMap(), action) => {
   }
 };
 
-const totalChanges = (state=null, action) => {
+const changesTotal = (state=null, action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.count;
@@ -143,7 +143,7 @@ export default combineReducers({
   samplesById,
   changeIds,
   changesById,
-  totalChanges,
+  changesTotal,
   artifactIds,
   artifactsById,
   labTestIds,
