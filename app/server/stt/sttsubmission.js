@@ -7,14 +7,6 @@ const sttclient = require('app/server/stt/sttclient.js');
 
 const client = sttclient({db: storage.db, models: storage.models});
 
-// TODO: remove
-// const DEBUG = (message, value) => {
-//   if (process.env.NODE_ENV === 'test') {
-//     console.log(`DEBUG ${message}`);
-//     console.dir(value, {depth: 10});
-//   }
-// };
-
 /**
  * [description]
  * @param  {Object} synced [description]
