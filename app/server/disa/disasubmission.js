@@ -27,8 +27,7 @@ const handleSubmission = incoming => {
   .then(sttsubmission.labChanges);
 
   return BPromise.props({sampleIds, metadata, labTests, changes})
-  .tap(log.info)
-  .catch(log.error);
+  .tap(log.info);
 };
 
 module.exports = {

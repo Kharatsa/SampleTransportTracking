@@ -23,8 +23,7 @@ const handleSubmission = incoming => {
   const changes = artifactsWithRefs.then(sttsubmission.scanChanges);
 
   return BPromise.props({sampleIds, artifacts, changes})
-  .tap(log.info)
-  .catch(log.error);
+  .tap(log.info);
 };
 
 module.exports = {handleSubmission};
