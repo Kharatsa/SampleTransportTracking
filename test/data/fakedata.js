@@ -59,7 +59,8 @@ const makeUUID = () => {
   s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
   s[8] = s[13] = s[18] = s[23] = '-';
 
-  return s.join('');
+  return 'FAKE' + s.slice(4, s.length).join('');
+  // return s.join('');
 };
 
 const getRandomInt = length => Math.floor(Math.random() * (length));
@@ -158,7 +159,7 @@ const makeMeta = (type, valueLength) => {
 
   return {
     type,
-    key: 'FAKE-' + makeRandomString('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4),
+    key: 'FAKE' + makeRandomString('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4),
     value,
     valueType: 'string'
   };
@@ -269,15 +270,21 @@ const load = () => {
   const fake = make();
   const noLog = {logging: false};
 
-  log.info('Loading fake data');
-
-  storage.db.sync()
-  .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
+  return storage.db.sync()
+  .then(() => log.info('Wiping data from development database'))
+  .then(() => storage.models.Changes.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+  .then(() => storage.models.Artifacts.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+  .then(() => storage.models.LabTests.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+  .then(() => storage.models.SampleIds.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+  .then(() => storage.models.Metadata.destroy({where: {key: {$like: 'FAKE%'}}}))
+  .then(() => log.info('Loading fake data'))
   .then(() => storage.models.Metadata.bulkCreate(fake.metadata, noLog))
+  .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
   .then(() => storage.models.Artifacts.bulkCreate(fake.artifacts, noLog))
   .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
   .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog))
-  .then(() => log.info('Finished loading fake data'));
+  .then(() => log.info('Finished loading fake data'))
+  .catch(log.error);
 };
 
 module.exports = {

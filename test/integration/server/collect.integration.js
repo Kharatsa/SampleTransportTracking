@@ -26,6 +26,7 @@ describe('ODK Collect Submission API', () => {
     .then(() => storage.db.sync())
     .then(() => storage.models.SampleIds.bulkCreate(sampleIds))
     .then(() => storage.models.Metadata.bulkCreate(metadata))
+    .catch(console.error)
     .then(() => done());
   });
 
@@ -37,7 +38,8 @@ describe('ODK Collect Submission API', () => {
     .type('form')
     .attach(
       'xml_submission_file',
-      `${path.join(__dirname, '..', '..', 'data', 'sdepart.xml')}`,
+      // `${path.join(__dirname, '..', '..', 'data', 'sdepart.xml')}`,
+      `${path.join(__dirname, '..', '..', 'data', 'sdepart2.xml')}`,
       'xml_submission_file.xml'
     )
     .toPromise()

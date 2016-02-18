@@ -1,0 +1,37 @@
+<?xml version='1.0' ?>
+<sdepart id="sdepart" version="20160212">
+  <start>2016-02-18T06:17:50.644+02</start>
+  <end>2016-02-18T06:18:54.745+02</end>
+  <deviceid>355451060940109</deviceid>
+  <simserial />
+  <person>per1</person>
+  <region>bb</region>
+  <facility>def</facility>
+  <srepeat>
+    <stid>4809505262</stid>
+    <stype>form</stype>
+  </srepeat>
+  <srepeat>
+    <stid>4809505262</stid>
+    <stype>blood</stype>
+    <condition>ok</condition>
+  </srepeat>
+  <srepeat>
+    <stid>016dbb1de</stid>
+    <stype>form</stype>
+  </srepeat>
+  <srepeat>
+    <stid>016dbb1de</stid>
+    <stype>dbs</stype>
+    <condition>overflow</condition>
+  </srepeat>
+  <srepeat>
+    <stid>016dbb1de</stid>
+    <stype>dbs</stype>
+    <condition>ok</condition>
+  </srepeat>
+  <store_gps>40.7636741 -73.9613551 0.0 95.047</store_gps>
+  <meta>
+    <instanceID>uuid:c7c69c68-fc5c-4f15-b411-ebe8b48c985a</instanceID>
+  </meta>
+</sdepart>

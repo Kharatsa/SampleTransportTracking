@@ -9,9 +9,9 @@ const log = require('app/server/util/logapp.js');
 const string = require('app/common/string.js');
 const sttmiddleware = require('app/server/sttmiddleware.js');
 const aggregate = require('app/server/odk/aggregateapi.js');
-const collecttransform = require('app/server/odk/collect/collecttransform.js');
-const collectsubmission = require('app/server/odk/collect/' +
-                                  'collectsubmission.js');
+const transform = require('app/server/odk/collect/collecttransform.js');
+const aggregatesubmission = require('app/server/odk/aggregatesubmission.js');
+const collect = require('app/server/odk/collect/collectsubmission.js');
 
 let passport = null;
 let authenticate = null;
@@ -172,7 +172,6 @@ const parseXMLPart = (form, part) => {
     return;
   }
 
-  // let value = '';
   let parts = [];
   part.on('data', buff => parts.push(buff.toString('utf-8')));
   part.on('end', () => form.emit('field', part.name, parts.join('')));
@@ -207,35 +206,21 @@ router.post('/submission',
     let submission = req.form.fields[SUBMISSION_PART_NAME];
     log.info(`ODK submission ${SUBMISSION_PART_NAME}:\n${submission}`);
 
-    const parseXML = collecttransform.collectSubmission(submission);
+    const parseXML = transform.collectSubmission(submission);
     const parseEntities = parseXML.then(parsed =>
       BPromise.props({
-        sampleIds: collecttransform.sampleIds(parsed),
+        sampleIds: transform.sampleIds(parsed),
         // statusDate: disatransform.labStatusDate(parsed),
-        metadata: collecttransform.metadata(parsed),
-        artifacts: collecttransform.artifacts(parsed),
-        changes: collecttransform.changes(parsed)
+        // metadata: transform.metadata(parsed),
+        artifacts: transform.artifacts(parsed),
+        changes: transform.changes(parsed)
       })
-    );
+    )
+    .tap(log.info);
 
-    const saveSubmission = parseEntities.then(
-      collectsubmission.handleSubmission
-    );
+    const saveSubmission = parseEntities.then(collect.handleSubmission);
 
-    const backup = aggregate.makeSubmission(submission)
-    .spread((odkRes, body) => {
-      const resMessage = `${odkRes.statusCode} - ${odkRes.statusMessage}`;
-      if (odkRes.statusCode === 201 || odkRes.statusCode === 202) {
-        log.info(`Successful ODK lab status submission: ${resMessage}`);
-      } else {
-        log.error(`Error with ODK lab status submission: ${resMessage}`);
-        log.error(body);
-      }
-      return body;
-    })
-    .catch(err => {
-      log.error(`Aggregate submission failed - ${err.message}\n${err.stack}`);
-    });
+    const backup = aggregatesubmission.submit(submission);
 
     return BPromise.join(saveSubmission, backup, (results, odkBody) => {
       log.debug(`Finished saving lab submission: ${results}`);

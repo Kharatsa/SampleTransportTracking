@@ -7,7 +7,7 @@ BPromise.promisifyAll(xml2js);
 const log = require('app/server/util/logapp.js');
 const dates = require('app/server/util/dates.js');
 const datamerge = require('app/server/util/datamerge.js');
-const datatransform = require('app/server/util/datatransform.js');
+// const datatransform = require('app/server/util/datatransform.js');
 
 const metaField = {
   START_DATE: 'start',
@@ -33,11 +33,13 @@ const ARTIFACT = 'stype';
 const STATUS = 'condition';
 
 const formElement = BPromise.method(parsed => {
+  log.debug('Pulling collect for element for parsed form', parsed);
   const form = _.values(formType).filter(type => !!parsed[type]);
   if (!(form || form[0])) {
     throw new Error(`Cannot identify form type among top elements:
                     ${Object.keys(parsed)}`);
   }
+  log.debug('form from parsed', form);
   return form[0];
 });
 
@@ -68,46 +70,36 @@ const REGION_PATH = [metaField.REGION, '0'];
 const STATUS_REPEAT_PATH = [STATUS, '0'];
 const ARTIFACT_REPEAT_PATH = [ARTIFACT, '0'];
 
-const metadata = form => {
-  const repeatEl = repeats(form);
-
-  const facilityMeta = datatransform.oneMeta(
-    form, 'facility', FACILITY_PATH, null
-  );
-  const personMeta = datatransform.oneMeta(form, 'person', PERSON_PATH, null);
-  const regionMeta = datatransform.oneMeta(form, 'region', REGION_PATH, null);
-  const statusMeta = repeatEl.map(repeat =>
-    datatransform.oneMeta(repeat, 'status', STATUS_REPEAT_PATH, null)
-  );
-  const artifactMeta = repeatEl.map(repeat =>
-    datatransform.oneMeta(repeat, 'artifact', ARTIFACT_REPEAT_PATH, null)
-  );
-
-  return BPromise.join(
-    facilityMeta, personMeta, regionMeta, statusMeta, artifactMeta
-  )
-  .then(_.flatten)
-  .filter(item => item !== null)
-  .then(results => _.uniqBy(results, meta => meta.key));
-};
-
 const upperCaseKey = key => key ? key.toUpperCase() : key;
 
-const artifacts = form => (
-  repeats(form)
+const artifacts = form => {
+  return repeats(form)
+  .tap(form => {
+    log.debug('collecttransform artifacts parser form', form);
+  })
   .map(repeat => ({
     stId: _.get(repeat, ST_ID_REPEAT_PATH) || null,
     labId: _.get(repeat, LAB_ID_REPEAT_PATH) || null,
     artifactType: upperCaseKey(_.get(repeat, ARTIFACT_REPEAT_PATH))
   }))
-  .then(results => _.uniqBy(results, artifact => artifact.artifactType))
-);
+  .tap(results => {
+    console.log('artifacts pre-filtered results');
+    console.dir(results, {depth: 3});
+  })
+  .then(results => _.uniqBy(results, item => item.artifactType + item.stId)
+  )
+  .tap(results => {
+    console.log('artifacts post-filtered results');
+    console.dir(results, {depth: 3});
+  });
+};
 
 const FORM_TYPE_PATH = ['$', 'id'];
 const END_DATE_PATH = ['end', 0];
 const DEFAULT_STATUS = 'ok';
 
 const changes = form => {
+  log.debug('form for changes', form);
   const commonProps = BPromise.props({
     statusDate: dates.parseXMLDate(_.get(form, END_DATE_PATH)),
     stage: _.get(form, FORM_TYPE_PATH),
@@ -180,8 +172,14 @@ const fillArtifactRefs = (changes, sampleIds, artifacts) => {
 
   return BPromise.join(mapSamples, mapArtifacts)
   .spread((smapper, amapper) => {
+    log.debug('sampleId mapper', smapper);
+    log.debug('artifacts mapper', amapper);
     return BPromise.map(changes, change => {
+      log.debug('Filling refs for change', change);
+      log.debug(`Pulling sampleId for stId=${change.stId}`);
       const sampleIdRef = smapper[change.stId];
+      log.debug('Matched sampleId', sampleIdRef);
+      log.debug('Artifacts for sampleId', amapper[sampleIdRef.uuid]);
       const artifactRef = amapper[sampleIdRef.uuid][change.artifactType];
       return Object.assign({},
         // Change objects do include stId, labId, and artifactType values
@@ -197,7 +195,6 @@ const fillArtifactRefs = (changes, sampleIds, artifacts) => {
 module.exports = {
   collectSubmission,
   sampleIds,
-  metadata,
   artifacts,
   changes,
   fillSampleIdRefs,

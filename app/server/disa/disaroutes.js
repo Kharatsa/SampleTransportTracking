@@ -8,6 +8,7 @@ const config = require('app/config');
 const log = require('app/server/util/logapp.js');
 const disatransform = require('app/server/disa/disatransform.js');
 const disasubmission = require('app/server/disa/disasubmission.js');
+const aggregatesubmission = require('app/server/odk/aggregatesubmission.js');
 const aggregate = require('app/server/odk/aggregateapi.js');
 
 let passport = null;
@@ -69,19 +70,8 @@ router.post('/status',
       )
     )
     .tap(xform => log.info('Built lab status xform', xform))
-    .then(aggregate.makeSubmission)
-    .spread((odkRes, body) => {
-      const resMessage = `${odkRes.statusCode} - ${odkRes.statusMessage}`;
-      if (odkRes.statusCode === 201 || odkRes.statusCode === 202) {
-        log.info(`Successful ODK lab status submission: ${resMessage}`);
-      } else {
-        log.error(`Error with ODK lab status submission: ${resMessage}`);
-      }
-      return body;
-    })
-    .catch(err => {
-      log.error(`Aggregate submission failed - ${err.message}\n${err.stack}`);
-    });
+    .then(aggregatesubmission.submit)
+    .then(aggregate.makeSubmission);
 
     return BPromise.join(saveSubmission, backup, (results, odkBody) => {
       log.debug(`Finished saving lab submission: ${results}`);
