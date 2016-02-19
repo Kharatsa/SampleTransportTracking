@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rarrive id="rarrive" version="20160212">
+   <start>2016-02-13T15:37:48.049+02</start>
+   <end>2016-02-13T15:38:49.821+02</end>
+   <deviceid>353350060356682</deviceid>
+   <simserial>89266010700059593792</simserial>
+   <person>per1</person>
+   <region>bb</region>
+   <facility>ghi</facility>
+   <srepeat>
+      <labid>b58ea568d</labid>
+   </srepeat>
+   <srepeat>
+      <labid>03d3b6db8</labid>
+   </srepeat>
+   <srepeat>
+      <labid>896e9b32f</labid>
+   </srepeat>
+   <store_gps />
+   <meta>
+      <instanceID>uuid:3fd3dc4d-cd87-48cb-b1c0-b9f37ef0b321</instanceID>
+   </meta>
+</rarrive>

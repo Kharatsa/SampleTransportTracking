@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdepart id="rdepart" version="20160212">
+   <start>2016-02-15T09:12:49.287+02</start>
+   <end>2016-02-15T09:16:17.122+02</end>
+   <deviceid>353350060356682</deviceid>
+   <simserial>89266010700059593792</simserial>
+   <person>per2</person>
+   <region>bb</region>
+   <facility>abc</facility>
+   <srepeat>
+      <labid>56cab8ad7</labid>
+   </srepeat>
+   <srepeat>
+      <labid>23739713e</labid>
+   </srepeat>
+   <store_gps>-29.34641578 27.5264964 1618.0 10.0</store_gps>
+   <meta>
+      <instanceID>uuid:60586b0d-535b-4855-852c-0aef4e333d26</instanceID>
+   </meta>
+</rdepart>

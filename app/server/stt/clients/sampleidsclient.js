@@ -34,12 +34,11 @@ SampleIdsClient.prototype.latest = function(options) {
 };
 
 SampleIdsClient.prototype.eitherIds = function(options) {
-  return sttquery.sampleIds.eitherIds(options.data)
-  .then(where => this.Model.findAll({
-    where,
-    offset: options.offset,
-    limit: options.limit || this.limit,
-    include: [
+  let include;
+
+  // TODO: maybe make this "includes" option common to all stt clients sttOptions
+  if (typeof options.includes === 'undefined' || options.includes === true) {
+    include = [
       {
         model: this.includes.Artifacts,
         include: [{model: this.includes.Changes}]
@@ -47,7 +46,15 @@ SampleIdsClient.prototype.eitherIds = function(options) {
         model: this.includes.LabTests,
         include: [{model: this.includes.Changes}]
       }
-    ]
+    ];
+  }
+
+  return sttquery.sampleIds.eitherIds(options.data)
+  .then(where => this.Model.findAll({
+    where,
+    offset: options.offset,
+    limit: options.limit || this.limit,
+    include
   }));
 };
 

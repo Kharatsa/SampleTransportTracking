@@ -90,14 +90,8 @@ const pairReduced = (sources, localReduced, propNames) => {
  */
 const pairByProps = (sources, targets, propNames) => {
   if (targets === null) {
-    console.log(`null pairByProps targets`);
-    console.dir(targets, {depth: 10});
     BPromise.resolve({incoming: sources, targets: []});
   } else if (!(Array.isArray(sources) && Array.isArray(targets))) {
-    console.log('sources');
-    console.dir(sources, {depth: 10});
-    console.log('targets');
-    console.dir(targets, {depth: 10});
     return BPromise.reject(new Error('Cannot merge Array with non-Array'));
   }
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rarrive id="rarrive" version="20160212">
+   <start>2016-02-16T10:55:36.418+02</start>
+   <end>2016-02-16T10:56:16.700+02</end>
+   <deviceid>353350060356682</deviceid>
+   <simserial>89266010700059593792</simserial>
+   <person>per1</person>
+   <region>bb</region>
+   <facility>def</facility>
+   <srepeat>
+      <labid>757d9f6f6</labid>
+   </srepeat>
+   <store_gps />
+   <meta>
+      <instanceID>uuid:0db6c029-204c-418a-8eb6-976c7ec2add2</instanceID>
+   </meta>
+</rarrive>

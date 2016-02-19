@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdepart id="rdepart" version="20160212">
+   <start>2016-02-15T09:18:27.907+02</start>
+   <end>2016-02-15T09:20:00.501+02</end>
+   <deviceid>353350060356682</deviceid>
+   <simserial>89266010700059593792</simserial>
+   <person>per2</person>
+   <region>br</region>
+   <facility>abc</facility>
+   <srepeat>
+      <labid>LAB0000002</labid>
+   </srepeat>
+   <store_gps />
+   <meta>
+      <instanceID>uuid:4a89d18f-acfa-417b-843c-7680e415aa8e</instanceID>
+   </meta>
+</rdepart>

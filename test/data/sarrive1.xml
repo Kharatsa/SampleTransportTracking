@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sarrive id="sarrive" version="20160212">
+   <start>2016-02-13T14:07:51.000Z</start>
+   <end>2016-02-16T11:52:15.000Z</end>
+   <deviceid>353350060319789</deviceid>
+   <simserial>89266010700059593800</simserial>
+   <person>per1</person>
+   <region>BR</region>
+   <facility>ghi</facility>
+   <srepeat>
+      <stid>01898426</stid>
+      <stype>blood</stype>
+      <condition>ok</condition>
+   </srepeat>
+   <srepeat>
+      <stid>b58ea568d</stid>
+      <stype>blood</stype>
+      <condition>ok</condition>
+   </srepeat>
+   <store_gps />
+   <meta>
+      <instanceID>uuid:601a495c-84f3-4cc6-b569-129659ea9417</instanceID>
+   </meta>
+</sarrive>

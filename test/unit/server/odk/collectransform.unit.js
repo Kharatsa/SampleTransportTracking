@@ -14,6 +14,10 @@ describe('ODK Collect Tranforms', () => {
     `${path.join(__dirname, '..', '..', '..', 'data', 'sdepart2.xml')}`
   );
 
+  const resultsXML = fs.readFileSync(
+    `${path.join(__dirname, '..', '..', '..', 'data', 'rdepart2.xml')}`
+  );
+
   const expectedSampleIds1 = [
     {stId: '4809505262', labId: null},
     {stId: '016dbb1de', labId: null}
@@ -25,24 +29,6 @@ describe('ODK Collect Tranforms', () => {
       .then(transform.sampleIds)
     ).to.eventually.deep.equal(expectedSampleIds1)
   );
-
-  // const expectedMeta1 = [
-  //   {type: 'facility', key: 'GHI', value: null, valueType: 'string'},
-  //   {type: 'person', key: 'PER1', value: null, valueType: 'string'},
-  //   {type: 'region', key: 'BR', value: null, valueType: 'string'},
-  //   {type: 'status', key: 'OK', value: null, valueType: 'string'},
-  //   {type: 'status', key: 'BRK', value: null, valueType: 'string'},
-  //   {type: 'artifact', key: 'FORM', value: null, valueType: 'string'},
-  //   {type: 'artifact', key: 'BLOOD', value: null, valueType: 'string'},
-  //   {type: 'artifact', key: 'DBS', value: null, valueType: 'string'}
-  // ];
-
-  // it('should parse sample depart metadata codes', () =>
-  //   expect(
-  //     transform.collectSubmission(departXML)
-  //     .then(transform.metadata)
-  //   ).to.eventually.deep.equal(expectedMeta1)
-  // );
 
   const expectedArtifacts1 = [
     {stId: '4809505262', labId: null, artifactType: 'FORM'},
@@ -57,6 +43,19 @@ describe('ODK Collect Tranforms', () => {
       .then(transform.artifacts)
       .tap(result => console.log('transform.artifacts parsed', result))
     ).to.eventually.deep.equal(expectedArtifacts1)
+  );
+
+  const expectedArtifacts2 = [
+    {stId: null, labId: '56cab8ad7', artifactType: 'FORM'},
+    {stId: null, labId: '23739713e', artifactType: 'FORM'}
+  ];
+
+  it('should parse sample depart artifacts', () =>
+    expect(
+      transform.collectSubmission(resultsXML)
+      .then(transform.artifacts)
+      .tap(result => console.log('transform.artifacts parsed', result))
+    ).to.eventually.deep.equal(expectedArtifacts2)
   );
 
   const expectedChanges1 = [

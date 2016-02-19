@@ -230,7 +230,6 @@ router.post('/submission',
     })
     .catch(err => {
       log.error(err);
-      console.error('aggregate submission error', err.message, err.stack);
       err.status = 500;
       next(err);
     });

@@ -41,9 +41,17 @@ const updateAndInsert = (merged, modelName, updatePKs) => {
  * @return {Promise.<Object>}     [description]
  */
 const sampleIds = incoming => {
-  const merge = client.sampleIds.byStIds({
-    data: incoming, omitDateDBCols: true
-  })
+  const stIds = BPromise.map(incoming, item => item.stId);
+  const labIds = BPromise.map(incoming, item => item.labId);
+  const combinedIds = BPromise.join(stIds, labIds, (stId, labId) =>
+    [].concat(stId, labId).filter(id => id !== null)
+  );
+
+  // throw error when no local record is retrieved and stId is null
+
+  const merge = combinedIds.then(ids => client.sampleIds.eitherIds({
+    data: ids, omitDateDBCols: true, includes: false
+  }))
   .then(local => datamerge.pairByProps(incoming, local, ['stId']));
 
   return merge.then(merged => updateAndInsert(merged, 'SampleIds', ['uuid']));

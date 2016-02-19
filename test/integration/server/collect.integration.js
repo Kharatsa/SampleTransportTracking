@@ -20,6 +20,7 @@ app.use('/odk', AggregateRoutes);
 describe('ODK Collect Submission API', () => {
   const sampleIds = require('../../data/sampleids.test.json');
   const metadata = require('../../data/metadata.test.json');
+  const dataPath = path.join(__dirname, '..', '..', 'data');
 
   before(done => {
     return storage.db.dropAllSchemas()
@@ -38,8 +39,55 @@ describe('ODK Collect Submission API', () => {
     .type('form')
     .attach(
       'xml_submission_file',
-      // `${path.join(__dirname, '..', '..', 'data', 'sdepart.xml')}`,
-      `${path.join(__dirname, '..', '..', 'data', 'sdepart2.xml')}`,
+      `${path.join(dataPath, 'sdepart2.xml')}`,
+      'xml_submission_file.xml'
+    )
+    .toPromise()
+    .tap(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.statusCode).to.equal(201))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  it('should accept new odk collect sarrive submissions', done => {
+    request(app)
+    .post('/odk/submission')
+    .type('form')
+    .attach(
+      'xml_submission_file',
+      `${path.join(dataPath, 'sarrive1.xml')}`,
+      'xml_submission_file.xml'
+    )
+    .toPromise()
+    .tap(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.statusCode).to.equal(201))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  it('should accept new odk collect rdepart submissions', done => {
+    request(app)
+    .post('/odk/submission')
+    .type('form')
+    .attach(
+      'xml_submission_file',
+      `${path.join(dataPath, 'rdepart2.xml')}`,
+      'xml_submission_file.xml'
+    )
+    .toPromise()
+    .tap(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.statusCode).to.equal(201))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  it('should accept new odk collect rarrive submissions', done => {
+    request(app)
+    .post('/odk/submission')
+    .type('form')
+    .attach(
+      'xml_submission_file',
+      `${path.join(dataPath, 'rarrive1.xml')}`,
       'xml_submission_file.xml'
     )
     .toPromise()

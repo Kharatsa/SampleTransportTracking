@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdepart id="sdepart" version="20160212">
+   <start>2016-02-13T16:34:13.915+02</start>
+   <end>2016-02-13T16:37:12.159+02</end>
+   <deviceid>353350060356682</deviceid>
+   <simserial>89266010700059593792</simserial>
+   <person>per1</person>
+   <region>bb</region>
+   <facility>ghi</facility>
+   <srepeat>
+      <stid>e986aeb3b</stid>
+      <stype>blood</stype>
+      <condition>ok</condition>
+   </srepeat>
+   <srepeat>
+      <stid>bd4fbf968</stid>
+      <stype>blood</stype>
+      <condition>ok</condition>
+   </srepeat>
+   <store_gps>-29.31682681 27.47767774 1502.0 16.0</store_gps>
+   <meta>
+      <instanceID>uuid:976a4a28-50db-4703-901d-f25015a60791</instanceID>
+   </meta>
+</sdepart>
