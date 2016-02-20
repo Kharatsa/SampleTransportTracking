@@ -135,9 +135,7 @@ const scanChanges = incoming => {
     data: incoming, omitDateDBCols: true
   })
   .tap(local => log.debug('scanChanges local', local))
-  .then(local =>
-    datamerge.pairByProps(incoming, local, ['artifact', 'status'])
-  )
+  .then(local => datamerge.pairByProps(incoming, local, ['artifact', 'status']))
   .tap(merged => log.debug('scanChanges merged', merged));
 
   return merge.then(merged => updateAndInsert(merged, 'Changes', ['uuid']));

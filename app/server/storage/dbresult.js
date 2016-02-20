@@ -47,12 +47,9 @@ const omitDBCols = result =>  {
 };
 
 /**
- * Largely mimics the Sequelize Instance equals method, except this function
- * ignores the database-specific `id` column. This function compares a
- * Sequelize instance (fetched from the source database) to a published Object
- * of the same type.
- *
- * http://docs.sequelizejs.com/en/latest/api/instance/#equalsother-boolean
+ * Checks 2 objects for equality. Objects are equal if the target shares all
+ * the same properties with the source, and the values for all those properties
+ * are also equal.
  *
  * @param  {Sequelize.Model} source
  * @param  {Object} target A plain Object

@@ -38,7 +38,6 @@ const FORM_TYPE_PATH = ['$', 'id'];
 const END_DATE_PATH = ['end', 0];
 const FACILITY_PATH = [metaField.FACILITY, 0];
 const PERSON_PATH = [metaField.PERSON, 0];
-const REGION_PATH = [metaField.REGION, 0];
 
 // Deep object paths from the repeat element (i.e., REPEAT) to target text
 const ST_ID_REPEAT_PATH = [ST_ID, 0];
@@ -47,8 +46,8 @@ const STATUS_REPEAT_PATH = [STATUS, 0];
 const ARTIFACT_REPEAT_PATH = [ARTIFACT, 0];
 
 // Other ODK Collect XForms constants
-const RESULT_ARTIFACT_TYPE = 'form';
-const DEFAULT_STATUS = 'ok';
+const RESULT_ARTIFACT_TYPE = 'FORM';
+const DEFAULT_STATUS = 'OK';
 
 const formElement = BPromise.method(parsed => {
   const form = _.values(formType).filter(type => {
@@ -94,9 +93,9 @@ const getArtifact = (repeat, form) => {
   // Results forms do not include artifacts (e.g., blood vials). In the
   // absense of these elements, a default artifact type is substituted.
   if (form === formType.RESULTS_DEPATURE || form === formType.RESULTS_ARRIVAL) {
-    return RESULT_ARTIFACT_TYPE;
+    return upperCaseKey(RESULT_ARTIFACT_TYPE);
   }
-  return artifact;
+  return upperCaseKey(artifact);
 };
 
 const upperCaseKey = key => key ? key.toUpperCase() : key;
@@ -117,13 +116,11 @@ const artifacts = form => {
 };
 
 const getChangeStatus = repeat => {
-  const status = upperCaseKey(
-    _.get(repeat, STATUS_REPEAT_PATH, DEFAULT_STATUS
-  ));
+  const status = _.get(repeat, STATUS_REPEAT_PATH, DEFAULT_STATUS);
   if (!(status && status.length)) {
-    return DEFAULT_STATUS;
+    return upperCaseKey(DEFAULT_STATUS);
   }
-  return status;
+  return upperCaseKey(status);
 };
 
 const changes = form => {
@@ -132,7 +129,6 @@ const changes = form => {
     statusDate: dates.parseXMLDate(_.get(form, END_DATE_PATH)),
     stage: _.get(form, FORM_TYPE_PATH),
     person: upperCaseKey(_.get(form, PERSON_PATH)),
-    region: upperCaseKey(_.get(form, REGION_PATH)),
     facility: upperCaseKey(_.get(form, FACILITY_PATH))
   });
 
@@ -143,7 +139,6 @@ const changes = form => {
       statusDate: common.statusDate,
       stage: common.stage,
       artifactType: upperCaseKey(getArtifact(repeat, common.type)),
-      region: common.region,
       facility: common.facility,
       person: common.person,
       status: getChangeStatus(repeat)
