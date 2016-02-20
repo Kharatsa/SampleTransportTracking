@@ -65,10 +65,11 @@ const collectSubmission = xml => {
   log.debug('Transorming Lab Status XML', xml);
   const parse = xml2js.parseStringAsync(xml);
   const form = parse.then(formElement);
-  return BPromise.join(parse, form, (parsed, formResult) => parsed[formResult]);
+  return BPromise.join(parse, form, (parsed, formResult) => parsed[formResult])
+  .tap(parsed => log.debug('raw parsed submission', parsed));
 };
 
-const repeats = form => BPromise.resolve(_.get(form, [REPEAT]));
+const repeats = form => BPromise.resolve(_.get(form, [REPEAT], []));
 
 const sampleIds = form => {
   return repeats(form)
@@ -76,6 +77,7 @@ const sampleIds = form => {
     stId: _.get(repeat, ST_ID_REPEAT_PATH) || null,
     labId: _.get(repeat, LAB_ID_REPEAT_PATH) || null
   }))
+  .filter(results => results.stId || results.labId)
   .then(results => _.uniqBy(results, ids => ids.stId + ids.labId));
 };
 
@@ -93,8 +95,6 @@ const getArtifact = (repeat, form) => {
   // absense of these elements, a default artifact type is substituted.
   if (form === formType.RESULTS_DEPATURE || form === formType.RESULTS_ARRIVAL) {
     return RESULT_ARTIFACT_TYPE;
-  } else if (!artifact) {
-    throw new Error(`Missing artifact for ${form} submission`);
   }
   return artifact;
 };
@@ -110,9 +110,20 @@ const artifacts = form => {
     labId: _.get(repeat, LAB_ID_REPEAT_PATH) || null,
     artifactType: upperCaseKey(getArtifact(repeat, type))
   }))
+  .filter(results => results.stId || results.labId)
   .then(results => _.uniqBy(results,
     item => item.artifactType + item.stId + item.labId
   ));
+};
+
+const getChangeStatus = repeat => {
+  const status = upperCaseKey(
+    _.get(repeat, STATUS_REPEAT_PATH, DEFAULT_STATUS
+  ));
+  if (!(status && status.length)) {
+    return DEFAULT_STATUS;
+  }
+  return status;
 };
 
 const changes = form => {
@@ -132,12 +143,12 @@ const changes = form => {
       statusDate: common.statusDate,
       stage: common.stage,
       artifactType: upperCaseKey(getArtifact(repeat, common.type)),
-      // artifactType: upperCaseKey(_.get(repeat, ARTIFACT_REPEAT_PATH)),
       region: common.region,
       facility: common.facility,
       person: common.person,
-      status: upperCaseKey(_.get(repeat, STATUS_REPEAT_PATH, DEFAULT_STATUS))
+      status: getChangeStatus(repeat)
     }))
+    .filter(results => results.stId || results.labId)
   );
 };
 
@@ -163,9 +174,14 @@ const fillSampleIdRefs = BPromise.method((artifacts, sampleIds) => {
 
   return BPromise.join(mapStIds, mapLabIds)
   .spread((stIdMapper, labIdMapper) => {
+
     return BPromise.map(artifacts, artifact => {
       const id = artifact.stId || artifact.labId;
       const sampleId = stIdMapper[id] || labIdMapper[id];
+      if (!sampleId) {
+        throw new Error(`Failed to pair artifact ${JSON.stringify(artifact)} to
+                        sampleIds ${JSON.stringify(sampleIds)}`);
+      }
       return Object.assign({},
         _.omit(artifact, ['stId', 'labId']),
         {sampleId: sampleId.uuid}
@@ -196,10 +212,15 @@ const fillArtifactRefs = (changes, sampleIds, artifacts) => {
 
   return BPromise.join(mapStIds, mapLabIds, mapArtifacts)
   .spread((stIdMapper, labIdMapper, artifactMapper) => {
+
     return BPromise.map(changes, change => {
       const id = change.stId || change.labId;
       const sampleId = stIdMapper[id] || labIdMapper[id];
       const artifactsByType = artifactMapper[sampleId.uuid];
+      if (!artifactsByType) {
+        throw new Error(`Failed to pair change ${JSON.stringify(change)} to
+                        artifacts ${JSON.stringify(artifacts)}`);
+      }
       const artifact = artifactsByType[change.artifactType];
       return Object.assign({},
         // Change objects should not include stId, labId, and artifactType

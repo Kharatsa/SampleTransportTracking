@@ -2,7 +2,7 @@
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
 
-const LAB_ID_REGEXP = new RegExp(/([a-zA-Z]{3})([0-9]{7})/);
+// const LAB_ID_REGEXP = new RegExp(/([a-zA-Z]{3})([0-9]{7})/);
 
 const modelName = 'SampleIds';
 
@@ -48,7 +48,8 @@ const sampleids = modelwrapper({
         validate: {
           oneIdRequired: function() {
             if (!(this.stId || this.labId)) {
-              throw new Error(`Samples require one of stId or labId`);
+              throw new Error(`Samples require one of stId or labId
+                              ${JSON.stringify(this.dataValues)}`);
             }
           }
         }

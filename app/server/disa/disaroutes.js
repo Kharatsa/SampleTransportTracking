@@ -74,7 +74,7 @@ router.post('/status',
     .then(aggregate.makeSubmission);
 
     return BPromise.join(saveSubmission, backup, (results, odkBody) => {
-      log.debug(`Finished saving lab submission: ${results}`);
+      log.info('Finished saving lab submission & ODK backup');
       log.debug(`ODK Aggregate submission response: ${odkBody}`);
       // TODO: maybe send a meaningful message
       res.status(201).send(SUBMISSION_SUCCESS);

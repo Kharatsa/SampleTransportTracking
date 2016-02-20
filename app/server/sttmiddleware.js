@@ -45,7 +45,7 @@ function handleDevelopmentErrors(err, req, res, next) {
   }
   log.error('Request Error', err, err.stack);
   res.status(err.status || 500);
-  res.send(err.message + '\n' + err.stack);
+  next(err);
 }
 
 const handleErrors = (

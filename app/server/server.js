@@ -48,19 +48,10 @@ app.get('/*', (req, res) => {
   res.sendFile(`${config.server.PUBLIC_PATH}/index.html`);
 });
 
-// app.use(requestLog.errorLogger);
-
-// catch 404 and forward to error handler
-// app.use((req, res, next) => {
-//   var err = new Error('Not Found ' + req.originalUrl);
-//   err.status = 404;
-//   next(err);
-// });
-
-app.use(sttmiddleware.handleErrors);
-
 prepareserver()
 .then(() => log.info('Finished server preload'));
+
+app.use(sttmiddleware.handleErrors);
 
 app.listen(config.server.LISTEN_PORT, config.server.LISTEN_HOST, () =>
   log.info('Listening at ' + config.server.LISTEN_HOST +

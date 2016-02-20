@@ -49,6 +49,22 @@ describe('ODK Collect Submission API', () => {
     .catch(err => done(err));
   });
 
+  it('should accept new odk collect sdepart submissions (2)', done => {
+    request(app)
+    .post('/odk/submission')
+    .type('form')
+    .attach(
+      'xml_submission_file',
+      `${path.join(dataPath, 'sdepart4.xml')}`,
+      'xml_submission_file.xml'
+    )
+    .toPromise()
+    .tap(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.statusCode).to.equal(201))
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
   it('should accept new odk collect sarrive submissions', done => {
     request(app)
     .post('/odk/submission')
