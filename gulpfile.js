@@ -11,9 +11,6 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const config = require('app/config');
 
-console.log(`gulpfile process.env.NODE_ENV=${process.env.NODE_ENV}`);
-
-// var IS_DEVELOPMENT = !config.server.isProduction();
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 // add custom browserify options here

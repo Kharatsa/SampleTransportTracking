@@ -10,6 +10,7 @@ const string = require('app/common/string.js');
 const datatransform = require('app/server/util/datatransform.js');
 const datamerge = require('app/server/util/datamerge.js');
 const firstText = datatransform.firstText;
+const uuid = require('app/server/util/uuid.js');
 
 // TODO: Define new typedefs for lab status objects
 
@@ -289,15 +290,18 @@ const LAB_STATUS_FORM_ID = 'labstatus';
  * @param {Array.<Object>} changes [description]
  * @return {string} labstatus form submission XML
  */
-const buildLabXForm = (sampleIds, statusDate, changes, facility) => {
+const buildLabXForm = (sampleIds, statusDate, changes, facility, xml) => {
   log.debug('Building lab status submission XML', changes);
+
+  const meta = uuid.uuidV5(xml)
+  .then(hash => ({instanceID: `uuid:${hash}`}));
 
   return BPromise.map(changes, change => ({
     labstatus: change.status,
     labtest: change.labTestType,
     labreject: change.labRejection
   }))
-  .then(repeats => ({
+  .then(repeats => BPromise.props({
     facility,
     stid: sampleIds.stId,
     labid: sampleIds.labId,
@@ -306,7 +310,8 @@ const buildLabXForm = (sampleIds, statusDate, changes, facility) => {
       statusDate.toISOString() :
       ''
     ),
-    srepeat: repeats
+    srepeat: repeats,
+    meta
   }))
   .then(result =>
     xmlBuilder.buildObject(formIdWrap(result, LAB_STATUS_FORM_ID))

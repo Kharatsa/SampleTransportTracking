@@ -13,6 +13,10 @@ const transform = require('app/server/odk/collect/collecttransform.js');
 const aggregatesubmission = require('app/server/odk/aggregatesubmission.js');
 const collect = require('app/server/odk/collect/collectsubmission.js');
 
+const ODK_MASK_URL = config.server.PUBLIC_URL + '/odk';
+log.info(`Backing up to ODK Aggregate -- ${config.odk.URL}`);
+log.info(`Masking ODK Aggregate backup server with url ${ODK_MASK_URL}`);
+
 let passport = null;
 let authenticate = null;
 if (process.env.NODE_ENV === 'production') {
@@ -49,9 +53,6 @@ const swapHostnames = (xml, fromHost, toHost) => {
     );
   });
 };
-
-const ODK_MASK_URL = config.server.PUBLIC_URL + '/odk';
-log.info(`Masking ODK Aggregate with url ${ODK_MASK_URL}`);
 
 router.all('*', aggregate.setOpenRosaHeaders, authenticate);
 

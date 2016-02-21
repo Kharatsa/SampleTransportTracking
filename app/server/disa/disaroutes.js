@@ -4,7 +4,6 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const BPromise = require('bluebird');
-const config = require('app/config');
 const log = require('app/server/util/logapp.js');
 const disatransform = require('app/server/disa/disatransform.js');
 const disasubmission = require('app/server/disa/disasubmission.js');
@@ -50,8 +49,9 @@ router.post('/status',
   requireBody,
   (req, res, next) => {
     log.info('Received Disa Labs status\n\t', req.body);
+    const xml = req.body;
 
-    const parseXML = disatransform.labStatus(req.body);
+    const parseXML = disatransform.labStatus(xml);
 
     const parseEntities = parseXML.then(parsed =>
       BPromise.props({
@@ -70,7 +70,8 @@ router.post('/status',
         entities.sampleIds,
         entities.statusDate,
         entities.changes,
-        entities.facility
+        entities.facility,
+        xml
       )
     )
     .tap(xform => log.info('Built lab status xform', xform))

@@ -22,7 +22,7 @@ describe('Disa Labs Status Tranforms', () => {
   );
 
   const expectedXML = fs.readFileSync(
-    `${path.join(__dirname, '..', '..', '..', 'data', 'disa-many-odk.xml')}`,
+    `${path.join(__dirname, '..', '..', '..', 'data', 'disa-odk.xml')}`,
     'utf-8'
   );
 
@@ -300,7 +300,8 @@ describe('Disa Labs Status Tranforms', () => {
         disatransform.sampleId(parsed),
         disatransform.labStatusDate(parsed),
         disatransform.labChanges(parsed),
-        disatransform.facility(parsed)
+        disatransform.facility(parsed),
+        manyUpdates
       ))
       .spread(disatransform.buildLabXForm)
     ).to.eventually.equal(expectedXML)

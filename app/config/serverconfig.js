@@ -2,7 +2,6 @@
 
 const path = require('path');
 
-console.log(`serverconfig process.env.NODE_ENV=${process.env.NODE_ENV}`);
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'development';
 }
