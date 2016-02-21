@@ -61,7 +61,6 @@ const formElement = BPromise.method(parsed => {
 });
 
 const collectSubmission = xml => {
-  log.debug('Transorming Lab Status XML', xml);
   const parse = xml2js.parseStringAsync(xml);
   const form = parse.then(formElement);
   return BPromise.join(parse, form, (parsed, formResult) => parsed[formResult])

@@ -55,6 +55,7 @@ router.post('/status',
 
     const parseEntities = parseXML.then(parsed =>
       BPromise.props({
+        facility: disatransform.facility(parsed),
         sampleIds: disatransform.sampleId(parsed),
         statusDate: disatransform.labStatusDate(parsed),
         metadata: disatransform.metadata(parsed),
@@ -66,7 +67,10 @@ router.post('/status',
 
     const backup = parseEntities.then(entities =>
       disatransform.buildLabXForm(
-        entities.sampleIds, entities.statusDate, entities.changes
+        entities.sampleIds,
+        entities.statusDate,
+        entities.changes,
+        entities.facility
       )
     )
     .tap(xform => log.info('Built lab status xform', xform))

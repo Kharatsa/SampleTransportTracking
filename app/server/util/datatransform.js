@@ -24,19 +24,19 @@ const firstText = (obj, propName) => {
  * @param  {Array.<string|number>} descPath   [description]
  * @return {Object}            [description]
  */
-function oneMeta(parentElem, metaType, keyPath, descPath) {
+const oneMeta = (parentElem, metaType, keyPath, descPath) => {
   const metaKey = _.get(parentElem, keyPath);
 
   if (metaKey) {
     return {
       type: metaType,
       key: metaKey.toUpperCase(),
-      value: descPath ? _.get(parentElem, descPath) : null,
+      value: descPath ? _.get(parentElem, descPath, '').trim() : null,
       valueType: 'string'
     };
   }
   return null;
-}
+};
 
 module.exports = {
   firstText,

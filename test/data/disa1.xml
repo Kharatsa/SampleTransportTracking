@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-16"?>
+<LabStatus xmlns="http://kharatsa.com/schemas/labstatus.xsd">
+    <STID>ZXCBZXCB</STID>
+    <LabID>LCC0231368</LabID>
+    <StatusTimestamp>2016-02-19T10:43:14</StatusTimestamp>
+    <LabPrefix>
+        <LabPrefixCode>LCC</LabPrefixCode>
+        <Description>Queen Elizabeth II Hospital</Description>
+    </LabPrefix>
+    <SampleTest>
+        <Status>
+            <StatusCode>REQ</StatusCode>
+            <Description>Requested</Description>
+        </Status>
+        <Test>
+            <TestCode>DIFF</TestCode>
+            <Description>Differential </Description>
+        </Test>
+    </SampleTest>
+    <SampleTest>
+        <Status>
+            <StatusCode>REQ</StatusCode>
+            <Description>Requested</Description>
+        </Status>
+        <Test>
+            <TestCode>LFT</TestCode>
+            <Description>Liver Function Tests </Description>
+        </Test>
+    </SampleTest>
+    <SampleTest>
+        <Status>
+            <StatusCode>REQ</StatusCode>
+            <Description>Requested</Description>
+        </Status>
+        <Test>
+            <TestCode>UECA</TestCode>
+            <Description>Urea, Electrolytes &amp; Creatinin </Description>
+        </Test>
+    </SampleTest>
+    <SampleTest>
+        <Status>
+            <StatusCode>REJ</StatusCode>
+            <Description>Rejected</Description>
+        </Status>
+        <Test>
+            <TestCode>FBC</TestCode>
+            <Description>Full Blood Count + Platelets </Description>
+        </Test>
+        <Rejection>
+          <RejectionCode>SOBAD</RejectionCode>
+          <Description>Morbi elementum erat quis pretium sodales</Description>
+     </Rejection>
+    </SampleTest>
+</LabStatus>

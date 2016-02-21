@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-16"?>
+<LabStatus xmlns="http://kharatsa.com/schemas/labstatus.xsd">
+    <STID>ST0010123</STID>
+    <LabID>ZZZ0010122</LabID>
+    <StatusTimestamp>2016-01-28T08:22:02</StatusTimestamp>
+    <LabPrefix>
+        <LabPrefixCode>ZZZ</LabPrefixCode>
+        <Description>fghkfgh</Description>
+    </LabPrefix>
+    <SampleTest>
+        <Status>
+            <StatusCode>PRT</StatusCode>
+            <Description>Printed</Description>
+        </Status>
+        <Test>
+            <TestCode>UECAA</TestCode>
+            <Description>Urea, Electrolytes &amp; Creatinin </Description>
+        </Test>
+    </SampleTest>
+    <SampleTest>
+        <Status>
+            <StatusCode>REQ</StatusCode>
+            <Description>Requested</Description>
+        </Status>
+        <Test>
+            <TestCode>LFTAA</TestCode>
+            <Description>LIVER FUNCTIONS </Description>
+        </Test>
+    </SampleTest>
+    <SampleTest>
+        <Status>
+            <StatusCode>REJ</StatusCode>
+            <Description>Rejected</Description>
+        </Status>
+        <Test>
+            <TestCode>ALBAA</TestCode>
+            <Description>Albumin </Description>
+        </Test>
+        <Rejection>
+            <RejectionCode>ACCAA</RejectionCode>
+            <Description>Laboratory Accident</Description>
+        </Rejection>
+    </SampleTest>
+</LabStatus>

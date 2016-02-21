@@ -56,21 +56,25 @@ const testFields = {
   REJECTION_CODE: 'RejectionCode'
 };
 
-function labStatusDate(status) {
+const labStatusDate = status => {
   return string.parseText(firstText(status, commonFields.STATUS_TIME));
-}
+};
 
-function sampleId(status) {
+const sampleId = status => {
   return BPromise.props({
     stId: firstText(status, commonFields.ST_ID),
     labId: firstText(status, commonFields.LAB_ID)
   });
-}
+};
 
 const LAB_ID_REGEX = /([a-zA-Z]{3})([0-9]{7})/;
 const LAB_PREFIX_CODE_PATH = [
   commonFields.LAB_PREFIX, '0', commonFields.LAB_PREFIX_CODE, '0'
 ];
+
+const facility = status => {
+  return _.get(status, LAB_PREFIX_CODE_PATH, null);
+};
 
 /**
  * Disa Labs Lab Ids are 10 character strings. The first 3 characters represent
@@ -117,13 +121,13 @@ const LAB_STATUS_CODE_PATH = [
  * @param  {Object} change [description]
  * @return {Promise.<Object>}        [description]
  */
-function getOneChange(change) {
+const getOneChange = change => {
   return BPromise.props({
     status: _.get(change, LAB_STATUS_CODE_PATH),
     labTestType: _.get(change, LAB_TEST_CODE_PATH),
     labRejection: _.get(change, LAB_REJECT_CODE_PATH) || null
   });
-}
+};
 
 const CHANGE_STAGE = 'labstatus';
 
@@ -133,7 +137,7 @@ const CHANGE_STAGE = 'labstatus';
  * @param  {Object} status [description]
  * @return {Promise.<Array.<Object>>}
  */
-function labChanges(status) {
+const labChanges = status => {
   const commonProps = BPromise.props({
     facility: labPrefix({
       status, labId: firstText(status, commonFields.LAB_ID)
@@ -150,7 +154,7 @@ function labChanges(status) {
   return BPromise.join(commonProps, changes, (common, changes) =>
     BPromise.map(changes, change => Object.assign({}, common, change))
   );
-}
+};
 
 const testTypeRefs = BPromise.method((testType, testMap) => {
   const labTestRef = testMap[testType] ? testMap[testType].uuid : null;
@@ -168,7 +172,7 @@ const testTypeRefs = BPromise.method((testType, testMap) => {
  * @param  {Array.<Object>} labTests [description]
  * @return {Promise.<Array.<Object>>}          [description]
  */
-function fillTestRefs(changes, labTests) {
+const fillTestRefs = (changes, labTests) => {
   return datamerge.propKeyReduce(labTests, ['testType'])
   .then(testMap => {
     return BPromise.map(changes, change => {
@@ -178,14 +182,14 @@ function fillTestRefs(changes, labTests) {
       );
     });
   });
-}
+};
 
 /**
  * [labTests description]
  * @param  {Object} status [description]
  * @return {Promise.<Array.<Object>>}
  */
-function labTests(status) {
+const labTests = status => {
   return BPromise.map(
     status[commonFields.UPDATES],
     change => BPromise.props({
@@ -193,7 +197,7 @@ function labTests(status) {
     })
   )
   .filter(test => test.testType !== '*');
-}
+};
 
 const fillSampleIdRefs = BPromise.method((labTests, sampleIdsRef) => {
   if (!sampleIdsRef) {
@@ -216,7 +220,7 @@ const LAB_REJECT_DESC_PATH = [testFields.REJECTION_ELEM, '0'].concat(DESC_PATH);
  * @param  {Object} status [description]
  * @return {Promise.<Object>}        [description]
  */
-function metadata(status) {
+const metadata = status => {
   const changes = status[commonFields.UPDATES];
 
   return BPromise.join(
@@ -240,8 +244,9 @@ function metadata(status) {
     )
   )
   .then(_.flatten)
-  .filter(item => item !== null);
-}
+  .filter(item => item !== null)
+  .then(results => _.uniqBy(results, meta => meta.type + meta.key));
+};
 
 /**
  * Converts a Disa Labs lab status XML document into an Object representing the
@@ -250,11 +255,10 @@ function metadata(status) {
  * @param  {string} status Disa Labs status XML
  * @return {Promise.<Object>}
  */
-function labStatus(xml) {
-  log.debug('Transorming Lab Status XML', xml);
+const labStatus = xml => {
   return xml2js.parseStringAsync(xml)
   .then(parsed => parsed[commonFields.STATUS]);
-}
+};
 
 /**
  * Returns a new Object with the id attribute, required for ODK Aggregate
@@ -267,13 +271,13 @@ function labStatus(xml) {
  * @param  {string} formId [description]
  * @return {Object}        [description]
  */
-function formIdWrap(obj, formId) {
+const formIdWrap = (obj, formId) => {
   var data = Object.assign(obj, {$: {id: formId}});
 
   var form = {};
   form[formId] = data;
   return form;
-}
+};
 
 const LAB_STATUS_FORM_ID = 'labstatus';
 
@@ -285,7 +289,7 @@ const LAB_STATUS_FORM_ID = 'labstatus';
  * @param {Array.<Object>} changes [description]
  * @return {string} labstatus form submission XML
  */
-function buildLabXForm(sampleIds, statusDate, changes) {
+const buildLabXForm = (sampleIds, statusDate, changes, facility) => {
   log.debug('Building lab status submission XML', changes);
 
   return BPromise.map(changes, change => ({
@@ -294,6 +298,7 @@ function buildLabXForm(sampleIds, statusDate, changes) {
     labreject: change.labRejection
   }))
   .then(repeats => ({
+    facility,
     stid: sampleIds.stId,
     labid: sampleIds.labId,
     labtime: (
@@ -306,11 +311,12 @@ function buildLabXForm(sampleIds, statusDate, changes) {
   .then(result =>
     xmlBuilder.buildObject(formIdWrap(result, LAB_STATUS_FORM_ID))
   );
-}
+};
 
 module.exports = {
   labStatus,
   labStatusDate,
+  facility,
   metadata,
   sampleId,
   labTests,

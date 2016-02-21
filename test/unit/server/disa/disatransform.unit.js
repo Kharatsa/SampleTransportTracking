@@ -17,7 +17,7 @@ describe('Disa Labs Status Tranforms', () => {
   );
 
   const manyUpdates = fs.readFileSync(
-    `${path.join(__dirname, '..', '..', '..', 'data', 'disa-many.xml')}`,
+    `${path.join(__dirname, '..', '..', '..', 'data', 'disa1.xml')}`,
     'utf-8'
   );
 
@@ -92,8 +92,8 @@ describe('Disa Labs Status Tranforms', () => {
   );
 
   const expectedSampleIds2 = {
-    stId: 'ABCD12345',
-    labId: 'MHL1234567'
+    stId: 'ZXCBZXCB',
+    labId: 'LCC0231368'
   };
 
   it('should parse multiple lab updates sample ids', () =>
@@ -104,9 +104,13 @@ describe('Disa Labs Status Tranforms', () => {
   );
 
   const expectedLabTests2 = [{
-    testType: 'TESTB'
+    testType: 'DIFF'
   }, {
-    testType: 'TESTC'
+    testType: 'LFT'
+  }, {
+    testType: 'UECA'
+  }, {
+    testType: 'FBC'
   }];
 
   it('should parse multiple lab updates lab tests', () =>
@@ -117,18 +121,32 @@ describe('Disa Labs Status Tranforms', () => {
   );
 
   const expectedChanges2 = [{
-    statusDate: new Date('2016-01-01T00:00:00.000Z'),
+    statusDate: new Date('2016-02-19T10:43:14'),
     stage: 'labstatus',
-    facility: 'MHL',
-    status: 'RVW',
-    labTestType: 'TESTB',
+    facility: 'LCC',
+    status: 'REQ',
+    labTestType: 'DIFF',
     labRejection: null
   }, {
-    statusDate: new Date('2016-01-01T00:00:00.000Z'),
+    statusDate: new Date('2016-02-19T10:43:14'),
     stage: 'labstatus',
-    facility: 'MHL',
+    facility: 'LCC',
+    status: 'REQ',
+    labTestType: 'LFT',
+    labRejection: null
+  }, {
+    statusDate: new Date('2016-02-19T10:43:14'),
+    stage: 'labstatus',
+    facility: 'LCC',
+    status: 'REQ',
+    labTestType: 'UECA',
+    labRejection: null
+  }, {
+    statusDate: new Date('2016-02-19T10:43:14'),
+    stage: 'labstatus',
+    facility: 'LCC',
     status: 'REJ',
-    labTestType: 'TESTC',
+    labTestType: 'FBC',
     labRejection: 'SOBAD'
   }];
 
@@ -142,28 +160,38 @@ describe('Disa Labs Status Tranforms', () => {
   const expectedMetadata2 = [
     {
       type: 'facility',
-      key: 'MHL',
-      value: 'Duis autem vel',
+      key: 'LCC',
+      value: 'Queen Elizabeth II Hospital',
       valueType: 'string'
     }, {
       type: 'status',
-      key: 'RVW',
-      value: 'Fusce vulputate faucibus lectus, et lacinia urna',
+      key: 'REQ',
+      value: 'Requested',
       valueType: 'string'
     }, {
       type: 'status',
       key: 'REJ',
-      value: 'Cras nec tristique enim',
+      value: 'Rejected',
       valueType: 'string'
     }, {
       type: 'labtest',
-      key: 'TESTB',
-      value: 'Ut wisi enim ad minim veniam',
+      key: 'DIFF',
+      value: 'Differential',
       valueType: 'string'
     }, {
       type: 'labtest',
-      key: 'TESTC',
-      value: 'Just another test',
+      key: 'LFT',
+      value: 'Liver Function Tests',
+      valueType: 'string'
+    }, {
+      type: 'labtest',
+      key: 'UECA',
+      value: 'Urea, Electrolytes & Creatinin',
+      valueType: 'string'
+    }, {
+      type: 'labtest',
+      key: 'FBC',
+      value: 'Full Blood Count + Platelets',
       valueType: 'string'
     }, {
       type: 'rejection',
@@ -271,7 +299,8 @@ describe('Disa Labs Status Tranforms', () => {
       .then(parsed => BPromise.join(
         disatransform.sampleId(parsed),
         disatransform.labStatusDate(parsed),
-        disatransform.labChanges(parsed)
+        disatransform.labChanges(parsed),
+        disatransform.facility(parsed)
       ))
       .spread(disatransform.buildLabXForm)
     ).to.eventually.equal(expectedXML)

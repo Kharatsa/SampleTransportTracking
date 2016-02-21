@@ -51,7 +51,8 @@ const sampleIds = incoming => {
 
   const fetchLocal = combinedIds.then(ids => client.sampleIds.eitherIds({
     data: ids, omitDateDBCols: true, includes: false
-  }));
+  }))
+  .tap(local => log.debug('sampleIds local', local));
 
   const mergeByStId = fetchLocal
   .then(local => datamerge.pairByProps(incoming, local, ['stId']));

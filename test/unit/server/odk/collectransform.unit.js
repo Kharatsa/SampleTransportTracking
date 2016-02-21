@@ -41,7 +41,6 @@ describe('ODK Collect Tranforms', () => {
     expect(
       transform.collectSubmission(departXML)
       .then(transform.artifacts)
-      .tap(result => console.log('transform.artifacts parsed', result))
     ).to.eventually.deep.equal(expectedArtifacts1)
   );
 
@@ -54,7 +53,6 @@ describe('ODK Collect Tranforms', () => {
     expect(
       transform.collectSubmission(resultsXML)
       .then(transform.artifacts)
-      .tap(result => console.log('transform.artifacts parsed', result))
     ).to.eventually.deep.equal(expectedArtifacts2)
   );
 
@@ -65,7 +63,6 @@ describe('ODK Collect Tranforms', () => {
       statusDate: new Date('2016-02-18T06:18:54.745+02:00'),
       stage: 'sdepart',
       artifactType: 'FORM',
-      region: 'BB',
       facility: 'DEF',
       person: 'PER1',
       status: 'OK'
@@ -75,7 +72,6 @@ describe('ODK Collect Tranforms', () => {
       statusDate: new Date('2016-02-18T06:18:54.745+02:00'),
       stage: 'sdepart',
       artifactType: 'BLOOD',
-      region: 'BB',
       facility: 'DEF',
       person: 'PER1',
       status: 'OK'
@@ -85,7 +81,6 @@ describe('ODK Collect Tranforms', () => {
       statusDate: new Date('2016-02-18T06:18:54.745+02:00'),
       stage: 'sdepart',
       artifactType: 'FORM',
-      region: 'BB',
       facility: 'DEF',
       person: 'PER1',
       status: 'OK'
@@ -95,7 +90,6 @@ describe('ODK Collect Tranforms', () => {
       statusDate: new Date('2016-02-18T06:18:54.745+02:00'),
       stage: 'sdepart',
       artifactType: 'DBS',
-      region: 'BB',
       facility: 'DEF',
       person: 'PER1',
       status: 'OVERFLOW'
@@ -105,7 +99,6 @@ describe('ODK Collect Tranforms', () => {
       statusDate: new Date('2016-02-18T06:18:54.745+02:00'),
       stage: 'sdepart',
       artifactType: 'DBS',
-      region: 'BB',
       facility: 'DEF',
       person: 'PER1',
       status: 'OK'
