@@ -13,7 +13,7 @@ const aggregate = require('app/server/odk/aggregateapi.js');
 
 let passport = null;
 let authenticate = null;
-if (config.server.isProduction()) {
+if (process.env.NODE_ENV === 'production') {
   passport = require('app/server/auth/httpauth.js');
   authenticate = passport.authenticate('basic', {session: false});
 } else {

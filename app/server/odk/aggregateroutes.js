@@ -15,7 +15,7 @@ const collect = require('app/server/odk/collect/collectsubmission.js');
 
 let passport = null;
 let authenticate = null;
-if (config.server.isProduction()) {
+if (process.env.NODE_ENV === 'production') {
   log.info('Aggregate routes require authentication');
   passport = require('app/server/auth/httpauth.js');
   authenticate = passport.authenticate('basic', {session: false});

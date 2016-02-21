@@ -37,6 +37,8 @@ const normalizeMetaType = (data, typeName) => {
 
 const pagedURL = (url, page) => `${url}?page=${page}`;
 
+// TODO: handle empty responses (res.json = {})
+
 export const getSamples = (options, callback) => {
   callback = typeof options === 'function' ? options : callback;
   return request('/stt/ids', (err, res) => {
@@ -80,14 +82,14 @@ export const getMetadata = (options, callback) => {
 
     const types = keyReduce(res.json);
 
-    const people = normalizeMetaType(types.person, 'person');
-    const facilities = normalizeMetaType(types.facility, 'facility');
+    const people = normalizeMetaType(types.person || [], 'person');
+    const facilities = normalizeMetaType(types.facility || [], 'facility');
     // TODO: are region codes needed at all?
     // const regions = normalizeMetaType(types.region, 'regions');
-    const labTests = normalizeMetaType(types.labtest, 'labTest');
-    const artifacts = normalizeMetaType(types.artifact, 'artifact');
-    const statuses = normalizeMetaType(types.status, 'status');
-    const labRejections = normalizeMetaType(types.rejection, 'rejection');
+    const labTests = normalizeMetaType(types.labtest || [], 'labTest');
+    const artifacts = normalizeMetaType(types.artifact || [], 'artifact');
+    const statuses = normalizeMetaType(types.status || [], 'status');
+    const labRejections = normalizeMetaType(types.rejection || [], 'rejection');
 
     const metadata = ImmutableMap(Object.assign({},
       people, facilities, labTests, artifacts, statuses, labRejections

@@ -1,6 +1,5 @@
 'use strict';
 
-const config = require('app/config');
 const log = require('app/server/util/logapp.js');
 
 // Convert query parameters to lowercase
@@ -49,7 +48,7 @@ function handleDevelopmentErrors(err, req, res, next) {
 }
 
 const handleErrors = (
-  config.server.isProduction() ?
+  process.env.NODE_ENV === 'production' ?
   handleProductionErrors :
   handleDevelopmentErrors
 );

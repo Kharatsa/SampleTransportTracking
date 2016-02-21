@@ -24,7 +24,7 @@ shutdownhandler.init();
 const app = express();
 
 log.info('NODE_ENV=%s', process.env.NODE_ENV);
-if (config.server.isProduction()) {
+if (process.env.NODE_ENV === 'production') {
   log.info('Running PRODUCTION server');
   app.set('trust proxy', 'loopback'); // specify a single subnet
 } else {

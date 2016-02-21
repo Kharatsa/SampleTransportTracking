@@ -43,7 +43,7 @@ const sampleids = modelwrapper({
           defaultValue: true
         }
       }, {
-        indexes: [{name: 'idPair', unique: true, fields: ['stId', 'labId']}],
+        // indexes: [{name: 'idPair', unique: true, fields: ['stId', 'labId']}],
 
         validate: {
           oneIdRequired: function() {

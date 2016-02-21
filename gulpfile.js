@@ -11,13 +11,16 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const config = require('app/config');
 
-var IS_DEVELOPMENT = !config.server.isProduction();
+console.log(`gulpfile process.env.NODE_ENV=${process.env.NODE_ENV}`);
+
+// var IS_DEVELOPMENT = !config.server.isProduction();
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 // add custom browserify options here
 const browserifyOptions = {
   entries: ['app/client/index.js'],
   extensions: ['.jsx'],
-  debug: IS_DEVELOPMENT
+  debug: !IS_PRODUCTION
 };
 const opts = Object.assign({}, watchify.args, browserifyOptions);
 var bundler = browserify(opts);
@@ -26,7 +29,7 @@ bundler.transform(babelify.configure({presets: [
 ]}));
 
 bundler.transform(envify({
-  NODE_ENV: process.env.NODE_ENV || 'development'
+  NODE_ENV: process.env.NODE_ENV
 }));
 
 var uglify = function() {
@@ -38,11 +41,10 @@ function bundle() {
     .on('error', $.util.log.bind($.util, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(buffer())
-      .pipe(IS_DEVELOPMENT ?
-        $.sourcemaps.init({loadMaps: true}) : $.util.noop())
-      .pipe(IS_DEVELOPMENT ? $.util.noop() : uglify())
+      .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.init({loadMaps: true}))
+      .pipe(IS_PRODUCTION ? uglify() : $.util.noop())
       .pipe($.filesize())
-      .pipe(IS_DEVELOPMENT ? $.sourcemaps.write('./') : $.util.noop())
+      .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.write('./'))
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 }
 
@@ -50,14 +52,9 @@ bundler.on('log', $.util.log); // output build logs to terminal
 gulp.task('bundle', bundle); // so you can run `gulp js` to build the file
 
 gulp.task('development', function() {
-  IS_DEVELOPMENT = true;
+  // IS_DEVELOPMENT = process.env.NODE_ENV || 'development';
   bundler = watchify(bundler);
   bundler.on('update', bundle); // on any dep update, runs the bundler
-  return;
-});
-
-gulp.task('production', function() {
-  IS_DEVELOPMENT = false;
   return;
 });
 
@@ -92,7 +89,7 @@ gulp.task('nodemon', ['lint'], function(cb) {
       'docs/**/*'
     ],
     execMap: {
-      js: 'BLUEBIRD_WARNINGS=0 NODE_ENV=development node --harmony'
+      js: 'BLUEBIRD_WARNINGS=0 node --harmony'
     }
   }).on('start', function() {
     // to avoid nodemon being started multiple times
@@ -115,9 +112,8 @@ const vendorsDev = [
 ];
 
 gulp.task('styles:vendors', () => {
-  const vendorsSource = IS_DEVELOPMENT ? vendorsDev : vendors;
+  const vendorsSource = IS_PRODUCTION ? vendors : vendorsDev;
   return gulp.src(vendorsSource)
-    // .pipe($.autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
     .pipe($.concat('vendor.css'))
     .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
@@ -129,10 +125,9 @@ const clientCSS = [
 
 gulp.task('styles', ['styles:vendors'], function() {
   const loadSourceMaps = (
-    IS_DEVELOPMENT ? $.sourcemaps.init.bind({loadMaps: true}) : $.util.noop
-  );
-  const cssMinify = IS_DEVELOPMENT ? $.util.noop : $.cssnano;
-  const writeSourceMaps = IS_DEVELOPMENT ? $.sourcemaps.write : $.util.noop;
+    IS_PRODUCTION ? $.util.noop : $.sourcemaps.init.bind({loadMaps: true}));
+  const cssMinify = IS_PRODUCTION ? $.cssnano : $.util.noop;
+  const writeSourceMaps = IS_PRODUCTION ? $.util.noop : $.sourcemaps.write;
 
   return gulp.src(clientCSS)
   .pipe(loadSourceMaps())
@@ -216,5 +211,5 @@ gulp.task('default',
 );
 
 gulp.task('build',
-  ['production', 'bundle', 'styles', 'static']
+  ['bundle', 'styles', 'static']
 );

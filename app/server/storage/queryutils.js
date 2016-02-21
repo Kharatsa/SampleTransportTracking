@@ -101,8 +101,8 @@ const sttOptions = wrappedFunc => {
 
     return query
     .then(result => {
-      const hasCount = !!result.count;
-      const data = hasCount ? result.rows : result;
+      const hasCount = typeof result.count !== 'undefined';
+      const data = (hasCount ? result.rows : result) || [];
 
       // TODO: support non-array (i.e., object) results
       // TODO: warn if omit settings enabled for non-plain results?
