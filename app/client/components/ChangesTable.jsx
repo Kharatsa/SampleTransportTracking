@@ -49,10 +49,6 @@ export default React.createClass({
       };
     }).toArray();
 
-    // const cellStyle = {
-    //     maxWidth: '100px';
-    // }
-
     return (
       <div className='panel'>
         <FlexTable

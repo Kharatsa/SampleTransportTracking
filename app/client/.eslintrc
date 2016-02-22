@@ -3,12 +3,16 @@
   "rules": {
     "no-console": 1
   },
+  "globals": {
+    "debugger": true
+  },
   "env": {
     "browser": true,
     "node": false,
     "es6": true
   },
   "ecmaFeatures": {
-    "modules": true
+    "modules": true,
+    "jsx": true
   }
 }

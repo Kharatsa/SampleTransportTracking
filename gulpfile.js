@@ -21,9 +21,10 @@ const browserifyOptions = {
 };
 const opts = Object.assign({}, watchify.args, browserifyOptions);
 var bundler = browserify(opts);
-bundler.transform(babelify.configure({presets: [
-  'react', 'es2015'
-]}));
+bundler.transform(babelify.configure({
+  presets: ['react', 'es2015'],
+  plugins: []
+}));
 
 bundler.transform(envify({
   NODE_ENV: process.env.NODE_ENV
