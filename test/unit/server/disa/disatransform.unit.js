@@ -301,6 +301,7 @@ describe('Disa Labs Status Tranforms', () => {
         disatransform.labStatusDate(parsed),
         disatransform.labChanges(parsed),
         disatransform.facility(parsed),
+        new Date('2016-01-02T00:00:00.000Z'),
         manyUpdates
       ))
       .spread(disatransform.buildLabXForm)

@@ -49,6 +49,7 @@ router.post('/status',
   requireBody,
   (req, res, next) => {
     log.info('Received Disa Labs status\n\t', req.body);
+    const requestDate = new Date();
     const xml = req.body;
 
     const parseXML = disatransform.labStatus(xml);
@@ -71,6 +72,7 @@ router.post('/status',
         entities.statusDate,
         entities.changes,
         entities.facility,
+        requestDate,
         xml
       )
     )

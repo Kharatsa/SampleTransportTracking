@@ -290,8 +290,9 @@ const LAB_STATUS_FORM_ID = 'labstatus';
  * @param {Array.<Object>} changes [description]
  * @return {string} labstatus form submission XML
  */
-const buildLabXForm = (sampleIds, statusDate, changes, facility, xml) => {
+const buildLabXForm = (sampleIds, statusDate, changes, facility, date, xml) => {
   log.debug('Building lab status submission XML', changes);
+  const submissionDate = date ? date.toISOString() : '';
 
   const meta = uuid.uuidV5(xml)
   .then(hash => ({instanceID: `uuid:${hash}`}));
@@ -302,6 +303,7 @@ const buildLabXForm = (sampleIds, statusDate, changes, facility, xml) => {
     labreject: change.labRejection
   }))
   .then(repeats => BPromise.props({
+    end: submissionDate,
     facility,
     stid: sampleIds.stId,
     labid: sampleIds.labId,
@@ -311,6 +313,7 @@ const buildLabXForm = (sampleIds, statusDate, changes, facility, xml) => {
       ''
     ),
     srepeat: repeats,
+    rawxml: xml,
     meta
   }))
   .then(result =>
