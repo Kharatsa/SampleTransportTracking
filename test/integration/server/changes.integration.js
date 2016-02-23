@@ -39,42 +39,50 @@ describe('STT Changes API', () => {
     Object.assign({},
       changes[0],
       {Artifact: Object.assign({}, artifacts[0], {SampleId: sampleIds[0]})},
-      {LabTest: null}
+      {LabTest: null},
+      {stage: 'Sample Pickup'}
     ),
     Object.assign({},
       changes[1],
       {Artifact: Object.assign({}, artifacts[1], {SampleId: sampleIds[0]})},
-      {LabTest: null}
+      {LabTest: null},
+      {stage: 'Sample Pickup'}
     ),
     Object.assign({},
       changes[2],
       {Artifact: Object.assign({}, artifacts[2], {SampleId: sampleIds[0]})},
-      {LabTest: null}
+      {LabTest: null},
+      {stage: 'Sample Pickup'}
     ),
     Object.assign({},
       changes[3],
       {Artifact: Object.assign({}, artifacts[3], {SampleId: sampleIds[1]})},
-      {LabTest: null}
+      {LabTest: null},
+      {stage: 'Sample Pickup'}
     ),
     Object.assign({},
       changes[4],
       {Artifact: Object.assign({}, artifacts[4], {SampleId: sampleIds[1]})},
-      {LabTest: null}
+      {LabTest: null},
+      {stage: 'Sample Pickup'}
     ),
     Object.assign({},
       changes[5],
       {Artifact: null},
-      {LabTest: Object.assign({}, labTests[0], {SampleId: sampleIds[2]})}
+      {LabTest: Object.assign({}, labTests[0], {SampleId: sampleIds[2]})},
+      {stage: 'Lab Status'}
     ),
     Object.assign({},
       changes[6],
       {Artifact: null},
-      {LabTest: Object.assign({}, labTests[1], {SampleId: sampleIds[2]})}
+      {LabTest: Object.assign({}, labTests[1], {SampleId: sampleIds[2]})},
+      {stage: 'Lab Status'}
     ),
     Object.assign({},
       changes[7],
       {Artifact: null},
-      {LabTest: Object.assign({}, labTests[2], {SampleId: sampleIds[2]})}
+      {LabTest: Object.assign({}, labTests[2], {SampleId: sampleIds[2]})},
+      {stage: 'Lab Status'}
     )
   ];
 

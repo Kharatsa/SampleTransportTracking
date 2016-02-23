@@ -6,13 +6,17 @@ const artifacts = require('./artifacts.js');
 const labtests = require('./labtests.js');
 
 // TODO: perhaps load this as another metadata reference instead?
-const WORKFLOW_STAGES = [
-  'spickup',
-  'sarrival',
-  'labstatus',
-  'rpickup',
-  'rarrival'
-];
+
+const WORKFLOW_STAGES = {
+  sdepart: 'Sample Pickup',
+  sarrive: 'Sample Delivery',
+  labstatus: 'Lab Status',
+  rdepart: 'Results Pickup',
+  rarrive: 'Results Delivery'
+};
+
+const WORKFLOW_STAGE_KEYS = Object.keys(WORKFLOW_STAGES);
+
 
 const modelName = 'Changes';
 
@@ -42,7 +46,11 @@ const changes = modelwrapper({
         stage: {
           type:   DataTypes.ENUM,
           allowNull: false,
-          values: WORKFLOW_STAGES
+          values: WORKFLOW_STAGE_KEYS,
+          get: function() {
+            const stageKey = this.getDataValue('stage');
+            return WORKFLOW_STAGES[stageKey];
+          }
         },
         artifact: {
           type: DataTypes.UUID,

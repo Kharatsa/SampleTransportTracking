@@ -198,17 +198,17 @@ describe('Sample Transport Tracking Database', () => {
     const c1 = {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx9',
       statusDate: new Date('2016-01-01T10:00:00.000Z'),
-      stage: 'spickup',
+      stage: 'sdepart',
       artifact: a3.uuid,
       facility: 'FACILITY1',
       person: 'PERSON1',
       status: 'OK'
     };
 
-    const expectedC1 = Object.assign({}, c1, {
-      labTest: null,
-      labRejection: null
-    });
+    const expectedC1 = Object.assign({}, c1,
+      {labTest: null, labRejection: null},
+      {stage: 'Sample Pickup'}
+    );
 
     it('should save single changes', () =>
       expect(
