@@ -13,7 +13,8 @@ import MissingRoute from './containers/MissingRoute.jsx';
 export default (
   <Route path='/' component={App}>
     <IndexRoute component={Changes}/>
-    <Route path='samples' component={Samples}/>
+    <Route path='changes(/:page)' component={Changes}/>
+    <Route path='samples(/:sampleId)' component={Samples}/>
     <Route path='facilities' component={Facilities}/>
     <Route path='riders' component={Riders}/>
     <Route path='*' component={MissingRoute} />

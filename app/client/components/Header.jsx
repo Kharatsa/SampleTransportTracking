@@ -11,6 +11,8 @@ export default React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
+    const {location} = this.props;
+
     return (
       <div className='header'>
       <div className='pure-menu pure-menu-horizontal pure-menu-blackbg'>
@@ -18,10 +20,26 @@ export default React.createClass({
           {appName}
         </Link>
         <ul className='pure-menu-list'>
-          <HeaderLink {...this.props} route='/' text='Changes' />
-          <HeaderLink {...this.props} route='/samples' text='Samples' />
-          <HeaderLink {...this.props} route='/facilities' text='Facilities' />
-          <HeaderLink {...this.props} route='/riders' text='Riders' />
+          <HeaderLink
+            linkTo='/'
+            location={location}
+            matchRoutes={['/', '/changes']}
+            text='Changes' />
+          <HeaderLink
+            linkTo='/samples'
+            location={location}
+            matchRoutes={'/samples'}
+            text='Samples' />
+          <HeaderLink
+            linkTo='/facilities'
+            location={location}
+            matchRoutes={'/facilities'}
+            text='Facilities' />
+          <HeaderLink
+            linkTo='/riders'
+            location={location}
+            matchRoutes={'/riders'}
+            text='Riders' />
         </ul>
       </div>
     </div>

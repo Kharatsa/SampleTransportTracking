@@ -12,7 +12,7 @@ const Changes = React.createClass({
       return false;
     }
 
-    // Uses strict equality for speed
+    // Strict equality for speed
     return (!(
       this.props.isFetchingData === nextProps.isFetchingData &&
       this.props.changesById === nextProps.changesById &&
@@ -24,8 +24,17 @@ const Changes = React.createClass({
   },
 
   componentWillMount() {
+    const {page} = this.props.params;
     const {fetchChanges} = this.props.actions;
-    fetchChanges();
+    fetchChanges(page);
+  },
+
+  componentWillReceiveProps(nextProps) {
+    const {page} = this.props.params;
+    if (nextProps.params.page !== page) {
+      const {fetchChanges} = this.props.actions;
+      fetchChanges(nextProps.params.page);
+    }
   },
 
   render() {

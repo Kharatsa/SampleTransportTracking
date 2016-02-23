@@ -1,12 +1,12 @@
 'use strict';
 
 import React, {PropTypes} from 'react';
+import Link from 'react-router/lib/Link';
 import classNames from 'classnames';
 
 export default React.createClass({
   propTypes: {
     fetchPage: PropTypes.func.isRequired,
-    toPage: PropTypes.number.isRequired,
     text: PropTypes.string.isRequired,
     disabled: PropTypes.bool
   },
@@ -22,15 +22,8 @@ export default React.createClass({
     return nextProps.active === active && nextProps.text === text;
   },
 
-  handlePageChange() {
-    const {toPage, fetchPage, disabled} = this.props;
-    if (!disabled) {
-      fetchPage(toPage);
-    }
-  },
-
   render() {
-    const {disabled, text} = this.props;
+    const {disabled, text, linkTo} = this.props;
 
     const pureButton = classNames({
       'pure-button': true,
@@ -41,13 +34,20 @@ export default React.createClass({
       display: 'inline-block'
     };
 
-    return (
+    const buttonElem = (
       <button
-        className={pureButton}
-        style={buttonStyle}
-        onClick={this.handlePageChange}>
+          className={pureButton}
+          style={buttonStyle}>
         {text}
       </button>
     );
+
+    const linkedButtonElem = (
+      disabled ?
+      <span>{buttonElem}</span> :
+      <Link to={linkTo}>{buttonElem}</Link>
+    );
+
+    return linkedButtonElem;
   }
 });

@@ -11,7 +11,10 @@ export default ({total, perPage, currentPage, fetchPage}) => {
 
   const buttonsStyle = {
     textAlign: 'right'
-  }
+  };
+
+  const prevPageLink = `/changes/${currentPage - 1}`;
+  const nextPageLink = `/changes/${currentPage + 1}`;
 
   return (
     <div className='pure-g'>
@@ -24,15 +27,15 @@ export default ({total, perPage, currentPage, fetchPage}) => {
       </div>
       <div className='pure-u-1-2' style={buttonsStyle}>
         <PageButton
+          linkTo={prevPageLink}
           fetchPage={fetchPage}
           disabled={currentPage === 1}
-          toPage={currentPage - 1}
           text='Previous' />
           {' '}
         <PageButton
+          linkTo={nextPageLink}
           fetchPage={fetchPage}
           disabled={currentPage === pageCount}
-          toPage={currentPage + 1}
           text='Next' />
       </div>
     </div>

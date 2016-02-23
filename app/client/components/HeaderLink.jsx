@@ -9,30 +9,33 @@ export default React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    route: PropTypes.string,
+    location: PropTypes.object,
     text: PropTypes.string.isRequired,
+    linkTo: PropTypes.string.isRequired,
+    active: PropTypes.bool,
     disabled: PropTypes.bool
+  },
+
+  isSelected() {
+    const {location, matchRoutes} = this.props;
+    const basePath = location.pathname.split('/').slice(0, 2).join('/');
+
+    if (Array.isArray(matchRoutes)) {
+      return matchRoutes.some(route => route === basePath);
+    }
+    return matchRoutes === location.pathname;
   },
 
   getDefaultProps: function() {
     return {
-      route: '#',
+      linkTo: '#',
+      active: false,
       disabled: false
     };
   },
 
-  isSelected: function() {
-    const {location, route} = this.props;
-    return location.pathname === route;
-  },
-
-  navigate: function() {
-    const {changeRoute, route} = this.props;
-    changeRoute(route);
-  },
-
   render: function() {
-    const {disabled, text, route} = this.props;
+    const {linkTo, disabled, text} = this.props;
 
     const itemClass = classNames({
       'pure-menu-item': true,
@@ -42,7 +45,7 @@ export default React.createClass({
 
     return (
       <li className={itemClass}>
-        <Link to={route} className='pure-menu-link'>{text}</Link>
+        <Link to={linkTo} className='pure-menu-link'>{text}</Link>
       </li>
     );
   }

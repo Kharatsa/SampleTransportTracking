@@ -62,7 +62,7 @@ export const fetchSamples = () => {
 const requestChanges = page => ({type: FETCH_CHANGES, page});
 
 export const fetchChanges = page => {
-  page = page || 1;
+  page = Number.parseInt(page || 1);
   return dispatch => {
     dispatch(fetchingData(true));
     dispatch(requestChanges(page));
