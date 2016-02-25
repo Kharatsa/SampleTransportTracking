@@ -4,11 +4,14 @@ import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {changeWindowSize} from '../actions/actioncreators.js';
+import {changeWindowSize} from '../../actions/actioncreators.js';
 
 const DEBOUNCE_MILLIS = 16;
+const NARROW_WIDTH_BUFFER = 0;
+const WIDE_WIDTH_BUFFER = 75;
+const HEIGHT_BUFFER = 200;
 
-const windowSizeListen = Component => {
+export const WindowSizeListen = Component => {
   const Wrapped = React.createClass({
     mixins: [PureRenderMixin],
 
@@ -43,15 +46,19 @@ const windowSizeListen = Component => {
     },
 
     _update() {
+      const {width, height} = this.props;
       const {changeWindowSize} = this.props.actions;
 
       const win = window;
 
-      const widthOffset = win.innerWidth < 680 ? 0 : 150;
-      const width = win.innerWidth - widthOffset;
-      const height = win.innerHeight - 200;
+      const widthOffset = (
+        win.innerWidth < 680 ? NARROW_WIDTH_BUFFER : WIDE_WIDTH_BUFFER);
+      const newWidth = win.innerWidth - widthOffset;
+      const newHeight = win.innerHeight - HEIGHT_BUFFER;
 
-      changeWindowSize(width, height);
+      if (!width || width !== newWidth || !height || height !== newHeight) {
+        changeWindowSize(newWidth, newHeight);
+      }
     },
 
     render() {
@@ -68,4 +75,4 @@ const windowSizeListen = Component => {
   )(Wrapped);
 };
 
-export default windowSizeListen;
+export default WindowSizeListen;

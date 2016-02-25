@@ -1,3 +1,5 @@
 'use strict';
 
-export {getChanges, getSamples, getMetadata} from './api.js';
+export {
+  getChanges, getSamples, getSampleDetail, getMetadata
+} from './api.js';

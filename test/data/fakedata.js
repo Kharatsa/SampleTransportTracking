@@ -183,11 +183,11 @@ const makeDate = () => {
 };
 
 const WORKFLOW_STAGES = [
-  'spickup',
-  'sarrival',
+  'sdepart',
+  'sarrive',
   'labstatus',
-  'rpickup',
-  'rarrival'
+  'rdepart',
+  'rarrive'
 ];
 
 const makeChange = (artifact, test, facility, person, status, labRejection) => {
@@ -273,10 +273,14 @@ const load = () => {
   return storage.db.sync()
   .then(() => log.info('Wiping data from development database'))
   .then(() => storage.models.Changes.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-  .then(() => storage.models.Artifacts.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-  .then(() => storage.models.LabTests.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-  .then(() => storage.models.SampleIds.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-  .then(() => storage.models.Metadata.destroy({where: {key: {$like: 'FAKE%'}}}))
+  .then(() =>
+    storage.models.Artifacts.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+  .then(() =>
+    storage.models.LabTests.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+  .then(() =>
+    storage.models.SampleIds.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+  .then(() =>
+    storage.models.Metadata.destroy({where: {key: {$like: 'FAKE%'}}}))
   .then(() => log.info('Loading fake data'))
   .then(() => storage.models.Metadata.bulkCreate(fake.metadata, noLog))
   .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))

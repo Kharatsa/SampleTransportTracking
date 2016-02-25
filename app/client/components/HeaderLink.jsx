@@ -23,7 +23,7 @@ export default React.createClass({
     if (Array.isArray(matchRoutes)) {
       return matchRoutes.some(route => route === basePath);
     }
-    return matchRoutes === location.pathname;
+    return matchRoutes === basePath;
   },
 
   getDefaultProps: function() {

@@ -6,7 +6,6 @@ const artifacts = require('./artifacts.js');
 const labtests = require('./labtests.js');
 
 // TODO: perhaps load this as another metadata reference instead?
-
 const WORKFLOW_STAGES = {
   sdepart: 'Sample Pickup',
   sarrive: 'Sample Delivery',
@@ -16,7 +15,6 @@ const WORKFLOW_STAGES = {
 };
 
 const WORKFLOW_STAGE_KEYS = Object.keys(WORKFLOW_STAGES);
-
 
 const modelName = 'Changes';
 

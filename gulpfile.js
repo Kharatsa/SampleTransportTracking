@@ -39,10 +39,8 @@ function bundle() {
     .on('error', $.util.log.bind($.util, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(buffer())
-      .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.init({loadMaps: true}))
       .pipe(IS_PRODUCTION ? uglify() : $.util.noop())
       .pipe($.filesize())
-      .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.write('./'))
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 }
 
@@ -50,7 +48,6 @@ bundler.on('log', $.util.log); // output build logs to terminal
 gulp.task('bundle', bundle); // so you can run `gulp js` to build the file
 
 gulp.task('development', function() {
-  // IS_DEVELOPMENT = process.env.NODE_ENV || 'development';
   bundler = watchify(bundler);
   bundler.on('update', bundle); // on any dep update, runs the bundler
   return;
@@ -101,12 +98,14 @@ gulp.task('nodemon', ['lint'], function(cb) {
 
 const vendors = [
   'bower_components/pure/pure-min.css',
-  'node_modules/fixed-data-table/dist/fixed-data-table.css'
+  'bower_components/pure/grids-responsive-min.css',
+  'node_modules/fixed-data-table/dist/fixed-data-table.min.css'
 ];
 
 const vendorsDev = [
   'bower_components/pure/pure.css',
-  'node_modules/fixed-data-table/dist/fixed-data-table.min.css'
+  'bower_components/pure/grids-responsive.css',
+  'node_modules/fixed-data-table/dist/fixed-data-table.css'
 ];
 
 gulp.task('styles:vendors', () => {

@@ -2,24 +2,22 @@
 
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import {OrderedSet, Map as ImmutableMap} from 'immutable';
+import {Seq, Map as ImmutableMap} from 'immutable';
 import {Table, Column, Cell} from 'fixed-data-table';
-import {TextCell, DateCell, MetadataCell} from './CellTypes.jsx';
-import WindowSizeListener from '../containers/WindowSizeListener.jsx';
+import {TextCell, LinkCell, DateCell, MetadataCell} from './CellTypes.jsx';
+import WindowSizeListener from '../containers/wrap/WindowSizeListener.jsx';
 
 const FlexTable = WindowSizeListener(Table);
 
 const ROW_HEIGHT = 40;
 const HEADER_HEIGHT = 50;
 const CELL_WIDTH = 150;
-// const MIN_CELL_WIDTH = 50;
-// const MAX_CELL_WIDTH = 250;
 
 export default React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    changeIds: PropTypes.instanceOf(OrderedSet),
+    changeIds: PropTypes.instanceOf(Seq),
     changesById: PropTypes.instanceOf(ImmutableMap)
   },
 
@@ -62,12 +60,12 @@ export default React.createClass({
             header={<Cell>ST ID</Cell>}
             fixed={true}
             width={CELL_WIDTH}
-            cell={<TextCell data={data} col='stId' />} />
+            cell={<LinkCell data={data} col='stId' route='/samples' />} />
           <Column
             header={<Cell>Lab ID</Cell>}
             fixed={true}
             width={CELL_WIDTH}
-            cell={<TextCell data={data} col='labId' />} />
+            cell={<LinkCell data={data} col='labId' route='/samples' />} />
           <Column
             header={<Cell>Stage</Cell>}
             width={CELL_WIDTH}

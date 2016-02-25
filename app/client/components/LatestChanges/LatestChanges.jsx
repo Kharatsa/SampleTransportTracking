@@ -1,8 +1,8 @@
 'use strict';
 
-import React from 'react'; // eslint-disable-line no-unused-vars
-import ChangesTable from '../components/ChangesTable.jsx';
-import Paging from '../components/pages/Paging.jsx';
+import React from 'react';
+import ChangesTable from '../ChangesTable.jsx';
+import Paging from '../pagination/Paging.jsx';
 
 export default React.createClass({
   render() {
@@ -11,7 +11,7 @@ export default React.createClass({
     const fetchPage = fetchChanges || function() {};
 
     return (
-      <div>
+      <div className='main'>
         <ChangesTable {...this.props} />
         <Paging
           fetchPage={fetchPage}

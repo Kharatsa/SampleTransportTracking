@@ -18,12 +18,8 @@ const App = React.createClass({
     return (
       <div>
         <Header location={location} />
-        <div className='pure-g'>
-          <div className='pure-u-1-24 sidebar'></div>
-          <div className='pure-u-11-12'>
-            {children}
-          </div>
-          <div className='pure-u-1-24 sidebar'></div>
+        <div id='main'>
+          {children}
         </div>
       </div>
     );

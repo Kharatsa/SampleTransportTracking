@@ -4,7 +4,10 @@ import React from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {fetchChanges} from '../actions/actioncreators.js';
-import LatestChanges from '../components/LatestChanges.jsx';
+import LatestChanges from '../components/LatestChanges/LatestChanges.jsx';
+import WaitOnFetch from './wrap/WaitOnFetch.jsx';
+
+const LatestChangesWrapped = WaitOnFetch(LatestChanges);
 
 const Changes = React.createClass({
   shouldComponentUpdate(nextProps) {
@@ -38,7 +41,7 @@ const Changes = React.createClass({
   },
 
   render() {
-    return <LatestChanges {...this.props} />;
+    return <LatestChangesWrapped {...this.props} />;
   }
 });
 
@@ -50,11 +53,9 @@ export default connect(
     samplesById: state.samplesById,
     artifactsById: state.artifactsById,
     labTestsById: state.labTestsById,
-    isFetchingData: state.isFetchingData,
     metadata: state.metadata,
-    page: state.page
+    page: state.page,
+    isFetchingData: state.isFetchingData
   }),
-  dispatch => ({
-    actions: bindActionCreators({fetchChanges}, dispatch)
-  })
+  dispatch => ({actions: bindActionCreators({fetchChanges}, dispatch)})
 )(Changes);

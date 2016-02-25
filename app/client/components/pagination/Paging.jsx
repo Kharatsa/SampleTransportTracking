@@ -17,7 +17,7 @@ export default ({total, perPage, currentPage, fetchPage}) => {
   const nextPageLink = `/changes/${currentPage + 1}`;
 
   return (
-    <div className='pure-g'>
+    <div className='pure-g panel'>
       <div className='pure-u-1-2'>
         <PageSummary
           total={total}

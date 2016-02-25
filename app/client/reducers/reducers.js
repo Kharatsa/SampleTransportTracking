@@ -1,19 +1,25 @@
 'use strict';
 
 import {combineReducers} from 'redux';
-import {OrderedSet, Map as ImmutableMap} from 'immutable';
+import {Seq, Map as ImmutableMap} from 'immutable';
 import {
-    FETCHING_DATA,
-    FETCH_CHANGES, FETCH_CHANGES_FAILURE,
-    RECEIVE_SAMPLES, RECEIVE_CHANGES,
+    // FETCHING_DATA,
+    FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
+    FETCH_SAMPLE_DETAIL, FETCH_SAMPLE_DETAIL_FAILURE, RECEIVE_SAMPLE_DETAIL,
     RECEIVE_METADATA, CHANGE_WINDOW_SIZE
 } from '../actions/actions.js';
 import {WindowSize, Page} from '../api/records.js';
 
-const isFetchingData = (state=false, action) => {
+const isFetchingData = (state=true, action) => {
   switch (action.type) {
-  case FETCHING_DATA:
-    return action.isFetching;
+  case FETCH_CHANGES:
+  case FETCH_SAMPLE_DETAIL:
+    return true;
+  case FETCH_CHANGES_FAILURE:
+  case FETCH_SAMPLE_DETAIL_FAILURE:
+  case RECEIVE_CHANGES:
+  case RECEIVE_SAMPLE_DETAIL:
+    return false;
   default:
     return state;
   }
@@ -28,12 +34,21 @@ const metadata = (state=ImmutableMap(), action) => {
   }
 };
 
-const sampleIds = (state=OrderedSet(), action) => {
+const selectedSampleId = (state=null, action) => {
   switch (action.type) {
-  case RECEIVE_SAMPLES:
-    return action.entities.sampleIds;
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.sampleId;
+  default:
+    return state;
+  }
+};
+
+const sampleIds = (state=Seq(), action) => {
+  switch (action.type) {
+  case RECEIVE_SAMPLE_DETAIL:
+    return Seq([action.sampleId]);
   case RECEIVE_CHANGES:
-    return action.entities.samples.keySeq().toOrderedSet();
+    return action.samples.keySeq();
   default:
     return state;
   }
@@ -41,19 +56,20 @@ const sampleIds = (state=OrderedSet(), action) => {
 
 const samplesById = (state=ImmutableMap(), action) => {
   switch (action.type) {
-  case RECEIVE_SAMPLES:
-    return action.samples;
   case RECEIVE_CHANGES:
-    return action.entities.samples;
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.samples;
   default:
     return state;
   }
 };
 
-const changeIds = (state=OrderedSet(), action) => {
+const changeIds = (state=Seq(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.changeIds;
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.changes.keySeq();
   default:
     return state;
   }
@@ -62,7 +78,9 @@ const changeIds = (state=OrderedSet(), action) => {
 const changesById = (state=ImmutableMap(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
-    return action.entities.changes;
+    return action.changes;
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.changes;
   default:
     return state;
   }
@@ -72,15 +90,18 @@ const changesTotal = (state=null, action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.count;
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.changes.size;
   default:
     return state;
   }
 };
 
-const artifactIds = (state=OrderedSet(), action) => {
+const artifactIds = (state=Seq(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
-    return action.entities.artifacts.keySeq().toOrderedSet();
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.artifacts.keySeq();
   default:
     return state;
   }
@@ -89,16 +110,18 @@ const artifactIds = (state=OrderedSet(), action) => {
 const artifactsById = (state=ImmutableMap(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
-    return action.entities.artifacts;
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.artifacts;
   default:
     return state;
   }
 };
 
-const labTestIds = (state=OrderedSet(), action) => {
+const labTestIds = (state=Seq(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
-    return action.entities.labTests.keySeq().toOrderedSet();
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.labTests.keySeq();
   default:
     return state;
   }
@@ -107,7 +130,8 @@ const labTestIds = (state=OrderedSet(), action) => {
 const labTestsById = (state=ImmutableMap(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
-    return action.entities.labTests;
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.labTests;
 
   default:
     return state;
@@ -139,6 +163,7 @@ export default combineReducers({
   windowSize,
   isFetchingData,
   metadata,
+  selectedSampleId,
   sampleIds,
   samplesById,
   changeIds,
