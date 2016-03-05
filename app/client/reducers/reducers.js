@@ -132,7 +132,28 @@ const labTestsById = (state=ImmutableMap(), action) => {
   case RECEIVE_CHANGES:
   case RECEIVE_SAMPLE_DETAIL:
     return action.labTests;
+  default:
+    return state;
+  }
+};
 
+const changesByArtifactId = (state=ImmutableMap(), action) => {
+  switch (action.type) {
+  case RECEIVE_CHANGES:
+    return ImmutableMap();
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.changesByArtifactId;
+  default:
+    return state;
+  }
+};
+
+const changesByLabTestId = (state=ImmutableMap(), action) => {
+  switch (action.type) {
+  case RECEIVE_CHANGES:
+    return ImmutableMap();
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.changesByLabTestId;
   default:
     return state;
   }
@@ -171,6 +192,8 @@ export default combineReducers({
   changesTotal,
   artifactIds,
   artifactsById,
+  changesByArtifactId,
   labTestIds,
-  labTestsById
+  labTestsById,
+  changesByLabTestId
 });

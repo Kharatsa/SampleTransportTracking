@@ -42,7 +42,6 @@ const fetchSampleDetailFailure = error => ({
 
 export const fetchSampleDetail = sampleId => {
   return dispatch => {
-    // dispatch(fetchingData(true));
     dispatch(requestSample(sampleId));
     return api.getSampleDetail({sampleId}, (err, data) => {
       if (err) {
@@ -54,10 +53,12 @@ export const fetchSampleDetail = sampleId => {
 };
 
 const receiveSampleDetail = ({
-  samples, sampleId, changes, artifacts, labTests
+  samples, sampleId, changes, artifacts, labTests,
+  changesByArtifactId, changesByLabTestId
 }) => ({
   type: RECEIVE_SAMPLE_DETAIL,
-  samples, sampleId, changes, artifacts, labTests
+  samples, sampleId, changes, artifacts, labTests,
+  changesByArtifactId, changesByLabTestId
 });
 
 // const requestSamples = () => ({type: FETCH_SAMPLE_LIST});
@@ -96,14 +97,12 @@ const fetchChangesFailure = (error, page) => ({
 export const fetchChanges = page => {
   page = Number.parseInt(page || 1);
   return dispatch => {
-    // dispatch(fetchingData(true));
     dispatch(requestChanges(page));
     return api.getChanges({page: page}, (err, data) => {
       if (err) {
         dispatch(fetchChangesFailure(err, page));
       }
       dispatch(receiveChanges(data));
-      // dispatch(fetchingData(false));
     });
   };
 };

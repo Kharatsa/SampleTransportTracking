@@ -11,48 +11,57 @@ export const toLocaleStringSupportsLocales = () => {
   return false;
 };
 
-// const shortFormatOptions = {
-//   localeMatcher: 'best-fit',
-//   year: 'numeric',
-//   month: '2-digit',
-//   day: '2-digit',
-//   hour: '2-digit',
-//   minute: '2-digit',
-//   second: '2-digit'
-// };
+const shortFormatOptions = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit'
+};
 
-// const longFormatOptions = {
-//   localeMatcher: 'best-fit',
-//   weekday: 'long',
-//   year: 'numeric',
-//   month: 'short',
-//   day: '2-digit',
-//   hour: '2-digit',
-//   minute: '2-digit',
-//   second: '2-digit'
-// };
+const longFormatOptions = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'short',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit'
+};
 
-// let longFormat;
-// let shortFormat;
-// const language = window.navigator.language;
+const shortDateFormatOptions = {
+  weekday: 'short',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+};
 
-// try {
-//   longFormat = new Intl.DateTimeFormat(language, longFormatOptions);
-//   shortFormat = new Intl.DateTimeFormat(language, shortFormatOptions);
-// } catch (err) {
-//   console.debug(err);
-//   // TODO
-// }
+let longFormat;
+let shortFormat;
+let shortDateFormat;
 
-// const local
+const language = window.navigator.language;
 
-// export const shortFormatDate = date => {
-//   // if (toLocaleStringSupportsLocales()) {}
-//   // console.debug(shortFormat)
-//   // return shortFormat ? shortFormat.format(date) : date.toLocaleString();
-// };
+try {
+  longFormat = new Intl.DateTimeFormat(language, longFormatOptions);
+  shortFormat = new Intl.DateTimeFormat(language, shortFormatOptions);
+  shortDateFormat = new Intl.DateTimeFormat(language, shortDateFormatOptions);
+} catch (err) {
+  // noop
+}
 
-// export const longFormatDate = date => {
-//   // console.debug(longFormat)
-//   // return longFormat ? longFormat.format(date) : date.toLocaleString();
-// };
+const supportsLocales = toLocaleStringSupportsLocales();
+
+const formatDate = (dateStr, formatter) => {
+  if (supportsLocales) {
+    return formatter.format(new Date(dateStr));
+  }
+  return (new Date(dateStr)).toLocaleString();
+};
+
+export const shortFormatDateTime = dateStr => formatDate(dateStr, shortFormat);
+
+export const longFormatDateTime = dateStr => formatDate(dateStr, longFormat);
+
+export const shortFormatDate = dateStr => formatDate(dateStr, shortDateFormat);

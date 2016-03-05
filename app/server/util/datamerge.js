@@ -20,7 +20,7 @@ const wrapObjOwnProps = (source, propNames) => {
     let wrapper = {};
     let value = source[propNames[i]];
     if (value) {
-      // don't wrap in non-truthy values (e.g., null, undefined)
+      // don't wrap in falsy values (e.g., null, undefined)
       wrapper[value] = result;
     }
     result = wrapper;

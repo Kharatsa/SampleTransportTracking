@@ -49,6 +49,8 @@ export default connect(
     artifactsById: state.artifactsById,
     labTestIds: state.labTestIds,
     labTestsById: state.labTestsById,
+    changesByArtifactId: state.changesByArtifactId,
+    changesByLabTestId: state.changesByLabTestId,
     metadata: state.metadata
   }),
   dispatch => ({actions: bindActionCreators({fetchSampleDetail}, dispatch)})

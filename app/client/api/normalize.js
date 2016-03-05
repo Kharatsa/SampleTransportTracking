@@ -9,23 +9,55 @@ import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord, MetadataRecord
 } from './records.js';
 
-const makeImmutable = (obj, ImmutableRecord) => {
-  if (obj && Object.keys(obj).length) {
-    return ImmutableMap(Object.keys(obj).map(
-      key => [key, new ImmutableRecord(obj[key])]
+/**
+ * Given an object keyed on UUIDs, returns an Immutable Map copy of that object
+ * containing Immutable Records for each key's value.
+ *
+ * @param  {Object} source
+ * @param  {Immutable.Record} ImmutableRecord
+ * @return {Immutable.Map}
+ */
+const makeImmutable = (source, ImmutableRecord) => {
+  if (source && Object.keys(source).length) {
+    return ImmutableMap(Object.keys(source).map(
+      key => {
+        const record = source[key];
+        if (Array.isArray(record)) {
+          return [key, Seq(record.map(item => new ImmutableRecord(item)))];
+        }
+        return [key, new ImmutableRecord(record)];
+      }
     ));
   }
   return ImmutableMap({});
 };
 
-const keyReduce = metadata => {
-  return metadata.reduce((previous, current) => {
-    const type = current.type;
-    if (!previous[type]) {
-      previous[type] = [];
+/**
+ * Reduce an array of Objects into an Object keyed on one of the Object's
+ * values.
+ *
+ * @param {Array.<Object>} data
+ * @param {Object} options
+ * @param {?boolean} [options.replace=false] [description]
+ * @param {!string} options.key
+ * @return {Object}
+ */
+const keyReduce = (data, options) => {
+  // options defaults
+  options = Object.assign({replace: false}, options);
+  const {replace, key} = options;
+  const keyFunc = typeof key === 'function' ? key : item => item[key];
+  return data.reduce((reduced, item) => {
+    const itemKey = keyFunc(item);
+    if (typeof reduced[itemKey] === 'undefined' && !replace) {
+      reduced[itemKey] = [];
     }
-    previous[type].push(current);
-    return previous;
+    if (replace) {
+      reduced[itemKey] = item;
+    } else {
+      reduced[itemKey].push(item);
+    }
+    return reduced;
   }, {});
 };
 
@@ -37,7 +69,7 @@ const normalizeMetaType = (data, typeName) => {
 };
 
 export const normalizeMetadata = data => {
-  const types = keyReduce(data);
+  const types = keyReduce(data, {key: 'type'});
 
   const people = normalizeMetaType(types.person || [], 'person');
   const facilities = normalizeMetaType(types.facility || [], 'facility');
@@ -59,15 +91,34 @@ export const normalizeSamples = ({data, count}) => {
 };
 
 export const normalizeSample = data => {
+  const artifactChanges = (
+    data.Artifacts ?
+    data.Artifacts.map(ref => ref.Changes)
+      .reduce((reduced, next) => reduced.concat(next), []) :
+    []);
+  const testChanges = (
+    data.LabTests ?
+    data.LabTests.map(ref => ref.Changes)
+      .reduce((reduced, next) => reduced.concat(next), []) :
+    []);
+
+  const changesByArtifactId = makeImmutable(keyReduce(artifactChanges,
+                                         {key: 'artifact'}), ChangeRecord);
+  const changesByLabTestId = makeImmutable(keyReduce(testChanges,
+                                        {key: 'labTest'}), ChangeRecord);
+
   const {entities, result} = normalize(data, sampleInclude);
+  const sampleId = result || null;
+
   // TODO: do this sort this on the server
   const changesRaw = makeImmutable(entities.changes, ChangeRecord);
   const changes = changesRaw.sortBy(change => change.statusDate);
+
   const artifacts = makeImmutable(entities.artifactChanges, ArtifactRecord);
   const labTests = makeImmutable(entities.labTestChanges, LabTestRecord);
   const samples = makeImmutable(entities.sampleIncludes, SampleRecord);
-  // const sample = SampleRecord(entities.sampleIncludes[result]);
-  return {samples, sampleId: result, changes, artifacts, labTests};
+  return {samples, sampleId, changes, artifacts, labTests,
+          changesByArtifactId, changesByLabTestId};
 };
 
 export const normalizeChanges = ({data, count}) => {

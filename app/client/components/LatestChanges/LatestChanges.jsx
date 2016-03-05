@@ -3,6 +3,9 @@
 import React from 'react';
 import ChangesTable from '../ChangesTable.jsx';
 import Paging from '../pagination/Paging.jsx';
+import WindowSizeListener from '../../containers/wrap/WindowSizeListener.jsx';
+
+const FlexChangesTable = WindowSizeListener(ChangesTable);
 
 export default React.createClass({
   render() {
@@ -12,7 +15,7 @@ export default React.createClass({
 
     return (
       <div className='main'>
-        <ChangesTable {...this.props} />
+        <FlexChangesTable {...this.props} />
         <Paging
           fetchPage={fetchPage}
           total={changesTotal}

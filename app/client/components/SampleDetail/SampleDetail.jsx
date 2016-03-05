@@ -4,9 +4,19 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import SampleBasics from './SampleBasics.jsx';
 import SampleRequest from './SampleRequest.jsx';
 import SampleResults from './SampleResults.jsx';
+import SampleArtifacts from './SampleArtifacts.jsx';
+import SampleTests from './SampleTests.jsx';
+import ChangesTable from '../ChangesTable.jsx';
+import WindowSizeListener from '../../containers/wrap/WindowSizeListener.jsx';
+
+const FlexChangesTable = WindowSizeListener(ChangesTable, {height: false});
 
 export const SampleDetail = ({
-  selectedSampleId, samplesById, changeIds, changesById, metadata
+  selectedSampleId, samplesById,
+  changeIds, changesById,
+  artifactsById, labTestsById,
+  changesByArtifactId, changesByLabTestId,
+  metadata
 }) => {
   const sample = samplesById.get(selectedSampleId);
 
@@ -16,14 +26,7 @@ export const SampleDetail = ({
 
     const stId = sample.get('stId');
     const labId = sample.get('labId');
-    const created = sample.get('createdAt').toLocaleString();
-
-    // TODO: fix
-    const pickupId = changeIds.first();
-    const pickupChange = pickupId ? changesById.get(pickupId) : null;
-
-    const deliveryId = changeIds.get(1);
-    const deliveryChange = deliveryId ? changesById.get(deliveryId) : null;
+    const created = sample.get('createdAt');
 
     return (
       <div>
@@ -33,13 +36,39 @@ export const SampleDetail = ({
             <SampleRequest
                 people={people}
                 facilities={facilities}
-                pickup={pickupChange}
-                delivery={deliveryChange} />
+                changeIds={changeIds}
+                changesById={changesById} />
           </div>
           <div className='pure-u-1 pure-u-md-1-2'>
             <SampleResults metadata={metadata} />
           </div>
         </div>
+        <div className='pure-g panel'>
+          <div className='pure-u-1 pure-u-md-1-2'>
+            <SampleArtifacts
+                // changeIds={changeIds}
+                // changesById={changesById}
+                artifactsById={artifactsById}
+                changesByArtifactId={changesByArtifactId}
+                metadata={metadata} />
+          </div>
+          <div className='pure-u-1 pure-u-md-1-2'>
+            <SampleTests
+                changeIds={changeIds}
+                changesById={changesById}
+                labTestsById={labTestsById}
+                changesByLabTestId={changesByLabTestId}
+                metadata={metadata} />
+          </div>
+        </div>
+        <FlexChangesTable
+          height={400}
+          samplesById={samplesById}
+          changeIds={changeIds}
+          changesById={changesById}
+          artifactsById={artifactsById}
+          labTestsById={labTestsById}
+          metadata={metadata} />
       </div>
     );
   }

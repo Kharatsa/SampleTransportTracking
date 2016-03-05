@@ -4,37 +4,30 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import SamplePanelRow from './SamplePanelRow.jsx';
 import InfoPanel from '../InfoPanel.jsx';
 
-export const SampleRequest = ({pickup, delivery, facilities}) => {
-  // TODO: add rider/person row?
-  let pickupElem;
-  let deliveryElem;
+export const SampleRequest = ({changeIds, changesById, facilities, people}) => {
+  // TODO: fix
+  const pickupId = changeIds.get(0);
+  const pickup = pickupId ? changesById.get(pickupId) : null;
 
-  if (pickup) {
-    const facility = facilities.get(pickup.get('facility'));
-    pickupElem = (
-      <SamplePanelRow
-          left='Pickup'
-          center={facility ? facility.get('value') : null}
-          right={pickup.get('statusDate')} />);
-  } else {
-    pickupElem = <SamplePanelRow left='Pickup' />;
-  }
-
-  if (delivery) {
-    const facility = facilities.get(delivery.get('facility'));
-    deliveryElem = (
-      <SamplePanelRow
-          left='Delivery'
-          center={facility ? facility.get('value') : null}
-          right={delivery.get('statusDate')} />);
-  } else {
-    deliveryElem = <SamplePanelRow left='Delivery' />;
-  }
+  const deliveryId = changeIds.get(1);
+  const delivery = deliveryId ? changesById.get(deliveryId) : null;
 
   const body = (
     <ul className='table-list'>
-      <li>{pickupElem}</li>
-      <li>{deliveryElem}</li>
+      <li>
+        <SamplePanelRow
+            label='Pickup'
+            change={pickup}
+            facilities={facilities}
+            people={people} />
+      </li>
+      <li>
+        <SamplePanelRow
+            label='Delivery'
+            change={delivery}
+            facilities={facilities}
+            people={people} />
+      </li>
     </ul>
   );
 

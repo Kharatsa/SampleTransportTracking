@@ -5,9 +5,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Seq, Map as ImmutableMap} from 'immutable';
 import {Table, Column, Cell} from 'fixed-data-table';
 import {TextCell, LinkCell, DateCell, MetadataCell} from './CellTypes.jsx';
-import WindowSizeListener from '../containers/wrap/WindowSizeListener.jsx';
-
-const FlexTable = WindowSizeListener(Table);
 
 const ROW_HEIGHT = 40;
 const HEADER_HEIGHT = 50;
@@ -22,6 +19,7 @@ export default React.createClass({
   },
 
   render() {
+    const {height, width} = this.props;
     const {changeIds, changesById} = this.props;
     const {samplesById, artifactsById, labTestsById, metadata} = this.props;
 
@@ -49,12 +47,12 @@ export default React.createClass({
 
     return (
       <div className='panel'>
-        <FlexTable
+        <Table
           rowHeight={ROW_HEIGHT}
           headerHeight={HEADER_HEIGHT}
           rowsCount={data.length}
-          width={1100}
-          height={600}
+          width={width}
+          height={height}
           {...this.props}>
           <Column
             header={<Cell>ST ID</Cell>}
@@ -108,15 +106,6 @@ export default React.createClass({
                     meta={metadata}
                     type='rejection' />} />
           <Column
-            header={<Cell>Person</Cell>}
-            flexGrow={1}
-            width={CELL_WIDTH}
-            cell={<MetadataCell
-                    data={data}
-                    col='person'
-                    meta={metadata}
-                    type='person' />} />
-          <Column
             header={<Cell>Facility</Cell>}
             flexGrow={1}
             width={CELL_WIDTH}
@@ -126,10 +115,19 @@ export default React.createClass({
                     meta={metadata}
                     type='facility' />} />
           <Column
+            header={<Cell>Person</Cell>}
+            flexGrow={1}
+            width={CELL_WIDTH}
+            cell={<MetadataCell
+                    data={data}
+                    col='person'
+                    meta={metadata}
+                    type='person' />} />
+          <Column
             header={<Cell>Date</Cell>}
             width={200}
             cell={<DateCell data={data} col='statusDate' />} />
-        </FlexTable>
+        </Table>
       </div>
     );
   }

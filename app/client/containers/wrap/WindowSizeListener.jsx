@@ -11,13 +11,24 @@ const NARROW_WIDTH_BUFFER = 0;
 const WIDE_WIDTH_BUFFER = 75;
 const HEIGHT_BUFFER = 200;
 
-export const WindowSizeListen = Component => {
+/**
+ * [description]
+ * @param  {React.Component} Component [description]
+ * @param  {Object} options   [description]
+ * @param {boolean} [options.width=true] [description]
+ * @param {boolean} [options.height=true] [description]
+ * @return {React.Component}           [description]
+ */
+export const WindowSizeListen = (Component, options) => {
+  // Defaults
+  options = Object.assign({}, {width: true, height: true}, options);
+
   const Wrapped = React.createClass({
     mixins: [PureRenderMixin],
 
     propTypes: {
-      width: PropTypes.number.isRequired,
-      height: PropTypes.number.isRequired
+      width: PropTypes.number,
+      height: PropTypes.number
     },
 
     componentDidMount() {
@@ -67,10 +78,16 @@ export const WindowSizeListen = Component => {
   });
 
   return connect(
-    state => ({
-      width: state.windowSize.get('innerWidth'),
-      height: state.windowSize.get('innerHeight')
-    }),
+    state => {
+      let result = {};
+      if (options.width) {
+        result.width = state.windowSize.get('innerWidth');
+      }
+      if (options.height) {
+        result.height = state.windowSize.get('innerHeight');
+      }
+      return result;
+    },
     dispatch => ({actions: bindActionCreators({changeWindowSize}, dispatch)})
   )(Wrapped);
 };

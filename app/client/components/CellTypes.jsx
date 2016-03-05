@@ -3,7 +3,7 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import Link from 'react-router/lib/Link';
 import {Cell} from 'fixed-data-table';
-// import {shortFormatDate, longFormatDate} from '../util/stringformat.js';
+import {shortFormatDateTime} from '../util/stringformat.js';
 
 export const TextCell = ({rowIndex, data, col}) => (
   <Cell>{data[rowIndex][col]}</Cell>
@@ -19,7 +19,8 @@ export const LinkCell = ({rowIndex, data, col, route}) =>  {
 };
 
 export const DateCell = ({rowIndex, data, col}) => {
-  return (<Cell>{data[rowIndex][col].toLocaleString()}</Cell>);
+  const dateStr = data[rowIndex][col];
+  return (<Cell>{shortFormatDateTime(dateStr)}</Cell>);
 };
 
 export const MetadataCell = ({rowIndex, data, col, meta, type}) => {

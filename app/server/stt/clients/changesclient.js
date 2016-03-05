@@ -20,6 +20,8 @@ function ChangesClient(options) {
 }
 util.inherits(ChangesClient, ModelClient);
 
+const DEFAULT_SORT = [['statusDate', 'DESC']];
+
 /**
  * [description]
  * @param {QueryOptions} options [description]
@@ -38,7 +40,7 @@ ChangesClient.prototype.latest = function(options) {
         include: [{model: this.includes.SampleIds}]
       }
     ],
-    order: [['statusDate', 'DESC']]
+    order: DEFAULT_SORT
   });
 };
 
