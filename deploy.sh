@@ -5,8 +5,10 @@ if [ $(docker images -q --filter "dangling=true") ]; then
 fi
 
 docker pull kharatsa/strack
-docker stop strack
-docker rm strack
+if [ $(docker ps -q) ]; then
+  docker stop strack
+  docker rm strack
+fi
 docker run -d \
   --name strack \
   --restart on-failure:10 \

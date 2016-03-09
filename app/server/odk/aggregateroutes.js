@@ -47,9 +47,10 @@ const handleHeadRequest = (req, res) => res.status(401).send('');
  * @return {string}          Altered XML
  */
 const swapHostnames = (xml, fromHost, toHost) => {
-  return new BPromise((resolve) => {
-    resolve(xml.replace(
-      new RegExp(string.escapeRegExp(fromHost), 'g'), toHost)
+  return new BPromise(resolve => {
+    resolve(
+      xml.replace(new RegExp(string.escapeRegExp(fromHost), 'g'), toHost)
+      .replace(new RegExp('\/odk\:[0-9]{2,5}\/', 'g'), '/odk/')
     );
   });
 };
