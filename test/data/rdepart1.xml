@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rdepart id="rdepart" version="20160212">
-   <start>2016-02-16T09:31:55.721+02</start>
-   <end>2016-02-16T09:32:53.883+02</end>
-   <deviceid>353350060356682</deviceid>
-   <simserial>89266010700059593792</simserial>
-   <person>per2</person>
-   <region>bb</region>
-   <facility>abc</facility>
+<rdepart id="rdepart">
+   <start>2016-03-15T10:40:31.005-04</start>
+   <end>2016-03-15T10:40:59.579-04</end>
+   <deviceid>867979021235970</deviceid>
+   <simserial>8901260971103975692</simserial>
+   <region>QTH</region>
+   <facility>STG</facility>
    <srepeat>
-      <labid>d019badde</labid>
+      <stid>f5c5995a3</stid>
    </srepeat>
-   <store_gps />
+   <srepeat>
+      <stid>c09795573</stid>
+   </srepeat>
+   <srepeat>
+      <stid>a2f4b8e3f</stid>
+   </srepeat>
+   <store_gps>40.7637388 -73.9613776 0.0 20.0</store_gps>
    <meta>
-      <instanceID>uuid:658aa5f2-1094-43b3-8bad-97360d85db8a</instanceID>
+      <instanceID>uuid:9e246e83-9e9f-4f88-b8e8-8f055cd24da3</instanceID>
    </meta>
 </rdepart>

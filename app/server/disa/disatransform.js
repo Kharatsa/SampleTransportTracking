@@ -12,7 +12,7 @@ const datamerge = require('app/server/util/datamerge.js');
 const firstText = datatransform.firstText;
 const uuid = require('app/server/util/uuid.js');
 
-// TODO: Define new typedefs for lab status objects
+// TODO: Define new jsdoc typedefs for lab status objects
 
 /**
  * @typedef {LabTest}

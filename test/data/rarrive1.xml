@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rarrive id="rarrive" version="20160212">
-   <start>2016-02-13T15:37:48.049+02</start>
-   <end>2016-02-13T15:38:49.821+02</end>
-   <deviceid>353350060356682</deviceid>
-   <simserial>89266010700059593792</simserial>
-   <person>per1</person>
-   <region>bb</region>
-   <facility>ghi</facility>
+<rarrive id="rarrive">
+   <start>2016-03-15T10:41:16.062-04</start>
+   <end>2016-03-15T10:41:29.974-04</end>
+   <deviceid>867979021235970</deviceid>
+   <simserial>8901260971103975692</simserial>
+   <region>LRB</region>
+   <facility>PNT</facility>
    <srepeat>
-      <labid>b58ea568d</labid>
-   </srepeat>
-   <srepeat>
-      <labid>03d3b6db8</labid>
-   </srepeat>
-   <srepeat>
-      <labid>896e9b32f</labid>
+      <stid>4b59bb109</stid>
    </srepeat>
    <store_gps />
    <meta>
-      <instanceID>uuid:3fd3dc4d-cd87-48cb-b1c0-b9f37ef0b321</instanceID>
+      <instanceID>uuid:e5f28062-820a-4bd2-b657-bac4654e0ca1</instanceID>
    </meta>
 </rarrive>

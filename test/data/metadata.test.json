@@ -11,6 +11,16 @@
     "valueType": "string"
   }, {
     "type": "artifact",
+    "key": "SPUTUM",
+    "value": "Sputum",
+    "valueType": "string"
+  }, {
+    "type": "artifact",
+    "key": "URINE",
+    "value": "Urine",
+    "valueType": "string"
+  }, {
+    "type": "artifact",
     "key": "DBS",
     "value": "Dried blood spot",
     "valueType": "string"
@@ -23,6 +33,11 @@
     "type": "person",
     "key": "PER2",
     "value": "Some Person 2",
+    "valueType": "string"
+  }, {
+    "type": "person",
+    "key": "TEST",
+    "value": "Test Person",
     "valueType": "string"
   }, {
     "type": "facility",
@@ -40,14 +55,54 @@
     "value": "Ut wisi enim ad minim veniam",
     "valueType": "string"
   }, {
+    "type": "facility",
+    "key": "STMN",
+    "value": "The STMN facility",
+    "valueType": "string"
+  }, {
+    "type": "facility",
+    "key": "STG",
+    "value": "Some name",
+    "valueType": "string"
+  }, {
+    "type": "facility",
+    "key": "PNT",
+    "value": "Some more facility",
+    "valueType": "string"
+  }, {
+    "type": "facility",
+    "key": "KHB",
+    "value": "KHB facility",
+    "valueType": "string"
+  }, {
+    "type": "facility",
+    "key": "THBP",
+    "value": "Yep",
+    "valueType": "string"
+  }, {
     "type": "region",
     "key": "BR",
     "value": "Berea",
     "valueType": "string"
   }, {
     "type": "region",
+    "key": "MSR",
+    "value": "Maseru",
+    "valueType": "string"
+  }, {
+    "type": "region",
     "key": "BB",
     "value": "Butha-Buthe",
+    "valueType": "string"
+  }, {
+    "type": "region",
+    "key": "LRB",
+    "value": "The LRB region",
+    "valueType": "string"
+  }, {
+    "type": "region",
+    "key": "QTH",
+    "value": "The QTH region",
     "valueType": "string"
   }, {
     "type": "labtest",
@@ -108,6 +163,11 @@
     "type": "status",
     "key": "REJ",
     "value": "Lab Test Rejected",
+    "valueType": "string"
+  }, {
+    "type": "status",
+    "key": "BAD",
+    "value": "Things are bad",
     "valueType": "string"
   }
 ]

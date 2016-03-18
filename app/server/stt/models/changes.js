@@ -46,6 +46,7 @@ const changes = modelwrapper({
           allowNull: false,
           values: WORKFLOW_STAGE_KEYS,
           get: function() {
+            // Return a readable version of the form/stage name from the database
             const stageKey = this.getDataValue('stage');
             return WORKFLOW_STAGES[stageKey];
           }

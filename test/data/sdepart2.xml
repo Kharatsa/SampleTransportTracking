@@ -1,37 +1,24 @@
-<?xml version='1.0' ?>
-<sdepart id="sdepart" version="20160212">
-  <start>2016-02-18T06:17:50.644+02</start>
-  <end>2016-02-18T06:18:54.745+02</end>
-  <deviceid>355451060940109</deviceid>
-  <simserial />
-  <person>per1</person>
-  <region>bb</region>
-  <facility>def</facility>
-  <srepeat>
-    <stid>4809505262</stid>
-    <stype>form</stype>
-  </srepeat>
-  <srepeat>
-    <stid>4809505262</stid>
-    <stype>blood</stype>
-    <condition>ok</condition>
-  </srepeat>
-  <srepeat>
-    <stid>016dbb1de</stid>
-    <stype>form</stype>
-  </srepeat>
-  <srepeat>
-    <stid>016dbb1de</stid>
-    <stype>dbs</stype>
-    <condition>overflow</condition>
-  </srepeat>
-  <srepeat>
-    <stid>016dbb1de</stid>
-    <stype>dbs</stype>
-    <condition>ok</condition>
-  </srepeat>
-  <store_gps>40.7636741 -73.9613551 0.0 95.047</store_gps>
-  <meta>
-    <instanceID>uuid:c7c69c68-fc5c-4f15-b411-ebe8b48c985a</instanceID>
-  </meta>
+<?xml version="1.0" encoding="UTF-8"?>
+<sdepart id="sdepart">
+   <start>2016-03-15T11:32:41.254-04</start>
+   <end>2016-03-15T11:33:11.116-04</end>
+   <deviceid>867979021235970</deviceid>
+   <simserial>8901260971103975692</simserial>
+   <region>QTH</region>
+   <facility>STG</facility>
+   <trepeat>
+      <stype>blood</stype>
+      <condition>bad</condition>
+   </trepeat>
+   <trepeat>
+      <stype>urine</stype>
+      <condition>ok</condition>
+   </trepeat>
+   <trepeat>
+      <stype>form</stype>
+   </trepeat>
+   <store_gps />
+   <meta>
+      <instanceID>uuid:d69bf133-1fe8-4718-bcbd-5012b610eccf</instanceID>
+   </meta>
 </sdepart>

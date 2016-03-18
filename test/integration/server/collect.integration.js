@@ -39,7 +39,7 @@ describe('ODK Collect Submission API', () => {
     .type('form')
     .attach(
       'xml_submission_file',
-      `${path.join(dataPath, 'sdepart2.xml')}`,
+      `${path.join(dataPath, 'sdepart1.xml')}`,
       'xml_submission_file.xml'
     )
     .toPromise()
@@ -55,7 +55,7 @@ describe('ODK Collect Submission API', () => {
     .type('form')
     .attach(
       'xml_submission_file',
-      `${path.join(dataPath, 'sdepart4.xml')}`,
+      `${path.join(dataPath, 'sdepart2.xml')}`,
       'xml_submission_file.xml'
     )
     .toPromise()
@@ -87,7 +87,7 @@ describe('ODK Collect Submission API', () => {
     .type('form')
     .attach(
       'xml_submission_file',
-      `${path.join(dataPath, 'rdepart2.xml')}`,
+      `${path.join(dataPath, 'rdepart1.xml')}`,
       'xml_submission_file.xml'
     )
     .toPromise()

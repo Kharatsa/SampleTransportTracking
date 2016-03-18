@@ -25,7 +25,11 @@ if (process.env.NODE_ENV === 'production') {
   authenticate = passport.authenticate('basic', {session: false});
 } else {
   log.info('Aggregate routes authentication disabled');
-  authenticate = (req, res, next) => next();
+  authenticate = (req, res, next) => {
+    req.user = 'test';
+    log.debug(`request username=${req.user}`);
+    next();
+  };
 }
 
 const prepareXMLResponse = (res, statusCode, body) => {
@@ -205,6 +209,7 @@ router.post('/submission',
   openRosaAcceptLength,
   parseSubmissionFormData,
   (req, res, next) => {
+    const username = req.user || 'unknown';
     let submission = req.form.fields[SUBMISSION_PART_NAME];
     log.info(`ODK submission ${SUBMISSION_PART_NAME}:\n${submission}`);
 
@@ -213,7 +218,7 @@ router.post('/submission',
       BPromise.props({
         sampleIds: transform.sampleIds(parsed),
         artifacts: transform.artifacts(parsed),
-        changes: transform.changes(parsed)
+        changes: transform.changes(parsed, username)
       })
     )
     .tap(log.info);
