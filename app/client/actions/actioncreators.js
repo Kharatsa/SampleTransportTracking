@@ -54,11 +54,11 @@ export const fetchSampleDetail = sampleId => {
 
 const receiveSampleDetail = ({
   samples, sampleId, changes, artifacts, labTests,
-  changesByArtifactId, changesByLabTestId
+  changesByArtifactId, changesByLabTestId, changesIdsByStage
 }) => ({
   type: RECEIVE_SAMPLE_DETAIL,
   samples, sampleId, changes, artifacts, labTests,
-  changesByArtifactId, changesByLabTestId
+  changesByArtifactId, changesByLabTestId, changesIdsByStage
 });
 
 // const requestSamples = () => ({type: FETCH_SAMPLE_LIST});

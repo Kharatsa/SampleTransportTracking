@@ -159,6 +159,17 @@ const changesByLabTestId = (state=ImmutableMap(), action) => {
   }
 };
 
+const changesIdsByStage = (state=ImmutableMap(), action) => {
+  switch (action.type) {
+  case RECEIVE_CHANGES:
+    return ImmutableMap();
+  case RECEIVE_SAMPLE_DETAIL:
+    return action.changesIdsByStage;
+  default:
+    return state;
+  }
+};
+
 const windowSize = (state=new WindowSize({}), action) => {
   switch (action.type) {
   case CHANGE_WINDOW_SIZE:
@@ -195,5 +206,6 @@ export default combineReducers({
   changesByArtifactId,
   labTestIds,
   labTestsById,
-  changesByLabTestId
+  changesByLabTestId,
+  changesIdsByStage
 });

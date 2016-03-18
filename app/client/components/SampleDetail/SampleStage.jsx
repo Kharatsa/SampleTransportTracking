@@ -4,13 +4,22 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import SamplePanelRow from './SamplePanelRow.jsx';
 import InfoPanel from '../InfoPanel.jsx';
 
-export const SampleRequest = ({changeIds, changesById, facilities, people}) => {
-  // TODO: fix
-  const pickupId = changeIds.get(0);
-  const pickup = pickupId ? changesById.get(pickupId) : null;
-
-  const deliveryId = changeIds.get(1);
-  const delivery = deliveryId ? changesById.get(deliveryId) : null;
+export const SampleRequest = ({
+  label, color,
+  pickupStageName, deliveryStageName,
+  changesIdsByStage, changesById,
+  facilities, people
+}) => {
+  const pickupChangeIds = changesIdsByStage.get(pickupStageName);
+  const deliveryChangeIds = changesIdsByStage.get(deliveryStageName);
+  let pickup = null;
+  let delivery = null;
+  if (pickupChangeIds && pickupChangeIds.size) {
+    pickup = changesById.get(pickupChangeIds.first());
+  }
+  if (deliveryChangeIds) {
+    delivery = changesById.get(deliveryChangeIds.first());
+  }
 
   const body = (
     <ul className='table-list'>
@@ -31,7 +40,7 @@ export const SampleRequest = ({changeIds, changesById, facilities, people}) => {
     </ul>
   );
 
-  return <InfoPanel title='Request' body={body} color='green' />;
+  return <InfoPanel title={label} body={body} color={color} />;
 };
 
 export default SampleRequest;

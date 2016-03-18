@@ -2,8 +2,7 @@
 
 import React from 'react'; // eslint-disable-line no-unused-vars
 import SampleBasics from './SampleBasics.jsx';
-import SampleRequest from './SampleRequest.jsx';
-import SampleResults from './SampleResults.jsx';
+import SampleStage from './SampleStage.jsx';
 import SampleArtifacts from './SampleArtifacts.jsx';
 import SampleTests from './SampleTests.jsx';
 import ChangesTable from '../ChangesTable.jsx';
@@ -15,7 +14,7 @@ export const SampleDetail = ({
   selectedSampleId, samplesById,
   changeIds, changesById,
   artifactsById, labTestsById,
-  changesByArtifactId, changesByLabTestId,
+  changesByArtifactId, changesByLabTestId, changesIdsByStage,
   metadata
 }) => {
   const sample = samplesById.get(selectedSampleId);
@@ -33,14 +32,26 @@ export const SampleDetail = ({
         <SampleBasics stId={stId} labId={labId} created={created} />
         <div className='pure-g panel'>
           <div className='pure-u-1 pure-u-md-1-2'>
-            <SampleRequest
+            <SampleStage
+                label='Requests'
+                color='blue'
                 people={people}
                 facilities={facilities}
-                changeIds={changeIds}
-                changesById={changesById} />
+                pickupStageName='Sample Pickup'
+                deliveryStageName='Sample Delivery'
+                changesById={changesById}
+                changesIdsByStage={changesIdsByStage} />
           </div>
           <div className='pure-u-1 pure-u-md-1-2'>
-            <SampleResults metadata={metadata} />
+            <SampleStage
+                label='Results'
+                color='green'
+                people={people}
+                facilities={facilities}
+                pickupStageName='Results Pickup'
+                deliveryStageName='Results Delivery'
+                changesById={changesById}
+                changesIdsByStage={changesIdsByStage}/>
           </div>
         </div>
         <div className='pure-g panel'>

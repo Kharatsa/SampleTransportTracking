@@ -90,22 +90,63 @@ export const normalizeSamples = ({data, count}) => {
   return {samples, sampleIds, count};
 };
 
-export const normalizeSample = data => {
-  const artifactChanges = (
-    data.Artifacts ?
-    data.Artifacts.map(ref => ref.Changes)
-      .reduce((reduced, next) => reduced.concat(next), []) :
-    []);
-  const testChanges = (
-    data.LabTests ?
-    data.LabTests.map(ref => ref.Changes)
-      .reduce((reduced, next) => reduced.concat(next), []) :
-    []);
+const sampleDetailArtifactMaps = data => {
+  let artifactChanges;
+  if (data.Artifacts) {
+    artifactChanges = (
+      data.Artifacts.map(ref => ref.Changes)
+      .reduce((reduced, next) => reduced.concat(next), []));
+  } else {
+    artifactChanges = [];
+  }
 
-  const changesByArtifactId = makeImmutable(keyReduce(artifactChanges,
-                                         {key: 'artifact'}), ChangeRecord);
-  const changesByLabTestId = makeImmutable(keyReduce(testChanges,
-                                        {key: 'labTest'}), ChangeRecord);
+  const changesByArtifactId = makeImmutable(
+    keyReduce(artifactChanges, {key: 'artifact'}), ChangeRecord
+  );
+
+  return {changesByArtifactId, artifactChanges};
+};
+
+const sampleDetailTestMaps = data => {
+  let testChanges;
+  if (data.LabTests) {
+    testChanges = (
+      data.LabTests.map(ref => ref.Changes)
+      .reduce((reduced, next) => reduced.concat(next), []));
+  } else {
+    testChanges = [];
+  }
+
+  const changesByLabTestId = makeImmutable(
+    keyReduce(testChanges, {key: 'labTest'}), ChangeRecord
+  );
+
+  return {changesByLabTestId, testChanges};
+};
+
+const sampleDetailStageMap = (artifactChanges, testChanges) => {
+  const combinedChanges = artifactChanges.concat(testChanges);
+
+  const changesIdsByStage = combinedChanges.reduce((reduced, item) => {
+    const stage = item.stage;
+    if (!reduced[stage]) {
+      reduced[stage] = [];
+    }
+    reduced[stage].push(item.uuid);
+    return reduced;
+  }, {});
+
+  Object.keys(changesIdsByStage).forEach(key => {
+    changesIdsByStage[key] = Seq(changesIdsByStage[key]);
+  });
+
+  return {changesIdsByStage: ImmutableMap(changesIdsByStage)};
+};
+
+export const normalizeSample = data => {
+  const {changesByArtifactId, artifactChanges} = sampleDetailArtifactMaps(data);
+  const {changesByLabTestId, testChanges} = sampleDetailTestMaps(data);
+  const {changesIdsByStage} = sampleDetailStageMap(artifactChanges, testChanges);
 
   const {entities, result} = normalize(data, sampleInclude);
   const sampleId = result || null;
@@ -118,7 +159,7 @@ export const normalizeSample = data => {
   const labTests = makeImmutable(entities.labTestChanges, LabTestRecord);
   const samples = makeImmutable(entities.sampleIncludes, SampleRecord);
   return {samples, sampleId, changes, artifacts, labTests,
-          changesByArtifactId, changesByLabTestId};
+          changesByArtifactId, changesByLabTestId, changesIdsByStage};
 };
 
 export const normalizeChanges = ({data, count}) => {
