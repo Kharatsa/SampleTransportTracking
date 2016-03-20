@@ -22,8 +22,8 @@ const wrapObjOwnProps = (source, propNames) => {
     if (value) {
       // don't wrap in falsy values (e.g., null, undefined)
       wrapper[value] = result;
+      result = wrapper;
     }
-    result = wrapper;
   }
   return result;
 };

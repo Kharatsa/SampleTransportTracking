@@ -1,17 +1,18 @@
 'use strict';
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
+const modelutils = require('./modelutils.js');
 const sampleids = require('./sampleids.js');
-const metadata = require('./metadata.js');
+const metadata = require('./metadata');
 
 const modelName = 'Artifacts';
 
 const artifacts = modelwrapper({
   name: modelName,
 
-  references: [sampleids, metadata],
+  references: [sampleids, metadata.artifacts],
 
-  import: function(SampleIds, Metadata) {
+  import: function(SampleIds, MetaArtifacts) {
     return function(sequelize, DataTypes) {
       return sequelize.define(modelName, {
         uuid: {
@@ -22,18 +23,12 @@ const artifacts = modelwrapper({
         sampleId: {
           type: DataTypes.UUID,
           allowNull: false,
-          references: {
-            model: SampleIds,
-            key: 'uuid'
-          }
+          references: modelutils.uuidReference(SampleIds)
         },
         artifactType: {
           type: DataTypes.STRING,
           allowNull: false,
-          references: {
-            model: Metadata,
-            key: 'key'
-          },
+          references: modelutils.keyReference(MetaArtifacts),
           set: function(val) {
             this.setDataValue('artifactType', val ? val.toUpperCase() : val);
           }
@@ -51,20 +46,6 @@ const artifacts = modelwrapper({
               foreignKey: 'sampleId'
             });
 
-            Metadata.hasMany(artifacts.model, {
-              foreignKey: 'artifactType',
-              scope: {
-                type: 'artifact'
-              }
-            });
-
-            artifacts.model.belongsTo(Metadata, {
-              targetKey: 'key',
-              foreignKey: 'artifactType',
-              scope: {
-                type: 'artifact'
-              }
-            });
           }
         }
       });

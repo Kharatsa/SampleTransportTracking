@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 
-if [ $(docker images -q --filter "dangling=true") ]; then
-  docker rmi $(docker images -q --filter "dangling=true")
-fi
-
 docker pull kharatsa/strack
+
 if [ $(docker ps -q) ]; then
   docker stop strack
   docker rm strack
 fi
+
 docker run -d \
   --name strack \
   --restart on-failure:10 \
@@ -23,7 +21,10 @@ docker run -d \
   -e "ODK_HOSTNAME=$ODK_HOSTNAME" \
   -e "ODK_USERNAME=$ODK_USERNAME" \
   -e "ODK_PASSWORD=$ODK_PASSWORD" \
-  -e "ODK_PUBLISHER_TOKEN=$ODK_PUBLISHER_TOKEN" \
   kharatsa/strack@latest
+
+if [ $(docker images -q --filter "dangling=true") ]; then
+  docker rmi $(docker images -q --filter "dangling=true")
+fi
 
 docker logs -f strack

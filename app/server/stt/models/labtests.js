@@ -1,17 +1,18 @@
 'use strict';
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
+const modelutils = require('./modelutils.js');
 const sampleids = require('./sampleids.js');
-const metadata = require('./metadata.js');
+const metadata = require('./metadata');
 
 const modelName = 'LabTests';
 
 const labtests = modelwrapper({
   name: modelName,
 
-  references: [sampleids, metadata],
+  references: [sampleids, metadata.labtests],
 
-  import: function(SampleIds, Metadata) {
+  import: function(SampleIds, MetaLabTests) {
     return function(sequelize, DataTypes) {
       return sequelize.define(modelName, {
         uuid: {
@@ -22,22 +23,15 @@ const labtests = modelwrapper({
         sampleId: {
           type: DataTypes.UUID,
           allowNull: false,
-          references: {
-            model: SampleIds,
-            key: 'uuid'
-          }
+          references: modelutils.uuidReference(SampleIds)
         },
         testType: {
           type: DataTypes.STRING,
           allowNull: false,
-          references: {
-            model: Metadata,
-            key: 'key'
-          },
+          references: modelutils.keyReference(MetaLabTests),
           set: function(val) {
             this.setDataValue('testType', val ? val.toUpperCase() : val);
-          },
-          validate: {is: /[A-Z0-9]{1,5}/}
+          }
         }
       }, {
 
@@ -49,21 +43,6 @@ const labtests = modelwrapper({
 
             labtests.model.belongsTo(SampleIds, {
               foreignKey: 'sampleId'
-            });
-
-            Metadata.hasMany(labtests.model, {
-              foreignKey: 'testType',
-              scope: {
-                type: 'labtest'
-              }
-            });
-
-            labtests.model.belongsTo(Metadata, {
-              targetKey: 'key',
-              foreignKey: 'testType',
-              scope: {
-                type: 'labtest'
-              }
             });
 
           }

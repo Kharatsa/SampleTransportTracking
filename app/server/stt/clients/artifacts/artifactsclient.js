@@ -2,7 +2,7 @@
 
 const util = require('util');
 const ModelClient = require('app/server/stt/clients/modelclient.js');
-const sttquery = require('app/server/stt/sttquery.js');
+const artifactsquery = require('./artifactsquery.js');
 
 function ArtifactsClient(options) {
   ModelClient.call(this, options);
@@ -15,7 +15,7 @@ util.inherits(ArtifactsClient, ModelClient);
  * @return {Promise.<Array.<Object>>}          [description]
  */
 ArtifactsClient.prototype.byTypesAndSampleIds = function(options) {
-  return sttquery.artifacts.typesAndSampleIds(options.data)
+  return artifactsquery.typesAndSampleIds(options.data)
   .then(where => this.Model.findAll({where}));
 };
 

@@ -5,7 +5,7 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
-const disatransform = require('app/server/disa/disatransform.js');
+const transform = require('app/server/disa/disatransform.js');
 const disasubmission = require('app/server/disa/disasubmission.js');
 const aggregatesubmission = require('app/server/odk/aggregatesubmission.js');
 const aggregate = require('app/server/odk/aggregateapi.js');
@@ -52,31 +52,36 @@ router.post('/status',
     const requestDate = new Date();
     const xml = req.body;
 
-    const parseXML = disatransform.labStatus(xml);
+    const parseXML = transform.labStatus(xml);
 
     const parseEntities = parseXML.then(parsed =>
       BPromise.props({
-        facility: disatransform.facility(parsed),
-        sampleIds: disatransform.sampleId(parsed),
-        statusDate: disatransform.labStatusDate(parsed),
-        metadata: disatransform.metadata(parsed),
-        labTests: disatransform.labTests(parsed),
-        changes: disatransform.labChanges(parsed)
+        sampleIds: transform.sampleId(parsed),
+        statusDate: transform.labStatusDate(parsed),
+        labTests: transform.labTests(parsed),
+        changes: transform.labChanges(parsed),
+        metaStatuses: transform.metaStatuses(parsed),
+        metaFacility: transform.metaFacility(parsed),
+        metaLabTests: transform.metaLabTests(parsed),
+        metaRejections: transform.metaRejections(parsed)
       })
-    );
-    const saveSubmission = parseEntities.then(disasubmission.handleSubmission);
+    )
+    .tap(log.info);
+
+    const saveSubmission = parseEntities.then(disasubmission.handleSubmission)
+    .tap(log.debug);
 
     const backup = parseEntities.then(entities =>
-      disatransform.buildLabXForm(
+      transform.buildLabXForm(
         entities.sampleIds,
         entities.statusDate,
         entities.changes,
-        entities.facility,
+        entities.metaFacility,
         requestDate,
         xml
       )
     )
-    .tap(xform => log.info('Built lab status xform', xform))
+    .tap(xform => log.info('Built Lab Status XForm', xform))
     .then(aggregatesubmission.submit)
     .then(aggregate.makeSubmission);
 

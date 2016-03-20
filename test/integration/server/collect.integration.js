@@ -8,25 +8,25 @@ const expect = chai.expect;
 
 const express = require('express');
 const config = require('app/config');
+const metamodels = require('app/server/stt/models/metadata');
 const sttmodels = require('app/server/stt/models');
 const storage = require('app/server/storage');
 storage.init({config: config.db});
+storage.loadModels(metamodels);
 storage.loadModels(sttmodels);
+const prepareserver = require('app/server/prepareserver.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
 
 const app = express();
 app.use('/odk', AggregateRoutes);
 
 describe('ODK Collect Submission API', () => {
-  const sampleIds = require('../../data/sampleids.test.json');
-  const metadata = require('../../data/metadata.test.json');
   const dataPath = path.join(__dirname, '..', '..', 'data');
 
   before(done => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
-    .then(() => storage.models.SampleIds.bulkCreate(sampleIds))
-    .then(() => storage.models.Metadata.bulkCreate(metadata))
+    .then(() => prepareserver())
     .catch(console.error)
     .then(() => done());
   });

@@ -7,6 +7,7 @@ const dbresult = require('app/server/storage/dbresult.js');
 
 /**
  * [AuthClient description]
+ * @class Authorization database client
  * @param {!Object} options [description]
  * @param {!Database} options.db [description]
  * @param {!Object} options.models [description]

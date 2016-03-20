@@ -1,34 +1,28 @@
 'use strict';
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
-const metadata = require('./metadata.js');
+const modelutils = require('./modelutils.js');
 const artifacts = require('./artifacts.js');
 const labtests = require('./labtests.js');
-
-// TODO: perhaps load this as another metadata reference instead?
-const WORKFLOW_STAGES = {
-  sdepart: 'Sample Pickup',
-  sarrive: 'Sample Delivery',
-  labstatus: 'Lab Status',
-  rdepart: 'Results Pickup',
-  rarrive: 'Results Delivery'
-};
-
-const WORKFLOW_STAGE_KEYS = Object.keys(WORKFLOW_STAGES);
+const metadata = require('./metadata');
 
 const modelName = 'Changes';
 
 const changes = modelwrapper({
   name: modelName,
 
-  references: [metadata, artifacts, labtests],
+  references: [
+    artifacts,
+    labtests,
+    metadata.facilities,
+    metadata.people,
+    metadata.statuses,
+    metadata.rejections,
+    metadata.stages
+  ],
 
-  import: function(Metadata, Artifacts, LabTests) {
-    const metadataKeyCol = {
-      model: Metadata,
-      key: 'key'
-    };
-
+  import: function(Artifacts, LabTests, MetaFacilities, MetaPeople,
+                   MetaStatuses, MetaRejections, MetaStages) {
     return function(sequelize, DataTypes) {
       return sequelize.define(modelName, {
         uuid: {
@@ -42,63 +36,39 @@ const changes = modelwrapper({
           defaultValue: DataTypes.NOW
         },
         stage: {
-          type:   DataTypes.ENUM,
+          type: DataTypes.STRING,
           allowNull: false,
-          values: WORKFLOW_STAGE_KEYS,
-          get: function() {
-            // Return a readable version of the form/stage name from the database
-            const stageKey = this.getDataValue('stage');
-            return WORKFLOW_STAGES[stageKey];
-          }
+          references: modelutils.keyReference(MetaStages)
         },
         artifact: {
           type: DataTypes.UUID,
           allowNull: true,
-          references: {
-            model: Artifacts,
-            key: 'uuid'
-          }
+          references: modelutils.uuidReference(Artifacts)
         },
         labTest: {
           type: DataTypes.UUID,
           allowNull: true,
-          references: {
-            model: LabTests,
-            key: 'uuid'
-          }
+          references: modelutils.uuidReference(LabTests)
         },
         facility: {
           type: DataTypes.STRING,
           allowNull: true,
-          references: metadataKeyCol,
-          set: function(val) {
-            this.setDataValue('facility', val ? val.toUpperCase() : val);
-          }
+          references: modelutils.keyReference(MetaFacilities)
         },
         person: {
           type: DataTypes.STRING,
           allowNull: true,
-          references: metadataKeyCol,
-          set: function(val) {
-            this.setDataValue('person', val ? val.toUpperCase() : val);
-          }
+          references: modelutils.keyReference(MetaPeople)
         },
         status: {
           type: DataTypes.STRING,
           allowNull: false,
-          references: metadataKeyCol,
-          set: function(val) {
-            this.setDataValue('status', val ? val.toUpperCase() : val);
-          }
+          references: modelutils.keyReference(MetaStatuses)
         },
         labRejection: {
           type: DataTypes.STRING,
           allowNull: true,
-          references: metadataKeyCol,
-          set: function(val) {
-            this.setDataValue('labRejection', val ? val.toUpperCase() : val);
-          },
-          validate: {is: /[A-Z]{5}/}
+          references: modelutils.keyReference(MetaRejections)
         }
       }, {
 
@@ -108,7 +78,6 @@ const changes = modelwrapper({
             Artifacts.hasMany(changes.model, {
               foreignKey: 'artifact'
             });
-
             changes.model.belongsTo(Artifacts, {
               foreignKey: 'artifact'
             });
@@ -116,9 +85,15 @@ const changes = modelwrapper({
             LabTests.hasMany(changes.model, {
               foreignKey: 'labTest'
             });
-
             changes.model.belongsTo(LabTests, {
               foreignKey: 'labTest'
+            });
+
+            changes.model.belongsTo(MetaFacilities, {
+              foreignKey: 'facility'
+            });
+            MetaFacilities.hasMany(changes.model, {
+              foreignKey: 'facility'
             });
 
           }

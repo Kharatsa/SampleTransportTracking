@@ -1,0 +1,18 @@
+[
+    {
+    "key": "FORM",
+    "value": "Request Form"
+  }, {
+    "key": "BLOOD",
+    "value": "Blood vial"
+  }, {
+    "key": "SPUTUM",
+    "value": "Sputum"
+  }, {
+    "key": "URINE",
+    "value": "Urine"
+  }, {
+    "key": "DBS",
+    "value": "Dried blood spot"
+  }
+]

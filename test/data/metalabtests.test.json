@@ -1,0 +1,12 @@
+[
+  {
+    "key": "TESTA",
+    "value": "A test of type A"
+  }, {
+    "key": "TESTB",
+    "value": "A type B test"
+  }, {
+    "key": "TESTC",
+    "value": "A test of type C"
+  }
+]

@@ -218,12 +218,16 @@ router.post('/submission',
       BPromise.props({
         sampleIds: transform.sampleIds(parsed),
         artifacts: transform.artifacts(parsed),
-        changes: transform.changes(parsed, username)
+        changes: transform.changes(parsed, username),
+        metaFacility: transform.metaFacility(parsed),
+        metaRegion: transform.metaRegion(parsed),
+        metaPerson: {key: username.toUpperCase()}
       })
     )
     .tap(log.info);
 
-    const saveSubmission = parseEntities.then(collect.handleSubmission);
+    const saveSubmission = parseEntities.then(collect.handleSubmission)
+    .tap(log.debug);
 
     const backup = aggregatesubmission.submit(submission);
 

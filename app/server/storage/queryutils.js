@@ -4,6 +4,8 @@ const _ = require('lodash');
 const BPromise = require('bluebird');
 const dbresult = require('app/server/storage/dbresult.js');
 
+const wrapOr = ands => ({$or: ands});
+
 const hasPropsDefined = (item, propNames) => {
   return propNames.every(name =>
     item.hasOwnProperty(name) && typeof item[name] !== 'undefined'
@@ -143,6 +145,7 @@ const findAllWhere = (Model, where) => {
 };
 
 module.exports = {
+  wrapOr,
   requireProps,
   sttOptions,
   findAllWhere,

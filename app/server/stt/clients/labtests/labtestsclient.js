@@ -1,9 +1,15 @@
 'use strict';
 
+/** @module stt/sttclient/labtests */
+
 const util = require('util');
 const ModelClient = require('app/server/stt/clients/modelclient.js');
-const sttquery = require('app/server/stt/sttquery.js');
+const labtestsquery = require('./labtestsquery.js');
 
+/**
+ * @class Lab Tests database client
+ * @param {Object} options [description]
+ */
 function LabTestsClient(options) {
   ModelClient.call(this, options);
 }
@@ -15,7 +21,7 @@ util.inherits(LabTestsClient, ModelClient);
  * @return {Promise.<Array.<Object>>}          [description]
  */
 LabTestsClient.prototype.byTypesAndSampleIds = function(options) {
-  return sttquery.labTests.typesAndSampleIds(options.data)
+  return labtestsquery.typesAndSampleIds(options.data)
   .then(where => this.Model.findAll({where}));
 };
 
@@ -25,7 +31,7 @@ LabTestsClient.prototype.byTypesAndSampleIds = function(options) {
  * @return {Promise.<Array.<Object>>}          [description]
  */
 LabTestsClient.prototype.bySampleIds = function(options) {
-  return sttquery.labTests.sampleIds(options.data)
+  return labtestsquery.sampleIds(options.data)
   .then(where => this.Model.findAll({where}));
 };
 

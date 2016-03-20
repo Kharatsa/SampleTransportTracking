@@ -7,23 +7,30 @@ const expect = chai.expect;
 const BPromise = require('bluebird');
 const config = require('app/config');
 const storage = require('app/server/storage');
+const metamodels = require('app/server/stt/models/metadata');
 const sttmodels = require('app/server/stt/models');
 const dbresult = require('app/server/storage/dbresult.js');
+const loadtestmeta = require('../../../utils/loadtestmeta.js');
 
 describe('Sample Transport Tracking Database', () => {
   var models;
   var Sequelize;
   before(done => {
     storage.init({config: config.db});
+    storage.loadModels(metamodels);
     storage.loadModels(sttmodels);
+    const prepareserver = require('app/server/prepareserver.js');
     models = storage.models;
     Sequelize = storage.Sequelize;
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
+    .then(() => prepareserver())
+    .then(() => loadtestmeta())
     .then(() => done());
   });
 
   describe('persist data', () => {
+
     const s1 = {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1',
       stId: 'stt1',
@@ -43,65 +50,6 @@ describe('Sample Transport Tracking Database', () => {
       expect(
         models.SampleIds.create(s1)
       ).to.eventually.be.rejectedWith(Sequelize.UniqueConstraintError)
-    );
-
-    const meta1 = [
-      {
-        type: 'artifact',
-        key: 'FORM',
-        value: 'Form',
-        valueType: 'string'
-      },
-      {
-        type: 'artifact',
-        key: 'BLOOD',
-        value: 'Blood',
-        valueType: 'string'
-      },
-      {
-        type: 'artifact',
-        key: 'DBS',
-        value: 'Dried Blood Spot',
-        valueType: 'string'
-      },
-      {
-        type: 'labtest',
-        key: 'TESTA',
-        value: 'Test A',
-        valueType: 'string'
-      },
-      {
-        type: 'labtest',
-        key: 'TESTB',
-        value: 'Some Test Named B',
-        valueType: 'string'
-      },
-      {
-        type: 'facility',
-        key: 'FACILITY1',
-        value: 'A great facility',
-        valueType: 'string'
-      },
-      {
-        type: 'person',
-        key: 'PERSON1',
-        value: 'A great person',
-        valueType: 'string'
-      },
-      {
-        type: 'status',
-        key: 'OK',
-        value: 'Everything is just great',
-        valueType: 'string'
-      }
-    ];
-
-    it('should save metadata', () =>
-      expect(
-        BPromise.map(meta1, meta => models.Metadata.create(meta))
-        .map(dbresult.plain)
-        .map(dbresult.omitDBCols)
-      ).to.eventually.deep.equal(meta1)
     );
 
     const s2 = {
@@ -195,29 +143,8 @@ describe('Sample Transport Tracking Database', () => {
       ).to.eventually.deep.equal(expectedA3)
     );
 
-    const c1 = {
-      uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx9',
-      statusDate: new Date('2016-01-01T10:00:00.000Z'),
-      stage: 'sdepart',
-      artifact: a3.uuid,
-      facility: 'FACILITY1',
-      person: 'PERSON1',
-      status: 'OK'
-    };
-
-    const expectedC1 = Object.assign({}, c1,
-      {labTest: null, labRejection: null},
-      {stage: 'Sample Pickup'}
-    );
-
-    it('should save single changes', () =>
-      expect(
-        models.Changes.create(c1)
-        .then(instance => instance.reload())
-        .then(dbresult.plain)
-        .then(dbresult.omitDateDBCols)
-      ).to.eventually.deep.equal(expectedC1)
-    );
+    it('should save metadata');
+    it('should save single changes');
 
   });
 

@@ -6,8 +6,21 @@ const sttsubmission = require('app/server/stt/sttsubmission.js');
 const disatransform = require('app/server/disa/disatransform.js');
 
 const handleSubmission = incoming => {
-  const sampleIds = sttsubmission.sampleIds([incoming.sampleIds]);
-  const metadata = sttsubmission.metadata(incoming.metadata);
+  // Facilies reference regions, so regions must finish inserts/updates first
+  const metaFacility = sttsubmission.metaFacilities([incoming.metaFacility])
+  .catch((err) => {
+    log.error(err.message, err);
+    throw new Error('Facility key "' + incoming.metaFacility.key +
+                    '" conflicts with existing facility key');
+  });
+  const metaStatuses = sttsubmission.metaStatuses(incoming.metaStatuses);
+  const metaLabTests = sttsubmission.metaLabTests(incoming.metaLabTests);
+  const metaRejections = sttsubmission.metaRejections(incoming.metaRejections);
+  const meta = BPromise.join(metaFacility, metaStatuses, metaLabTests,
+                             metaRejections);
+
+  const sampleIds = meta.then(() =>
+    sttsubmission.sampleIds([incoming.sampleIds]));
 
   // Pull the sample id UUID from the sampleIds results for labTests lookups
   const sampleIdsRef = sampleIds
@@ -26,7 +39,10 @@ const handleSubmission = incoming => {
   .then(tests => disatransform.fillTestRefs(incoming.changes, tests))
   .then(sttsubmission.labChanges);
 
-  return BPromise.props({sampleIds, metadata, labTests, changes})
+  return BPromise.props({
+    sampleIds, labTests, changes,
+    metaFacility, metaStatuses, metaLabTests, metaRejections
+  })
   .tap(log.info);
 };
 

@@ -2,7 +2,7 @@
 
 const util = require('util');
 const ModelClient = require('app/server/stt/clients/modelclient.js');
-const sttquery = require('app/server/stt/sttquery.js');
+const sampleidsquery = require('./sampleidsquery.js');
 
 function SampleIdsClient(options) {
   ModelClient.call(this, options);
@@ -49,7 +49,7 @@ SampleIdsClient.prototype.eitherIds = function(options) {
     ];
   }
 
-  return sttquery.sampleIds.eitherIds(options.data)
+  return sampleidsquery.eitherIds(options.data)
   .then(where => this.Model.findAll({
     where,
     offset: options.offset,
@@ -64,7 +64,7 @@ SampleIdsClient.prototype.eitherIds = function(options) {
  * @return {Promise.<Array.<Object>>}          [description]
  */
 SampleIdsClient.prototype.byStIds = function(options) {
-  return sttquery.sampleIds.stIds(options.data)
+  return sampleidsquery.stIds(options.data)
   .then(where => Object.assign({}, options, {where}))
   .then(options => this.Model.findAll(options));
 };

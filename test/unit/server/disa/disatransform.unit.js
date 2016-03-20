@@ -51,7 +51,7 @@ describe('Disa Labs Status Tranforms', () => {
 
   const expectedChanges = [{
     statusDate: new Date('2016-01-01T00:00:00.000Z'),
-    stage: 'labstatus',
+    stage: 'LABSTATUS',
     facility: 'MHL',
     status: 'PRT',
     labTestType: 'TESTA',
@@ -65,30 +65,44 @@ describe('Disa Labs Status Tranforms', () => {
     ).to.eventually.deep.equal(expectedChanges)
   );
 
-  const expectedMetadata = [
-    {
-      type: 'facility',
-      key: 'MHL',
-      value: 'Duis autem vel',
-      valueType: 'string'
-    }, {
-      type: 'status',
-      key: 'PRT',
-      value: 'Lorem ipsum dolor sit amet',
-      valueType: 'string'
-    }, {
-      type: 'labtest',
-      key: 'TESTA',
-      value: 'A test of type A',
-      valueType: 'string'
-    }
-  ];
+  const expectedMetaFacility1 = {key: 'MHL', value: 'Duis autem vel'};
 
-  it('should parse single lab update metadata', () =>
+  it('should parse single lab update meta facility', () =>
     expect(
       disatransform.labStatus(singleUpdate)
-      .then(disatransform.metadata)
-    ).to.eventually.deep.equal(expectedMetadata)
+      .then(disatransform.metaFacility)
+    ).to.eventually.deep.equal(expectedMetaFacility1)
+  );
+
+  const expectedMetaStatuses1 = [
+    {key: 'PRT', value: 'Lorem ipsum dolor sit amet'}
+  ];
+
+  it('should parse single lab update meta statuses', () =>
+    expect(
+      disatransform.labStatus(singleUpdate)
+      .then(disatransform.metaStatuses)
+    ).to.eventually.deep.equal(expectedMetaStatuses1)
+  );
+
+  const expectedMetaLabTests1 = [
+    {key: 'TESTA', value: 'A test of type A'}
+  ];
+
+  it('should parse single lab update meta lab tests', () =>
+    expect(
+      disatransform.labStatus(singleUpdate)
+      .then(disatransform.metaLabTests)
+    ).to.eventually.deep.equal(expectedMetaLabTests1)
+  );
+
+  const expectedMetaRejections1 = [];
+
+  it('should parse single lab update meta rejections', () =>
+    expect(
+      disatransform.labStatus(singleUpdate)
+      .then(disatransform.metaRejections)
+    ).to.eventually.deep.equal(expectedMetaRejections1)
   );
 
   const expectedSampleIds2 = {
@@ -122,28 +136,28 @@ describe('Disa Labs Status Tranforms', () => {
 
   const expectedChanges2 = [{
     statusDate: new Date('2016-02-19T10:43:14'),
-    stage: 'labstatus',
+    stage: 'LABSTATUS',
     facility: 'LCC',
     status: 'REQ',
     labTestType: 'DIFF',
     labRejection: null
   }, {
     statusDate: new Date('2016-02-19T10:43:14'),
-    stage: 'labstatus',
+    stage: 'LABSTATUS',
     facility: 'LCC',
     status: 'REQ',
     labTestType: 'LFT',
     labRejection: null
   }, {
     statusDate: new Date('2016-02-19T10:43:14'),
-    stage: 'labstatus',
+    stage: 'LABSTATUS',
     facility: 'LCC',
     status: 'REQ',
     labTestType: 'UECA',
     labRejection: null
   }, {
     statusDate: new Date('2016-02-19T10:43:14'),
-    stage: 'labstatus',
+    stage: 'LABSTATUS',
     facility: 'LCC',
     status: 'REJ',
     labTestType: 'FBC',
@@ -157,55 +171,52 @@ describe('Disa Labs Status Tranforms', () => {
     ).to.eventually.deep.equal(expectedChanges2)
   );
 
-  const expectedMetadata2 = [
-    {
-      type: 'facility',
-      key: 'LCC',
-      value: 'Queen Elizabeth II Hospital',
-      valueType: 'string'
-    }, {
-      type: 'status',
-      key: 'REQ',
-      value: 'Requested',
-      valueType: 'string'
-    }, {
-      type: 'status',
-      key: 'REJ',
-      value: 'Rejected',
-      valueType: 'string'
-    }, {
-      type: 'labtest',
-      key: 'DIFF',
-      value: 'Differential',
-      valueType: 'string'
-    }, {
-      type: 'labtest',
-      key: 'LFT',
-      value: 'Liver Function Tests',
-      valueType: 'string'
-    }, {
-      type: 'labtest',
-      key: 'UECA',
-      value: 'Urea, Electrolytes & Creatinin',
-      valueType: 'string'
-    }, {
-      type: 'labtest',
-      key: 'FBC',
-      value: 'Full Blood Count + Platelets',
-      valueType: 'string'
-    }, {
-      type: 'rejection',
-      key: 'SOBAD',
-      value: 'Morbi elementum erat quis pretium sodales',
-      valueType: 'string'
-    }
+  const expectedMetaStatuses = [
+    {key: 'REQ', value: 'Requested'},
+    {key: 'REJ', value: 'Rejected'}
   ];
 
-  it('should parse multiple lab update metadata', () =>
+  it('should parse multiple lab update meta statuses', () =>
     expect(
       disatransform.labStatus(manyUpdates)
-      .then(disatransform.metadata)
-    ).to.eventually.deep.equal(expectedMetadata2)
+      .then(disatransform.metaStatuses)
+    ).to.eventually.deep.equal(expectedMetaStatuses)
+  );
+
+  const expectedMetaFacility = {
+    key: 'LCC', value: 'Queen Elizabeth II Hospital'
+  };
+
+  it('should parse multiple lab update meta facility', () =>
+    expect(
+      disatransform.labStatus(manyUpdates)
+      .then(disatransform.metaFacility)
+    ).to.eventually.deep.equal(expectedMetaFacility)
+  );
+
+  const expectedMetaLabTests = [
+    {key: 'DIFF', value: 'Differential'},
+    {key: 'LFT', value: 'Liver Function Tests'},
+    {key: 'UECA', value: 'Urea, Electrolytes & Creatinin'},
+    {key: 'FBC', value: 'Full Blood Count + Platelets'}
+  ];
+
+  it('should parse multiple lab update meta lab tests', () =>
+    expect(
+      disatransform.labStatus(manyUpdates)
+      .then(disatransform.metaLabTests)
+    ).to.eventually.deep.equal(expectedMetaLabTests)
+  );
+
+  const expectedMetaRejections = [
+    {key: 'SOBAD', value: 'Morbi elementum erat quis pretium sodales'}
+  ];
+
+  it('should parse multiple lab update meta rejections', () =>
+    expect(
+      disatransform.labStatus(manyUpdates)
+      .then(disatransform.metaRejections)
+    ).to.eventually.deep.equal(expectedMetaRejections)
   );
 
   const sampleIds1 = {
@@ -230,14 +241,14 @@ describe('Disa Labs Status Tranforms', () => {
   const c1 = [
     {
       statusDate: new Date('2016-01-01T00:00:00.000Z'),
-      stage: 'labstatus',
+      stage: 'LABSTATUS',
       facility: 'MHL',
       status: 'PRT',
       labTestType: 'TESTA',
       labRejection: null
     }, {
       statusDate: new Date('2016-01-01T00:00:00.000Z'),
-      stage: 'labstatus',
+      stage: 'LABSTATUS',
       facility: 'MHL',
       status: 'PRT',
       labTestType: 'TESTB',
@@ -248,14 +259,14 @@ describe('Disa Labs Status Tranforms', () => {
   const expectedFilledChanges = [
     {
       statusDate: new Date('2016-01-01T00:00:00.000Z'),
-      stage: 'labstatus',
+      stage: 'LABSTATUS',
       facility: 'MHL',
       status: 'PRT',
       labTest: labTests[0].uuid,
       labRejection: null
     }, {
       statusDate: new Date('2016-01-01T00:00:00.000Z'),
-      stage: 'labstatus',
+      stage: 'LABSTATUS',
       facility: 'MHL',
       status: 'PRT',
       labTest: labTests[1].uuid,
@@ -272,14 +283,14 @@ describe('Disa Labs Status Tranforms', () => {
   const c2 = [
     {
       statusDate: new Date('2016-01-01T00:00:00.000Z'),
-      stage: 'labstatus',
+      stage: 'LABSTATUS',
       facility: 'MHL',
       status: 'PRT',
       labTestType: 'TESTA',
       labRejection: null
     }, {
       statusDate: new Date('2016-01-01T00:00:00.000Z'),
-      stage: 'labstatus',
+      stage: 'LABSTATUS',
       facility: 'MHL',
       status: 'PRT',
       labTestType: 'TESTD', // This test does not exist in the database
@@ -300,7 +311,7 @@ describe('Disa Labs Status Tranforms', () => {
         disatransform.sampleId(parsed),
         disatransform.labStatusDate(parsed),
         disatransform.labChanges(parsed),
-        disatransform.facility(parsed),
+        disatransform.metaFacility(parsed),
         new Date('2016-01-02T00:00:00.000Z'),
         manyUpdates
       ))

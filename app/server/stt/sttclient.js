@@ -2,11 +2,21 @@
 
 const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
-const sampleidsclient = require('app/server/stt/clients/sampleidsclient.js');
-const metadataclient = require('app/server/stt/clients/metadataclient.js');
-const artifactsclient = require('app/server/stt/clients/artifactsclient.js');
-const labtestsclient = require('app/server/stt/clients/labtestsclient.js');
-const changesclient = require('app/server/stt/clients/changesclient.js');
+const metaregionsclient = require('./clients/metadata/metaregionsclient.js');
+const metafacilitiesclient = require('./clients/metadata/' +
+                                     'metafacilitiesclient.js');
+const metapeopleclient = require('./clients/metadata/metapeopleclient.js');
+const metaartifactsclient = require('./clients/metadata/' +
+                                    'metaartifactsclient.js');
+const metarejectionsclient = require('./clients/metadata/' +
+                                     'metarejectionsclient.js');
+const metastatusesclient = require('./clients/metadata/metastatusesclient.js');
+const metastagesclient = require('./clients/metadata/metastagesclient.js');
+const metalabtestsclient = require('./clients/metadata/metalabtestsclient.js');
+const sampleidsclient = require('app/server/stt/clients/sampleids');
+const artifactsclient = require('app/server/stt/clients/artifacts');
+const labtestsclient = require('app/server/stt/clients/labtests');
+const changesclient = require('app/server/stt/clients/changes');
 const dbresult = require('app/server/storage/dbresult.js');
 
 /** @module stt/sttclient */
@@ -42,7 +52,21 @@ function STTClient(options) {
       LabTests: this.models.LabTests
     }
   });
-  this.metadata = metadataclient({model: this.models.Metadata});
+
+  // Metadata clients
+  this.metaFacilities = metafacilitiesclient({
+    model: this.models.MetaFacilities
+  });
+  this.metaRegions = metaregionsclient({model: this.models.MetaRegions});
+  this.metaPeople = metapeopleclient({model: this.models.MetaPeople});
+  this.metaArtifacts = metaartifactsclient({model: this.models.MetaArtifacts});
+  this.metaLabTests = metalabtestsclient({model: this.models.MetaLabTests});
+  this.metaStatuses = metastatusesclient({model: this.models.MetaStatuses});
+  this.metaRejections = metarejectionsclient({
+    model: this.models.MetaRejections
+  });
+  this.metaStages = metastagesclient({model: this.models.MetaStages});
+
   this.artifacts = artifactsclient({model: this.models.Artifacts});
   this.labTests = labtestsclient({model: this.models.LabTests});
   this.changes = changesclient({
@@ -125,7 +149,7 @@ STTClient.prototype.modelUpdates = BPromise.method(function(options) {
  * @param {!Object} options
  * @param  {!Sequelize.Model} options.modelName
  * @param  {!Array.<Object>} options.data  [description]
- * @return {Array.<Object>}
+ * @return {Promise.<Array.<Object>>}
  * @throws {Error} If [missing required parameter]
  */
 STTClient.prototype.modelInserts = BPromise.method(function(options) {

@@ -5,6 +5,7 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 const config = require('app/config');
+const metamodels = require('app/server/stt/models/metadata');
 const sttmodels = require('app/server/stt/models');
 const storage = require('app/server/storage');
 const sttclient = require('app/server/stt/sttclient.js');
@@ -33,6 +34,7 @@ describe('Sample Transport Tracking Sample IDs client', () => {
   let models = null;
   before(done => {
     storage.init({config: config.db});
+    storage.loadModels(metamodels);
     storage.loadModels(sttmodels);
     client = sttclient({db: storage.db, models: storage.models});
     models = storage.models;

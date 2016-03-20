@@ -2,6 +2,12 @@
 
 const BPromise = require('bluebird');
 
+/**
+ * "Zips" the key and values array into an Object.
+ * @param  {Array.<string>} keys
+ * @param  {Array.<string>} values
+ * @return {Object}
+ */
 const parseLine = (keys, values) => {
   return keys.reduce((obj, key, i) => {
     obj[key] = values[i];
@@ -10,7 +16,11 @@ const parseLine = (keys, values) => {
 };
 
 /**
- * [description]
+ * Parses a string of CSV data into an Array of Objects. The keys for these
+ * Objects will be parsed from the first line (i.e., text before '\n') when
+ * options.headers=true, otherwise, the Object keys will be the strings 0 to N
+ * where 'N' is the number of columns.
+ *
  * @param {string} str [description]
  * @param  {Object} options [description]
  * @param {?string} [options.delimeter=','] [description]

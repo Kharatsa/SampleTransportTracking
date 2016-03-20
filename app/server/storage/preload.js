@@ -6,38 +6,27 @@ const BPromise = require('bluebird');
 BPromise.promisifyAll(fs);
 const log = require('app/server/util/logapp.js');
 const csv = require('app/server/util/csv.js');
-const storage = require('app/server/storage');
-const dbresult = require('app/server/storage/dbresult.js');
 
-const transform = (meta, type, keyProp, valueProp) => {
-  return BPromise.map(meta, one => {
-    let result = {type, valueType: 'string'};
-    result.key = one[keyProp];
-    result.value = one[valueProp];
-    return result;
-  });
-};
-
-const maybeCreate = meta => {
-  const model = storage.models.Metadata;
-
-  return storage.db.transaction({logging: false})
-  .then(tran => {
-    return BPromise.map(meta, incoming => {
-      return model.findOrCreate({
-        where: {type: incoming.type, key: incoming.key.toUpperCase()},
-        defaults: incoming,
-        transaction: tran,
-        logging: false
-      });
-    })
-    .map(dbresult.plain)
-    .then(() => tran.commit())
-    .catch(err => {
-      tran.rollback();
-      log.error(err.message, err);
-    });
-  });
+/**
+ * Converts metadata parsed from CSV to an Object for to a database model
+ * @param  {Object} options
+ * @param  {Array.<Object>} options.data  Data parsed from CSV
+ * @param  {Object} options.attributes  Map of target Model attributes to
+ *                                      source CSV column names (i.e.,
+ *                                      {target: source})
+ * @return {Promise.<Array.<Object>>}
+ */
+const transform = (options) => {
+  const data = options.data;
+  const attributes = options.attributes;
+  const attrNames = Object.keys(attributes);
+  return BPromise.map(data, item =>
+    BPromise.reduce(attrNames, (reduced, targetAttr) => {
+      const csvColName = attributes[targetAttr];
+      reduced[targetAttr] = item[csvColName];
+      return reduced;
+    }, {})
+  );
 };
 
 const metapath = `${path.join(__dirname,
@@ -49,29 +38,40 @@ try {
   log.error(`Cannot locate metadata folder at ${metapath}\n${err}`);
 }
 
+// For merges to work properly, all keys (including references)
+// should be converted to uppercase.
+const keyValueToUpperCase = (item, keyAttr) => {
+  let result = {};
+  result[keyAttr] = item[keyAttr].toUpperCase();
+  return Object.assign({}, item, result);
+};
+
 /**
- * [description]
- * @param  {!Object} options  [description]
- * @param {!string} options.filename [description]
- * @param {!string} options.key [description]
- * @param {!string} options.value [description]
- * @return {Promise.<Array.<Object>>}          [description]
+ * Preload the specified CSV files into the database as metadata.
+ *
+ * @param {!Object} options
+ * @param {!string} options.filename    Path to the metadata CSV file
+ * @param {!Object} options.attributes  Mapping of CSV header names to database
+ *                                      attribute names
+ * @return {Promise.<Array.<Object>>}
  */
 const metadata = BPromise.method((options) => {
-  if (!(options && options.filename && options.type && options.key &&
-      options.value)) {
+  if (!(options && options.filename && options.attributes && options.handler)) {
     throw new Error('Missing required options parameter');
   }
+  const handler = options.handler;
+  const keyAttr = options.attributes.key;
+
   return fs.readFileAsync(path.join(metapath, options.filename), 'utf-8')
   .then(csv.parse)
-  .then(parsed => transform(parsed, options.type, options.key, options.value))
-  .then(maybeCreate)
+  .map(item => keyValueToUpperCase(item, keyAttr))
+  .then(data => transform({data, attributes: options.attributes}))
+  .then(data => handler(data))
   .then(() => log.info(`Finished metadata preload for "${options.filename}"`))
   .catch(err =>
-    log.error(`Failed metadata preload for "${options.filename}"`, err)
+    log.error(`Failed metadata preload for "${options.filename}": `,
+              err.message, err.errors)
   );
 });
 
-module.exports = {
-  metadata
-};
+module.exports = {metadata};

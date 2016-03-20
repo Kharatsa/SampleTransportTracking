@@ -13,7 +13,7 @@ const Bluebird = require('bluebird');
 const readFileAsync = Bluebird.promisify(fs.readFile);
 const transform = require('app/server/odk/collect/collecttransform.js');
 
-const basePath = path.join(__dirname);
+const basePath = path.join(__dirname, '..', 'data');
 const filenames = [
   'sdepart1.xml',
   'sdepart2.xml',

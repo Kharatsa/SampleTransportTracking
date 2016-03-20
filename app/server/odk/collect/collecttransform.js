@@ -40,6 +40,7 @@ const END_DATE = 'end';
 const FORM_TYPE_PATH = ['$', 'id'];
 const END_DATE_PATH = [END_DATE, 0];
 const FACILITY_PATH = [metaFields.FACILITY, 0];
+const REGION_PATH = [metaFields.REGION, 0];
 
 // Other ODK Collect XForms constants
 const DEFAULT_ARTIFACT_TYPE = 'FORM';
@@ -252,9 +253,9 @@ const changes = (form, username) => {
   // Top-level elements shared among all changes
   const parseDate = dates.parseXMLDate(_.get(form, END_DATE_PATH));
   const common = {
-    stage: _.get(form, FORM_TYPE_PATH),
+    stage: upperCaseKey(_.get(form, FORM_TYPE_PATH)),
     facility: upperCaseKey(_.get(form, FACILITY_PATH)),
-    person: username ? username.toUpperCase() : DEFAULT_PERSON
+    person: upperCaseKey(username ? username : DEFAULT_PERSON)
   };
 
   const parseRepeats = repeatsFlat({
@@ -268,6 +269,16 @@ const changes = (form, username) => {
       Object.assign({}, {statusDate}, common, repeat));
   })
   .filter(results => results.stId || results.labId);
+};
+
+const metaRegion = form => {
+  return {key: upperCaseKey(_.get(form, REGION_PATH))};
+};
+
+const metaFacility = form => {
+  const facilityKey = upperCaseKey(_.get(form, FACILITY_PATH));
+  const regionKey = upperCaseKey(_.get(form, REGION_PATH));
+  return {key: facilityKey, region: regionKey};
 };
 
 /**
@@ -356,6 +367,8 @@ module.exports = {
   sampleIds,
   artifacts,
   changes,
+  metaRegion,
+  metaFacility,
   fillSampleIdRefs,
   fillArtifactRefs
 };

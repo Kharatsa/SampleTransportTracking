@@ -42,7 +42,6 @@ const updateAndInsert = (merged, modelName, updatePKs) => {
  * @return {Promise.<Object>}     [description]
  */
 const sampleIds = incoming => {
-  // TODO: cleanup
   const stIds = BPromise.map(incoming, item => item.stId);
   const labIds = BPromise.map(incoming, item => item.labId);
   const combinedIds = BPromise.join(stIds, labIds, (stId, labId) =>
@@ -75,21 +74,27 @@ const sampleIds = incoming => {
   return merge.then(merged => updateAndInsert(merged, 'SampleIds', ['uuid']));
 };
 
-/**
- * [description]
- * @param  {Array.<Object>} incoming [description]
- * @return {Promise.<Object>}      [description]
- */
-const metadata = incoming => {
-  const merge = client.metadata.byTypeAndKey({
-    data: incoming, omitDateDBCols: true
-  })
-  .tap(local => log.debug('metadata local', local))
-  .then(local => datamerge.pairByProps(incoming, local, ['type', 'key']))
-  .tap(merged => log.debug('metadata merged', merged));
+const metaHandler = (model, modelName, uniques) => {
+  uniques = uniques || ['key'];
 
-  return merge.then(merged => updateAndInsert(merged, 'Metadata', ['id']));
+  return data => {
+    const merge = model.byKey({data, omitDateDBCols: true})
+    .tap(local => log.debug(`${modelName} local`, local))
+    .then(local => datamerge.pairByProps(data, local, uniques))
+    .tap(merged => log.debug(`${modelName} merged`, merged));
+
+    return merge.then(merged => updateAndInsert(merged, modelName, uniques));
+  };
 };
+
+const metaRegions = metaHandler(client.metaRegions, 'MetaRegions');
+const metaFacilities = metaHandler(client.metaFacilities, 'MetaFacilities');
+const metaArtifacts = metaHandler(client.metaArtifacts, 'MetaArtifacts');
+const metaLabTests = metaHandler(client.metaLabTests, 'MetaLabTests');
+const metaPeople = metaHandler(client.metaPeople, 'MetaPeople');
+const metaStatuses = metaHandler(client.metaStatuses, 'MetaStatuses');
+const metaRejections = metaHandler(client.metaRejections, 'MetaRejections');
+const metaStages = metaHandler(client.metaStages, 'MetaStages');
 
 /**
  * [description]
@@ -161,7 +166,14 @@ const labChanges = incoming => {
 module.exports = {
   syncedCombine,
   sampleIds,
-  metadata,
+  metaRegions,
+  metaFacilities,
+  metaArtifacts,
+  metaLabTests,
+  metaPeople,
+  metaStatuses,
+  metaRejections,
+  metaStages,
   artifacts,
   labTests,
   scanChanges,

@@ -1,9 +1,16 @@
 'use strict';
 
+/** @module stt/sttclient/changes */
+
 const util = require('util');
 const ModelClient = require('app/server/stt/clients/modelclient.js');
-const sttquery = require('app/server/stt/sttquery.js');
+const changesquery = require('./changesquery.js');
 
+/**
+ * [ChangesClient description]
+ * @class Changes database client
+ * @param {Object} options [description]
+ */
 function ChangesClient(options) {
   ModelClient.call(this, options);
 
@@ -50,7 +57,7 @@ ChangesClient.prototype.latest = function(options) {
  * @return {Promise.<Array.<Object>>}          [description]
  */
 ChangesClient.prototype.byLabTestsAndDates = function(options) {
-  return sttquery.changes.labTestsAndDates(options.data)
+  return changesquery.labTestsAndDates(options.data)
   .then(where => this.Model.findAll({where}));
 };
 
@@ -60,7 +67,7 @@ ChangesClient.prototype.byLabTestsAndDates = function(options) {
  * @return {Promise.<Array.<Object>>}          [description]
  */
 ChangesClient.prototype.byArtifactsAndDates = function(options) {
-  return sttquery.changes.artifactsAndDates(options.data)
+  return changesquery.artifactsAndDates(options.data)
   .then(where => this.Model.findAll({where}));
 };
 
