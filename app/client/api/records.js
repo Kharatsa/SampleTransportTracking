@@ -2,11 +2,19 @@
 
 import {Record} from 'immutable';
 
-export const MetadataRecord = Record({
-  id: null,
-  type: null,
+export const KeyValueMetaRecord = Record({
   key: null,
-  value: null
+  value: null,
+  createdAt: null,
+  updatedAt: null
+});
+
+export const FacilityMetaRecord = Record({
+  key: null,
+  value: null,
+  region: null,
+  createdAt: null,
+  updatedAt: null
 });
 
 export const ChangeRecord = Record({
@@ -38,8 +46,8 @@ export const SampleRecord = Record({
   stId: null,
   labId: null,
   outstanding: true,
-  createdAt: null
-  // updatedAt: null
+  createdAt: null,
+  updatedAt: null
 });
 
 export const WindowSize = Record({

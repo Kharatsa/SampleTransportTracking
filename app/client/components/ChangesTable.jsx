@@ -4,7 +4,7 @@ import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Seq, Map as ImmutableMap} from 'immutable';
 import {Table, Column, Cell} from 'fixed-data-table';
-import {TextCell, LinkCell, DateCell, MetadataCell} from './CellTypes.jsx';
+import {LinkCell, DateCell, MetadataCell} from './CellTypes.jsx';
 
 const ROW_HEIGHT = 40;
 const HEADER_HEIGHT = 50;
@@ -68,7 +68,10 @@ export default React.createClass({
             header={<Cell>Stage</Cell>}
             width={CELL_WIDTH}
             flexGrow={1}
-            cell={<TextCell data={data} col='stage' />} />
+            cell={<MetadataCell
+                  data={data}
+                  col='stage'
+                  metadata={metadata.get('stages')} />} />
           <Column
             header={<Cell>Status</Cell>}
             width={CELL_WIDTH}
@@ -76,8 +79,7 @@ export default React.createClass({
             cell={<MetadataCell
                   data={data}
                   col='status'
-                  meta={metadata}
-                  type='status' />} />
+                  metadata={metadata.get('statuses')} />} />
           <Column
             header={<Cell>Artifact</Cell>}
             flexGrow={1}
@@ -85,8 +87,7 @@ export default React.createClass({
             cell={<MetadataCell
                     data={data}
                     col='artifactType'
-                    meta={metadata}
-                    type='artifact' />} />
+                    metadata={metadata.get('artifacts')} />} />
           <Column
             header={<Cell>Test</Cell>}
             flexGrow={1}
@@ -94,8 +95,7 @@ export default React.createClass({
             cell={<MetadataCell
                     data={data}
                     col='testType'
-                    meta={metadata}
-                    type='labTest' />} />
+                    metadata={metadata.get('labTests')} />} />
           <Column
             header={<Cell>Rejection</Cell>}
             flexGrow={1}
@@ -103,8 +103,7 @@ export default React.createClass({
             cell={<MetadataCell
                     data={data}
                     col='labRejection'
-                    meta={metadata}
-                    type='rejection' />} />
+                    metadata={metadata.get('rejections')} />} />
           <Column
             header={<Cell>Facility</Cell>}
             flexGrow={1}
@@ -112,8 +111,7 @@ export default React.createClass({
             cell={<MetadataCell
                     data={data}
                     col='facility'
-                    meta={metadata}
-                    type='facility' />} />
+                    metadata={metadata.get('facilities')} />} />
           <Column
             header={<Cell>Person</Cell>}
             flexGrow={1}
@@ -121,8 +119,7 @@ export default React.createClass({
             cell={<MetadataCell
                     data={data}
                     col='person'
-                    meta={metadata}
-                    type='person' />} />
+                    metadata={metadata.get('people')} />} />
           <Column
             header={<Cell>Date</Cell>}
             width={200}

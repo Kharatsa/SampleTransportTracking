@@ -3,6 +3,7 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import Link from 'react-router/lib/Link';
 import {Cell} from 'fixed-data-table';
+import MetaText from './MetaText.jsx';
 import {shortFormatDateTime} from '../util/stringformat.js';
 
 export const TextCell = ({rowIndex, data, col}) => (
@@ -23,9 +24,7 @@ export const DateCell = ({rowIndex, data, col}) => {
   return (<Cell>{shortFormatDateTime(dateStr)}</Cell>);
 };
 
-export const MetadataCell = ({rowIndex, data, col, meta, type}) => {
-  const metaType = meta.get(type);
+export const MetadataCell = ({rowIndex, data, col, metadata}) => {
   const metaKey = data[rowIndex][col];
-  const metaRecord = metaType.get(metaKey) || null;
-  return <Cell>{metaRecord ? metaRecord.get('value') : ''}</Cell>;
+  return <Cell><MetaText metadata={metadata} metaKey={metaKey} /></Cell>;
 };

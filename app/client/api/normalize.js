@@ -6,7 +6,8 @@ import {
   changeInclude, sample, metadata, sampleInclude
 } from './schemas.js';
 import {
-  ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord, MetadataRecord
+  ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
+  KeyValueMetaRecord, FacilityMetaRecord
 } from './records.js';
 
 /**
@@ -61,26 +62,22 @@ const keyReduce = (data, options) => {
   }, {});
 };
 
-const normalizeMetaType = (data, typeName) => {
+const normalizeMeta = (data, Record) => {
   let {entities} = normalize(data, arrayOf(metadata));
-  let normalized = {};
-  normalized[typeName] = makeImmutable(entities.metadata, MetadataRecord);
-  return normalized;
+  return makeImmutable(entities.metadata, Record);
 };
 
 export const normalizeMetadata = data => {
-  const types = keyReduce(data, {key: 'type'});
-
-  const people = normalizeMetaType(types.person || [], 'person');
-  const facilities = normalizeMetaType(types.facility || [], 'facility');
-  const labTests = normalizeMetaType(types.labtest || [], 'labTest');
-  const artifacts = normalizeMetaType(types.artifact || [], 'artifact');
-  const statuses = normalizeMetaType(types.status || [], 'status');
-  const labRejections = normalizeMetaType(types.rejection || [], 'rejection');
-
-  return ImmutableMap(Object.assign({},
-    people, facilities, labTests, artifacts, statuses, labRejections
-  ));
+  return ImmutableMap({
+    regions: normalizeMeta(data.regions, KeyValueMetaRecord),
+    facilities: normalizeMeta(data.facilities, FacilityMetaRecord),
+    people: normalizeMeta(data.people, KeyValueMetaRecord),
+    labTests: normalizeMeta(data.labTests, KeyValueMetaRecord),
+    artifacts: normalizeMeta(data.artifacts, KeyValueMetaRecord),
+    statuses: normalizeMeta(data.statuses, KeyValueMetaRecord),
+    rejections: normalizeMeta(data.rejections, KeyValueMetaRecord),
+    stages: normalizeMeta(data.stages, KeyValueMetaRecord)
+  });
 };
 
 export const normalizeSamples = ({data, count}) => {
@@ -146,7 +143,8 @@ const sampleDetailStageMap = (artifactChanges, testChanges) => {
 export const normalizeSample = data => {
   const {changesByArtifactId, artifactChanges} = sampleDetailArtifactMaps(data);
   const {changesByLabTestId, testChanges} = sampleDetailTestMaps(data);
-  const {changesIdsByStage} = sampleDetailStageMap(artifactChanges, testChanges);
+  const {changesIdsByStage} = sampleDetailStageMap(artifactChanges,
+                                                   testChanges);
 
   const {entities, result} = normalize(data, sampleInclude);
   const sampleId = result || null;

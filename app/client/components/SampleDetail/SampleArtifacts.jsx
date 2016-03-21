@@ -7,9 +7,6 @@ import InfoPanel from '../InfoPanel.jsx';
 export const SampleArtifacts = ({
   artifactsById, changesByArtifactId, metadata
 }) => {
-  const artifacts = metadata.get('artifact');
-  const statuses = metadata.get('status');
-
   const artifactElems = changesByArtifactId.entrySeq().map(entry => {
     const id = entry[0];
     const changes = entry[1];
@@ -20,8 +17,9 @@ export const SampleArtifacts = ({
             changes={changes}
             refItem={artifact}
             refType='artifactType'
-            refMeta={artifacts}
-            statuses={statuses} />
+            refMeta={metadata.get('artifacts')}
+            statuses={metadata.get('statuses')}
+            stages={metadata.get('stages')} />
       </li>
     );
   });

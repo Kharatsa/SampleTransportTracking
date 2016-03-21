@@ -61,31 +61,6 @@ const receiveSampleDetail = ({
   changesByArtifactId, changesByLabTestId, changesIdsByStage
 });
 
-// const requestSamples = () => ({type: FETCH_SAMPLE_LIST});
-
-// const fetchSamplesFailure = error => ({type: FETCH_SAMPLE_LIST_FAILURE, error});
-
-// const receiveSamples = (samples, sampleIds) => ({
-//   type: RECEIVE_SAMPLE_LIST,
-//   samples,
-//   sampleIds
-// });
-
-// export const fetchSamples = () => {
-//   return dispatch => {
-//     dispatch(fetchingData(true));
-//     dispatch(requestSamples());
-//     return api.getSamples((err, data) => {
-//       if (err) {
-//         dispatch(fetchSamplesFailure(err));
-//       } else {
-//         dispatch(receiveSamples(data.samples, data.sampleIds));
-//       }
-//       dispatch(fetchingData(false));
-//     });
-//   };
-// };
-
 const requestChanges = page => ({type: FETCH_CHANGES, page});
 
 const fetchChangesFailure = (error, page) => ({

@@ -3,7 +3,6 @@
 import {combineReducers} from 'redux';
 import {Seq, Map as ImmutableMap} from 'immutable';
 import {
-    // FETCHING_DATA,
     FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
     FETCH_SAMPLE_DETAIL, FETCH_SAMPLE_DETAIL_FAILURE, RECEIVE_SAMPLE_DETAIL,
     RECEIVE_METADATA, CHANGE_WINDOW_SIZE

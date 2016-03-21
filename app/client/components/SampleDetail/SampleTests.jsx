@@ -7,9 +7,6 @@ import InfoPanel from '../InfoPanel.jsx';
 export const SampleTests = ({
   labTestsById, changesByLabTestId, metadata
 }) => {
-  const labTests = metadata.get('labTest');
-  const statuses = metadata.get('status');
-
   const testElems = changesByLabTestId.entrySeq().map(entry => {
     const id = entry[0];
     const changes = entry[1];
@@ -20,8 +17,9 @@ export const SampleTests = ({
             changes={changes}
             refItem={labTest}
             refType='testType'
-            refMeta={labTests}
-            statuses={statuses} />
+            refMeta={metadata.get('labTests')}
+            statuses={metadata.get('statuses')}
+            stages={metadata.get('stages')} />
       </li>
     );
   });

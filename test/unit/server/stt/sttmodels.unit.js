@@ -10,7 +10,7 @@ const storage = require('app/server/storage');
 const metamodels = require('app/server/stt/models/metadata');
 const sttmodels = require('app/server/stt/models');
 const dbresult = require('app/server/storage/dbresult.js');
-const loadtestmeta = require('../../../utils/loadtestmeta.js');
+const testmeta = require('../../../utils/testmeta.js');
 
 describe('Sample Transport Tracking Database', () => {
   var models;
@@ -25,7 +25,7 @@ describe('Sample Transport Tracking Database', () => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
     .then(() => prepareserver())
-    .then(() => loadtestmeta())
+    .then(() => testmeta.load())
     .then(() => done());
   });
 

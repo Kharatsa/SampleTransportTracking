@@ -14,15 +14,16 @@ const sttsubmission = require('app/server/stt/sttsubmission.js');
 const basePath = path.join(__dirname, '..', 'data');
 const testJsonPath = filename => path.join(basePath, filename);
 
-const loadMeta = () => {
-  const metaLabTests = require(testJsonPath('metalabtests.test.json'));
-  const metaArtifacts = require(testJsonPath('metaartifacts.test.json'));
-  const metaRegions = require(testJsonPath('metaregions.test.json'));
-  const metaFacilities = require(testJsonPath('metafacilities.test.json'));
-  const metaPeople = require(testJsonPath('metapeople.test.json'));
-  const metaRejections = require(testJsonPath('metarejections.test.json'));
-  const metaStatuses = require(testJsonPath('metastatuses.test.json'));
+const metaLabTests = require(testJsonPath('metalabtests.test.json'));
+const metaArtifacts = require(testJsonPath('metaartifacts.test.json'));
+const metaRegions = require(testJsonPath('metaregions.test.json'));
+const metaFacilities = require(testJsonPath('metafacilities.test.json'));
+const metaPeople = require(testJsonPath('metapeople.test.json'));
+const metaRejections = require(testJsonPath('metarejections.test.json'));
+const metaStatuses = require(testJsonPath('metastatuses.test.json'));
+const metaStages = require(testJsonPath('metastages.test.json'));
 
+const load = () => {
   return storage.db.sync()
   .then(() => sttsubmission.metaLabTests(metaLabTests))
   .then(() => sttsubmission.metaArtifacts(metaArtifacts))
@@ -31,7 +32,18 @@ const loadMeta = () => {
   .then(() => sttsubmission.metaPeople(metaPeople))
   .then(() => sttsubmission.metaRejections(metaRejections))
   .then(() => sttsubmission.metaStatuses(metaStatuses))
+  .then(() => sttsubmission.metaStages(metaStages))
   .then(() => log.debug('Finished loading test metadata'));
 };
 
-module.exports = loadMeta;
+module.exports = {
+  load,
+  metaLabTests,
+  metaArtifacts,
+  metaRegions,
+  metaFacilities,
+  metaPeople,
+  metaRejections,
+  metaStatuses,
+  metaStages
+};

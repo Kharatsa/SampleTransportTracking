@@ -4,7 +4,7 @@ const log = require('app/server/util/logapp.js');
 const storage = require('app/server/storage');
 const preload = require('app/server/storage/preload.js');
 const sttsubmission = require('app/server/stt/sttsubmission.js');
-// const fakedata = require('../../test/utils/fakedata.js');
+const fakedata = require('../../test/utils/fakedata.js');
 
 module.exports = () => {
   const preloadMetadata = storage.db.sync()
@@ -41,8 +41,9 @@ module.exports = () => {
   .catch(err => log.error(err, err.stack));
 
   if (process.env.NODE_ENV !== 'production') {
-    return preloadMetadata.then(() => {});
-    // return preloadMetadata.then(() => fakedata.load());
+    // return preloadMetadata.then(() => {})
+    return preloadMetadata.then(() => fakedata.load())
+    .catch(err => log.error(err, err.message));
   }
 
   return preloadMetadata;

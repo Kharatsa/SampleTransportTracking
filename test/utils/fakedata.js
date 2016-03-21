@@ -6,47 +6,12 @@ const storage = require('app/server/storage');
 storage.init({config: config.db});
 const sttmodels = require('app/server/stt/models');
 storage.loadModels(sttmodels);
+const testmeta = require('./testmeta.js');
 
-const lorem = ['lorem', 'ipsum', 'dolor', 'sit', 'amet, ', 'consectetur',
-'adipisicing', 'elit, ', 'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut',
-'labore', 'et', 'dolore', 'magna', 'aliqua.', 'enim', 'ad', 'minim',
-'veniam, ', 'quis', 'nostrud', 'exercitation', 'ullamco', 'laboris', 'nisi',
-'ut', 'aliquip', 'ex', 'ea', 'commodo', 'consequat.', 'duis', 'aute', 'irure',
-'dolor', 'in', 'reprehenderit', 'in', 'voluptate', 'velit', 'esse', 'cillum',
-'dolore', 'eu', 'fugiat', 'nulla', 'pariatur.', 'excepteur', 'sint', 'occaecat',
-'cupidatat', 'non', 'proident, ', 'sunt', 'in', 'culpa', 'qui', 'officia',
-'deserunt', 'mollit', 'anim', 'id', 'est', 'laborum.', 'sed', 'ut',
-'perspiciatis', 'unde', 'omnis', 'iste', 'natus', 'error', 'sit', 'voluptatem',
-'accusantium', 'doloremque', 'laudantium, ', 'totam', 'rem', 'aperiam', 'eaque',
-'ipsa, ', 'quae', 'ab', 'illo', 'inventore', 'veritatis', 'et', 'quasi',
-'architecto', 'beatae', 'vitae', 'dicta', 'sunt, ', 'explicabo.', 'nemo',
-'enim', 'ipsam', 'voluptatem, ', 'quia', 'voluptas', 'sit, ', 'aspernatur',
-'aut', 'odit', 'aut', 'fugit, ', 'sed', 'quia', 'consequuntur', 'magni',
-'dolores', 'eos, ', 'qui', 'ratione', 'voluptatem', 'sequi', 'nesciunt, ',
-'neque', 'porro', 'quisquam', 'est, ', 'qui', 'dolorem', 'ipsum, ', 'quia',
-'dolor', 'sit, ', 'amet, ', 'consectetur, ', 'adipisci', 'velit, ', 'sed',
-'quia', 'non', 'numquam', 'eius', 'modi', 'tempora', 'incidunt, ', 'ut',
-'labore', 'et', 'dolore', 'magnam', 'aliquam', 'quaerat', 'voluptatem.', 'ut',
-'enim', 'ad', 'minima', 'veniam, ', 'quis', 'nostrum', 'exercitationem',
-'ullam', 'corporis', 'suscipit', 'laboriosam, ', 'nisi', 'ut', 'aliquid', 'ex',
-'ea', 'commodi', 'consequatur?', 'quis', 'autem', 'vel', 'eum', 'iure',
-'reprehenderit, ', 'qui', 'in', 'ea', 'voluptate', 'velit', 'esse, ', 'quam',
-'nihil', 'molestiae', 'consequatur, ', 'vel', 'illum, ', 'qui', 'dolorem',
-'eum', 'fugiat, ', 'quo', 'voluptas', 'nulla', 'pariatur?', 'at', 'vero', 'eos',
-'et', 'accusamus', 'et', 'iusto', 'odio', 'dignissimos', 'ducimus, ', 'qui',
-'blanditiis', 'praesentium', 'voluptatum', 'deleniti', 'atque', 'corrupti, ',
-'quos', 'dolores', 'et', 'quas', 'molestias', 'excepturi', 'sint, ',
-'obcaecati', 'cupiditate', 'non', 'provident, ', 'similique', 'sunt', 'in',
-'culpa, ', 'qui', 'officia', 'deserunt', 'mollitia', 'animi, ', 'id', 'est',
-'laborum', 'et', 'dolorum', 'fuga.', 'harum', 'quidem', 'rerum', 'facilis',
-'est', 'et', 'expedita', 'distinctio.', 'Nam', 'libero', 'tempore, ', 'cum',
-'soluta', 'nobis', 'est', 'eligendi', 'optio, ', 'cumque', 'nihil', 'impedit',
-'quo', 'minus', 'id, ', 'quod', 'maxime', 'placeat, ', 'facere', 'possimus, ',
-'omnis', 'voluptas', 'assumenda', 'est, ', 'omnis', 'dolor', 'repellendus.',
-'temporibus', 'autem', 'quibusdam', 'aut', 'officiis', 'debitis', 'aut',
-'rerum', 'necessitatibus', 'saepe', 'eveniet, ', 'ut', 'et', 'voluptates',
-'repudiandae', 'sint', 'molestiae', 'non', 'recusandae.', 'itaque', 'earum'
-];
+const FAKE_SAMPLES_NUM = 500;
+const FAKE_ARTIFACTS_NUM = 1500;
+const FAKE_TESTS_NUM = 2000;
+const FAKE_CHANGES_NUM = 5000;
 
 const makeUUID = () => {
   // http://www.ietf.org/rfc/rfc4122.txt
@@ -60,7 +25,6 @@ const makeUUID = () => {
   s[8] = s[13] = s[18] = s[23] = '-';
 
   return 'FAKE' + s.slice(4, s.length).join('');
-  // return s.join('');
 };
 
 const getRandomInt = length => Math.floor(Math.random() * (length));
@@ -146,55 +110,19 @@ const fakeTests = (num, samples, types) => {
   return {tests, testsById};
 };
 
-const makeLorem = length => {
-  let value = [];
-  for (let i = 0; i < length; i++) {
-    value.push(lorem[getRandomInt(lorem.length)]);
-  }
-  return value.join(' ');
-};
-
-const makeMeta = (type, valueLength) => {
-  let value = makeLorem(valueLength);
-
-  return {
-    type,
-    key: 'FAKE' + makeRandomString('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4),
-    value,
-    valueType: 'string'
-  };
-};
-
-const fakeMetadata = (num, type, valueLength) => {
-  let result = [];
-
-  for (let i = 0; i < num; i++) {
-    let meta = makeMeta(type, valueLength);
-    result.push(meta);
-  }
-
-  return result;
-};
-
 const MILLIS_PER_YEAR = 31536000000;
 
 const makeDate = () => {
   return new Date(Date.now() - getRandomInt(MILLIS_PER_YEAR * 5)).toISOString();
 };
 
-const WORKFLOW_STAGES = [
-  'sdepart',
-  'sarrive',
-  'labstatus',
-  'rdepart',
-  'rarrive'
-];
-
-const makeChange = (artifact, test, facility, person, status, labRejection) => {
+const makeChange = (
+  artifact, test, facility, person, status, labRejection, stage
+) => {
   return ({
     uuid: makeUUID(),
     statusDate: makeDate(),
-    stage: WORKFLOW_STAGES[getRandomInt(WORKFLOW_STAGES.length)],
+    stage: stage,
     artifact: artifact ? artifact.uuid : null,
     labTest: test ? test.uuid : null,
     facility: facility ? facility.key : null,
@@ -214,6 +142,7 @@ const fakeChanges = (num, artifacts, tests, meta) => {
     let person = null;
     let status = null;
     let rejection = null;
+    let stage = null;
     if (Math.random() > 0.5) {
       artifact = artifacts[getRandomInt(artifacts.length)];
       facility = meta.facility[getRandomInt(meta.facility.length)];
@@ -224,8 +153,10 @@ const fakeChanges = (num, artifacts, tests, meta) => {
     }
     status = meta.status[getRandomInt(meta.status.length)];
 
+    stage = meta.stage[getRandomInt(meta.stage.length)].key;
+
     let change = makeChange(
-      artifact, test, facility, person, status, rejection
+      artifact, test, facility, person, status, rejection, stage
     );
     changes.push(change);
   }
@@ -234,61 +165,68 @@ const fakeChanges = (num, artifacts, tests, meta) => {
 };
 
 const make = () => {
-  const meta = {
-    artifact: fakeMetadata(5, 'artifact', 2),
-    labtest: fakeMetadata(20, 'labtest', 2),
-    facility: fakeMetadata(50, 'facility', 2),
-    region: fakeMetadata(10, 'region', 1),
-    status: fakeMetadata(10, 'status', 2),
-    rejection: fakeMetadata(10, 'rejection', 3),
-    person: fakeMetadata(50, 'person', 2)
-  };
+  return testmeta.load()
+  .then(() => {
+    const meta = {
+      artifact: testmeta.metaArtifacts,
+      labtest: testmeta.metaLabTests,
+      facility: testmeta.metaFacilities,
+      region: testmeta.metaRegions,
+      status: testmeta.metaStatuses,
+      rejection: testmeta.metaRejections,
+      person: testmeta.metaPeople,
+      stage: testmeta.metaStages
+    };
 
-  const fSamples = fakeSamples(100);
+    const fSamples = fakeSamples(FAKE_SAMPLES_NUM);
 
-  const artifactTypes = meta.artifact.map(meta => meta.key);
-  const fArtifacts = fakeArtifacts(500, fSamples.samples, artifactTypes);
+    const artifactTypes = meta.artifact.map(meta => meta.key);
+    const fArtifacts = fakeArtifacts(FAKE_ARTIFACTS_NUM, fSamples.samples,
+                                     artifactTypes);
 
-  const testTypes = meta.labtest.map(meta => meta.key);
-  const fTests = fakeTests(500, fSamples.samples, testTypes);
+    const testTypes = meta.labtest.map(meta => meta.key);
+    const fTests = fakeTests(FAKE_TESTS_NUM, fSamples.samples, testTypes);
 
-  const fChanges = fakeChanges(1000, fArtifacts.artifacts, fTests.tests, meta);
+    const fChanges = fakeChanges(FAKE_CHANGES_NUM, fArtifacts.artifacts,
+                                 fTests.tests, meta);
 
-  return {
-    metadata: [].concat(
-      meta.artifact, meta.labtest, meta.facility, meta.region, meta.status,
-      meta.rejection, meta.person
-    ),
-    samples: fSamples.samples,
-    artifacts: fArtifacts.artifacts,
-    labTests: fTests.tests,
-    changes: fChanges
-  };
+    return {
+      metadata: [].concat(
+        meta.artifact, meta.labtest, meta.facility, meta.region, meta.status,
+        meta.rejection, meta.person
+      ),
+      samples: fSamples.samples,
+      artifacts: fArtifacts.artifacts,
+      labTests: fTests.tests,
+      changes: fChanges
+    };
+  });
 };
 
 const load = () => {
-  const fake = make();
   const noLog = {logging: false};
 
-  return storage.db.sync()
-  .then(() => log.info('Wiping data from development database'))
-  .then(() => storage.models.Changes.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-  .then(() =>
-    storage.models.Artifacts.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-  .then(() =>
-    storage.models.LabTests.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-  .then(() =>
-    storage.models.SampleIds.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-  .then(() =>
-    storage.models.Metadata.destroy({where: {key: {$like: 'FAKE%'}}}))
-  .then(() => log.info('Loading fake data'))
-  .then(() => storage.models.Metadata.bulkCreate(fake.metadata, noLog))
-  .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
-  .then(() => storage.models.Artifacts.bulkCreate(fake.artifacts, noLog))
-  .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
-  .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog))
-  .then(() => log.info('Finished loading fake data'))
-  .catch(log.error);
+  return make()
+  .then(fake => {
+    return storage.db.sync()
+    .then(() => log.info('Wiping fake data from development database'))
+    .then(() => storage.models.Changes.destroy(
+      {where: {uuid: {$like: 'FAKE%'}}}))
+    .then(() =>
+      storage.models.Artifacts.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+    .then(() =>
+      storage.models.LabTests.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+    .then(() =>
+      storage.models.SampleIds.destroy({where: {uuid: {$like: 'FAKE%'}}}))
+    .then(() => log.info('Loading fake data'))
+    .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
+    .then(() => storage.models.Artifacts.bulkCreate(fake.artifacts, noLog))
+    .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
+    .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog))
+    .then(() => log.info('Finished loading fake data'))
+    .catch(err => log.error('Error creating fake data', err,
+                            err.message, err.stack));
+  });
 };
 
 module.exports = {
