@@ -5,6 +5,7 @@
 const config = require('app/config');
 const log = require('app/server/util/logapp.js');
 const authmodels = require('app/server/auth/models');
+const metamodels = require('app/server/stt/models/metadata');
 const sttmodels = require('app/server/stt/models');
 const storage = require('app/server/storage');
 const cli = require('commander');
@@ -12,6 +13,7 @@ const cli = require('commander');
 function before() {
   storage.init({config: config.db});
   storage.loadModels(authmodels);
+  storage.loadModels(metamodels);
   storage.loadModels(sttmodels);
 }
 
