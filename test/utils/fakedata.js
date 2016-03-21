@@ -210,8 +210,8 @@ const load = () => {
   .then(fake => {
     return storage.db.sync()
     .then(() => log.info('Wiping fake data from development database'))
-    .then(() => storage.models.Changes.destroy(
-      {where: {uuid: {$like: 'FAKE%'}}}))
+    .then(() =>
+      storage.models.Changes.destroy({where: {uuid: {$like: 'FAKE%'}}}))
     .then(() =>
       storage.models.Artifacts.destroy({where: {uuid: {$like: 'FAKE%'}}}))
     .then(() =>
@@ -224,8 +224,7 @@ const load = () => {
     .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
     .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog))
     .then(() => log.info('Finished loading fake data'))
-    .catch(err => log.error('Error creating fake data', err,
-                            err.message, err.stack));
+    .catch(err => log.error('Error creating fake data', err, err.message));
   });
 };
 

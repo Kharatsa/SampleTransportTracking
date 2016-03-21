@@ -40,8 +40,7 @@ module.exports = () => {
   .then(() => log.info('Metadata preload completed'))
   .catch(err => log.error(err, err.stack));
 
-  if (process.env.NODE_ENV !== 'production') {
-    // return preloadMetadata.then(() => {})
+  if (process.env.NODE_ENV === 'development') {
     return preloadMetadata.then(() => fakedata.load())
     .catch(err => log.error(err, err.message));
   }

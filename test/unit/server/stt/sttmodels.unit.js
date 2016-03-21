@@ -10,9 +10,8 @@ const storage = require('app/server/storage');
 const metamodels = require('app/server/stt/models/metadata');
 const sttmodels = require('app/server/stt/models');
 const dbresult = require('app/server/storage/dbresult.js');
-const testmeta = require('../../../utils/testmeta.js');
 
-describe('Sample Transport Tracking Database', () => {
+describe('Sample Transport Tracking Database Models', () => {
   var models;
   var Sequelize;
   before(done => {
@@ -20,6 +19,7 @@ describe('Sample Transport Tracking Database', () => {
     storage.loadModels(metamodels);
     storage.loadModels(sttmodels);
     const prepareserver = require('app/server/prepareserver.js');
+    const testmeta = require('../../../utils/testmeta.js');
     models = storage.models;
     Sequelize = storage.Sequelize;
     return storage.db.dropAllSchemas()

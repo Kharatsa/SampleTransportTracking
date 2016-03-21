@@ -15,6 +15,7 @@ storage.init({config: config.db});
 storage.loadModels(metamodels);
 storage.loadModels(sttmodels);
 const prepareserver = require('app/server/prepareserver.js');
+const testmeta = require('../../utils/testmeta.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
 
 const app = express();
@@ -27,6 +28,7 @@ describe('ODK Collect Submission API', () => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
     .then(() => prepareserver())
+    .then(() => testmeta.load())
     .catch(console.error)
     .then(() => done());
   });
