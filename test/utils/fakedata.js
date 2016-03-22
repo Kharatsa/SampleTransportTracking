@@ -136,24 +136,24 @@ const fakeChanges = (num, artifacts, tests, meta) => {
   let changes = [];
 
   for (let i = 0; i < num; i++) {
+    const facility = meta.facility[getRandomInt(meta.facility.length)];
+    const stage = meta.stage[getRandomInt(meta.stage.length)].key;
+    const status = meta.status[getRandomInt(meta.status.length)];
+
     let test = null;
     let artifact = null;
-    let facility = null;
     let person = null;
-    let status = null;
     let rejection = null;
-    let stage = null;
-    if (Math.random() > 0.5) {
+
+    if (stage !== 'LABSTATUS') {
       artifact = artifacts[getRandomInt(artifacts.length)];
-      facility = meta.facility[getRandomInt(meta.facility.length)];
       person = meta.person[getRandomInt(meta.person.length)];
     } else {
       test = tests[getRandomInt(tests.length)];
-      rejection = meta.rejection[getRandomInt(meta.rejection.length)];
+      if (status !== 'OK') {
+        rejection = meta.rejection[getRandomInt(meta.rejection.length)];
+      }
     }
-    status = meta.status[getRandomInt(meta.status.length)];
-
-    stage = meta.stage[getRandomInt(meta.stage.length)].key;
 
     let change = makeChange(
       artifact, test, facility, person, status, rejection, stage
