@@ -15,9 +15,8 @@ const stIds = queryutils.requireProps(['stId'], ids =>
 );
 
 /**
- * [description]
- * @param  {Array.<string>} ids [description]
- * @return {Promise.<Object>}     [description]
+ * @param  {Array.<string>} ids
+ * @return {Promise.<Object>}
  */
 const eitherIds = ids => {
   const byStId = BPromise.filter(ids, queryutils.deepTruthy)
@@ -30,6 +29,29 @@ const eitherIds = ids => {
   .then(queryutils.wrapOr);
 };
 
+/**
+ * @param  {Object} options
+ * @param {Date} options.afterDate
+ * @param {Date} [options.beforeDate]
+ * @return {Promise.<Object>}
+ */
+const betweenDates = queryutils.requireProps(['afterDate'], options => {
+  const afterQuery = {$gte: options.afterDate};
+  const beforeQuery = (
+    typeof options.beforeDate !== 'undefined' ?
+    {$lte: options.afterDate} :
+    {}
+  );
+
+  return BPromise.resolve({
+    createdAt: Object.assign({}, afterQuery, beforeQuery)
+  });
+});
+
+const originFacility = queryutils.requireProps(['facilityKey'],
+  options => BPromise.resolve({origin: options.facilityKey})
+);
+
 module.exports = {
-  stIds, eitherIds
+  stIds, eitherIds, betweenDates, originFacility
 };

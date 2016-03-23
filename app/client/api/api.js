@@ -23,7 +23,7 @@ export const getSampleDetail = (options, callback) => {
   if (!options.sampleId) {
     throw new Error(`Missing required options.sampleId parameter`);
   }
-  return request(`/stt/ids/${options.sampleId}`, (err, res) => {
+  return request(`/stt/ids/${options.sampleId}/changes`, (err, res) => {
     if (err) {
       return callback(err);
     }

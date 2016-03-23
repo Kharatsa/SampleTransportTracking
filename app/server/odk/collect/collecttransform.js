@@ -23,8 +23,7 @@ const formTypes = {
   SAMPLE_DEPARTURE: 'sdepart',
   SAMPLE_ARRIVAL: 'sarrive',
   RESULTS_DEPATURE: 'rdepart',
-  RESULTS_ARRIVAL: 'rarrive',
-  TEST: 'testform'
+  RESULTS_ARRIVAL: 'rarrive'
 };
 
 // ODK Collect XForms element names
@@ -48,13 +47,18 @@ const DEFAULT_STATUS = 'OK';
 const DEFAULT_PERSON = null;
 
 const formElement = BPromise.method(parsed => {
+  // The parsed xml2js object should include an attribute corresponding to a
+  // recognized form type. If the object does not include one of these
+  // attributes, the form is unsupported.
   const form = _.values(formTypes).filter(type => {
     return !!parsed[type];
   });
+
   if (!(form && form[0])) {
     throw new Error(`Cannot identify form type among top elements:
                     ${Object.keys(parsed)}`);
   }
+
   return form[0];
 });
 
@@ -75,7 +79,8 @@ const typeRepeats = form => BPromise.resolve(_.get(form, TYPE_REPEAT, []));
 // Parses the scan repeat element from the parsed xml2js object
 const scanRepeats = outer => BPromise.resolve(_.get(outer, SCAN_REPEAT, []));
 
-const upperCaseKey = text => text && text.length ? text.toUpperCase() : text;
+const prepareKey = text =>
+  (text && text.length ? text.toUpperCase().trim() : text);
 
 /**
  * @callback getTextCallback
@@ -208,7 +213,16 @@ const sampleIds = form => {
     pick: ['stId', 'labId']
   })
   .filter(results => results.stId || results.labId)
-  .then(results => _.uniqBy(results, ids => ids.stId + ids.labId));
+  .then(results => _.uniqBy(results, ids => ids.stId + ids.labId))
+  .then(results => {
+    const formType = prepareKey(_.get(form, FORM_TYPE_PATH));
+    if (formType.toUpperCase() === formTypes.SAMPLE_DEPARTURE.toUpperCase()) {
+      const originFacility = prepareKey(_.get(form, FACILITY_PATH));
+      return BPromise.map(results, result =>
+        Object.assign({}, result, {origin: originFacility}));
+    }
+    return results;
+  });
 };
 
 // Attribute getter for artifact type
@@ -216,7 +230,7 @@ const artifactText = attributeParser({
   source: ARTIFACT,
   dest: 'artifactType',
   defaultValue: DEFAULT_ARTIFACT_TYPE,
-  transform: upperCaseKey
+  transform: prepareKey
 });
 
 /**
@@ -241,7 +255,7 @@ const statusText = attributeParser({
   source: STATUS,
   dest: 'status',
   defaultValue: DEFAULT_STATUS,
-  transform: upperCaseKey
+  transform: prepareKey
 });
 
 /**
@@ -253,9 +267,9 @@ const changes = (form, username) => {
   // Top-level elements shared among all changes
   const parseDate = dates.parseXMLDate(_.get(form, END_DATE_PATH));
   const common = {
-    stage: upperCaseKey(_.get(form, FORM_TYPE_PATH)),
-    facility: upperCaseKey(_.get(form, FACILITY_PATH)),
-    person: upperCaseKey(username ? username : DEFAULT_PERSON)
+    stage: prepareKey(_.get(form, FORM_TYPE_PATH)),
+    facility: prepareKey(_.get(form, FACILITY_PATH)),
+    person: prepareKey(username ? username : DEFAULT_PERSON)
   };
 
   const parseRepeats = repeatsFlat({
@@ -272,12 +286,12 @@ const changes = (form, username) => {
 };
 
 const metaRegion = form => {
-  return {key: upperCaseKey(_.get(form, REGION_PATH))};
+  return {key: prepareKey(_.get(form, REGION_PATH))};
 };
 
 const metaFacility = form => {
-  const facilityKey = upperCaseKey(_.get(form, FACILITY_PATH));
-  const regionKey = upperCaseKey(_.get(form, REGION_PATH));
+  const facilityKey = prepareKey(_.get(form, FACILITY_PATH));
+  const regionKey = prepareKey(_.get(form, REGION_PATH));
   return {key: facilityKey, region: regionKey};
 };
 

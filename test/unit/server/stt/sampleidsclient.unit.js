@@ -8,7 +8,7 @@ const config = require('app/config');
 const metamodels = require('app/server/stt/models/metadata');
 const sttmodels = require('app/server/stt/models');
 const storage = require('app/server/storage');
-const sttclient = require('app/server/stt/sttclient.js');
+const sttclient = require('app/server/stt/clients/sttclient.js');
 
 describe('Sample Transport Tracking Sample IDs client', () => {
   const sampleIds = [
@@ -16,16 +16,19 @@ describe('Sample Transport Tracking Sample IDs client', () => {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1',
       stId: 'stt1',
       labId: null,
+      origin: 'ABC',
       outstanding: true
     }, {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2',
       stId: 'stt2',
       labId: null,
+      origin: 'ABC',
       outstanding: true
     }, {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx3',
       stId: 'stt3',
       labId: 'LAB0000001',
+      origin: 'ABC',
       outstanding: true
     }
   ];
@@ -37,9 +40,13 @@ describe('Sample Transport Tracking Sample IDs client', () => {
     storage.loadModels(metamodels);
     storage.loadModels(sttmodels);
     client = sttclient({db: storage.db, models: storage.models});
+    const prepareserver = require('app/server/prepareserver.js');
+    const testmeta = require('../../../utils/testmeta.js');
     models = storage.models;
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
+    .then(() => prepareserver())
+    .then(() => testmeta.load())
     .then(() => models.SampleIds.bulkCreate(sampleIds))
     .then(() => done());
   });

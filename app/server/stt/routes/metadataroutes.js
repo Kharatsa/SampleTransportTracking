@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const BPromise = require('bluebird');
 const storage = require('app/server/storage');
-const sttclient = require('app/server/stt/sttclient.js');
+const sttclient = require('app/server/stt/clients/sttclient.js');
 const dbresult = require('app/server/storage/dbresult.js');
 
 const sttClient = sttclient({db: storage.db, models: storage.models});

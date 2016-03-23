@@ -2,22 +2,21 @@
 
 const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
-const metaregionsclient = require('./clients/metadata/metaregionsclient.js');
-const metafacilitiesclient = require('./clients/metadata/' +
-                                     'metafacilitiesclient.js');
-const metapeopleclient = require('./clients/metadata/metapeopleclient.js');
-const metaartifactsclient = require('./clients/metadata/' +
-                                    'metaartifactsclient.js');
-const metarejectionsclient = require('./clients/metadata/' +
-                                     'metarejectionsclient.js');
-const metastatusesclient = require('./clients/metadata/metastatusesclient.js');
-const metastagesclient = require('./clients/metadata/metastagesclient.js');
-const metalabtestsclient = require('./clients/metadata/metalabtestsclient.js');
+const metaregionsclient = require('./metadata/metaregionsclient.js');
+const metafacilitiesclient = require('./metadata/metafacilitiesclient.js');
+const metapeopleclient = require('./metadata/metapeopleclient.js');
+const metaartifactsclient = require('./metadata/metaartifactsclient.js');
+const metarejectionsclient = require('./metadata/metarejectionsclient.js');
+const metastatusesclient = require('./metadata/metastatusesclient.js');
+const metastagesclient = require('./metadata/metastagesclient.js');
+const metalabtestsclient = require('./metadata/metalabtestsclient.js');
 const sampleidsclient = require('app/server/stt/clients/sampleids');
 const artifactsclient = require('app/server/stt/clients/artifacts');
 const labtestsclient = require('app/server/stt/clients/labtests');
 const changesclient = require('app/server/stt/clients/changes');
 const dbresult = require('app/server/storage/dbresult.js');
+const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
+const summaryqueries = require('./summaries/summaryqueries.js');
 
 /** @module stt/sttclient */
 
@@ -70,6 +69,7 @@ function STTClient(options) {
   this.artifacts = artifactsclient({model: this.models.Artifacts});
   this.labTests = labtestsclient({model: this.models.LabTests});
   this.changes = changesclient({
+    db: this.db,
     model: this.models.Changes,
     includes: {
       Artifacts: this.models.Artifacts,
@@ -78,6 +78,59 @@ function STTClient(options) {
     }
   });
 }
+
+const summaryQuery = (self, queryFunc, params) => {
+  rawqueryutils.checkRequired(params);
+  log.debug('summary query params', params);
+
+  return self.db.query(queryFunc(params), {
+    bind: params,
+    type: self.db.QueryTypes.SELECT
+  })
+  .map(row => dbresult.recomposeRaw(row, {parent: 'Summary', children: []}));
+};
+
+/**
+ * @method [artifactCounts]
+ * @param {Object} options
+ * @param {Date} options.afterDate
+ * @param {Date} [options.beforeDate]
+ * @param {string} [options.regionKey]
+ * @param {string} [options.facilityKey]
+ * @return {Promise.<Array.<Object>>}
+ * @throws {Error} If afterDate is undefined
+ */
+STTClient.prototype.artifactCounts = BPromise.method(function(options) {
+  return summaryQuery(this, summaryqueries.artifactStagesRaw, options.data);
+});
+
+/**
+ * @method [labTestCounts]
+ * @param {Object} options
+ * @param {Date} options.afterDate
+ * @param {Date} [options.beforeDate]
+ * @param {string} [options.regionKey]
+ * @param {string} [options.facilityKey]
+ * @return {Promise.<Array.<Object>>}
+ * @throws {Error} If afterDate is undefined
+ */
+STTClient.prototype.labTestCounts = BPromise.method(function(options) {
+  return summaryQuery(this, summaryqueries.testStatusRaw, options.data);
+});
+
+/**
+ * @method [labTestCounts]
+ * @param {Object} options
+ * @param {Date} options.afterDate
+ * @param {Date} [options.beforeDate]
+ * @param {string} [options.regionKey]
+ * @param {string} [options.facilityKey]
+ * @return {Promise.<Array.<Object>>}
+ * @throws {Error} If afterDate is undefined
+ */
+STTClient.prototype.totalCounts = BPromise.method(function(options) {
+  return summaryQuery(this, summaryqueries.totalsRaw, options.data);
+});
 
 /**
  * [description]

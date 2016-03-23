@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
+const log = require('app/server/util/logapp.js');
 const dbresult = require('app/server/storage/dbresult.js');
 
 const wrapOr = ands => ({$or: ands});
@@ -13,13 +14,18 @@ const hasPropsDefined = (item, propNames) => {
 };
 
 const havePropsDefined = BPromise.method((items, propNames) => {
-  if (!items.every(item => hasPropsDefined(item, propNames))) {
+  const subject = Array.isArray(items) ? items : [items];
+  if (!subject.every(item => hasPropsDefined(item, propNames))) {
     throw new Error(`Missing one or more required properties: ${propNames}`);
   }
 });
 
 /**
- * [description]
+ * Throws an error if the parameters passed to the wrapped function do not
+ * include the specified attributes. The required attributes or propNames may
+ * be passed to the wrapped function within the Object parameter, or within the
+ * Objects included in the Array parameter.
+ *
  * @param  {Array.<string>} propNames       [description]
  * @param  {Function} wrappedFuncFunc [description]
  * @return {Promise.<Function>}             [description]
@@ -68,10 +74,44 @@ const deepTruthy = value => {
  * @param {QueryOptions} options [description]
  */
 
-// const DEFAULT_LIMIT = 30;
 const STT_OPTIONS = [
   'omitDateDBCols', 'omitDBCols', 'plain', 'allowEmpty'
 ];
+
+const plainResult = (data, options) => {
+  let result;
+  if (options.plain && typeof data.rows !== 'undefined') {
+    result = BPromise.props({
+      count: data.count,
+      data: BPromise.map(data.rows, dbresult.plain)
+    });
+  } else if (options.plain && Array.isArray(data)) {
+    result = BPromise.map(data, dbresult.plain);
+  } else if (options.plain) {
+    result = BPromise.resolve(dbresult.plain(data));
+  } else {
+    result = BPromise.resolve(data);
+  }
+  return result;
+};
+
+const maybeExcludeDates = (data, options) => {
+  let transformFunc = null;
+  if (options.omitDBCols) {
+    transformFunc = dbresult.omitDBCols;
+  } else if (options.omitDateDBCols) {
+    transformFunc = dbresult.omitDateDBCols;
+  }
+
+  let result = data;
+  if (Array.isArray(data) && transformFunc !== null) {
+    result = BPromise.map(data, transformFunc);
+  } else if (transformFunc !== null) {
+    result = BPromise.resolve(transformFunc(data));
+  }
+
+  return result;
+};
 
 /**
  * [description]
@@ -81,7 +121,6 @@ const STT_OPTIONS = [
 const sttOptions = wrappedFunc => {
   return function(options) {
     _.defaultsDeep(options || {}, {
-      // limit: DEFAULT_LIMIT,
       offset: 0,
       plain: true,
       omitDateDBCols: false,
@@ -92,43 +131,22 @@ const sttOptions = wrappedFunc => {
     const sequelizeOptions = _.omit(options, STT_OPTIONS);
 
     let query = null;
-    if (options.allowEmpty || (options.data && options.data.length)) {
+    if (options.allowEmpty || (options.data &&
+                              (options.data.length ||
+                               Object.keys(options.data).length))
+       ) {
       // Wrap with resolve in case wrappedFunc doesn't return a Promise
       query = BPromise.resolve(wrappedFunc.call(this, sequelizeOptions));
     } else {
       // When allow empty queries is false, and no data option parameter is
       // provided, resolve with an empty result array.
+      log.info(`Missing data query parameter. Returning empty result set`);
       query = BPromise.resolve([]);
     }
 
     return query
-    .then(result => {
-      const hasCount = typeof result.count !== 'undefined';
-      const data = (hasCount ? result.rows : result) || [];
-
-      // TODO: support non-array (i.e., object) results
-      // TODO: warn if omit settings enabled for non-plain results?
-
-      const sanitized = (options.plain ?
-        BPromise.map(data, dbresult.plain) :
-        BPromise.resolve(data)
-      );
-
-      let filtered;
-      if (options.omitDBCols) {
-        filtered = sanitized.map(dbresult.omitDBCols);
-      } else if (options.omitDateDBCols) {
-        filtered = sanitized.map(dbresult.omitDateDBCols);
-      } else {
-        filtered = sanitized;
-      }
-
-      return (
-        hasCount ?
-        filtered.then(rows => ({data: rows, count: result.count})) :
-        filtered
-      );
-    });
+    .then(results => plainResult(results, options))
+    .then(results => maybeExcludeDates(results, options));
   };
 };
 
@@ -144,10 +162,17 @@ const findAllWhere = (Model, where) => {
   .then(where => Model.findAll({where}));
 };
 
+const makeSelectExpression = (columnNames, queryAlias, outputAlias) => {
+  const parts = columnNames.map(name =>
+    `${queryAlias}.${name} AS "${outputAlias}.${name}"`);
+  return parts.join(', ');
+};
+
 module.exports = {
   wrapOr,
   requireProps,
   sttOptions,
   findAllWhere,
-  deepTruthy
+  deepTruthy,
+  makeSelectExpression
 };

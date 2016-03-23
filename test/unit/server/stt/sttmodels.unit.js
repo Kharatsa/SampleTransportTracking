@@ -35,6 +35,7 @@ describe('Sample Transport Tracking Database Models', () => {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1',
       stId: 'stt1',
       labId: null,
+      origin: 'ABC',
       outstanding: true
     };
 
@@ -56,6 +57,7 @@ describe('Sample Transport Tracking Database Models', () => {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2',
       stId: 'stt2',
       labId: 'LAB0000002',
+      origin: 'ABC',
       outstanding: true
     };
 
@@ -89,6 +91,7 @@ describe('Sample Transport Tracking Database Models', () => {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx5',
       stId: 'stt3',
       labId: 'LAB0000003',
+      origin: 'ABC',
       outstanding: true
     };
 

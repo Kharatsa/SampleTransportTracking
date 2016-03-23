@@ -14,7 +14,7 @@ const authmodels = require('app/server/auth/models');
 storage.loadModels(authmodels);
 storage.loadModels(metamodels);
 storage.loadModels(sttmodels);
-const sttmiddleware = require('app/server/sttmiddleware.js');
+const errors = require('app/server/middleware/errors.js');
 const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
 const STTRoutes = require('app/server/stt/sttroutes.js');
@@ -53,7 +53,7 @@ app.get('/*', (req, res) => {
 prepareserver()
 .then(() => log.info('Finished server preload'));
 
-app.use(sttmiddleware.handleErrors);
+app.use(errors.handleErrors);
 
 app.listen(config.server.LISTEN_PORT, config.server.LISTEN_HOST, () =>
   log.info('Listening at ' + config.server.LISTEN_HOST +

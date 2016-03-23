@@ -13,7 +13,7 @@ const transform = require('app/server/odk/collect/collecttransform.js');
 describe('ODK Collect Tranforms', () => {
   const basePath = path.join(__dirname, '..', '..', '..', 'data');
 
-  it('should parse empty submission sample ids', () =>
+  it('should parse empty submissions sample ids', () =>
     expect(
       readFileAsync(path.join(basePath, 'sdepart1.xml'), 'utf-8')
       .then(transform.collectSubmission)
@@ -21,7 +21,7 @@ describe('ODK Collect Tranforms', () => {
     ).to.eventually.deep.equal([])
   );
 
-  it('should parse empty submission artifacts', () =>
+  it('should parse empty submissions artifacts', () =>
     expect(
       readFileAsync(path.join(basePath, 'sdepart1.xml'), 'utf-8')
       .then(transform.collectSubmission)
@@ -29,12 +29,71 @@ describe('ODK Collect Tranforms', () => {
     ).to.eventually.deep.equal([])
   );
 
-  it('should parse empty submission changes', () =>
+  it('should parse empty submissions changes', () =>
     expect(
       readFileAsync(path.join(basePath, 'sdepart1.xml'), 'utf-8')
       .then(transform.collectSubmission)
       .then(transform.changes)
     ).to.eventually.deep.equal([])
+  );
+
+  const expectedSampleIds4 = [{stId: '396f99229', labId: null, origin: 'STG'}];
+
+  it('should parse sample depart sample ids', () =>
+    expect(
+      readFileAsync(path.join(basePath, 'sdepart2.xml'), 'utf-8')
+      .then(transform.collectSubmission)
+      .then(transform.sampleIds)
+    ).to.eventually.deep.equal(expectedSampleIds4)
+  );
+
+  const expectedArtifacts4 = [
+    {stId: '396f99229', labId: null, artifactType: 'BLOOD'},
+    {stId: '396f99229', labId: null, artifactType: 'URINE'},
+    {stId: '396f99229', labId: null, artifactType: 'FORM'}
+  ];
+
+  it('should parse sample depart artifacts', () =>
+    expect(
+      readFileAsync(path.join(basePath, 'sdepart2.xml'), 'utf-8')
+      .then(transform.collectSubmission)
+      .then(transform.artifacts)
+    ).to.eventually.deep.equal(expectedArtifacts4)
+  );
+
+  const expectedChanges4 = [
+    {statusDate: new Date('Tue Mar 15 2016 11:33:11.116 GMT-0400 (EDT)'),
+      stage: 'SDEPART',
+      facility: 'STG',
+      person: null,
+      stId: '396f99229',
+      labId: null,
+      artifactType: 'BLOOD',
+      status: 'BAD'},
+    {statusDate: new Date('Tue Mar 15 2016 11:33:11.116 GMT-0400 (EDT)'),
+      stage: 'SDEPART',
+      facility: 'STG',
+      person: null,
+      stId: '396f99229',
+      labId: null,
+      artifactType: 'URINE',
+      status: 'OK'},
+    {statusDate: new Date('Tue Mar 15 2016 11:33:11.116 GMT-0400 (EDT)'),
+      stage: 'SDEPART',
+      facility: 'STG',
+      person: null,
+      stId: '396f99229',
+      labId: null,
+      artifactType: 'FORM',
+      status: 'OK'}
+  ];
+
+  it('should parse sample depart changes', () =>
+    expect(
+      readFileAsync(path.join(basePath, 'sdepart2.xml'), 'utf-8')
+      .then(transform.collectSubmission)
+      .then(transform.changes)
+    ).to.eventually.deep.equal(expectedChanges4)
   );
 
   const expectedSampleIds1 = [
@@ -258,30 +317,6 @@ describe('ODK Collect Tranforms', () => {
       .then(transform.collectSubmission)
       .then(transform.changes)
     ).to.eventually.deep.equal(expectedChanges1)
-  );
-
-  it('should parse submissions missing srepeat sample ids', () =>
-    expect(
-      readFileAsync(path.join(basePath, 'sdepart2.xml'), 'utf-8')
-      .then(transform.collectSubmission)
-      .then(transform.sampleIds)
-    ).to.eventually.deep.equal([])
-  );
-
-  it('should parse submissions missing srepeat sample ids', () =>
-    expect(
-      readFileAsync(path.join(basePath, 'sdepart2.xml'), 'utf-8')
-      .then(transform.collectSubmission)
-      .then(transform.artifacts)
-    ).to.eventually.deep.equal([])
-  );
-
-  it('should parse submissions missing srepeat sample ids', () =>
-    expect(
-      readFileAsync(path.join(basePath, 'sdepart2.xml'), 'utf-8')
-      .then(transform.collectSubmission)
-      .then(transform.changes)
-    ).to.eventually.deep.equal([])
   );
 
   const expectedSampleIds2 = [

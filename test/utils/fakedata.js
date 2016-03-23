@@ -49,18 +49,19 @@ const makeLabId = () => {
   return makeRandomString(letters, 3) + makeRandomString(numbers, 7);
 };
 
-const makeSample = () => ({
+const makeSample = meta => ({
   uuid: makeUUID(),
   stId: makeStId(),
-  labId: makeLabId()
+  labId: makeLabId(),
+  origin: meta.facility[getRandomInt(meta.facility.length)].key
 });
 
-const fakeSamples = num => {
+const fakeSamples = (num, meta) => {
   let samples = [];
   let samplesById = {};
 
   for (let i = 0; i < num; i++) {
-    let sample = makeSample();
+    let sample = makeSample(meta);
     samples.push(sample);
     samplesById[sample.uuid] = sample;
   }
@@ -122,7 +123,7 @@ const makeChange = (
   return ({
     uuid: makeUUID(),
     statusDate: makeDate(),
-    stage: stage,
+    stage: stage.key,
     artifact: artifact ? artifact.uuid : null,
     labTest: test ? test.uuid : null,
     facility: facility ? facility.key : null,
@@ -137,7 +138,7 @@ const fakeChanges = (num, artifacts, tests, meta) => {
 
   for (let i = 0; i < num; i++) {
     const facility = meta.facility[getRandomInt(meta.facility.length)];
-    const stage = meta.stage[getRandomInt(meta.stage.length)].key;
+    const stage = meta.stage[getRandomInt(meta.stage.length)];
     const status = meta.status[getRandomInt(meta.status.length)];
 
     let test = null;
@@ -145,12 +146,12 @@ const fakeChanges = (num, artifacts, tests, meta) => {
     let person = null;
     let rejection = null;
 
-    if (stage !== 'LABSTATUS') {
+    if (stage.key !== 'LABSTATUS') {
       artifact = artifacts[getRandomInt(artifacts.length)];
       person = meta.person[getRandomInt(meta.person.length)];
     } else {
       test = tests[getRandomInt(tests.length)];
-      if (status !== 'OK') {
+      if (status.key !== 'OK') {
         rejection = meta.rejection[getRandomInt(meta.rejection.length)];
       }
     }
@@ -178,7 +179,7 @@ const make = () => {
       stage: testmeta.metaStages
     };
 
-    const fSamples = fakeSamples(FAKE_SAMPLES_NUM);
+    const fSamples = fakeSamples(FAKE_SAMPLES_NUM, meta);
 
     const artifactTypes = meta.artifact.map(meta => meta.key);
     const fArtifacts = fakeArtifacts(FAKE_ARTIFACTS_NUM, fSamples.samples,
@@ -219,6 +220,7 @@ const load = () => {
     .then(() =>
       storage.models.SampleIds.destroy({where: {uuid: {$like: 'FAKE%'}}}))
     .then(() => log.info('Loading fake data'))
+    // .then(() => storage.models.SampleIds.bulkCreate(fake.samples))
     .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
     .then(() => storage.models.Artifacts.bulkCreate(fake.artifacts, noLog))
     .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))

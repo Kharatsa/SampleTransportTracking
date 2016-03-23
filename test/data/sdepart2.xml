@@ -9,13 +9,22 @@
    <trepeat>
       <stype>blood</stype>
       <condition>bad</condition>
+      <srepeat>
+         <stid>396f99229</stid>
+      </srepeat>
    </trepeat>
    <trepeat>
       <stype>urine</stype>
       <condition>ok</condition>
+      <srepeat>
+         <stid>396f99229</stid>
+      </srepeat>
    </trepeat>
    <trepeat>
       <stype>form</stype>
+      <srepeat>
+         <stid>396f99229</stid>
+      </srepeat>
    </trepeat>
    <store_gps />
    <meta>

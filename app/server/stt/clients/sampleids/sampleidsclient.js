@@ -20,8 +20,9 @@ function SampleIdsClient(options) {
 }
 util.inherits(SampleIdsClient, ModelClient);
 
+const DEFAULT_SORT = [['createdAt', 'DESC']];
+
 /**
- * [description]
  * @param {QueryOptions} options [description]
  * @return {Promise.<Array.<Object>>}          [description]
  */
@@ -29,24 +30,30 @@ SampleIdsClient.prototype.latest = function(options) {
   return this.Model.findAndCountAll({
     offset: options.offset,
     limit: options.limit || this.limit,
-    order: [['createdAt', 'DESC']]
+    order: DEFAULT_SORT
   });
 };
 
+const allReferences = self => ([
+  {
+    model: self.includes.Artifacts,
+    include: [{model: self.includes.Changes}]
+  }, {
+    model: self.includes.LabTests,
+    include: [{model: self.includes.Changes}]
+  }
+]);
+
+/**
+ * @param {QueryOptions} options [description]
+ * @return {Promise.<Array.<Object>>}          [description]
+ */
 SampleIdsClient.prototype.eitherIds = function(options) {
   let include;
 
   // TODO: maybe make this "includes" option common to all stt clients sttOptions
   if (typeof options.includes === 'undefined' || options.includes === true) {
-    include = [
-      {
-        model: this.includes.Artifacts,
-        include: [{model: this.includes.Changes}]
-      }, {
-        model: this.includes.LabTests,
-        include: [{model: this.includes.Changes}]
-      }
-    ];
+    include = allReferences(this);
   }
 
   return sampleidsquery.eitherIds(options.data)
@@ -59,7 +66,6 @@ SampleIdsClient.prototype.eitherIds = function(options) {
 };
 
 /**
- * [description]
  * @param {QueryOptions} options [description]
  * @return {Promise.<Array.<Object>>}          [description]
  */

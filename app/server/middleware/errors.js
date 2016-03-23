@@ -2,19 +2,7 @@
 
 const log = require('app/server/util/logapp.js');
 
-// Convert query parameters to lowercase
-const normalizeParams = function(req, res, next) {
-  var result = {};
-  if (req.query) {
-    Object.keys(req.query).forEach(function(key) {
-      result[key.toLowerCase()] = req.query[key];
-    });
-    req.query = result;
-  }
-  next();
-};
-
-function handleJSONErrors(err, req, res, next) {
+const handleJSONErrors = (err, req, res, next) => {
   if (err.status) {
     var message = {'error': err.message};
     log.warn('Bad application/json request',
@@ -25,27 +13,27 @@ function handleJSONErrors(err, req, res, next) {
   } else {
     next(err);
   }
-}
+};
 
 // production error handler
 // no stacktraces leaked to user
-function handleProductionErrors(err, req, res, next) {
+const handleProductionErrors = (err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
   log.error('Request Error', err, err.stack);
   res.status(err.status || 500);
   res.send(err.message);
-}
+};
 
-function handleDevelopmentErrors(err, req, res, next) {
+const handleDevelopmentErrors = (err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
   log.error('Request Error', err, err.stack);
   res.status(err.status || 500);
   next(err);
-}
+};
 
 const handleErrors = (
   process.env.NODE_ENV === 'production' ?
@@ -54,7 +42,6 @@ const handleErrors = (
 );
 
 module.exports = {
-  normalizeParams,
   handleJSONErrors,
   handleErrors
 };

@@ -7,7 +7,7 @@ const formidable = require('formidable');
 const config = require('app/config');
 const log = require('app/server/util/logapp.js');
 const string = require('app/common/string.js');
-const sttmiddleware = require('app/server/sttmiddleware.js');
+const normalizequery = require('app/server/middleware/normalizequery.js');
 const aggregate = require('app/server/odk/aggregateapi.js');
 const transform = require('app/server/odk/collect/collecttransform.js');
 const aggregatesubmission = require('app/server/odk/aggregatesubmission.js');
@@ -16,6 +16,8 @@ const collect = require('app/server/odk/collect/collectsubmission.js');
 const ODK_MASK_URL = config.server.PUBLIC_URL + '/odk';
 log.info(`Backing up to ODK Aggregate -- ${config.odk.URL}`);
 log.info(`Masking ODK Aggregate backup server with url ${ODK_MASK_URL}`);
+
+const lowerCaseQueryKeys = normalizequery.lowerCaseQueryKeys();
 
 let passport = null;
 let authenticate = null;
@@ -63,27 +65,24 @@ router.all('*', aggregate.setOpenRosaHeaders, authenticate);
 
 router.head('/formList', handleHeadRequest);
 
-router.get('/formList',
-  sttmiddleware.normalizeParams,
-  (req, res) => {
-    let formId = req.query.formid;
-    let verbose = req.query.verbose;
-    let allVersions = req.query.listallversions;
+router.get('/formList', lowerCaseQueryKeys, (req, res) => {
+  let formId = req.query.formid;
+  let verbose = req.query.verbose;
+  let allVersions = req.query.listallversions;
 
-    return aggregate.formList({formId, verbose, allVersions})
-    .spread((odkRes, body) => {
-      return BPromise.join(
-        odkRes,
-        swapHostnames(body, config.odk.URL, ODK_MASK_URL)
-      );
-    })
-    .spread((odkRes, body) => {
-      log.debug('Got formList', body);
-      prepareXMLResponse(res, odkRes.statusCode, body);
-      res.send(body);
-    });
-  }
-);
+  return aggregate.formList({formId, verbose, allVersions})
+  .spread((odkRes, body) => {
+    return BPromise.join(
+      odkRes,
+      swapHostnames(body, config.odk.URL, ODK_MASK_URL)
+    );
+  })
+  .spread((odkRes, body) => {
+    log.debug('Got formList', body);
+    prepareXMLResponse(res, odkRes.statusCode, body);
+    res.send(body);
+  });
+});
 
 const openRosaAcceptLength = (req, res, next) => {
   res.append(
@@ -100,7 +99,7 @@ router.head('view/submissionList',
 
 router.get('/view/submissionList',
   openRosaAcceptLength,
-  sttmiddleware.normalizeParams,
+  lowerCaseQueryKeys,
   (req, res, next) => {
     log.debug(`Requesting ODK submission list`);
 
@@ -125,7 +124,7 @@ router.get('/view/submissionList',
 router.head('/view/downloadSubmission', handleHeadRequest);
 
 router.get('/view/downloadSubmission',
-  sttmiddleware.normalizeParams,
+  lowerCaseQueryKeys,
   (req, res, next) => {
     let formId = req.query.formid;
     let topElement = req.query.topelement || formId;

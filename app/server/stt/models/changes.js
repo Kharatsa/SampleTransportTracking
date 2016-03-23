@@ -2,6 +2,7 @@
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
 const modelutils = require('./modelutils.js');
+const sampleids = require('./sampleids.js');
 const artifacts = require('./artifacts.js');
 const labtests = require('./labtests.js');
 const metadata = require('./metadata');
@@ -12,6 +13,7 @@ const changes = modelwrapper({
   name: modelName,
 
   references: [
+    sampleids,
     artifacts,
     labtests,
     metadata.facilities,
@@ -21,7 +23,7 @@ const changes = modelwrapper({
     metadata.stages
   ],
 
-  import: function(Artifacts, LabTests, MetaFacilities, MetaPeople,
+  import: function(SampleIds, Artifacts, LabTests, MetaFacilities, MetaPeople,
                    MetaStatuses, MetaRejections, MetaStages) {
     return function(sequelize, DataTypes) {
       return sequelize.define(modelName, {
@@ -72,6 +74,10 @@ const changes = modelwrapper({
         }
       }, {
 
+        indexes: [
+          {fields: ['facility']}, {fields: ['artifact']}, {fields: ['labTest']}
+        ],
+
         classMethods: {
           associate: function() {
 
@@ -109,16 +115,27 @@ const changes = modelwrapper({
         },
 
         scopes: {
-          artifactChanges: {
-            where: {
-              artifact: {$not: null}
-            }
+          artifactsChangesInDateRange: function(range) {
+            return {
+              where: {artifact: {$not: null}},
+              include: [{
+                model: Artifacts,
+                include: [{
+                  model: SampleIds.scope({method: ['inDateRange', range]})
+                }]
+              }]
+            };
           },
-
-          labTestChanges: {
-            where: {
-              labTest: {$not: null}
-            }
+          labTestChangesInDateRange: function(range) {
+            return {
+              where: {labTest: {$not: null}},
+              include: [{
+                model: LabTests,
+                include: [{
+                  model: SampleIds.scope({method: ['inDateRange', range]})
+                }]
+              }]
+            };
           }
         }
 

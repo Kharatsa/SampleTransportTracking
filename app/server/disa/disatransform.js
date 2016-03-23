@@ -236,7 +236,7 @@ const oneMeta = (parentElem, keyPath, descPath) => {
 
   if (metaKey) {
     return {
-      key: metaKey.toUpperCase(),
+      key: metaKey.toUpperCase().trim(),
       value: descPath ? _.get(parentElem, descPath, '').trim() : null
     };
   }
