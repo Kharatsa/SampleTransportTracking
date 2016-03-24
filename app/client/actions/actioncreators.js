@@ -93,3 +93,42 @@ export const changeWindowSize = (innerWidth, innerHeight) => ({
   type: CHANGE_WINDOW_SIZE,
   size: new WindowSize({innerWidth, innerHeight})
 });
+
+const requestSummary = (afterDate, beforeDate, region, facility) => ({type: FETCH_SUMMARY, afterDate, beforeDate, region, facility});
+
+const fetchSummaryFailure = (error) => ({
+  type: FETCH_SUMMARY_FAILURE,
+  error
+});
+
+const receiveSummary = ({
+  artifacts, labTests, totals
+}) => ({
+  type: RECEIVE_SUMMARY,
+  artifacts, labTests, totals
+});
+
+//required: afterDate, beforeDate
+//optional: region, facility
+export const fetchSummary = (afterDate, beforeDate, region, facility) => {
+
+  //validity checking for region / facility here?
+
+  return dispatch => {
+    dispatch(requestSummary(afterDate, beforeDate, region, facility));
+
+    var options = {
+      afterDate: afterDate,
+      beforeDate: beforeDate,
+      region: region,
+      facility: facility
+    };
+
+    return api.getSummary(options, (err, data) => {
+      if (err) {
+        dispatch(fetchSummaryFailure(err));
+      }
+      dispatch(receiveChanges(data));
+    });
+  };
+};

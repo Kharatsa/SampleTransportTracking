@@ -15,34 +15,44 @@ export default React.createClass({
 
     return (
       <div className='header'>
-      <div className='pure-menu pure-menu-horizontal pure-menu-blackbg'>
-        <Link to='/' className='pure-menu-heading pure-menu-link'>
-          {appName}
-        </Link>
-        <ul className='pure-menu-list'>
-          <HeaderLink
-            linkTo='/'
-            location={location}
-            matchRoutes={['/', '/changes']}
-            text='Changes' />
-          <HeaderLink
-            linkTo='/samples'
-            location={location}
-            matchRoutes={'/samples'}
-            text='Samples' />
-          <HeaderLink
-            linkTo='/facilities'
-            location={location}
-            matchRoutes={'/facilities'}
-            text='Facilities' />
-          <HeaderLink
-            linkTo='/riders'
-            location={location}
-            matchRoutes={'/riders'}
-            text='Riders' />
-        </ul>
+        <div className='pure-menu pure-menu-horizontal pure-menu-blackbg'>
+          <Link to='/' className='pure-menu-heading pure-menu-link'>
+            {appName}
+          </Link>
+        </div>
       </div>
-    </div>
     );
+
+    // return (
+    //   <div className='header'>
+    //   <div className='pure-menu pure-menu-horizontal pure-menu-blackbg'>
+    //     <Link to='/' className='pure-menu-heading pure-menu-link'>
+    //       {appName}
+    //     </Link>
+    //     <ul className='pure-menu-list'>
+    //       <HeaderLink
+    //         linkTo='/'
+    //         location={location}
+    //         matchRoutes={['/', '/changes']}
+    //         text='Changes' />
+    //       <HeaderLink
+    //         linkTo='/samples'
+    //         location={location}
+    //         matchRoutes={'/samples'}
+    //         text='Samples' />
+    //       <HeaderLink
+    //         linkTo='/facilities'
+    //         location={location}
+    //         matchRoutes={'/facilities'}
+    //         text='Facilities' />
+    //       <HeaderLink
+    //         linkTo='/riders'
+    //         location={location}
+    //         matchRoutes={'/riders'}
+    //         text='Riders' />
+    //     </ul>
+    //   </div>
+    // </div>
+    // );
   }
 });
