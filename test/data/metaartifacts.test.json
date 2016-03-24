@@ -1,6 +1,6 @@
 [
-    {
-    "key": "FORM",
+  {
+    "key": "REQUEST",
     "value": "Request Form"
   }, {
     "key": "BLOOD",
@@ -14,5 +14,8 @@
   }, {
     "key": "DBS",
     "value": "Dried blood spot"
+  }, {
+    "key": "RESULT",
+    "value": "Results Form"
   }
 ]

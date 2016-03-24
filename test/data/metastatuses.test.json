@@ -3,11 +3,11 @@
     "key": "OK",
     "value": "A-OK"
   }, {
-    "key": "BRK",
-    "value": "Broken"
+    "key": "BAD",
+    "value": "Things are bad"
   }, {
-    "key": "OVERFLOW",
-    "value": "Container overflowing"
+    "key": "REQ",
+    "value": "Lab Test Requested"
   }, {
     "key": "RVW",
     "value": "Lab Test Reviewed"
@@ -17,8 +17,5 @@
   }, {
     "key": "REJ",
     "value": "Lab Test Rejected"
-  }, {
-    "key": "BAD",
-    "value": "Things are bad"
   }
 ]

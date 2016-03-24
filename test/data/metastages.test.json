@@ -1,18 +1,18 @@
 [
   {
-    "key": "SARRIVE",
-    "value": "Sample Delivery"
-  }, {
     "key": "SDEPART",
     "value": "Sample Pickup"
   }, {
-    "key": "RARRIVE",
-    "value": "Results Delivery"
+    "key": "SARRIVE",
+    "value": "Sample Delivery"
+  }, {
+    "key": "LABSTATUS",
+    "value": "Lab Status"
   }, {
     "key": "RDEPART",
     "value": "Results Pickup"
   }, {
-    "key": "LABSTATUS",
-    "value": "Lab Status"
+    "key": "RARRIVE",
+    "value": "Results Delivery"
   }
 ]

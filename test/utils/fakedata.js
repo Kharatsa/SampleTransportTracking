@@ -1,17 +1,14 @@
 'use strict';
 
-const config = require('app/config');
-const log = require('app/server/util/logapp.js');
-const storage = require('app/server/storage');
-storage.init({config: config.db});
-const sttmodels = require('app/server/stt/models');
-storage.loadModels(sttmodels);
+const _ = require('lodash');
 const testmeta = require('./testmeta.js');
 
-const FAKE_SAMPLES_NUM = 500;
-const FAKE_ARTIFACTS_NUM = 1500;
-const FAKE_TESTS_NUM = 2000;
 const FAKE_CHANGES_NUM = 5000;
+
+const MILLIS_PER_YEAR = 1000 * 60 * 60 * 24 * 365;
+const MILLIS_PER_HOUR = 1000 * 60 * 60;
+const STAGE_ORDER = ['SDEPART', 'SARRIVE', 'LABSTATUS', 'RDEPART', 'RARRIVE'];
+const TEST_STATUS_ORDER = ['REQ', 'RVW', 'PRT'];
 
 const makeUUID = () => {
   // http://www.ietf.org/rfc/rfc4122.txt
@@ -27,9 +24,9 @@ const makeUUID = () => {
   return 'FAKE' + s.slice(4, s.length).join('');
 };
 
-const getRandomInt = length => Math.floor(Math.random() * (length));
+const randomInt = length => Math.floor(Math.random() * (length));
 
-const makeRandomString = (possible, numChars) => {
+const randomString = (possible, numChars) => {
   let result = [];
 
   for (let i = 0; i < numChars; i++) {
@@ -38,36 +35,34 @@ const makeRandomString = (possible, numChars) => {
   return result.join('');
 };
 
+const randomPastDate = () => {
+  return new Date(Date.now() - randomInt(MILLIS_PER_YEAR * 5)).toISOString();
+};
+
+const incrementDate = dateStr => {
+  const sourceTimestamp = new Date(dateStr).getTime();
+  const incrementMillis = randomInt(100) * MILLIS_PER_HOUR;
+  return new Date(sourceTimestamp + incrementMillis).toISOString();
+};
+
 const makeStId = () => {
   let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  return makeRandomString(possible, 10);
+  return randomString(possible, 10);
 };
 
 const makeLabId = () => {
   let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let numbers = '0123456789';
-  return makeRandomString(letters, 3) + makeRandomString(numbers, 7);
+  return randomString(letters, 3) + randomString(numbers, 7);
 };
 
-const makeSample = meta => ({
+const makeSample = (meta, createdAt) => ({
   uuid: makeUUID(),
   stId: makeStId(),
   labId: makeLabId(),
-  origin: meta.facility[getRandomInt(meta.facility.length)].key
+  origin: meta.facility[randomInt(meta.facility.length)].key,
+  createdAt
 });
-
-const fakeSamples = (num, meta) => {
-  let samples = [];
-  let samplesById = {};
-
-  for (let i = 0; i < num; i++) {
-    let sample = makeSample(meta);
-    samples.push(sample);
-    samplesById[sample.uuid] = sample;
-  }
-
-  return {samples,  samplesById};
-};
 
 const makeArtifact = (sample, type) => ({
   uuid: makeUUID(),
@@ -75,99 +70,259 @@ const makeArtifact = (sample, type) => ({
   artifactType: type
 });
 
-const fakeArtifacts = (num, samples, types) => {
-  let artifacts = [];
-  let artifactsById = {};
-
-  for (let i = 0; i < num; i++) {
-    let sample = samples[getRandomInt(samples.length)];
-    let type = types[getRandomInt(types.length)];
-    let artifact = makeArtifact(sample, type);
-    artifacts.push(artifact);
-    artifactsById[artifact.uuid] = artifact;
-  }
-
-  return {artifacts,  artifactsById};
-};
-
 const makeTest = (sample, type) => ({
   uuid: makeUUID(),
   sampleId: sample.uuid,
   testType: type
 });
 
-const fakeTests = (num, samples, types) => {
-  let tests = [];
-  let testsById = {};
-
-  for (let i = 0; i < num; i++) {
-    let sample = samples[getRandomInt(samples.length)];
-    let type = types[getRandomInt(types.length)];
-    let test = makeTest(sample, type);
-    tests.push(test);
-    testsById[test.uuid] = test;
-  }
-
-  return {tests, testsById};
-};
-
-const MILLIS_PER_YEAR = 31536000000;
-
-const makeDate = () => {
-  return new Date(Date.now() - getRandomInt(MILLIS_PER_YEAR * 5)).toISOString();
-};
-
-const makeChange = (
-  artifact, test, facility, person, status, labRejection, stage
-) => {
-  return ({
+const makeChange = options => {
+  return {
     uuid: makeUUID(),
-    statusDate: makeDate(),
-    stage: stage.key,
-    artifact: artifact ? artifact.uuid : null,
-    labTest: test ? test.uuid : null,
-    facility: facility ? facility.key : null,
-    person: person ? person.key : null,
-    status: status ? status.key :  null,
-    labRejection: labRejection ? labRejection.key : null
+    statusDate: options.statusDate,
+    stage: options.stage,
+    artifact: options.artifact || null,
+    labTest: options.labTest || null,
+    facility: options.facility,
+    person: options.person || null,
+    status: options.status || null,
+    labRejection: options.labRejection || null
+  };
+};
+
+const buildStages = count => {
+  let stages = ['SDEPART'];
+  if (count > 1) {
+    stages.push('SARRIVE');
+  }
+  if (count > 2) {
+    stages.push('LABSTATUS');
+  }
+  if (count > 3) {
+    stages.push('RDEPART');
+  }
+  if (count > 4) {
+    stages.push('RARRIVE');
+  }
+  return stages;
+};
+
+const buildArtifacts = (sample, meta) => {
+  let artifacts = [];
+  const metaArtifacts = meta.artifact.filter(artifact =>
+    artifact.key !== 'RESULT');
+  const count = randomInt(4) + 1;
+  for (let i = 0; i < count; i++) {
+    const artifactMeta = metaArtifacts[randomInt(metaArtifacts.length)];
+    artifacts.push(makeArtifact(sample, artifactMeta.key));
+  }
+  return artifacts;
+};
+
+const buildLabTests = (sample, stageCount, meta) => {
+  let tests = [];
+  if (stageCount > 2) {
+    const count = randomInt(4) + 1;
+    for (let i = 0; i < count; i++) {
+      const testMeta = meta.labtest[randomInt(meta.labtest.length)];
+      tests.push(makeTest(sample, testMeta.key));
+    }
+  }
+  return tests;
+};
+
+const buildRequestChanges = (
+  statusDate, stageKey, facilityKey, artifacts, meta
+) => {
+  const person = meta.person[randomInt(meta.person.length)];
+  return artifacts.map(artifact => {
+    const statusKey = Math.random() < 0.9 ? 'OK' : 'BAD';
+    return makeChange({
+      statusDate,
+      stage: stageKey,
+      artifact: artifact.uuid,
+      facility: facilityKey,
+      person: person.key,
+      status: statusKey
+    });
   });
 };
 
-const fakeChanges = (num, artifacts, tests, meta) => {
-  let changes = [];
+const buildLabStatusChanges = (startDate, test, facilityKey, meta) => {
+  let statusDate = startDate;
 
-  for (let i = 0; i < num; i++) {
-    const facility = meta.facility[getRandomInt(meta.facility.length)];
-    const stage = meta.stage[getRandomInt(meta.stage.length)];
-    const status = meta.status[getRandomInt(meta.status.length)];
-
-    let test = null;
-    let artifact = null;
-    let person = null;
-    let rejection = null;
-
-    if (stage.key !== 'LABSTATUS') {
-      artifact = artifacts[getRandomInt(artifacts.length)];
-      person = meta.person[getRandomInt(meta.person.length)];
-    } else {
-      test = tests[getRandomInt(tests.length)];
-      if (status.key !== 'OK') {
-        rejection = meta.rejection[getRandomInt(meta.rejection.length)];
-      }
-    }
-
-    let change = makeChange(
-      artifact, test, facility, person, status, rejection, stage
+  const testStatusCount = randomInt(TEST_STATUS_ORDER.length) + 1;
+  let result = [];
+  for (let i = 0; i < testStatusCount; i++) {
+    const status = meta.status[randomInt(meta.status.length)];
+    const rejection = (
+      status.key === 'REJ' ?
+      meta.rejection[randomInt(meta.rejection.length)] :
+      null
     );
-    changes.push(change);
+
+    result.push(makeChange({
+      statusDate,
+      stage: 'LABSTATUS',
+      labTest: test.uuid,
+      facility: facilityKey,
+      status: status.key,
+      labRejection: rejection ? rejection.key : null
+    }));
+
+    if (status.key === 'REJ') {
+      break;
+    }
+    statusDate = incrementDate(statusDate);
   }
 
-  return changes;
+  return result;
 };
 
-const make = () => {
-  return testmeta.load()
+const buildLabChanges = (startDate, facilityKey, labTests, meta) => {
+  let prints = [];
+  const testChanges = labTests.map(test => {
+    const result = buildLabStatusChanges(startDate, test, facilityKey, meta);
+
+    const lastChange = result[result.length - 1];
+    if (lastChange.status === 'PRT') {
+      prints.push({date: lastChange.statusDate, facilityKey});
+    }
+
+    return result;
+  });
+
+  return {changes: _.flatten(testChanges), prints};
+};
+
+const buildResultChanges = (
+  sample, artifacts, prints, facilityKey, meta
+) => {
+  const person = meta.person[randomInt(meta.person.length)];
+
+  let artifact;
+  const results = prints.map(print => {
+    const pickupDate = incrementDate(print.date);
+    let statusKey;
+    let stages = [];
+
+    if (Math.random() > 0.75) {
+      artifact = makeArtifact(sample, 'RESULT');
+      artifacts.push(artifact);
+      statusKey = Math.random() < 0.9 ? 'OK' : 'BAD';
+
+      stages.push(makeChange({
+        statusDate: pickupDate,
+        stage: 'RDEPART',
+        artifact: artifact.uuid,
+        facility: print.facilityKey,
+        person: person.key,
+        status: statusKey
+      }));
+    }
+
+    if (Math.random() > 0.75 && !!artifact) {
+      const facility = meta.facility[randomInt(meta.facility.length)];
+      statusKey = Math.random() < 0.9 ? 'OK' : 'BAD';
+
+      stages.push(makeChange({
+        statusDate: incrementDate(pickupDate),
+        stage: 'RARRIVE',
+        artifact: artifact.uuid,
+        facility: facility.key,
+        person: person.key,
+        status: statusKey
+      }));
+    }
+
+    artifact = null;
+
+    return stages;
+  });
+
+  return _.flatten(results);
+
+};
+
+const buildChanges = (startDate, stages, sample, artifacts, labTests, meta) => {
+  let statusDate = startDate;
+  const facilityKey = sample.origin;
+  let prints;
+  const changes = stages.map(stage => {
+    let result = [];
+    if (stage === 'SDEPART' || stage === 'SARRIVE') {
+      result = buildRequestChanges(
+        statusDate, stage, facilityKey, artifacts, meta);
+    } else if (stage === 'LABSTATUS') {
+      const facility = meta.facility[randomInt(meta.facility.length)];
+      result = buildLabChanges(statusDate, facility.key, labTests, meta);
+      prints = result.prints;
+      result = result.changes;
+    } else if (stage === 'RDEPART') {
+      const facility = meta.facility[randomInt(meta.facility.length)];
+      result = buildResultChanges(
+        sample, artifacts, prints, facility.key, meta);
+    } else {
+      // noop
+    }
+    statusDate = incrementDate(statusDate);
+    return result;
+  });
+
+  return _.flatten(changes);
+};
+
+const buildEntities = meta => {
+  const stageCount = randomInt(STAGE_ORDER.length) + 1;
+  const stages = buildStages(stageCount);
+
+  const startDate = randomPastDate();
+
+  const sample = makeSample(meta, startDate);
+
+  const artifacts = buildArtifacts(sample, meta);
+
+  const labTests = buildLabTests(sample, stageCount, meta);
+
+  const changes = buildChanges(
+    startDate, stages, sample, artifacts, labTests, meta);
+
+  return {sample, artifacts, labTests, changes};
+};
+
+const removeFakeData = storage => {
+  return storage.models.Changes.destroy({where: {uuid: {$like: 'FAKE%'}}})
+  .then(() =>
+    storage.models.Artifacts.destroy({where: {uuid: {$like: 'FAKE%'}}})
+  )
+  .then(() =>
+    storage.models.LabTests.destroy({where: {uuid: {$like: 'FAKE%'}}})
+  )
+  .then(() =>
+    storage.models.SampleIds.destroy({where: {uuid: {$like: 'FAKE%'}}})
+  );
+};
+
+const load = (changesNum) => {
+  const config = require('app/config');
+  const log = require('app/server/util/logapp.js');
+  const storage = require('app/server/storage');
+  storage.init({config: config.db});
+  const sttmodels = require('app/server/stt/models');
+  storage.loadModels(sttmodels);
+
+  const noLog = {logging: false};
+
+  return storage.db.sync()
+  .then(() => testmeta.load())
   .then(() => {
+    log.info('Wiping fake data from development database');
+    return removeFakeData(storage);
+  })
+  .then(() => {
+    log.info('Loading fake data');
+    const fakeChangesTarget = changesNum || FAKE_CHANGES_NUM;
+
     const meta = {
       artifact: testmeta.metaArtifacts,
       labtest: testmeta.metaLabTests,
@@ -179,58 +334,33 @@ const make = () => {
       stage: testmeta.metaStages
     };
 
-    const fSamples = fakeSamples(FAKE_SAMPLES_NUM, meta);
+    let samples = [];
+    let artifacts = [];
+    let labTests = [];
+    let changes = [];
+    while (changes.length < fakeChangesTarget) {
+      const fake = buildEntities(meta);
+      samples = samples.concat(fake.sample);
+      artifacts = artifacts.concat(fake.artifacts);
+      labTests = labTests.concat(fake.labTests);
+      changes = changes.concat(fake.changes);
+    }
 
-    const artifactTypes = meta.artifact.map(meta => meta.key);
-    const fArtifacts = fakeArtifacts(FAKE_ARTIFACTS_NUM, fSamples.samples,
-                                     artifactTypes);
-
-    const testTypes = meta.labtest.map(meta => meta.key);
-    const fTests = fakeTests(FAKE_TESTS_NUM, fSamples.samples, testTypes);
-
-    const fChanges = fakeChanges(FAKE_CHANGES_NUM, fArtifacts.artifacts,
-                                 fTests.tests, meta);
-
-    return {
-      metadata: [].concat(
-        meta.artifact, meta.labtest, meta.facility, meta.region, meta.status,
-        meta.rejection, meta.person
-      ),
-      samples: fSamples.samples,
-      artifacts: fArtifacts.artifacts,
-      labTests: fTests.tests,
-      changes: fChanges
-    };
-  });
-};
-
-const load = () => {
-  const noLog = {logging: false};
-
-  return make()
+    return {samples, artifacts, labTests, changes};
+  })
   .then(fake => {
-    return storage.db.sync()
-    .then(() => log.info('Wiping fake data from development database'))
-    .then(() =>
-      storage.models.Changes.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-    .then(() =>
-      storage.models.Artifacts.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-    .then(() =>
-      storage.models.LabTests.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-    .then(() =>
-      storage.models.SampleIds.destroy({where: {uuid: {$like: 'FAKE%'}}}))
-    .then(() => log.info('Loading fake data'))
-    // .then(() => storage.models.SampleIds.bulkCreate(fake.samples))
-    .then(() => storage.models.SampleIds.bulkCreate(fake.samples, noLog))
+    log.info('Finished generating fake data');
+    return storage.models.SampleIds.bulkCreate(fake.samples, noLog)
     .then(() => storage.models.Artifacts.bulkCreate(fake.artifacts, noLog))
     .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
-    .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog))
-    .then(() => log.info('Finished loading fake data'))
-    .catch(err => log.error('Error creating fake data', err, err.message));
-  });
+    .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog));
+  })
+  .then(() => log.info('Finihsed loading fake data'))
+  .catch(err => log.error('Error creating fake data', err, err.message));
 };
 
 module.exports = {
-  make,
+  buildEntities,
+  removeFakeData,
   load
 };
