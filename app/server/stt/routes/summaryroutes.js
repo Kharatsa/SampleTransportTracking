@@ -18,27 +18,17 @@ const uppercaseParams = transformkeys.upperCaseParamsMiddleware(
 );
 const lowerCaseQueryKeys = normalizequery.lowerCaseQueryKeys();
 
+const summaryKeyParams = req => ({
+  facilityKey: req.params.facilityKey,
+  regionKey: req.params.regionKey,
+  afterDate: req.query.afterdate,
+  beforeDate: req.query.beforedate
+});
+
 const handleSummaryReq = (req, res, next) => {
-  const artifacts = client.artifactCounts({data: {
-    facilityKey: req.params.facilityKey,
-    regionKey: req.params.regionKey,
-    afterDate: req.query.afterdate,
-    beforeDate: req.query.beforedate
-  }});
-
-  const labTests = client.labTestCounts({data: {
-    facilityKey: req.params.facilityKey,
-    regionKey: req.params.regionKey,
-    afterDate: req.query.afterdate,
-    beforeDate: req.query.beforedate
-  }});
-
-  const totals = client.totalCounts({data: {
-    facilityKey: req.params.facilityKey,
-    regionKey: req.params.regionKey,
-    afterDate: req.query.afterdate,
-    beforeDate: req.query.beforedate
-  }})
+  const artifacts = client.artifactCounts({data: summaryKeyParams(req)});
+  const labTests = client.labTestCounts({data: summaryKeyParams(req)});
+  const totals = client.totalCounts({data: summaryKeyParams(req)})
   .then(dbresult.oneResult);
 
   return BPromise.props({artifacts, labTests, totals})
@@ -53,5 +43,17 @@ router.get('/region/:regionKey/summary', lowerCaseQueryKeys, dateRange,
   uppercaseParams, handleSummaryReq);
 
 router.get('/summary', lowerCaseQueryKeys, dateRange, handleSummaryReq);
+
+const handleTATIdsReq = (req, res, next) => {
+  return client.stageDates({data: summaryKeyParams(req)})
+  .then(results => res.json(results))
+  .catch(next);
+};
+
+router.get('/ids/tat', lowerCaseQueryKeys, dateRange, handleTATIdsReq);
+router.get('/facility/:facilityKey/ids/tat', lowerCaseQueryKeys, dateRange,
+  handleTATIdsReq);
+router.get('/region/:regionKey/ids/tat', lowerCaseQueryKeys, dateRange,
+  handleTATIdsReq);
 
 module.exports = router;

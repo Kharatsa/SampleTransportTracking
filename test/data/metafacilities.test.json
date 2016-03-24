@@ -1,13 +1,13 @@
 [
   {
     "key": "ABC",
-    "value": "Duis autem vel eum"
+    "value": "Altoona"
   }, {
     "key": "DEF",
-    "value": "Ut wisi enim ad minim veniam"
+    "value": "Horn Head House"
   }, {
     "key": "GHI",
-    "value": "Ut wisi enim ad minim veniam"
+    "value": "Bantry House"
   }, {
     "key": "STMN",
     "value": "St. Monicas",
@@ -18,13 +18,13 @@
     "region": "QTH"
   }, {
     "key": "PNT",
-    "value": "PontMain",
+    "value": "Summerhill House",
     "region": "LRB"
   }, {
     "key": "KHB",
-    "value": "KHB facility"
+    "value": "Killarney House"
   }, {
     "key": "THBP",
-    "value": "Yep"
+    "value": "Lismore Castle"
   }
 ]
