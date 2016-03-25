@@ -19,6 +19,7 @@ import LabTestIdsReducer from './reducer_labTestIds';
 import LabTestsByIdReducer from './reducer_labTestsById';
 import ChangesByLabTestIdReducer from './reducer_changesByLabTestId';
 import ChangesIdsByStageReducer from './reducer_changesIdsByStage';
+import SummaryFilterReducer from './reducer_summaryFilter';
 
 
 const rootReducer = combineReducers({
@@ -38,7 +39,8 @@ const rootReducer = combineReducers({
   labTestIds: LabTestIdsReducer,
   labTestsById: LabTestsByIdReducer,
   changesByLabTestId: ChangesByLabTestIdReducer,
-  changesIdsByStage: ChangesIdsByStageReducer
+  changesIdsByStage: ChangesIdsByStageReducer,
+  summaryFilter: SummaryFilterReducer
 });
 
 export default rootReducer;

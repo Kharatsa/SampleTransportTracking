@@ -9,10 +9,11 @@ import Samples from './containers/Samples.jsx';
 import Facilities from './containers/Facilities.jsx';
 import Riders from './containers/Riders.jsx';
 import MissingRoute from './containers/MissingRoute.jsx';
+import SummaryView from './containers/SummaryView.jsx';
 
 export default (
   <Route path='/' component={App}>
-    <IndexRoute component={Changes}/>
+    <IndexRoute component={SummaryView}/>
     <Route path='changes(/:page)' component={Changes}/>
     <Route path='samples(/:sampleId)' component={Samples}/>
     <Route path='facilities' component={Facilities}/>

@@ -83,6 +83,14 @@ textarea {
     padding: 0.2em 0;
 }
 
+
+.custom-restricted {
+    height: 160px;
+    width: 150px;
+    border: 1px solid gray;
+    border-radius: 4px;
+}
+
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */

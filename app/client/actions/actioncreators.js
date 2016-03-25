@@ -4,10 +4,10 @@ import {
   FETCH_SAMPLE_DETAIL, FETCH_SAMPLE_DETAIL_FAILURE, RECEIVE_SAMPLE_DETAIL,
   FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA,
   FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
-  CHANGE_WINDOW_SIZE
+  CHANGE_WINDOW_SIZE, CHANGE_SUMMARY_FILTER
 } from './actions.js';
 import * as api from '../api';
-import {WindowSize} from '../api/records.js';
+import {WindowSize, SummaryFilter} from '../api/records.js';
 
 const requestMetadata = () => ({type: FETCH_METADATA});
 
@@ -132,3 +132,8 @@ export const fetchSummary = (afterDate, beforeDate, region, facility) => {
     });
   };
 };
+
+export const changeSummaryFilter = (afterDate, beforeDate, regionKey, facilityKey) => ({
+  type: CHANGE_SUMMARY_FILTER,
+  summaryFilter: new SummaryFilter({afterDate, beforeDate, regionKey, facilityKey})
+});

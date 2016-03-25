@@ -29,6 +29,8 @@ export const RECEIVE_SUMMARY = 'RECEIVE_SUMMARY';
 
 export const CHANGE_WINDOW_SIZE = 'CHANGE_WINDOW_SIZE';
 
+export const CHANGE_SUMMARY_FILTER = 'CHANGE_SUMMARY_FILTER';
+
 /*
  * other constants
  */
