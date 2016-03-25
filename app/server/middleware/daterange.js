@@ -14,16 +14,12 @@ const parseDateParam = date => {
 // Parse date strings into Date objects. Also, fill the default afterDate value
 // if none is provided with the request.
 const dateRangeMiddleware = () => (req, res, next) => {
-  console.log(`dateRangeMiddleware req.query.afterdate=${req.query.afterdate}`);
-  console.log(`dateRangeMiddleware req.query.beforedate=${req.query.beforedate}`);
   req.afterDateOriginal = req.query.afterdate;
   req.query.afterdate = parseDateParam(req.query.afterdate);
   if (typeof req.query.beforedate !== 'undefined') {
     req.beforeDateOriginal = req.query.beforedate;
     req.query.beforedate = parseDateParam(req.query.beforedate);
   }
-  console.log(`dateRangeMiddleware req.query.afterdate=${req.query.afterdate}`);
-  console.log(`dateRangeMiddleware req.query.beforedate=${req.query.beforedate}`);
   next();
 };
 

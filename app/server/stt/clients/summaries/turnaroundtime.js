@@ -140,14 +140,15 @@ const calculateOneTAT = (stagePair, data) => {
  * @return {Array.<Object>}
  */
 const calculateTATs = data => {
-  log.debug('Calculating turn around times');
+  log.debug('Calculating TAT');
   return BPromise.map(TAT_STAGE_PAIRS, stagePair =>
     Object.assign({}, stagePair)
   )
   .map(stagePair =>
     calculateOneTAT(stagePair, data)
     .then(result => Object.assign({}, stagePair, result))
-  );
+  )
+  .tap(() => log.debug('Finished computing TAT'));
 };
 
 module.exports = {calculateTATs};
