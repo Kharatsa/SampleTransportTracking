@@ -2,21 +2,15 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import {changeSummaryFilter} from '../../actions/actioncreators';
 import {List} from 'immutable';
 
+import DatePicker from 'react-datepicker';
+import Moment from 'moment';
+
 import SummaryFilterVerticalMenu from './SummaryFilterVerticalMenu';
 
 class SummaryFilter extends React.Component {
 
-  // shouldComponentUpdate(nextProps) {
-  //
-  //   return (!(
-  //     this.props.summaryFilter === nextProps.summaryFilter
-  //   ));
-  // }
-
   render() {
     const {afterDate, beforeDate, regionKey, facilityKey} = this.props.summaryFilter;
-    console.log(this.props.summaryFilter)
-
     const {changeSummaryFilter} = this.props.actions;
 
     //convert regions to list of (value, key), sorted alphabetically by value
@@ -61,8 +55,6 @@ class SummaryFilter extends React.Component {
       }
     })();
 
-    facilitiesList.forEach( (rec) => console.log('region: ', rec.get('region')) )
-
     const facilitySelection = (key) => {
       changeSummaryFilter(
         afterDate,
@@ -72,44 +64,74 @@ class SummaryFilter extends React.Component {
       )
     }
 
-    // console.log(this.props.summaryFilter);
+    const afterDateSelection = (ad) => {
+      //minimum before date is afterDate + 1 day
+      //set accordingly
+      var bd = (() => {
+        const minBeforeDate = ad.clone().add(1, 'day');
+        if ( beforeDate <= minBeforeDate ) {
+          return minBeforeDate
+        }
+        else {
+          return beforeDate
+        }
+      })()
 
-    // console.log(this.props.actions);
-    // return (
-    //   <div>
-    //     {afterDate.toString()}
-    //     {beforeDate.toString()}
-    //     <SummaryFilterVerticalMenu menuRecords={regionsList} onSelection={regionSelection}/>
-    //     {facilityKey}
-    //   </div>
-    // )
-    // return (
-    //   <div>
-    //     <div className="pure-menu pure-menu-scrollable custom-restricted">
-    //       <ul className="pure-menu-list">
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Home</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Flickr</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Messenger</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Sports</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Finance</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Autos</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Beauty</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Movies</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Small Business</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Cricket</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Tech</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">World</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">News</a></li>
-    //           <li className="pure-menu-item"><a href="#" className="pure-menu-link">Support</a></li>
-    //       </ul>
-    //     </div>
-    //   </div>
-    // )
+      changeSummaryFilter(
+        ad,
+        bd,
+        regionKey,
+        facilityKey
+      )
+    }
+
+    const beforeDateSelection = (bd) => {
+      //maximum afterDate date is beforeDate - 1 day
+      //set accordingly
+      var ad = (() => {
+        const maxAfterDate = bd.clone().subtract(1, 'day');
+        if ( afterDate >= maxAfterDate ) {
+          return maxAfterDate
+        }
+        else {
+          return afterDate
+        }
+      })()
+
+      changeSummaryFilter(
+        ad,
+        bd,
+        regionKey,
+        facilityKey
+      )
+    }
 
     return (
-      <div>
-        <SummaryFilterVerticalMenu menuRecords={regionsList} currentlySelected={regionKey} onSelection={regionSelection}/>
-        <SummaryFilterVerticalMenu menuRecords={facilitiesList} currentlySelected={facilityKey} onSelection={facilitySelection}/>
+      <div className="pure-g">
+        <div className="pure-u-1 pure-u-md-1-2 pure-u-lg-1-5">
+          <span>Regions</span>
+          <SummaryFilterVerticalMenu menuRecords={regionsList} currentlySelected={regionKey} onSelection={regionSelection}/>
+        </div>
+        <div className="pure-u-1 pure-u-md-1-2 pure-u-lg-1-5">
+          <span>Facilities</span>
+          <SummaryFilterVerticalMenu menuRecords={facilitiesList} currentlySelected={facilityKey} onSelection={facilitySelection}/>
+        </div>
+        <div className="pure-u-1 pure-u-md-1-2 pure-u-lg-1-5">
+          <span>After Date</span>
+          <br/>
+          <DatePicker
+            selected={afterDate}
+            maxDate={Moment().subtract(1, 'day')}
+            onChange={afterDateSelection} />
+        </div>
+        <div className="pure-u-1 pure-u-md-1-2 pure-u-lg-1-5">
+          <span>Before Date</span>
+          <br/>
+          <DatePicker
+            selected={beforeDate}
+            maxDate={Moment()}
+            onChange={beforeDateSelection} />
+        </div>
       </div>
     );
   }

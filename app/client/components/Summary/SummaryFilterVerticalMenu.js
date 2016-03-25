@@ -3,7 +3,7 @@ import React from 'react';
 const SummaryFilterVerticalMenu = ({menuRecords, currentlySelected, onSelection}) => {
   return (
     <div>
-      <div className="pure-menu pure-menu-scrollable custom-restricted">
+      <div className="pure-menu pure-menu-scrollable summary-filter-vertical-menu">
         <ul className="pure-menu-list">
           <span className="pure-menu-link" onClick={ () => onSelection(null)}>Clear Selection</span>
           {menuRecords.map( (record, index) => {

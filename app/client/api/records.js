@@ -1,7 +1,6 @@
 'use strict';
 
 import {Record} from 'immutable';
-import { addDaysToDate } from '../util/date';
 
 export const KeyValueMetaRecord = Record({
   key: null,
@@ -62,8 +61,8 @@ export const Page = Record({
 });
 
 export const SummaryFilter = Record({
-  afterDate: addDaysToDate(-30, new Date()),
-  beforeDate: new Date(),
+  afterDate: null,
+  beforeDate: null,
   regionKey: null,
   facilityKey: null
 });

@@ -27,12 +27,12 @@ class SummaryView extends React.Component {
         <div>
           <SummaryFilterContainer />
         </div>
-        <div style={containerStyle}>
-          <div style={leftStyle}>
-            Total Counts
+        <div className="pure-g">
+          <div className="pure-u-1 pure-u-md-1 pure-u-lg-1-2">
+            <span>Total Counts</span>
           </div>
-          <div style={rightStyle}>
-            Turn Around Time
+          <div className="pure-u-1 pure-u-md-1 pure-u-lg-1-2">
+            <span>Turn Around Time</span>
           </div>
         </div>
         <div>
