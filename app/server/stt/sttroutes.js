@@ -7,9 +7,9 @@ const MetadataRoutes = require('app/server/stt/routes/metadataroutes.js');
 const ChangesRoutes = require('app/server/stt/routes/changesroutes.js');
 const SummaryRoutes = require('app/server/stt/routes/summaryroutes.js');
 
+router.use('/', SummaryRoutes);
 router.use('/', SampleIdRoutes);
 router.use('/', MetadataRoutes);
 router.use('/', ChangesRoutes);
-router.use('/', SummaryRoutes);
 
 module.exports = router;

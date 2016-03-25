@@ -15,8 +15,10 @@ const artifactsclient = require('app/server/stt/clients/artifacts');
 const labtestsclient = require('app/server/stt/clients/labtests');
 const changesclient = require('app/server/stt/clients/changes');
 const dbresult = require('app/server/storage/dbresult.js');
+const datamerge = require('app/server/util/datamerge.js');
 const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
 const summaryqueries = require('./summaries/summaryqueries.js');
+const turnaroundtime = require('./summaries/turnaroundtime.js');
 
 /** @module stt/sttclient */
 
@@ -130,6 +132,27 @@ STTClient.prototype.labTestCounts = BPromise.method(function(options) {
  */
 STTClient.prototype.totalCounts = BPromise.method(function(options) {
   return summaryQuery(this, summaryqueries.totalsRaw, options.data);
+});
+
+/**
+ * @method [stageDates]
+ * @param {Object} options
+ * @param {Date} options.afterDate
+ * @param {Date} [options.beforeDate]
+ * @param {string} [options.regionKey]
+ * @param {string} [options.facilityKey]
+ * @return {Promise.<Array.<Object>>}
+ * @throws {Error} If afterDate is undefined
+ */
+STTClient.prototype.stageDates = BPromise.method(function(options) {
+  return summaryQuery(this, summaryqueries.stageDatesRaw, options.data)
+  .tap(results => {
+    log.debug('stageDates raw query results', results);
+  })
+  .then(results => datamerge.propKeyReduce(
+    results, ['sampleId', 'changeStage', 'changeStatus']
+  ))
+  .then(turnaroundtime.calculateTATs);
 });
 
 /**
