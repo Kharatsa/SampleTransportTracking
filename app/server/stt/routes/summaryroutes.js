@@ -51,8 +51,8 @@ const handleTATIdsReq = (req, res, next) => {
 };
 
 router.get('/ids/tat', lowerCaseQueryKeys, dateRange, handleTATIdsReq);
-router.get('/facility/:facilityKey/ids/tat', lowerCaseQueryKeys, dateRange,
-  handleTATIdsReq);
+router.get('/facility/:facilityKey/ids/tat',
+  lowerCaseQueryKeys, dateRange, handleTATIdsReq);
 router.get('/region/:regionKey/ids/tat', lowerCaseQueryKeys, dateRange,
   handleTATIdsReq);
 

@@ -1,10 +1,8 @@
 'use strict';
 
 import {arrayOf, normalize} from 'normalizr';
-import {Map as ImmutableMap, Seq} from 'immutable';
-import {
-  changeInclude, sample, metadata, sampleInclude
-} from './schemas.js';
+import {Map as ImmutableMap, Seq, List} from 'immutable';
+import {changeInclude, sample, metadata} from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
   KeyValueMetaRecord, FacilityMetaRecord
@@ -33,35 +31,6 @@ const makeImmutable = (source, ImmutableRecord) => {
   return ImmutableMap({});
 };
 
-/**
- * Reduce an array of Objects into an Object keyed on one of the Object's
- * values.
- *
- * @param {Array.<Object>} data
- * @param {Object} options
- * @param {?boolean} [options.replace=false] [description]
- * @param {!string} options.key
- * @return {Object}
- */
-const keyReduce = (data, options) => {
-  // options defaults
-  options = Object.assign({replace: false}, options);
-  const {replace, key} = options;
-  const keyFunc = typeof key === 'function' ? key : item => item[key];
-  return data.reduce((reduced, item) => {
-    const itemKey = keyFunc(item);
-    if (typeof reduced[itemKey] === 'undefined' && !replace) {
-      reduced[itemKey] = [];
-    }
-    if (replace) {
-      reduced[itemKey] = item;
-    } else {
-      reduced[itemKey].push(item);
-    }
-    return reduced;
-  }, {});
-};
-
 const normalizeMeta = (data, Record) => {
   let {entities} = normalize(data, arrayOf(metadata));
   return makeImmutable(entities.metadata, Record);
@@ -87,77 +56,47 @@ export const normalizeSamples = ({data, count}) => {
   return {samples, sampleIds, count};
 };
 
-const sampleDetailArtifactMaps = data => {
-  let artifactChanges;
-  if (data.Artifacts) {
-    artifactChanges = (
-      data.Artifacts.map(ref => ref.Changes)
-      .reduce((reduced, next) => reduced.concat(next), []));
-  } else {
-    artifactChanges = [];
-  }
+/**
+ * @param  {ImmutableMap} changesById [description]
+ * @param  {Object} options     [description]
+ * @param {string} options.refName [description]
+ * @param {boolean} [options.many=false] [description]
+ * @return {Object}             [description]
+ */
+const sampleDetailsRefMap = (changesById, options) => {
+  options = Object.assign({}, {many: false}, options);
 
-  const changesByArtifactId = makeImmutable(
-    keyReduce(artifactChanges, {key: 'artifact'}), ChangeRecord
-  );
-
-  return {changesByArtifactId, artifactChanges};
-};
-
-const sampleDetailTestMaps = data => {
-  let testChanges;
-  if (data.LabTests) {
-    testChanges = (
-      data.LabTests.map(ref => ref.Changes)
-      .reduce((reduced, next) => reduced.concat(next), []));
-  } else {
-    testChanges = [];
-  }
-
-  const changesByLabTestId = makeImmutable(
-    keyReduce(testChanges, {key: 'labTest'}), ChangeRecord
-  );
-
-  return {changesByLabTestId, testChanges};
-};
-
-const sampleDetailStageMap = (artifactChanges, testChanges) => {
-  const combinedChanges = artifactChanges.concat(testChanges);
-
-  const changesIdsByStage = combinedChanges.reduce((reduced, item) => {
-    const stage = item.stage;
-    if (!reduced[stage]) {
-      reduced[stage] = [];
+  return changesById.keySeq().reduce((reduced, changeId) => {
+    const change = changesById.get(changeId);
+    const refId = change.get(options.refName);
+    if (refId !== null && options.many) {
+      const changes = reduced.get(refId);
+      reduced = reduced.set(refId,
+        typeof changes === 'undefined' ? List([change]) : changes.push(change));
+    } else if (refId !== null) {
+      reduced = reduced.set(refId, change);
     }
-    reduced[stage].push(item.uuid);
     return reduced;
-  }, {});
-
-  Object.keys(changesIdsByStage).forEach(key => {
-    changesIdsByStage[key] = Seq(changesIdsByStage[key]);
-  });
-
-  return {changesIdsByStage: ImmutableMap(changesIdsByStage)};
+  }, ImmutableMap());
 };
 
 export const normalizeSample = data => {
-  const {changesByArtifactId, artifactChanges} = sampleDetailArtifactMaps(data);
-  const {changesByLabTestId, testChanges} = sampleDetailTestMaps(data);
-  const {changesIdsByStage} = sampleDetailStageMap(artifactChanges,
-                                                   testChanges);
+  const normalized = normalizeChanges(data);
+  const {changes, changeIds, artifacts, labTests, samples, count} = normalized;
 
-  const {entities, result} = normalize(data, sampleInclude);
-  const sampleId = result || null;
+  const changesByArtifactId = sampleDetailsRefMap(changes,
+    {refName: 'artifact', many: true});
+  const changesByLabTestId = sampleDetailsRefMap(changes,
+    {refName: 'labTest', many: true});
+  const changesByStage = sampleDetailsRefMap(changes,
+    {refName: 'stage', many: true});
 
-  // TODO: do this sort this on the server
-  const changesRaw = makeImmutable(entities.changes, ChangeRecord);
-  const changes = changesRaw.sortBy(change => change.statusDate);
+  const sampleId = samples.first().get('uuid');
 
-  const artifacts = makeImmutable(entities.artifactChanges, ArtifactRecord);
-  const labTests = makeImmutable(entities.labTestChanges, LabTestRecord);
-  const samples = makeImmutable(entities.sampleIncludes, SampleRecord);
-  return {samples, sampleId, changes, artifacts, labTests,
-          changesByArtifactId, changesByLabTestId, changesIdsByStage};
+  return {
+    changes, changeIds, artifacts, labTests, samples, count, sampleId,
+    changesByArtifactId, changesByLabTestId, changesByStage
+  };
 };
 
 export const normalizeChanges = ({data, count}) => {

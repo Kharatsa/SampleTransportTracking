@@ -3,7 +3,7 @@
 import {createStore, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
-import reducers from './reducers/reducers.js';
+import reducers from './reducers';
 import DevTools from './containers/DevTools.jsx';
 
 let enhancer;

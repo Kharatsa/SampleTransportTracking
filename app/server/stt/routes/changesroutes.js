@@ -11,35 +11,35 @@ const sttclient = require('app/server/stt/clients/sttclient.js');
 const client = sttclient({db: storage.db, models: storage.models});
 const dateRange = daterange.dateRangeMiddleware();
 const lowerCaseQueryKeys = normalizequery.lowerCaseQueryKeys();
+const pageOffset = offset(client.changes.limit);
 
-router.get('/changes', offset(client.changes.limit), (req, res, next) => {
-  return client.changes.latest({offset: req.offset, allowEmpty: true})
+const handleChangesReq = (req, res, next) => {
+  return client.changes.allChanges({data: {
+    sampleId: req.params.sampleId,
+    facilityKey: req.params.facilityKey,
+    regionKey: req.params.regionKey,
+    afterDate: req.query.afterdate,
+    beforeDate: req.query.beforedate,
+    offset: req.offset
+  }})
   .then(results => res.json(results))
   .catch(next);
-});
+};
 
-router.get('/facility/:facilityKey/changes', lowerCaseQueryKeys, dateRange,
-  (req, res, next) => {
-    return client.changes.allChanges({data: {
-      facilityKey: req.params.facilityKey,
-      afterDate: req.query.afterdate,
-      beforeDate: req.query.beforedate
-    }})
-    .then(results => res.json(results))
-    .catch(next);
-  }
+router.get('/changes',
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
 );
 
-router.get('/region/:regionKey/changes', lowerCaseQueryKeys, dateRange,
-  (req, res, next) => {
-    return client.changes.allChanges({data: {
-      regionKey: req.params.regionKey,
-      afterDate: req.query.afterdate,
-      beforeDate: req.query.beforedate
-    }})
-    .then(results => res.json(results))
-    .catch(next);
-  }
+router.get('/ids/:sampleId/changes',
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
+);
+
+router.get('/facility/:facilityKey/changes',
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
+);
+
+router.get('/region/:regionKey/changes',
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
 );
 
 module.exports = router;

@@ -14,16 +14,19 @@ export const ShowLoading = Component => {
     },
 
     render() {
-      const {isFetchingData} = this.props;
+      const {isFetchingData, metadata} = this.props;
 
-      if (isFetchingData) {
+      if (isFetchingData || metadata.size === 0) {
         return (<LoadingIndicator />);
       }
       return (<Component {...this.props} />);
     }
   });
 
-  return connect(state => ({isFetchingData: state.isFetchingData}))(Wrapped);
+  return connect(state => ({
+    isFetchingData: state.isFetchingData,
+    metadata: state.metadata
+  }))(Wrapped);
 };
 
 export default ShowLoading;

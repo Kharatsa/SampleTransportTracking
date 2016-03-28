@@ -14,14 +14,14 @@ export const SampleDetail = ({
   selectedSampleId, samplesById,
   changeIds, changesById,
   artifactsById, labTestsById,
-  changesByArtifactId, changesByLabTestId, changesIdsByStage,
+  changesByArtifactId, changesByLabTestId, changesByStage,
   metadata
 }) => {
   const sample = samplesById.get(selectedSampleId);
 
   if (sample) {
-    const people = metadata.get('person');
-    const facilities = metadata.get('facility');
+    const people = metadata.get('people');
+    const facilities = metadata.get('facilities');
 
     const stId = sample.get('stId');
     const labId = sample.get('labId');
@@ -37,10 +37,10 @@ export const SampleDetail = ({
                 color='blue'
                 people={people}
                 facilities={facilities}
-                pickupStageName='Sample Pickup'
-                deliveryStageName='Sample Delivery'
+                pickupStageName='SDEPART'
+                deliveryStageName='SARRIVE'
                 changesById={changesById}
-                changesIdsByStage={changesIdsByStage} />
+                changesByStage={changesByStage} />
           </div>
           <div className='pure-u-1 pure-u-md-1-2'>
             <SampleStage
@@ -48,10 +48,10 @@ export const SampleDetail = ({
                 color='green'
                 people={people}
                 facilities={facilities}
-                pickupStageName='Results Pickup'
-                deliveryStageName='Results Delivery'
+                pickupStageName='RDEPART'
+                deliveryStageName='RARRIVE'
                 changesById={changesById}
-                changesIdsByStage={changesIdsByStage}/>
+                changesByStage={changesByStage}/>
           </div>
         </div>
         <div className='pure-g panel'>

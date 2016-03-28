@@ -73,7 +73,7 @@ describe('Authentication Components', () => {
         username, salt: result.salt, digest: result.digest
       }))
       .then(user => {
-        expect(user.username).to.equal(username);
+        expect(user.username).to.equal(username.toUpperCase());
       }).then(() => done());
     });
 
@@ -107,7 +107,7 @@ describe('Authentication Components', () => {
     it('should get existing users', done => {
       client.getUser({username})
       .then(user => {
-        expect(user.username).to.equal(username);
+        expect(user.username).to.equal(username.toUpperCase());
         return credentials.isValid(password, user.salt, user.digest);
       })
       .then(valid => expect(valid).to.be.true).then(() => done());
