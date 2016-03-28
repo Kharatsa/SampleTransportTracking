@@ -42,7 +42,7 @@ const FACILITY_PATH = [metaFields.FACILITY, 0];
 const REGION_PATH = [metaFields.REGION, 0];
 
 // Other ODK Collect XForms constants
-const DEFAULT_ARTIFACT_TYPE = 'FORM';
+const DEFAULT_ARTIFACT_TYPE = 'RESULT';
 const DEFAULT_STATUS = 'OK';
 const DEFAULT_PERSON = null;
 

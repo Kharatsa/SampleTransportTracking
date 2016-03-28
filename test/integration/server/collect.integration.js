@@ -21,7 +21,9 @@ const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
 const app = express();
 app.use('/odk', AggregateRoutes);
 
-describe('ODK Collect Submission API', () => {
+describe('ODK Collect Submission API', function() {
+  this.timeout(5000);
+
   const dataPath = path.join(__dirname, '..', '..', 'data');
 
   before(done => {

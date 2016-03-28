@@ -2,7 +2,7 @@
   {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx4",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
-    "artifactType": "FORM"
+    "artifactType": "REQUEST"
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx5",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
@@ -14,7 +14,7 @@
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx8",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2",
-    "artifactType": "FORM"
+    "artifactType": "REQUEST"
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx9",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2",

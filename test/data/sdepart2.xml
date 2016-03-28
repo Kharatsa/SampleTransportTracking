@@ -21,7 +21,7 @@
       </srepeat>
    </trepeat>
    <trepeat>
-      <stype>form</stype>
+      <stype>request</stype>
       <srepeat>
          <stid>396f99229</stid>
       </srepeat>
