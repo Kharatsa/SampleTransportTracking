@@ -36,7 +36,7 @@ function AuthClient(options) {
  * @return {Promise.<string>}
  */
 var sanitizeUsername = BPromise.method(function(username) {
-  return username.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  return username.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 });
 
 const USERNAME_MAX_LENGTH = 50;
