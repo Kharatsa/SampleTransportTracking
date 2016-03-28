@@ -9,7 +9,7 @@ import Samples from './containers/Samples.jsx';
 import Facilities from './containers/Facilities.jsx';
 import Riders from './containers/Riders.jsx';
 import MissingRoute from './containers/MissingRoute.jsx';
-import SummaryView from './containers/SummaryView.jsx';
+import SummaryView from './containers/Summary/SummaryView.jsx';
 
 export default (
   <Route path='/' component={App}>

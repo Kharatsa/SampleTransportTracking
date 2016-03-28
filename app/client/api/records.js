@@ -66,3 +66,9 @@ export const SummaryFilter = Record({
   regionKey: null,
   facilityKey: null
 });
+
+export const SummaryTotal = Record({
+  artifactsCount:null,
+  labTestsCount:null,
+  sampleIdsCount:null
+});

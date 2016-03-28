@@ -1,6 +1,7 @@
 import React from 'react';
 import SummaryFilterContainer from './SummaryFilterContainer';
-import ViewChangesButton from '../components/Summary/ViewChangesButton';
+import ViewChangesButton from '../../components/Summary/ViewChangesButton';
+import TotalCountsContainer from './TotalCountsContainer';
 
 class SummaryView extends React.Component {
   render() {
@@ -10,19 +11,19 @@ class SummaryView extends React.Component {
     };
 
     return (
-      <div>
-        <div>
+      <div className='main'>
+        <div className='panel'>
           <SummaryFilterContainer />
         </div>
         <div className="pure-g">
-          <div className="pure-u-1 pure-u-md-1 pure-u-lg-1-2">
-            <span>Total Counts</span>
+          <div className="panel pure-u-1 pure-u-md-1 pure-u-lg-1-2">
+            <TotalCountsContainer />
           </div>
-          <div className="pure-u-1 pure-u-md-1 pure-u-lg-1-2">
+          <div className="panel pure-u-1 pure-u-md-1 pure-u-lg-1-2">
             <span>Turn Around Time</span>
           </div>
         </div>
-        <div style={buttonsStyle}>
+        <div className='panel' style={buttonsStyle}>
           <ViewChangesButton />
         </div>
       </div>

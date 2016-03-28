@@ -6,7 +6,6 @@ import {
 } from './normalize.js';
 
 const pagedURL = (url, page) => `${url}?page=${page}`;
-const urlWithDates = (url, afterDate, beforeDate) => `${url}?afterDate=${afterDate}&beforeDate=${beforeDate}`
 // TODO: handle empty responses (res.json = {})
 
 export const getSamples = (options, callback) => {
@@ -42,19 +41,34 @@ export const getChanges = (options, callback) => {
   });
 };
 
-export const getSummary = (options, callback) => {
-  let {afterDate, beforeDate, region, facility} = options;
+
+const dateForAPI = momentDate => momentDate.format("YYYY-MM-DD")
+const urlWithDates = (url, afterDate, beforeDate) => `${url}?afterDate=${dateForAPI(afterDate)}&beforeDate=${dateForAPI(beforeDate)}`
+
+const summaryURLForFilter = (summaryFilter) => {
+
+  const afterDate = summaryFilter.get('afterDate');
+  const beforeDate = summaryFilter.get('beforeDate');
+  const regionKey = summaryFilter.get('regionKey');
+  const facilityKey = summaryFilter.get('facilityKey');
+
   var url;
-  if (facility) {
-    url = `/stt/facility/${facility}/summary`
+  if (facilityKey) {
+    url = `/stt/facility/${facilityKey}/summary`
   }
-  else if (region) {
-    url = `/stt/region/${region}/summary`
+  else if (regionKey) {
+    url = `/stt/region/${regionKey}/summary`
   }
   else {
     url = `/stt/summary`
   }
-  return request(urlWithDates(url, afterDate, beforeDate), (err, res) => {
+  return urlWithDates(url, afterDate, beforeDate)
+}
+
+export const getSummary = (summaryFilter, callback) => {
+  const url = summaryURLForFilter(summaryFilter)
+  console.log('FETCH URL: ', url)
+  return request(url, (err, res) => {
     if (err) {
       return callback(err);
     }

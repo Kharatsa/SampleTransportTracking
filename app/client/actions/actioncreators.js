@@ -4,10 +4,11 @@ import {
   FETCH_SAMPLE_DETAIL, FETCH_SAMPLE_DETAIL_FAILURE, RECEIVE_SAMPLE_DETAIL,
   FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA,
   FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
+  FETCH_SUMMARY, FETCH_SUMMARY_FAILURE, RECEIVE_SUMMARY,
   CHANGE_WINDOW_SIZE, CHANGE_SUMMARY_FILTER
 } from './actions.js';
 import * as api from '../api';
-import {WindowSize, SummaryFilter} from '../api/records.js';
+import {WindowSize, SummaryFilter, SummaryTotal} from '../api/records.js';
 
 const requestMetadata = () => ({type: FETCH_METADATA});
 
@@ -94,7 +95,7 @@ export const changeWindowSize = (innerWidth, innerHeight) => ({
   size: new WindowSize({innerWidth, innerHeight})
 });
 
-const requestSummary = (afterDate, beforeDate, region, facility) => ({type: FETCH_SUMMARY, afterDate, beforeDate, region, facility});
+const requestSummary = (summaryFilter) => ({type: FETCH_SUMMARY, summaryFilter});
 
 const fetchSummaryFailure = (error) => ({
   type: FETCH_SUMMARY_FAILURE,
@@ -105,30 +106,24 @@ const receiveSummary = ({
   artifacts, labTests, totals
 }) => ({
   type: RECEIVE_SUMMARY,
-  artifacts, labTests, totals
+  artifacts,
+  labTests,
+  totals: new SummaryTotal(totals)
 });
 
-//required: afterDate, beforeDate
-//optional: region, facility
-export const fetchSummary = (afterDate, beforeDate, region, facility) => {
+export const fetchSummary = (summaryFilter) => {
 
   //validity checking for region / facility here?
 
   return dispatch => {
-    dispatch(requestSummary(afterDate, beforeDate, region, facility));
+    dispatch(requestSummary(summaryFilter));
 
-    var options = {
-      afterDate: afterDate,
-      beforeDate: beforeDate,
-      region: region,
-      facility: facility
-    };
-
-    return api.getSummary(options, (err, data) => {
+    return api.getSummary(summaryFilter, (err, data) => {
       if (err) {
         dispatch(fetchSummaryFailure(err));
       }
-      dispatch(receiveChanges(data));
+      console.log(data);
+      dispatch(receiveSummary(data));
     });
   };
 };

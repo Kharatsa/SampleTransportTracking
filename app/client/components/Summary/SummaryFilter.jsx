@@ -1,5 +1,4 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
-import {changeSummaryFilter} from '../../actions/actioncreators';
 import {List} from 'immutable';
 
 import DatePicker from 'react-datepicker';
@@ -26,12 +25,14 @@ class SummaryFilter extends React.Component {
     })();
 
     const regionSelection = (key) => {
-      changeSummaryFilter(
-        afterDate,
-        beforeDate,
-        key,
-        facilityKey
-      )
+      if (regionKey !== key) {
+        changeSummaryFilter(
+          afterDate,
+          beforeDate,
+          key,
+          facilityKey
+        )
+      }
     }
 
     //disable facilities control unless a region has been selected??
@@ -56,54 +57,64 @@ class SummaryFilter extends React.Component {
     })();
 
     const facilitySelection = (key) => {
-      changeSummaryFilter(
-        afterDate,
-        beforeDate,
-        regionKey,
-        key
-      )
+      if (facilityKey !== key) {
+        changeSummaryFilter(
+          afterDate,
+          beforeDate,
+          regionKey,
+          key
+        )
+      }
     }
 
     const afterDateSelection = (ad) => {
       //minimum before date is afterDate + 1 day
       //set accordingly
-      var bd = (() => {
-        const minBeforeDate = ad.clone().add(1, 'day');
-        if ( beforeDate <= minBeforeDate ) {
-          return minBeforeDate
-        }
-        else {
-          return beforeDate
-        }
-      })()
+      if (ad !== afterDate) {
+        var bd = (() => {
+          const minBeforeDate = ad.clone().add(1, 'day');
+          if ( beforeDate <= minBeforeDate ) {
+            return minBeforeDate
+          }
+          else {
+            return beforeDate
+          }
+        })()
 
-      changeSummaryFilter(
-        ad,
-        bd,
-        regionKey,
-        facilityKey
-      )
+        changeSummaryFilter(
+          ad,
+          bd,
+          regionKey,
+          facilityKey
+        )
+      }
+
     }
 
     const beforeDateSelection = (bd) => {
       //maximum afterDate date is beforeDate - 1 day
       //set accordingly
-      var ad = (() => {
-        const maxAfterDate = bd.clone().subtract(1, 'day');
-        if ( afterDate >= maxAfterDate ) {
-          return maxAfterDate
-        }
-        else {
-          return afterDate
-        }
-      })()
 
-      changeSummaryFilter(
-        ad,
-        bd,
-        regionKey,
-        facilityKey
-      )
+      if (bd !== beforeDate) {
+        var ad = (() => {
+          const maxAfterDate = bd.clone().subtract(1, 'day');
+          if ( afterDate >= maxAfterDate ) {
+            return maxAfterDate
+          }
+          else {
+            return afterDate
+          }
+        })()
+
+        changeSummaryFilter(
+          ad,
+          bd,
+          regionKey,
+          facilityKey
+        )
+      }
+
+
     }
 
     return (
