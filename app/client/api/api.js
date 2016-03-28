@@ -2,7 +2,7 @@
 
 import request from '../util/request.js';
 import {
-  normalizeChanges, normalizeSamples, normalizeMetadata, normalizeSample
+  normalizeChanges, normalizeSamples, normalizeMetadata, normalizeSample, normalizeSummary
 } from './normalize.js';
 
 const pagedURL = (url, page) => `${url}?page=${page}`;
@@ -72,7 +72,7 @@ export const getSummary = (summaryFilter, callback) => {
     if (err) {
       return callback(err);
     }
-    callback(null, res.json);
+    callback(null, normalizeSummary(res.json));
   });
 };
 

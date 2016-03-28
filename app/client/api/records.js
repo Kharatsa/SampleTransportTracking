@@ -72,3 +72,21 @@ export const SummaryTotal = Record({
   labTestsCount:null,
   sampleIdsCount:null
 });
+
+export const ArtifactsCount = Record({
+  stage:null,
+  status:null,
+  artifactsCountDetails:null
+});
+
+export const ArtifactsCountDetail = Record({
+  type:null,
+  sampleIdsCount:0,
+  artifactsCount:0
+});
+
+export const LabTestsCount = Record({
+  artifactsCount:null,
+  labTestsCount:null,
+  sampleIdsCount:null
+});

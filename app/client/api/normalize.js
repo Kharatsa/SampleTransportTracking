@@ -1,13 +1,13 @@
 'use strict';
 
 import {arrayOf, normalize} from 'normalizr';
-import {Map as ImmutableMap, Seq} from 'immutable';
+import {Map as ImmutableMap, Seq, List} from 'immutable';
 import {
   changeInclude, sample, metadata, sampleInclude
 } from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
-  KeyValueMetaRecord, FacilityMetaRecord
+  KeyValueMetaRecord, FacilityMetaRecord, SummaryTotal, ArtifactsCount, ArtifactsCountDetail
 } from './records.js';
 
 /**
@@ -169,3 +169,56 @@ export const normalizeChanges = ({data, count}) => {
   const samples = makeImmutable(entities.samples, SampleRecord);
   return {changes, changeIds, artifacts, labTests, samples, count};
 };
+
+const defaultArtifactsStruct = () => {
+  const stages = Seq(["RARRIVE", "RDEPART", "SARRIVE", "SDEPART"])
+  const statuses = Seq(["OK", "BAD"])
+  const artifactTypes = Seq(["REQUEST", "BLOOD", "SPUTUM", "URINE", "DBS", "RESULT"])
+
+  return stages.flatMap( stage => {
+    return statuses.map( status => {
+      return new ArtifactsCount({
+        stage,
+        status,
+        artifactsCountDetails: artifactTypes.map( type => (new ArtifactsCountDetail({type})))
+      })
+    })
+  })
+}
+
+const normalizeArtifacts = artifacts => {
+  return Seq(artifacts).reduce((artifactsStruct, jsonArtifactCount) => {
+    return artifactsStruct.map( (artifactCount) => {
+      // console.log(artifactCount)
+      if ((jsonArtifactCount.stage === artifactCount.get('stage')) && (jsonArtifactCount.status === artifactCount.get('status'))) {
+          return new ArtifactsCount({
+            stage: artifactCount.get('stage'),
+            status: artifactCount.get('status'),
+            artifactsCountDetails: artifactCount.artifactsCountDetails.map( detail => {
+              if (jsonArtifactCount.artifactType === detail.get('type')) {
+                return new ArtifactsCountDetail({
+                  type: jsonArtifactCount.artifactType,
+                  sampleIdsCount: jsonArtifactCount.sampleIdsCount,
+                  artifactsCount: jsonArtifactCount.artifactsCount
+                });
+              }
+              else {
+                return detail;
+              }
+            })
+          })
+      }
+      else {
+        return artifactCount
+      }
+    })
+  },
+  defaultArtifactsStruct());
+}
+
+export const normalizeSummary = data => {
+  console.log(defaultArtifactsStruct())
+  defaultArtifactsStruct().forEach(x => console.log(x))
+  const {artifacts, labTests, totals} = data;
+  return {artifacts: normalizeArtifacts(artifacts), labTests, totals: new SummaryTotal(totals)};
+}

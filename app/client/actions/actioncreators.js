@@ -8,7 +8,7 @@ import {
   CHANGE_WINDOW_SIZE, CHANGE_SUMMARY_FILTER
 } from './actions.js';
 import * as api from '../api';
-import {WindowSize, SummaryFilter, SummaryTotal} from '../api/records.js';
+import {WindowSize, SummaryFilter} from '../api/records.js';
 
 const requestMetadata = () => ({type: FETCH_METADATA});
 
@@ -108,7 +108,7 @@ const receiveSummary = ({
   type: RECEIVE_SUMMARY,
   artifacts,
   labTests,
-  totals: new SummaryTotal(totals)
+  totals
 });
 
 export const fetchSummary = (summaryFilter) => {
