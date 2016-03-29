@@ -2,12 +2,12 @@
 
 /** @module stt/sttclient/changes */
 
+const _ = require('lodash');
 const BPromise = require('bluebird');
 const queryutils = require('app/server/storage/queryutils.js');
 const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
 
 /**
- * [description]
  * @method changesTestsAndDate
  * @param  {Array.<Object>} changes [description]
  * @return {Promise.<Object>}         [description]
@@ -20,7 +20,6 @@ const labTestsAndDates = queryutils.requireProps(['labTest', 'statusDate'],
 );
 
 /**
- * [description]
  * @method changesArtifactsAndDate
  * @param  {Array.<Object>} changes [description]
  * @return {Promise.<Object>}         [description]
@@ -42,12 +41,12 @@ const changesSelectExpression = queryutils.makeSelectExpression(
 const artifactsColumns = ['uuid', 'sampleId', 'artifactType', 'createdAt',
                           'updatedAt'];
 const artifactsSelectExpression = queryutils.makeSelectExpression(
-  artifactsColumns, 'a', 'Artifact');
+  artifactsColumns, 'a', 'Ref');
 
 const labTestsColumns = ['uuid', 'sampleId', 'testType', 'createdAt',
                          'updatedAt'];
 const labTestsSelectExpression = queryutils.makeSelectExpression(
-  labTestsColumns, 'r', 'LabTest');
+  labTestsColumns, 'r', 'Ref');
 
 const sampleIdsColumns = ['uuid', 'stId', 'labId', 'origin', 'outstanding',
                           'createdAt', 'updatedAt'];
@@ -55,10 +54,19 @@ const sampleIdsSelectExpression = queryutils.makeSelectExpression(
   sampleIdsColumns, 's', 'SampleId');
 
 /**
- * @param  {Object} params
- * @param {string} [params.facilityKey]
- * @param {string} [params.regionKey]
- * @return {string}
+ * @typedef {Object} ChangesQueryParams
+ * @property {string} [facilityKey]
+ * @property {string} [regionKey]
+ * @property {number} [limit=50]
+ * @property {number} [offset]
+ * @property {string} [sampleId]
+ * @property {string} [beforeDate] ISO8601-format Date string
+ *
+ */
+
+/**
+ * @param  {ChangesQueryParams} params
+ * @return {string} Raw SQL query string
  */
 const changesRaw = params => {
   return `SELECT
@@ -70,10 +78,13 @@ const changesRaw = params => {
     INNER JOIN SampleIds s ON s.uuid = a.sampleId
     ${rawqueryutils.regionQueryInnerJoin(params)}
     WHERE s.createdAt >= $afterDate
+    ${rawqueryutils.sampleIdCondition(params)}
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
+
     UNION ALL
+
     SELECT
     ${changesSelectExpression},
     ${labTestsSelectExpression},
@@ -83,12 +94,28 @@ const changesRaw = params => {
     INNER JOIN SampleIds s ON s.uuid = r.sampleId
     ${rawqueryutils.regionQueryInnerJoin(params)}
     WHERE s.createdAt >= $afterDate
+    ${rawqueryutils.sampleIdCondition(params)}
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-    ORDER BY c.statusDate DESC`;
+
+    ORDER BY c.statusDate DESC
+    ${rawqueryutils.limitOffsetExpression(params)}`;
+};
+
+/**
+ * @param  {ChangesQueryParams} params
+ * @return {string} Raw SQL query string
+ */
+const changesRawCount = params => {
+  const countParams = _.omit(params, ['limit', 'offset']);
+  return `SELECT
+    COUNT(DISTINCT "Change.uuid") AS "ChangesCount"
+    FROM (
+      ${changesRaw(countParams)}
+    )`;
 };
 
 module.exports = {
-  labTestsAndDates, artifactsAndDates, changesRaw
+  labTestsAndDates, artifactsAndDates, changesRaw, changesRawCount
 };

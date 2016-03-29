@@ -1,6 +1,6 @@
 'use strict';
 
-import {Schema, arrayOf} from 'normalizr';
+import {Schema} from 'normalizr';
 
 export const sample = new Schema('samples', {idAttribute: 'uuid'});
 export const change = new Schema('changes', {idAttribute: 'uuid'});
@@ -24,24 +24,4 @@ labTestSample.define({
 
 artifactSample.define({
   SampleId: sample
-});
-
-export const sampleInclude = new Schema(
-  'sampleIncludes', {idAttribute: 'uuid'});
-export const artifactChange = new Schema(
-  'artifactChanges', {idAttribute: 'uuid'});
-export const labTestChange = new Schema(
-  'labTestChanges', {idAttribute: 'uuid'});
-
-artifactChange.define({
-  Changes: arrayOf(change)
-});
-
-labTestChange.define({
-  Changes: arrayOf(change)
-});
-
-sampleInclude.define({
-  Artifacts: arrayOf(artifactChange),
-  LabTests: arrayOf(labTestChange)
 });

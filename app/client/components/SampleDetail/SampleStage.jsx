@@ -7,18 +7,21 @@ import InfoPanel from '../InfoPanel.jsx';
 export const SampleRequest = ({
   label, color,
   pickupStageName, deliveryStageName,
-  changesIdsByStage, changesById,
+  changesByStage, changesById,
   facilities, people
 }) => {
-  const pickupChangeIds = changesIdsByStage.get(pickupStageName);
-  const deliveryChangeIds = changesIdsByStage.get(deliveryStageName);
+  const pickupChangeIds = changesByStage.get(pickupStageName);
+  const deliveryChangeIds = changesByStage.get(deliveryStageName);
   let pickup = null;
   let delivery = null;
+  let change = null;
   if (pickupChangeIds && pickupChangeIds.size) {
-    pickup = changesById.get(pickupChangeIds.first());
+    change = pickupChangeIds.first();
+    pickup = change ? changesById.get(change.get('uuid')) : null;
   }
   if (deliveryChangeIds) {
-    delivery = changesById.get(deliveryChangeIds.first());
+    change = deliveryChangeIds.first();
+    delivery = change ? changesById.get(change.get('uuid')) : null;
   }
 
   const body = (

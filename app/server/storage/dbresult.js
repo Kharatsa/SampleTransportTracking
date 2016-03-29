@@ -1,7 +1,6 @@
 'use strict';
 
 const _ = require('lodash');
-const BPromise = require('bluebird');
 
 /**
  * Converts Sequelize instances to plain objects. Empty objects passed to this
@@ -70,31 +69,10 @@ const commonPropsEqual = (source, target) => {
   });
 };
 
-const recomposeRaw = (data, options) => {
-  const template = options.children.reduce((reduced, key) => {
-    reduced[key] = {};
-    return reduced;
-  }, {});
-
-  const parentModelName = options.parent;
-  return BPromise.reduce(Object.keys(data), (reduced, key) => {
-    const parts = key.split('.');
-    const modelName = parts[0];
-    const columnName = parts[1];
-    if (modelName === parentModelName) {
-      reduced[columnName] = data[key];
-    } else {
-      reduced[modelName][columnName] = data[key];
-    }
-    return reduced;
-  }, template);
-};
-
 module.exports = {
   plain,
   oneResult,
   omitDateDBCols,
   omitDBCols,
-  commonPropsEqual,
-  recomposeRaw
+  commonPropsEqual
 };

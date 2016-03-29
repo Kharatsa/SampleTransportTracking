@@ -50,7 +50,7 @@ describe('ODK Collect Tranforms', () => {
   const expectedArtifacts4 = [
     {stId: '396f99229', labId: null, artifactType: 'BLOOD'},
     {stId: '396f99229', labId: null, artifactType: 'URINE'},
-    {stId: '396f99229', labId: null, artifactType: 'FORM'}
+    {stId: '396f99229', labId: null, artifactType: 'REQUEST'}
   ];
 
   it('should parse sample depart artifacts', () =>
@@ -84,7 +84,7 @@ describe('ODK Collect Tranforms', () => {
       person: null,
       stId: '396f99229',
       labId: null,
-      artifactType: 'FORM',
+      artifactType: 'REQUEST',
       status: 'OK'}
   ];
 
@@ -118,16 +118,16 @@ describe('ODK Collect Tranforms', () => {
   );
 
   const expectedArtifacts1 = [
-    {artifactType: 'FORM', stId: 'fc598532d', labId: null},
-    {artifactType: 'FORM', stId: 'a7c9b39b3', labId: null},
-    {artifactType: 'FORM', stId: '396f99229', labId: null},
-    {artifactType: 'FORM', stId: '857fa4700', labId: null},
-    {artifactType: 'FORM', stId: 'a786ae7ff', labId: null},
-    {artifactType: 'FORM', stId: 'f975916ff', labId: null},
-    {artifactType: 'FORM', stId: 'f852a888a', labId: null},
-    {artifactType: 'FORM', stId: '7359984eb', labId: null},
-    {artifactType: 'FORM', stId: '666996e91', labId: null},
-    {artifactType: 'FORM', stId: '7d80a07b0', labId: null},
+    {artifactType: 'REQUEST', stId: 'fc598532d', labId: null},
+    {artifactType: 'REQUEST', stId: 'a7c9b39b3', labId: null},
+    {artifactType: 'REQUEST', stId: '396f99229', labId: null},
+    {artifactType: 'REQUEST', stId: '857fa4700', labId: null},
+    {artifactType: 'REQUEST', stId: 'a786ae7ff', labId: null},
+    {artifactType: 'REQUEST', stId: 'f975916ff', labId: null},
+    {artifactType: 'REQUEST', stId: 'f852a888a', labId: null},
+    {artifactType: 'REQUEST', stId: '7359984eb', labId: null},
+    {artifactType: 'REQUEST', stId: '666996e91', labId: null},
+    {artifactType: 'REQUEST', stId: '7d80a07b0', labId: null},
     {artifactType: 'SPUTUM', stId: 'fc598532d', labId: null},
     {artifactType: 'SPUTUM', stId: 'a7c9b39b3', labId: null},
     {artifactType: 'SPUTUM', stId: '396f99229', labId: null},
@@ -153,7 +153,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: 'fc598532d',
     labId: null},
@@ -161,7 +161,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: 'a7c9b39b3',
     labId: null},
@@ -169,7 +169,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: '396f99229',
     labId: null},
@@ -177,7 +177,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: '857fa4700',
     labId: null},
@@ -185,7 +185,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: 'a786ae7ff',
     labId: null},
@@ -193,7 +193,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: 'f975916ff',
     labId: null},
@@ -201,7 +201,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: 'f852a888a',
     labId: null},
@@ -209,7 +209,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: '7359984eb',
     labId: null},
@@ -217,7 +217,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: '666996e91',
     labId: null},
@@ -225,7 +225,7 @@ describe('ODK Collect Tranforms', () => {
     stage: 'SARRIVE',
     person: null,
     facility: 'KHB',
-    artifactType: 'FORM',
+    artifactType: 'REQUEST',
     status: 'OK',
     stId: '7d80a07b0',
     labId: null},
@@ -334,9 +334,9 @@ describe('ODK Collect Tranforms', () => {
   );
 
   const expectedArtifacts2 = [
-    {stId: 'f5c5995a3', labId: null, artifactType: 'FORM'},
-    {stId: 'c09795573', labId: null, artifactType: 'FORM'},
-    {stId: 'a2f4b8e3f', labId: null, artifactType: 'FORM'}
+    {stId: 'f5c5995a3', labId: null, artifactType: 'RESULT'},
+    {stId: 'c09795573', labId: null, artifactType: 'RESULT'},
+    {stId: 'a2f4b8e3f', labId: null, artifactType: 'RESULT'}
   ];
 
   it('should parse result depart artifacts', () =>
@@ -354,7 +354,7 @@ describe('ODK Collect Tranforms', () => {
       person: null,
       stId: 'f5c5995a3',
       labId: null,
-      artifactType: 'FORM',
+      artifactType: 'RESULT',
       status: 'OK'},
     {statusDate: new Date('Tue Mar 15 2016 10:40:59.579 GMT-0400 (EDT)'),
       stage: 'RDEPART',
@@ -362,7 +362,7 @@ describe('ODK Collect Tranforms', () => {
       person: null,
       stId: 'c09795573',
       labId: null,
-      artifactType: 'FORM',
+      artifactType: 'RESULT',
       status: 'OK'},
     {statusDate: new Date('Tue Mar 15 2016 10:40:59.579 GMT-0400 (EDT)'),
       stage: 'RDEPART',
@@ -370,7 +370,7 @@ describe('ODK Collect Tranforms', () => {
       person: null,
       stId: 'a2f4b8e3f',
       labId: null,
-      artifactType: 'FORM',
+      artifactType: 'RESULT',
       status: 'OK'}
   ];
 
@@ -393,7 +393,7 @@ describe('ODK Collect Tranforms', () => {
   );
 
   const expectedArtifacts3 = [
-    {stId: '4b59bb109', labId: null, artifactType: 'FORM'}
+    {stId: '4b59bb109', labId: null, artifactType: 'RESULT'}
   ];
 
   it('should parse result arrive artifacts', () =>
@@ -411,7 +411,7 @@ describe('ODK Collect Tranforms', () => {
       person: null,
       stId: '4b59bb109',
       labId: null,
-      artifactType: 'FORM',
+      artifactType: 'RESULT',
       status: 'OK'}
   ];
 

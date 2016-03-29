@@ -21,7 +21,8 @@ const DisaRoutes = require('app/server/disa/disaroutes.js');
 const app = express();
 app.use('/disa', DisaRoutes);
 
-describe('Disa Labs Lab Status Update API', () => {
+describe('Disa Labs Lab Status Update API', function() {
+  this.timeout(5000);
   // const sampleIds = require('../../data/sampleids.test.json');
 
   const manyUpdates = fs.readFileSync(

@@ -7,7 +7,7 @@
     <region>MSR</region>
     <facility>KHB</facility>
     <trepeat>
-        <stype>form</stype>
+        <stype>request</stype>
         <srepeat>
             <stid>fc598532d</stid>
         </srepeat>

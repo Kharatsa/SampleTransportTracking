@@ -67,7 +67,7 @@ describe('Sample Transport Tracking Database Models', () => {
     };
     const a2 = {
       uuid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx4',
-      artifactType: 'FORM'
+      artifactType: 'REQUEST'
     };
 
     const expectedA1 = [

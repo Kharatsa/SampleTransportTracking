@@ -22,11 +22,4 @@ router.get('/ids/:id', (req, res, next) => {
   .catch(next);
 });
 
-router.get('/ids/:id/changes', (req, res, next) => {
-  return client.sampleIds.eitherIds({data: [req.params.id]})
-  .then(dbresult.oneResult)
-  .then(results => res.json(results))
-  .catch(next);
-});
-
 module.exports = router;

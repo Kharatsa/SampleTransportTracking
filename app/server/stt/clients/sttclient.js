@@ -14,10 +14,11 @@ const sampleidsclient = require('app/server/stt/clients/sampleids');
 const artifactsclient = require('app/server/stt/clients/artifacts');
 const labtestsclient = require('app/server/stt/clients/labtests');
 const changesclient = require('app/server/stt/clients/changes');
-const dbresult = require('app/server/storage/dbresult.js');
 const datamerge = require('app/server/util/datamerge.js');
+const dbresult = require('app/server/storage/dbresult.js');
 const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
 const summaryqueries = require('./summaries/summaryqueries.js');
+const summaryresult = require('./summaries/summaryresult.js');
 const turnaroundtime = require('./summaries/turnaroundtime.js');
 
 /** @module stt/sttclient */
@@ -89,7 +90,7 @@ const summaryQuery = (self, queryFunc, params) => {
     bind: params,
     type: self.db.QueryTypes.SELECT
   })
-  .map(row => dbresult.recomposeRaw(row, {parent: 'Summary', children: []}));
+  .map(row => summaryresult.recomposeRawSummary(row, {parent: 'Summary'}));
 };
 
 /**

@@ -18,7 +18,7 @@ import ChangesByArtifactIdReducer from './reducer_changesByArtifactId';
 import LabTestIdsReducer from './reducer_labTestIds';
 import LabTestsByIdReducer from './reducer_labTestsById';
 import ChangesByLabTestIdReducer from './reducer_changesByLabTestId';
-import ChangesIdsByStageReducer from './reducer_changesIdsByStage';
+import changesByStageReducer from './reducer_changesByStage';
 import SummaryFilterReducer from './reducer_summaryFilter';
 import SummaryReducer from './reducer_summary';
 
@@ -40,7 +40,7 @@ const rootReducer = combineReducers({
   labTestIds: LabTestIdsReducer,
   labTestsById: LabTestsByIdReducer,
   changesByLabTestId: ChangesByLabTestIdReducer,
-  changesIdsByStage: ChangesIdsByStageReducer,
+  changesByStage: changesByStageReducer,
   summaryFilter: SummaryFilterReducer,
   summary: SummaryReducer
 });

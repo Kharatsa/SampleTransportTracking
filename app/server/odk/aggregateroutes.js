@@ -208,9 +208,10 @@ router.post('/submission',
   openRosaAcceptLength,
   parseSubmissionFormData,
   (req, res, next) => {
-    const username = req.user || 'unknown';
+    const username = req.user.username || 'unknown';
     let submission = req.form.fields[SUBMISSION_PART_NAME];
-    log.info(`ODK submission ${SUBMISSION_PART_NAME}:\n${submission}`);
+    log.info(`ODK user '${username}' submission ${SUBMISSION_PART_NAME}:
+      ${submission}`);
 
     const parseXML = transform.collectSubmission(submission);
     const parseEntities = parseXML.then(parsed =>
