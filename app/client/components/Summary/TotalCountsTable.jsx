@@ -1,69 +1,87 @@
 import React from 'react';
-import MetaText from '../MetaText';
-import {Accordion, AccordionItem} from 'react-sanfona';
+import {Seq, Set as ImmutableSet, List} from 'Immutable';
+import {ArtifactsCount, LabTestsCount} from '../../api/records';
+import ArtifactsAccordion from './ArtifactsAccordion';
+import LabTestsAccordion from './LabTestsAccordion';
+
 
 const TotalCountsTable = ({summary, metadata}) => {
-  console.log("TOTAL COUNTS SUMMARY", summary);
-  console.log("TOTAL COUNTS SUMMARY", summary.artifacts);
-  summary.artifacts.forEach((v) => {
-    console.log(v)
-  })
 
-  const goodRequests = summary.artifacts
-    .filter( artifact => artifact.get('status') === 'OK')
-    .filter( artifact => (artifact.get('stage') === 'SDEPART' || artifact.get('stage') === 'SARRIVE'))
-    .map( (artifact, index) => {
-      const stageKey = artifact.get('stage');
-      const stageValue = metadata.get('stages').get(stageKey).get('value');
-      const sampleIdsCount = artifact.get('artifactsCountDetails').reduce((sum, detail) => (sum + detail.sampleIdsCount), 0)
-      return (
-        <AccordionItem title={`${ stageValue }: ${ sampleIdsCount }`} key={stageKey}>
-          <ul>
-            {artifact.get('artifactsCountDetails')
-              .filter(detail => detail.get('type') !== "RESULT")
-              .map( detail => {
-                const artifactType = detail.get('type')
-                return <li>{`${metadata.get('artifacts').get(artifactType).get('value')}: ${detail.get('artifactsCount')}`}</li>
-            })}
-          </ul>
-        </AccordionItem>
-      )
+  const cartesianGenerator = (seq) => {
+    return seq.butLast().reduceRight( (acc, l) => {
+      return Seq(l).flatMap( e => {
+        return acc.map( el => Seq([e]).concat(el) );
+      })
+    }, seq.last())
+  }
+
+  //merges in items in the actual data list to elements in default data
+  //that match based on matchKeys
+  const merge = (defaultData, actualData, matchKeys) => {
+    return actualData.reduce((acc, artifact) => {
+      return acc.map( e => {
+          const matchFound = matchKeys.reduce((match, key) => {
+            return (match && (e.get(key) === artifact.get(key)));
+          }, true)
+          return matchFound ? artifact : e;
+      })
+    }, defaultData);
+  }
+
+  // **************************************************************************************
+  // Requests
+  const goodStatuses = Seq(['OK'])
+  const requestStages = Seq(['SDEPART', 'SARRIVE'])
+  const requestArtifactTypes = Seq(['REQUEST', 'BLOOD', 'SPUTUM', 'URINE', 'DBS'])
+
+  //generate default requests artifact counts
+  const defaultRequests = cartesianGenerator(Seq([goodStatuses, requestStages, requestArtifactTypes]))
+    .map( s => {
+      return new ArtifactsCount({status: s.get(0), stage: s.get(1), artifactType: s.get(2)})
     })
 
-  const goodResults = summary.artifacts
-    .filter( artifact => artifact.get('status') === 'OK')
-    .filter( artifact => (artifact.get('stage') === 'RDEPART' || artifact.get('stage') === 'RARRIVE'))
-    .map( artifact => {
-      const stageKey = artifact.get('stage');
-      const sampleIdsCount = artifact.get('artifactsCountDetails').reduce((sum, detail) => (sum + detail.sampleIdsCount), 0)
-      return (
-        <div>
-          <MetaText metadata={metadata.get('stages')} metaKey={stageKey} />
-          <span>:   {sampleIdsCount}</span>
-          <br/>
-        </div>
-      )
+  const mergedRequests = merge(defaultRequests, summary.artifacts, Seq(['status', 'stage', 'artifactType']))
+
+  // **************************************************************************************
+  // Results
+  const resultStages = Seq(['RDEPART', 'RARRIVE'])
+  const resultArtifactTypes = Seq(['RESULT'])
+
+  const defaultResults = cartesianGenerator(Seq([goodStatuses, resultStages, resultArtifactTypes]))
+    .map( s => {
+      return new ArtifactsCount({status: s.get(0), stage: s.get(1), artifactType: s.get(2)})
     })
 
+  const mergedResults = merge(defaultResults, summary.artifacts, Seq(['status', 'stage', 'artifactType']))
+
+  // **************************************************************************************
+  // Lab Tests
+  const testStatuses = Seq(['REQ', 'RVW', 'PRT'])
+  const testTypes = (metadata.has('labTests') ? Seq(metadata.get('labTests').map(test => test.get('key'))) : List()).toList()
+  const rejectionCodes = Seq([null])
+
+  const defaultLabTestsCounts = cartesianGenerator(Seq([testStatuses, testTypes, rejectionCodes]))
+    .map( s => {
+      return new LabTestsCount({status: s.get(0), testType: s.get(1), testRejection: s.get(2)})
+    })
+
+  const mergedLabTestsCounts =  merge(defaultLabTestsCounts, summary.labTests, Seq(['status', 'testType', 'testRejection']))
 
 
   return (
     <div>
-      <div>
-        <h1> Total Counts Table </h1>
-        <span> Artifacts: {summary.totals.get('artifactsCount')} </span><br/>
-        <span> Lab Tests: {summary.totals.get('labTestsCount')} </span><br/>
-        <span> Sample IDs: {summary.totals.get('sampleIdsCount')} </span><br/>
-      </div>
-      <div>
-        <h2> Artifacts Section </h2>
-        <h3> Requests </h3>
-        <Accordion activeItems={[]} allowMultiple={true}>
-          {goodRequests}
-        </Accordion>
-        <h3> Results </h3>
-        {goodResults}
-      </div>
+      <ArtifactsAccordion
+        artifacts={mergedRequests}
+        metadata={metadata}
+        />
+      <LabTestsAccordion
+        labTests={mergedLabTestsCounts}
+        metadata={metadata}
+        />
+      <ArtifactsAccordion
+        artifacts={mergedResults}
+        metadata={metadata}
+        />
     </div>
   )
 }

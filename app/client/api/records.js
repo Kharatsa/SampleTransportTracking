@@ -76,17 +76,15 @@ export const SummaryTotal = Record({
 export const ArtifactsCount = Record({
   stage:null,
   status:null,
-  artifactsCountDetails:null
-});
-
-export const ArtifactsCountDetail = Record({
-  type:null,
+  artifactType:null,
   sampleIdsCount:0,
   artifactsCount:0
 });
 
 export const LabTestsCount = Record({
-  artifactsCount:null,
-  labTestsCount:null,
-  sampleIdsCount:null
+  status:null,
+  testType:null,
+  testRejection:null,
+  sampleIdsCount:0,
+  labTestsCount:0
 });

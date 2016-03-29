@@ -7,7 +7,7 @@ import {
 } from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
-  KeyValueMetaRecord, FacilityMetaRecord, SummaryTotal, ArtifactsCount, ArtifactsCountDetail
+  KeyValueMetaRecord, FacilityMetaRecord, SummaryTotal, ArtifactsCount, LabTestsCount
 } from './records.js';
 
 /**
@@ -111,55 +111,15 @@ export const normalizeChanges = ({data, count}) => {
   return {changes, changeIds, artifacts, labTests, samples, count};
 };
 
-const defaultArtifactsStruct = () => {
-  const stages = Seq(["RARRIVE", "RDEPART", "SARRIVE", "SDEPART"])
-  const statuses = Seq(["OK", "BAD"])
-  const artifactTypes = Seq(["REQUEST", "BLOOD", "SPUTUM", "URINE", "DBS", "RESULT"])
-
-  return stages.flatMap( stage => {
-    return statuses.map( status => {
-      return new ArtifactsCount({
-        stage,
-        status,
-        artifactsCountDetails: artifactTypes.map( type => (new ArtifactsCountDetail({type})))
-      })
-    })
-  })
+const normalizeArtifacts = artifacts => {
+  return Seq(artifacts).map(artifact => new ArtifactsCount(artifact));
 }
 
-const normalizeArtifacts = artifacts => {
-  return Seq(artifacts).reduce((artifactsStruct, jsonArtifactCount) => {
-    return artifactsStruct.map( (artifactCount) => {
-      // console.log(artifactCount)
-      if ((jsonArtifactCount.stage === artifactCount.get('stage')) && (jsonArtifactCount.status === artifactCount.get('status'))) {
-          return new ArtifactsCount({
-            stage: artifactCount.get('stage'),
-            status: artifactCount.get('status'),
-            artifactsCountDetails: artifactCount.artifactsCountDetails.map( detail => {
-              if (jsonArtifactCount.artifactType === detail.get('type')) {
-                return new ArtifactsCountDetail({
-                  type: jsonArtifactCount.artifactType,
-                  sampleIdsCount: jsonArtifactCount.sampleIdsCount,
-                  artifactsCount: jsonArtifactCount.artifactsCount
-                });
-              }
-              else {
-                return detail;
-              }
-            })
-          })
-      }
-      else {
-        return artifactCount
-      }
-    })
-  },
-  defaultArtifactsStruct());
+const normalizeLabTests = labTests => {
+  return Seq(labTests).map(labTest => new LabTestsCount(labTest));
 }
 
 export const normalizeSummary = data => {
-  console.log(defaultArtifactsStruct())
-  defaultArtifactsStruct().forEach(x => console.log(x))
   const {artifacts, labTests, totals} = data;
-  return {artifacts: normalizeArtifacts(artifacts), labTests, totals: new SummaryTotal(totals)};
+  return {artifacts: normalizeArtifacts(artifacts), labTests: normalizeLabTests(labTests), totals: new SummaryTotal(totals)};
 }

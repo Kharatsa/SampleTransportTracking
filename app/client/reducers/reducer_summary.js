@@ -22,10 +22,10 @@ const artifacts = (state=Seq(), action) => {
   }
 }
 
-const labTests = (state={}, action) => {
+const labTests = (state=Seq(), action) => {
   switch(action.type) {
     case RECEIVE_SUMMARY:
-      return action.totals;
+      return action.labTests;
     default:
       return state;
   }
@@ -33,7 +33,8 @@ const labTests = (state={}, action) => {
 
 const summaryReducer = combineReducers({
   totals,
-  artifacts
+  artifacts,
+  labTests
 });
 
 export default summaryReducer;
