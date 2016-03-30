@@ -1,9 +1,10 @@
 'use strict';
 
+const util = require('util');
 const _ = require('lodash');
 const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
-const dbresult = require('app/server/storage/dbresult.js');
+const ModelClient = require('app/server/stt/clients/modelclient.js');
 
 /**
  * [AuthClient description]
@@ -26,6 +27,7 @@ function AuthClient(options) {
   }
   this.models = options.models;
 }
+util.inherits(AuthClient, ModelClient);
 
 /**
  * Returns a copy of username converted to lowercase, and with special
@@ -41,6 +43,11 @@ var sanitizeUsername = BPromise.method(function(username) {
 
 const USERNAME_MAX_LENGTH = 50;
 
+AuthClient.prototype.all = function() {
+  log.debug(`Retrieving all Users`);
+  return this.models.Users.findAll();
+};
+
 /**
  * [getUser description]
  *
@@ -49,50 +56,54 @@ const USERNAME_MAX_LENGTH = 50;
  * @param {!string} username [description]
  * @param {?bool} [simple=true] [description]
  * @return {Promise.<Sequelize.Instance|Object>}
- * @throws {Error} If [!options.username]
+ * @throws {Error} If [options.username is undefined]
  */
 AuthClient.prototype.getUser = BPromise.method(function(options) {
-  options = _.defaultsDeep(options || {}, {
-    simple: true
-  });
-
-  var username = options.username;
-  log.debug('getUser for username:', username);
-  if (!username) {
-    throw new Error('getUser requires options.username');
+  const username = options.username;
+  if (typeof username === 'undefined') {
+    throw new Error('Missing required parameter username');
   }
+  log.debug(`Retrieving User where username=${username}`);
 
   return sanitizeUsername(username)
-  .bind(this)
-  .then(username => this.models.Users.findOne({where: {username}}))
-  .then(result => {
-    if (options.simple) {
-      return dbresult.plain(result);
-    }
-    return result;
-  });
+  .then(username => this.models.Users.findOne({where: {username}}));
+});
+
+/**
+ * @method changePassword
+ * @param  {QueryOptions} options
+ * @return {Promise.<Object>}
+ */
+AuthClient.prototype.changePassword = BPromise.method(function(options) {
+  if (!(options.username && options.salt && options.digest)) {
+    throw new Error('Missing required parameter username, salt, or digest');
+  }
+  const username = options.username;
+
+  return this.models.Users.update(
+    {salt: options.salt, digest: options.digest},
+    {where: {username}, fields: ['salt', 'digest']})
+  .then(affectedCount => log.debug(`changePassword affected=${affectedCount}`))
+  .then(() => this.getUser({username}));
 });
 
 /**
  * [createUser description]
  *
  * @method
- * @param  {!Object} options [description]
- * @param {!string} options.username [description]
- * @param {!string} options.salt [description]
- * @param {!string} options.digest [description]
- * @param {?boolean} [options.admin=false] [description]
- * @param {?boolean} [options.simple=true] [description]
- * @return {Promise.<Sequelize.Instance|Object>}
+ * @param  {QueryOptions} options
+ * @param {string} options.username [description]
+ * @param {string} options.salt [description]
+ * @param {string} options.digest [description]
+ * @param {boolean} [options.admin=false] [description]
+ * @return {Promise.<Object>}
  */
 AuthClient.prototype.createUser = BPromise.method(function(options) {
   options = _.defaultsDeep(options || {}, {
-    simple: true,
     admin: false
   });
-  log.debug('options:', options);
 
-  if (!options.username || !options.salt || !options.digest) {
+  if (!(options.username && options.salt && options.digest)) {
     throw new Error('Username, salt, and digest are all required parameters');
   }
   if (options.username.length > USERNAME_MAX_LENGTH) {
@@ -102,8 +113,8 @@ AuthClient.prototype.createUser = BPromise.method(function(options) {
   }
 
   log.debug('createUser for username:', options.username);
+
   return sanitizeUsername(options.username)
-  .bind(this)
   .then(username => {
     return this.models.Users.create({
       username,
@@ -111,12 +122,6 @@ AuthClient.prototype.createUser = BPromise.method(function(options) {
       digest: options.digest,
       isAdmin: options.admin
     });
-  })
-  .then(result => {
-    if (options.simple) {
-      return dbresult.plain(result);
-    }
-    return result;
   });
 });
 
@@ -146,7 +151,6 @@ AuthClient.prototype.removeUser = BPromise.method(function(options) {
   }
 });
 
-module.exports = {
-  create: options => new AuthClient(options),
-  USERNAME_MAX_LENGTH
+module.exports = function(options) {
+  return new AuthClient(options);
 };

@@ -19,8 +19,12 @@ const DEFAULT_RESULTS_LIMIT = 50;
  */
 function ModelClient(options) {
   if (!options.model) {
-    throw new Error('Model is a required parameter');
+    throw new Error('Missing required parameter model');
   }
+  if (!options.db) {
+    throw new Error('Missing required parameter db');
+  }
+  this.db = options.db;
   this.Model = options.model;
   wrap.allClassMethods(this, queryutils.sttOptions);
 

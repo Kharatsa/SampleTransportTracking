@@ -46,4 +46,7 @@ const databaseConfigs = {
   }
 };
 
-module.exports = databaseConfigs[process.env.NODE_ENV || 'development'];
+const getEnv = () => process.env.NODE_ENV || 'development';
+
+log.debug(`Exporting ${getEnv()} configuration`);
+module.exports = databaseConfigs[getEnv()];

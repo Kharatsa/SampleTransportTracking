@@ -2,21 +2,79 @@
 
 'use strict';
 
-const config = require('app/config');
+const cli = require('commander');
+const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
-const storage = require('app/server/storage');
 const authModels = require('app/server/auth/models');
 const authclient = require('app/server/auth/authclient.js');
 const credentials = require('app/server/auth/credentials.js');
-const cli = require('commander');
+const clibefore = require('./utils/clibefore.js');
+const clireport = require('./utils/clireport.js');
 
-var client;
+const before = clibefore({models: authModels});
 
-function before() {
-  storage.init({config: config.db});
-  storage.loadModel(authModels.users);
-  client = authclient.create({db: storage.db, models: storage.models});
-}
+// Global options
+cli.option('-d --development', 'Run commands on development database ' +
+           '(default: production');
+
+// const usersBefore = before.bind(null, authModels);
+
+const makeAuthClient = storage => (
+  authclient({db: storage.db, models: storage.models}));
+
+const displayUsersTable = users => {
+  const Table = require('cli-table');
+  const table = new Table({
+    head: ['ID', 'Username', 'Admin', 'Created At', 'Updated At'],
+    colWidths: [5, 20, 10, 28, 28]
+  });
+
+  return BPromise.map(users, user => [
+    user.id,
+    user.username,
+    user.isAdmin,
+    user.createdAt,
+    user.updatedAt
+  ])
+  .each(user => table.push(user))
+  .then(() => console.log(table.toString()));
+};
+
+const validUser = user => {
+  return (
+    user !== null &&
+    typeof user !== 'undefined' &&
+    typeof user.id !== 'undefined'
+  );
+};
+
+const list = () => {
+  return before({dev: cli.development})
+  .then(makeAuthClient)
+  .then(client => client.all())
+  .then(displayUsersTable);
+};
+
+cli.command('list')
+  .description('List all users in the database')
+  .action(list);
+
+const handleUserResult = (client, user, username, password, isAdmin) => {
+  if (!validUser(user)) {
+    log.info('Inserting new user in database');
+
+    return credentials.protect(password)
+    .then(result => client.createUser({
+      username, salt: result.salt, digest: result.digest, isAdmin
+    }))
+    .then(user => {
+      log.info('Successfully created new user');
+      displayUsersTable([user]);
+    });
+  }
+
+  log.error(`User with username="${username}" already exists`);
+};
 
 /**
  * Adds a new user to the STT database
@@ -26,31 +84,25 @@ function before() {
  * @param  {?Object} options  [description]
  * @param {?boolean} options.admin [description]
  */
-function add(username, password, options) {
-  before();
-
+const add = (username, password, options) => {
   username = username.trim();
   password = password.trim();
-  var admin = !!options.admin;
-  log.debug('User Add -- username=`%s`, password=`%s` (admin=%s)',
-            username, password, !!options.admin);
-  return client.getUser({username})
-  .then(user => {
-    if (!user || Object.keys(user).length === 0) {
-      log.info('User should be created');
-      return credentials.protect(password)
-      .then(result => client.createUser({
-        username, salt: result.salt, digest: result.digest, admin
-      }))
-      .then(user => log.info('New user created', user));
-    }
-    log.warn('User with username ' + username + ' already exists', user);
-  });
-}
+  const isAdmin = !!options.admin;
+  log.debug(`User add
+        username=${username}
+        password=${password}
+        (admin=${isAdmin})`);
+
+  const getClient = before({dev: cli.development}).then(makeAuthClient);
+  const getUser = getClient.then(client => client.getUser({username}));
+  return BPromise.join(getClient, getUser, (client, user) =>
+    handleUserResult(client, user, username, password, isAdmin)
+  );
+};
 
 cli.command('add <username> <password>')
-  .description('add a new user')
-  .option('-a, --admin', 'add user as administrator')
+  .description('Add a new user')
+  .option('-a, --admin', 'Add user as administrator')
   .action(add);
 
 /**
@@ -58,30 +110,60 @@ cli.command('add <username> <password>')
  *
  * @param  {string} username [description]
  */
-function remove(username) {
-  before();
+const remove = username => {
+  username = username.trim().toUpperCase();
+  log.debug(`User remove
+      username=${username}`);
 
-  username = username.trim();
-
-  log.debug('User Remove -- username=%s', username);
-
-  return client.removeUser({username: username})
-  .then(deleted => {
-    if (deleted) {
-      log.info('Successfully deleted %s user record(s)', deleted);
-    } else {
-      log.warn('Could not delete username=%s', username);
-    }
-  });
-}
+  // return usersBefore(cli.development)
+  return before({dev: cli.development})
+  .then(makeAuthClient)
+  .then(client => client.removeUser({username}))
+  .then(count =>
+    clireport.handleRemoveResult(count, 'user', 'username', username));
+};
 
 cli.command('remove <username>')
-  .description('remove an existing user')
+  .description('Remove an existing user')
   .action(remove);
 
-// TODO: List existing users
-// TODO: Change user's password
-// TODO: Maybe rehash passwords?
+const handlePasswordChange = (client, user, username, password) => {
+  if (validUser(user)) {
+    log.info('Changing user\'s password');
+
+    return credentials.protect(password)
+    .then(result => client.changePassword({
+      username, salt: result.salt, digest: result.digest
+    }))
+    .then(user => {
+      log.info('Successfully updated password for user');
+      displayUsersTable([user]);
+    });
+  }
+
+  log.error(`Failed locate User with username=${username}.`);
+};
+
+const changePassword = (username, newPassword) => {
+  username = username.trim();
+  newPassword = newPassword.trim();
+
+  log.debug(`User change password
+        username=${username}
+        password=${newPassword})`);
+
+  // const getClient = usersBefore(cli.development);
+  const getClient = before({dev: cli.development}).then(makeAuthClient);
+  const getUser = getClient.then(client => client.getUser({username}));
+  return BPromise.join(getClient, getUser, (client, user) =>
+    handlePasswordChange(client, user, username, newPassword)
+  );
+};
+
+cli.command('changepwd <username> <newPassword>')
+  .description('Change an existing user\'s password')
+  .action(changePassword);
+
 // TODO: Load users from secret CSV or JSON
 
 cli.parse(process.argv);

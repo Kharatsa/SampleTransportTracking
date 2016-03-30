@@ -10,35 +10,32 @@
  *
  * http://docs.sequelizejs.com/en/latest/docs/models-definition/#import
  */
-module.exports = (options) => {
-  options = options || {};
-  if (!options.modelName) {
-    throw new Error('Missing required parameter modelName');
-  }
 
-  return function() {
-    return function(sequelize, DataTypes) {
-      return sequelize.define(options.modelName, {
-        key: {
-          type: DataTypes.STRING,
-          primaryKey: true,
-          set: function(val) {
-            this.setDataValue('key', val ? val.toUpperCase().trim() : val);
-          },
-          validate: options.keyValidate
-        },
-        value: {
-          type: DataTypes.STRING,
-          allowNull: true,
-          get: function() {
-            const val = this.getDataValue('value');
-            // Metadata values should return something more than null,
-            // since they are intended for user-facing display.
-            return val !== null ? val : this.getDataValue('key');
-          }
-        }
+const metaModelTemplate = (DataTypes, options) => {
+  options = options || {};
+  return {
+    key: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      set: function(val) {
+        this.setDataValue('key', val ? val.toUpperCase().trim() : val);
       },
-      {tableName: options.modelName});
-    };
+      validate: options.keyValidate
+    },
+    value: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      set: function(val) {
+        this.setDataValue('value', val ? val.trim() : val);
+      },
+      get: function() {
+        const val = this.getDataValue('value');
+        // Metadata values should return something more than null,
+        // since they are intended for user-facing display.
+        return val !== null ? val : this.getDataValue('key');
+      }
+    }
   };
 };
+
+module.exports = metaModelTemplate;

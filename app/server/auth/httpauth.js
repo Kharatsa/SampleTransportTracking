@@ -7,7 +7,7 @@ const storage = require('app/server/storage');
 const authclient = require('./authclient.js');
 const credentials = require('./credentials.js');
 
-const client = authclient.create({db: storage.db, models: storage.models});
+const client = authclient({db: storage.db, models: storage.models});
 
 // Configures the Basic strategy for use by Passport.
 //

@@ -10,7 +10,7 @@ const modelName = 'LabTests';
 const labtests = modelwrapper({
   name: modelName,
 
-  references: [sampleids, metadata.labtests],
+  references: [sampleids, metadata.labTests],
 
   import: function(SampleIds, MetaLabTests) {
     return function(sequelize, DataTypes) {

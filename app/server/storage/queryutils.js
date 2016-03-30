@@ -170,6 +170,7 @@ const makeSelectExpression = (columnNames, queryAlias, outputAlias) => {
 
 module.exports = {
   wrapOr,
+  havePropsDefined,
   requireProps,
   sttOptions,
   findAllWhere,

@@ -64,7 +64,7 @@ function ModelWrapper(options) {
 
   this.import = (sequelize, DataTypes) => {
     // Intercept, save, then return the model returned from the import call.
-    var referenceModels = this.references.map(ref => ref.model);
+    let referenceModels = this.references.map(ref => ref.model);
     const importFunc = options.import.apply(this, referenceModels);
     this.model = importFunc(sequelize, DataTypes);
     return this.model;

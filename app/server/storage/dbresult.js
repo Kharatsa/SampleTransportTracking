@@ -12,13 +12,13 @@ const _ = require('lodash');
  */
 const plain = result => {
   // If it's a Sequelize instance object, return a plain object
-  if (result && result.get) {
+  if (result && typeof result.get !== 'undefined') {
     return result.get({plain: true});
   }
 
   // Empty objects are truthy, making it difficult to easily spot whether a
   // query returned any results. This returns `null` when result is `{}` or [].
-  if (result && !Object.keys(result).length) {
+  if (_.isObject(result) && _.isEmpty(result)) {
     return null;
   }
 

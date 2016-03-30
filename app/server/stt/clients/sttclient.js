@@ -2,18 +2,11 @@
 
 const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
-const metaregionsclient = require('./metadata/metaregionsclient.js');
-const metafacilitiesclient = require('./metadata/metafacilitiesclient.js');
-const metapeopleclient = require('./metadata/metapeopleclient.js');
-const metaartifactsclient = require('./metadata/metaartifactsclient.js');
-const metarejectionsclient = require('./metadata/metarejectionsclient.js');
-const metastatusesclient = require('./metadata/metastatusesclient.js');
-const metastagesclient = require('./metadata/metastagesclient.js');
-const metalabtestsclient = require('./metadata/metalabtestsclient.js');
 const sampleidsclient = require('app/server/stt/clients/sampleids');
 const artifactsclient = require('app/server/stt/clients/artifacts');
 const labtestsclient = require('app/server/stt/clients/labtests');
 const changesclient = require('app/server/stt/clients/changes');
+const metaclients = require('app/server/stt/clients/metadata');
 const datamerge = require('app/server/util/datamerge.js');
 const dbresult = require('app/server/storage/dbresult.js');
 const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
@@ -43,10 +36,28 @@ function STTClient(options) {
     throw new Error('Database is a required parameter');
   }
   this.db = options.db;
-
   this.models = options.models;
 
+  // Metadata clients
+  this.metaFacilities = metaclients.facilities({
+    db: this.db, model: this.models.MetaFacilities});
+  this.metaRegions = metaclients.regions({
+    db: this.db, model: this.models.MetaRegions});
+  this.metaPeople = metaclients.people({
+    db: this.db, model: this.models.MetaPeople});
+  this.metaArtifacts = metaclients.artifacts({
+    db: this.db, model: this.models.MetaArtifacts});
+  this.metaLabTests = metaclients.labTests({
+    db: this.db, model: this.models.MetaLabTests});
+  this.metaStatuses = metaclients.statuses({
+    db: this.db, model: this.models.MetaStatuses});
+  this.metaRejections = metaclients.rejections({
+    db: this.db, model: this.models.MetaRejections});
+  this.metaStages = metaclients.stages({
+    db: this.db, model: this.models.MetaStages});
+
   this.sampleIds = sampleidsclient({
+    db: this.db,
     model: this.models.SampleIds,
     includes: {
       Changes: this.models.Changes,
@@ -55,22 +66,12 @@ function STTClient(options) {
     }
   });
 
-  // Metadata clients
-  this.metaFacilities = metafacilitiesclient({
-    model: this.models.MetaFacilities
-  });
-  this.metaRegions = metaregionsclient({model: this.models.MetaRegions});
-  this.metaPeople = metapeopleclient({model: this.models.MetaPeople});
-  this.metaArtifacts = metaartifactsclient({model: this.models.MetaArtifacts});
-  this.metaLabTests = metalabtestsclient({model: this.models.MetaLabTests});
-  this.metaStatuses = metastatusesclient({model: this.models.MetaStatuses});
-  this.metaRejections = metarejectionsclient({
-    model: this.models.MetaRejections
-  });
-  this.metaStages = metastagesclient({model: this.models.MetaStages});
+  this.artifacts = artifactsclient({
+    db: this.db, model: this.models.Artifacts});
 
-  this.artifacts = artifactsclient({model: this.models.Artifacts});
-  this.labTests = labtestsclient({model: this.models.LabTests});
+  this.labTests = labtestsclient({
+    db: this.db, model: this.models.LabTests});
+
   this.changes = changesclient({
     db: this.db,
     model: this.models.Changes,

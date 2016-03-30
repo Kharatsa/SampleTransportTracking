@@ -1,9 +1,12 @@
 'use strict';
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
+const metaModelTemplate = require('./metamodeltemplate.js');
 const regions = require('./metaregions.js');
 
 const modelName = 'MetaFacilities';
+
+
 
 const facilities = modelwrapper({
   name: modelName,
@@ -12,47 +15,38 @@ const facilities = modelwrapper({
 
   import: function(Regions) {
     return function(sequelize, DataTypes) {
-      return sequelize.define(modelName, {
-        key: {
-          type: DataTypes.STRING,
-          primaryKey: true,
-          unique: 'facilityRegion'
+      const template = Object.assign({}, metaModelTemplate(DataTypes));
+
+      // Facilities includes some additional fields, so the normal metadata
+      // model template must be supplemented
+      template.key.unique = 'facilityRegion';
+      template.region = {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: 'facilityRegion',
+        references: {
+          model: Regions,
+          key: 'key'
         },
-        value: {
-          type: DataTypes.STRING,
-          allowNull: true,
-          get: function() {
-            const val = this.getDataValue('value');
-            // Metadata values should return something more than null,
-            // since they are intended for user-facing display.
-            return val !== null ? val : this.getDataValue('key');
-          }
-        },
-        region: {
-          type: DataTypes.STRING,
-          allowNull: true,
-          unique: 'facilityRegion',
-          references: {
-            model: Regions,
-            key: 'key'
+        set: function(val) {
+          this.setDataValue('region', val ? val.toUpperCase().trim() : val);
+        }
+      };
+
+      return sequelize.define(
+        modelName,
+        template,
+        {
+          tableName: modelName,
+
+          classMethods: {
+            associate: function() {
+              facilities.model.belongsTo(Regions, {foreignKey: 'region'});
+              Regions.hasMany(facilities.model, {foreignKey: 'region'});
+            }
           }
         }
-      }, {
-        tableName: modelName,
-
-        classMethods: {
-          associate: function() {
-            facilities.model.belongsTo(Regions, {
-              foreignKey: 'region'
-            });
-
-            Regions.hasMany(facilities.model, {
-              foreignKey: 'region'
-            });
-
-          }
-        }
-      });
+      );
     };
   }
 });
