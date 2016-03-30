@@ -29,14 +29,18 @@ const Changes = React.createClass({
   componentWillMount() {
     const {page} = this.props.params;
     const {fetchChanges} = this.props.actions;
-    fetchChanges(page);
+    const {summaryFilter} = this.props;
+    console.log('page: ', page)
+    fetchChanges(summaryFilter, page);
   },
 
   componentWillReceiveProps(nextProps) {
     const {page} = this.props.params;
     if (nextProps.params.page !== page) {
       const {fetchChanges} = this.props.actions;
-      fetchChanges(nextProps.params.page);
+      const {summaryFilter} = this.props;
+      console.log('page: ', page)
+      fetchChanges(summaryFilter, nextProps.params.page);
     }
   },
 
@@ -55,7 +59,8 @@ export default connect(
     labTestsById: state.labTestsById,
     metadata: state.metadata,
     page: state.page,
-    isFetchingData: state.isFetchingData
+    isFetchingData: state.isFetchingData,
+    summaryFilter: state.summaryFilter
   }),
   dispatch => ({actions: bindActionCreators({fetchChanges}, dispatch)})
 )(Changes);

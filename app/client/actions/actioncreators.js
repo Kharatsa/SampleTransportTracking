@@ -62,7 +62,7 @@ const receiveSampleDetail = ({
   changesByArtifactId, changesByLabTestId, changesByStage
 });
 
-const requestChanges = page => ({type: FETCH_CHANGES, page});
+const requestChanges = (summaryFilter, page) => ({type: FETCH_CHANGES, summaryFilter, page});
 
 const fetchChangesFailure = (error, page) => ({
   type: FETCH_CHANGES_FAILURE,
@@ -70,11 +70,13 @@ const fetchChangesFailure = (error, page) => ({
   prevPageNumber: page
 });
 
-export const fetchChanges = page => {
+export const fetchChanges = (summaryFilter, page) => {
+  // console.log(summaryFilter);
   page = Number.parseInt(page || 1);
+  console.log('page in fetch changes ', page);
   return dispatch => {
-    dispatch(requestChanges(page));
-    return api.getChanges({page: page}, (err, data) => {
+    dispatch(requestChanges(summaryFilter, page));
+    return api.getChanges(summaryFilter, {page: page}, (err, data) => {
       if (err) {
         dispatch(fetchChangesFailure(err, page));
       }

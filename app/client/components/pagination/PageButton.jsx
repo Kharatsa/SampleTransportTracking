@@ -6,7 +6,6 @@ import classNames from 'classnames';
 
 export default React.createClass({
   propTypes: {
-    fetchPage: PropTypes.func.isRequired,
     text: PropTypes.string.isRequired,
     disabled: PropTypes.bool
   },
