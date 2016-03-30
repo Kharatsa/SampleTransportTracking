@@ -59,7 +59,7 @@ describe('Authentication Components', () => {
       storage.init({config: config.db});
       storage.loadModel(users);
 
-      client = authclient.create({
+      client = authclient({
         db: storage.db,
         models: storage.models
       });
