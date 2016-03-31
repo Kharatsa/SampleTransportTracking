@@ -91,7 +91,7 @@ export const normalizeSample = data => {
   const changesByStage = sampleDetailsRefMap(changes,
     {refName: 'stage', many: true});
 
-  const sampleId = samples.first().get('uuid');
+  const sampleId = samples.size > 0 ? samples.first().get('uuid') : null;
 
   return {
     changes, changeIds, artifacts, labTests, samples, count, sampleId,
