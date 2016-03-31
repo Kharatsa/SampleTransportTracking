@@ -1,6 +1,6 @@
 'use strict';
 
-function loadHandler(request) {
+const loadHandler = request => {
   let response;
   if (request.status >= 200 && request.status < 400) {
     // Success!
@@ -24,7 +24,7 @@ function loadHandler(request) {
     // We reached our target server, but it returned an error
   }
   return response;
-}
+};
 
 /**
  * The callback is called after one of the XMLHttpRequest onload, onerror, or
@@ -43,6 +43,33 @@ function loadHandler(request) {
  * @param {string} res.statusText
  */
 
+const reqOnLoad = (req, finished, callback) => {
+  return () => {
+    const res = loadHandler(req);
+    if (finished) {
+      return;
+    }
+
+    finished = true;
+    if (res.error) {
+      return callback(res.error);
+    } else {
+      return callback(null, res);
+    }
+  };
+};
+
+const reqOnError = (finished, callback) => {
+  return () => {
+    if (finished) {
+      return;
+    }
+
+    finished = true;
+    return callback(null, {});
+  };
+};
+
 /**
  * Helper function for XMLHttpRequests
  *
@@ -53,7 +80,7 @@ function loadHandler(request) {
  * @param  {Function}       callback
 
  */
-let request = function(options, callback) {
+const request = (options, callback) => {
   let method = options.method || 'GET';
   let url = typeof options === 'string' ? options : options.url;
 
@@ -61,34 +88,9 @@ let request = function(options, callback) {
   let finished = false;
   let req = new XMLHttpRequest();
 
-  req.onload = function() {
-    let res = loadHandler(req);
-    if (finished) {
-      return;
-    }
-    finished = true;
-    if (res.error) {
-      callback(res.error);
-    } else {
-      callback(null, res);
-    }
-  };
-
-  req.onerror = function() {
-    if (finished) {
-      return;
-    }
-    finished = true;
-    callback({error: new Error('Connection error')});
-  };
-
-  req.onabort = function() {
-    if (finished) {
-      return;
-    }
-    finished = true;
-    callback(null, {});
-  };
+  req.onload = reqOnLoad(req, finished, callback);
+  req.onerror = reqOnError(finished, callback);
+  req.onabort = () => {/** noop */};
 
   // void open(DOMString method, DOMString url, optional boolean async,
   //           optional DOMString? user, optional DOMString? password);
