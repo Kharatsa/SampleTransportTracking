@@ -33,7 +33,9 @@ const handleSubmission = incoming => {
   const changes = BPromise.join(artifactsWithRefs, meta)
   .spread(artifactRefs => sttsubmission.scanChanges(artifactRefs));
 
-  return BPromise.props({sampleIds, artifacts, changes, metaRegion, metaFacility})
+  return BPromise.props({
+    sampleIds, artifacts, changes, metaRegion, metaFacility, metaPerson
+  })
   .tap(log.info);
 };
 
