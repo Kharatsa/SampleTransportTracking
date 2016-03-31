@@ -43,6 +43,10 @@ function STTClient(options) {
     db: this.db, model: this.models.MetaFacilities});
   this.metaRegions = metaclients.regions({
     db: this.db, model: this.models.MetaRegions});
+  this.metaDistricts = metaclients.facilities({
+    db: this.db, model: this.models.MetaDistricts});
+  this.metaLabs = metaclients.regions({
+    db: this.db, model: this.models.MetaLabs});
   this.metaPeople = metaclients.people({
     db: this.db, model: this.models.MetaPeople});
   this.metaArtifacts = metaclients.artifacts({

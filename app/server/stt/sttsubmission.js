@@ -89,6 +89,8 @@ const metaHandler = (model, modelName, uniques) => {
 
 const metaRegions = metaHandler(client.metaRegions, 'MetaRegions');
 const metaFacilities = metaHandler(client.metaFacilities, 'MetaFacilities');
+const metaDistricts = metaHandler(client.metaDistricts, 'MetaDistricts');
+const metaLabs = metaHandler(client.metaLabs, 'MetaLabs');
 const metaArtifacts = metaHandler(client.metaArtifacts, 'MetaArtifacts');
 const metaLabTests = metaHandler(client.metaLabTests, 'MetaLabTests');
 const metaPeople = metaHandler(client.metaPeople, 'MetaPeople');
@@ -168,6 +170,8 @@ module.exports = {
   sampleIds,
   metaRegions,
   metaFacilities,
+  metaDistricts,
+  metaLabs,
   metaArtifacts,
   metaLabTests,
   metaPeople,

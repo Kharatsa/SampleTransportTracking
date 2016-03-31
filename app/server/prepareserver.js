@@ -4,7 +4,6 @@ const log = require('app/server/util/logapp.js');
 const storage = require('app/server/storage');
 const preload = require('app/server/storage/preload.js');
 const sttsubmission = require('app/server/stt/sttsubmission.js');
-const fakedata = require('../../test/utils/fakedata.js');
 
 module.exports = () => {
   const preloadMetadata = storage.db.sync()
@@ -22,10 +21,17 @@ module.exports = () => {
       handler: sttsubmission.metaRegions,
       attributes: {key: 'region_key', value: 'region'}
     }, {
-      // TODO: remove when facilities list is completed
       filename: 'facilities.csv',
       handler: sttsubmission.metaFacilities,
       attributes: {key: 'facility_key', value: 'facility', region: 'region'}
+    }, {
+      filename: 'districts.csv',
+      handler: sttsubmission.metaDistricts,
+      attributes: {key: 'district_key', value: 'district'}
+    }, {
+      filename: 'labs.csv',
+      handler: sttsubmission.metaLabs,
+      attributes: {key: 'lab_key', value: 'lab', district: 'district'}
     }, {
       filename: 'stypes.csv',
       handler: sttsubmission.metaArtifacts,
@@ -41,6 +47,7 @@ module.exports = () => {
   .catch(err => log.error(err, err.stack));
 
   if (process.env.NODE_ENV === 'development') {
+    const fakedata = require('../../test/utils/fakedata.js');
     return preloadMetadata.then(() => fakedata.load())
     .catch(err => log.error(err, err.message));
   }

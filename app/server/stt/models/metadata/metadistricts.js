@@ -3,7 +3,9 @@
 const modelwrapper = require('app/server/storage/modelwrapper.js');
 const metaModelTemplate = require('./metamodeltemplate.js');
 
-const modelName = 'MetaRejections';
+const modelName = 'MetaDistricts';
+
+const keyValidate = {is: /[A-Z]{1,5}/};
 
 const model = modelwrapper({
   name: modelName,
@@ -12,7 +14,7 @@ const model = modelwrapper({
     return function(sequelize, DataTypes) {
       return sequelize.define(
         modelName,
-        metaModelTemplate(DataTypes),
+        metaModelTemplate(DataTypes, {keyValidate}),
         {tableName: modelName});
     };
   }

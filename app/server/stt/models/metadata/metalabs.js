@@ -2,32 +2,32 @@
 
 const modelwrapper = require('app/server/storage/modelwrapper.js');
 const metaModelTemplate = require('./metamodeltemplate.js');
-const regions = require('./metaregions.js');
+const districts = require('./metadistricts.js');
 
-const modelName = 'MetaFacilities';
+const modelName = 'MetaLabs';
 
-const facilities = modelwrapper({
+const labs = modelwrapper({
   name: modelName,
 
-  references: [regions],
+  references: [districts],
 
-  import: function(Regions) {
+  import: function(Districts) {
     return function(sequelize, DataTypes) {
       const template = Object.assign({}, metaModelTemplate(DataTypes));
 
-      // Facilities includes some additional fields, so the normal metadata
-      // model template must be supplemented
-      template.key.unique = 'facilityRegion';
-      template.region = {
+      // Labs belong to a district
+      template.key.unique = 'districtLab';
+
+      template.district = {
         type: DataTypes.STRING,
         allowNull: true,
-        unique: 'facilityRegion',
+        unique: 'districtLab',
         references: {
-          model: Regions,
+          model: Districts,
           key: 'key'
         },
         set: function(val) {
-          this.setDataValue('region', val ? val.toUpperCase().trim() : val);
+          this.setDataValue('district', val ? val.toUpperCase().trim() : val);
         }
       };
 
@@ -39,8 +39,8 @@ const facilities = modelwrapper({
 
           classMethods: {
             associate: function() {
-              facilities.model.belongsTo(Regions, {foreignKey: 'region'});
-              Regions.hasMany(facilities.model, {foreignKey: 'region'});
+              labs.model.belongsTo(Districts, {foreignKey: 'region'});
+              Districts.hasMany(labs.model, {foreignKey: 'region'});
             }
           }
         }
@@ -49,4 +49,4 @@ const facilities = modelwrapper({
   }
 });
 
-module.exports = facilities;
+module.exports = labs;

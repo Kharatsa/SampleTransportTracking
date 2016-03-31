@@ -47,6 +47,16 @@ const getRegionsKey = getMetaByKey(sttClient.metaRegions);
 router.get('/meta/regions', getRegions);
 router.get('/meta/regions/:key', uppercaseParams, getRegionsKey);
 
+const getDistricts = getMetadata(sttClient.metaDistricts);
+const getDistrictsKey = getMetaByKey(sttClient.metaDistricts);
+router.get('/meta/districts', getDistricts);
+router.get('/meta/districts/:key', uppercaseParams, getDistrictsKey);
+
+const getLabs = getMetadata(sttClient.metaLabs);
+const getLabsKey = getMetaByKey(sttClient.metaLabs);
+router.get('/meta/labs', getLabs);
+router.get('/meta/labs/:key', uppercaseParams, getLabsKey);
+
 const getPeople = getMetadata(sttClient.metaPeople);
 const getPeopleKey = getMetaByKey(sttClient.metaPeople);
 router.get('/meta/people', getPeople);
@@ -77,6 +87,8 @@ router.get('/meta', (req, res, next) => {
   return BPromise.props({
     facilities: sttClient.metaFacilities.all({allowEmpty: true}),
     regions: sttClient.metaRegions.all({allowEmpty: true}),
+    districts: sttClient.metaDistricts.all({allowEmpty: true}),
+    labs: sttClient.metaLabs.all({allowEmpty: true}),
     people: sttClient.metaPeople.all({allowEmpty: true}),
     artifacts: sttClient.metaArtifacts.all({allowEmpty: true}),
     labTests: sttClient.metaLabTests.all({allowEmpty: true}),

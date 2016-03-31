@@ -1,21 +1,25 @@
 'use strict';
 
-const metaregionsclient = require('./metaregionsclient.js');
-const metafacilitiesclient = require('./metafacilitiesclient.js');
-const metapeopleclient = require('./metapeopleclient.js');
-const metaartifactsclient = require('./metaartifactsclient.js');
-const metalabtestsclient = require('./metalabtestsclient.js');
-const metarejectionsclient = require('./metarejectionsclient.js');
-const metastatusesclient = require('./metastatusesclient.js');
-const metastagesclient = require('./metastagesclient.js');
+const facilities = require('./metafacilitiesclient.js');
+const districts = require('./metaclientbase.js');
+const labs = require('./metaclientbase.js');
+const regions = require('./metaclientbase.js');
+const people = require('./metaclientbase.js');
+const artifacts = require('./metaclientbase.js');
+const labTests = require('./metaclientbase.js');
+const rejections = require('./metaclientbase.js');
+const statuses = require('./metaclientbase.js');
+const stages = require('./metaclientbase.js');
 
 module.exports = {
-  regions: metaregionsclient,
-  facilities: metafacilitiesclient,
-  people: metapeopleclient,
-  artifacts: metaartifactsclient,
-  labTests: metalabtestsclient,
-  rejections: metarejectionsclient,
-  statuses: metastatusesclient,
-  stages: metastagesclient
+  regions,
+  facilities,
+  districts,
+  labs,
+  people,
+  artifacts,
+  labTests,
+  rejections,
+  statuses,
+  stages
 };

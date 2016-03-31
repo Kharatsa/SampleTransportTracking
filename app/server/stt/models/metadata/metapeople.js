@@ -8,7 +8,6 @@ const modelName = 'MetaPeople';
 const model = modelwrapper({
   name: modelName,
 
-  // import: metamodeltemplate({modelName})
   import: function() {
     return function(sequelize, DataTypes) {
       return sequelize.define(

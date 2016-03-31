@@ -10,7 +10,6 @@ const keyValidate = {is: /[A-Z0-9]{1,5}/};
 const model = modelwrapper({
   name: modelName,
 
-  // import: metamodeltemplate({modelName, keyValidate})
   import: function() {
     return function(sequelize, DataTypes) {
       return sequelize.define(
