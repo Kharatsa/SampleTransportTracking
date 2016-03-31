@@ -9,6 +9,7 @@ import Samples from './containers/Samples.jsx';
 import Facilities from './containers/Facilities.jsx';
 import Riders from './containers/Riders.jsx';
 import MissingRoute from './containers/MissingRoute.jsx';
+import TestCharts from './components/TestCharts.jsx';
 
 export default (
   <Route path='/' component={App}>
@@ -17,6 +18,7 @@ export default (
     <Route path='samples(/:sampleId)' component={Samples}/>
     <Route path='facilities' component={Facilities}/>
     <Route path='riders' component={Riders}/>
+    <Route path='testchart' component={TestCharts}/>
     <Route path='*' component={MissingRoute} />
   </Route>
 );
