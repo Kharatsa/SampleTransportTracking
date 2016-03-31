@@ -140,7 +140,6 @@ gulp.task('styles:watch', () => gulp.watch(clientCSS, ['styles']));
 
 gulp.task('static:schemas', () => {
   return gulp.src(schemas)
-  .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/schemas'));
 });
 
@@ -148,7 +147,6 @@ const xforms = ['app/assets/xforms/*.xml'];
 
 gulp.task('static:xforms', () => {
   return gulp.src(xforms)
-  .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/xforms'));
 });
 
@@ -156,8 +154,17 @@ const metadata = ['app/assets/xforms/metadata/*.csv'];
 
 gulp.task('static:metadata', () => {
   return gulp.src(metadata)
-  .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/xforms/metadata'));
+});
+
+const iconic = [
+  'bower_components/open-iconic/svg/*',
+  'bower_components/open-iconic/png/*'
+];
+
+gulp.task('static:iconic', () => {
+  return gulp.src(iconic)
+  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/icons'));
 });
 
 const stats = 'bower_components/memory-stats/memory-stats.js';
@@ -166,7 +173,6 @@ gulp.task('static:debugstats', () => {
   return gulp.src([stats])
   .pipe($.concat('debug.js'))
   .pipe(uglify())
-  .pipe($.filesize())
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
 });
 
@@ -177,12 +183,15 @@ const fonts = 'app/assets/fonts';
 const schemas = 'app/assets/schemas/**/*';
 
 const preStatic = [
-  'static:schemas', 'static:xforms', 'static:metadata', 'static:debugstats'
+  'static:schemas',
+  'static:xforms',
+  'static:metadata',
+  'static:debugstats',
+  'static:iconic'
 ];
 
 gulp.task('static', preStatic, () => {
   return gulp.src([html, favicon, fonts, robots])
-    .pipe($.filesize())
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 });
 
@@ -198,7 +207,8 @@ gulp.task('clean', () =>
     'app/public/schemas',
     'app/public/xforms',
     'app/public/fonts',
-    'app/public/lib'
+    'app/public/lib',
+    'app/public/icons'
   ], {read: false})
     .pipe($.rimraf())
 );

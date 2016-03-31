@@ -20,6 +20,9 @@
   ],
   "dependencies": {
     "pure": "~0.6.0",
+    "open-iconic": "^1.1.1"
+  },
+  "devDependencies": {
     "memory-stats": "*"
   }
 }
