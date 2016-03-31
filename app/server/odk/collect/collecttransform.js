@@ -312,8 +312,10 @@ const fillSampleIdRefs = BPromise.method((artifacts, sampleIds) => {
     throw new Error('Missing required sampleIds uuid');
   }
 
-  const mapStIds = datamerge.propKeyReduce(sampleIds, ['stId']);
-  const mapLabIds = datamerge.propKeyReduce(sampleIds, ['labId']);
+  const mapStIds = datamerge.propKeyReduce(
+    {items: sampleIds, propNames: ['stId']});
+  const mapLabIds = datamerge.propKeyReduce(
+    {items: sampleIds, propNames: ['labId']});
 
   return BPromise.join(mapStIds, mapLabIds)
   .spread((stIdMapper, labIdMapper) => {
@@ -345,13 +347,14 @@ const fillSampleIdRefs = BPromise.method((artifacts, sampleIds) => {
  */
 const fillArtifactRefs = (changes, sampleIds, artifacts) => {
   // Lookup samples by the STT IDs
-  const mapStIds = datamerge.propKeyReduce(sampleIds, ['stId']);
-  const mapLabIds = datamerge.propKeyReduce(sampleIds, ['labId']);
+  const mapStIds = datamerge.propKeyReduce(
+    {items: sampleIds, propNames: ['stId']});
+  const mapLabIds = datamerge.propKeyReduce(
+    {items: sampleIds, propNames: ['labId']});
 
   // Lookup artifacts by sampleId (uuid) and artifactType (metadata key)
   const mapArtifacts = datamerge.propKeyReduce(
-    artifacts, ['sampleId', 'artifactType']
-  );
+    {items: artifacts, propNames: ['sampleId', 'artifactType']});
 
   return BPromise.join(mapStIds, mapLabIds, mapArtifacts)
   .spread((stIdMapper, labIdMapper, artifactMapper) => {

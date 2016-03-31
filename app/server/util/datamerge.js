@@ -16,7 +16,8 @@ const dbresult = require('app/server/storage/dbresult.js');
  */
 const wrapObjOwnProps = (source, propNames) => {
   let result = source;
-  for (let i = (propNames.length - 1); i > -1; i--) {
+  const lastPropIndex = propNames.length - 1;
+  for (let i = lastPropIndex; i > -1; i--) {
     let wrapper = {};
     let value = source[propNames[i]];
     if (value) {
@@ -28,18 +29,101 @@ const wrapObjOwnProps = (source, propNames) => {
   return result;
 };
 
+const setWithPath = (target, path, val) => {
+  let key = null;
+  let nestedParent = null;
+  let nested = target;
+  const lastIndex = path.length - 1;
+
+  for (let i = 0; i < path.length; i++) {
+    key = path[i];
+    if (typeof nested[key] === 'undefined' && i < lastIndex) {
+      nested[key] = {};
+    } else if (typeof nested[key] === 'undefined') {
+      nested[key] = [];
+    }
+    nestedParent = nested;
+    nested = nested[key];
+  }
+
+  nestedParent[key].push(val);
+  return target;
+};
+
+const getKeyPath = (item, numProps) => {
+  let nested = item;
+  let path = [];
+  for (let i = 0; i < numProps; i++) {
+    const key = Object.keys(nested)[0];
+    nested = nested[key];
+    path.push(key);
+  }
+  return path;
+};
+
+const mergeOneItem = (reduced, item, numProps) => {
+  const path = getKeyPath(item, numProps);
+  const value = _.get(item, path);
+  return setWithPath(reduced, path, value);
+};
+
+const mergeMany = (items, propNames) => {
+  const numProps = propNames.length;
+  return BPromise.reduce(items, (reduced, item) => {
+    return mergeOneItem(reduced, item, numProps);
+  }, {});
+};
+
+const mergeWrapped = (items, propNames, many) => {
+  if (many) {
+    return mergeMany(items, propNames);
+  }
+  const source = [{}].concat(items);
+  return BPromise.resolve(_.merge.apply(null, source));
+};
+
 /**
  * Build a single, reduced object from the Array of input objects. This
  * reduced object will be arranged with keys extracted from the properties
  * specified in propNames.
  *
+ * When "many" is true, the Objects nested beneath propNames values will be
+ * contained in an Array. When "many" is false (the default), a single Object
+ * is nested beneath the specified propNames values.
+ *
+ * Examples:
+ *   let example = [{a: 1, b: 2, c: 3}, {a: 1, b: 2, c: 4}, {a: 2, b: 2, c: 4}]
+ *
+ *   propKeyReduce(example, ['a'])
+ *   // {'1': {a: 1, b: 2, c: 4}, '2': {a: 2, b: 2, c: 4}
+ *
+ *   propKeyReduce(example, ['a'], true)
+ *   // {
+ *   //   '1': [{a: 1, b: 2, c: 3}, {a: 1, b: 2, c: 4}],
+ *   //   '2': [{a: 2, b: 2, c: 4}]
+ *   // }
+ *
+ *   propKeyReduce(example, ['a', 'c'])
+ *   // {
+ *   //   '1': {
+ *   //      '3': {a: 1, b: 2, c: 3},
+ *   //      '4': {a: 1, b: 2, c: 4}
+ *   //   },
+ *   //   '2': {'4': {a: 2, b: 2, c: 4}}
+ *   // }
+ *
  * @param  {Array.<Object>} items
  * @param  {Array.<string>} propNames
+ * @param {boolean} [many=false]
  * @return {Promise.<Object>}
  */
-const propKeyReduce = (items, propNames) => {
-  return BPromise.map(items, item => wrapObjOwnProps(item, propNames))
-  .then(wrapped => _.merge.apply(null, [{}].concat(wrapped)));
+const propKeyReduce = (options) => {
+  options = options || {};
+  const items = options.items;
+  const propNames = options.propNames;
+  const many = options.many || false;
+  return BPromise.map(items, item => wrapObjOwnProps(item, propNames, many))
+  .then(wrapped => mergeWrapped(wrapped, propNames, many));
 };
 
 /**
@@ -103,7 +187,7 @@ const pairByProps = (sources, targets, propNames) => {
   }
 
   return BPromise.join(
-    sources, propKeyReduce(targets, propNames), propNames,
+    sources, propKeyReduce({items: targets, propNames}), propNames,
     pairReduced
   );
 };

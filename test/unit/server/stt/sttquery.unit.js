@@ -14,7 +14,9 @@ describe('Sample Transport Tracking Query Builders', () => {
     {stId: 'abc'},
     {stId: 'def'},
     {labId: 'abc'},
-    {labId: 'def'}
+    {labId: 'def'},
+    {uuid: 'abc'},
+    {uuid: 'def'}
   ]};
 
   it('should build sampleIds w/ eitherId query where clause', () =>

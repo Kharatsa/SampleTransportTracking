@@ -44,8 +44,23 @@ router.get('/region/:regionKey/summary', lowerCaseQueryKeys, dateRange,
 
 router.get('/summary', lowerCaseQueryKeys, dateRange, handleSummaryReq);
 
+const handleDateStageCountsReq = (req, res, next) => {
+  return client.stageDateCounts({data: summaryKeyParams(req)})
+  .then(results => res.json(results))
+  .catch(next);
+};
+
+router.get('/summary/stage([dD])ates', lowerCaseQueryKeys, dateRange,
+  handleDateStageCountsReq);
+
+router.get('/facility/:facilityKey/summary/stage([dD])ates', lowerCaseQueryKeys,
+  dateRange, handleDateStageCountsReq);
+
+router.get('/region/:regionKey/summary/stage([dD])ates', lowerCaseQueryKeys,
+  dateRange, handleDateStageCountsReq);
+
 const handleTATIdsReq = (req, res, next) => {
-  return client.stageDates({data: summaryKeyParams(req)})
+  return client.stageTATs({data: summaryKeyParams(req)})
   .then(results => res.json(results))
   .catch(next);
 };

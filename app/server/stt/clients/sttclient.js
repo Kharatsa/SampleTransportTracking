@@ -87,6 +87,20 @@ function STTClient(options) {
   });
 }
 
+/**
+ * @typedef {Object} SummaryQueryParams
+ * @property {Date} afterDate [description]
+ * @property {Date} [beforeDate] [description]
+ * @property {string} [regionKey] [description]
+ * @property {string} [facilityKey] [description]
+ */
+
+/**
+ * @typedef {Object} SummaryQueryOptions
+ * @extends {QueryOptions}
+ * @extends {SummaryQueryParams}
+ */
+
 const summaryQuery = (self, queryFunc, params) => {
   rawqueryutils.checkRequired(params);
   log.debug('summary query params', params);
@@ -100,11 +114,7 @@ const summaryQuery = (self, queryFunc, params) => {
 
 /**
  * @method [artifactCounts]
- * @param {Object} options
- * @param {Date} options.afterDate
- * @param {Date} [options.beforeDate]
- * @param {string} [options.regionKey]
- * @param {string} [options.facilityKey]
+ * @param {SummaryQueryOptions} options
  * @return {Promise.<Array.<Object>>}
  * @throws {Error} If afterDate is undefined
  */
@@ -114,11 +124,7 @@ STTClient.prototype.artifactCounts = BPromise.method(function(options) {
 
 /**
  * @method [labTestCounts]
- * @param {Object} options
- * @param {Date} options.afterDate
- * @param {Date} [options.beforeDate]
- * @param {string} [options.regionKey]
- * @param {string} [options.facilityKey]
+ * @param {SummaryQueryOptions} options
  * @return {Promise.<Array.<Object>>}
  * @throws {Error} If afterDate is undefined
  */
@@ -128,11 +134,7 @@ STTClient.prototype.labTestCounts = BPromise.method(function(options) {
 
 /**
  * @method [labTestCounts]
- * @param {Object} options
- * @param {Date} options.afterDate
- * @param {Date} [options.beforeDate]
- * @param {string} [options.regionKey]
- * @param {string} [options.facilityKey]
+ * @param {SummaryQueryOptions} options
  * @return {Promise.<Array.<Object>>}
  * @throws {Error} If afterDate is undefined
  */
@@ -141,24 +143,27 @@ STTClient.prototype.totalCounts = BPromise.method(function(options) {
 });
 
 /**
- * @method [stageDates]
- * @param {Object} options
- * @param {Date} options.afterDate
- * @param {Date} [options.beforeDate]
- * @param {string} [options.regionKey]
- * @param {string} [options.facilityKey]
+ * @method [stageTATs
+ * @param {SummaryQueryOptions} options
  * @return {Promise.<Array.<Object>>}
  * @throws {Error} If afterDate is undefined
  */
-STTClient.prototype.stageDates = BPromise.method(function(options) {
-  return summaryQuery(this, summaryqueries.stageDatesRaw, options.data)
-  .tap(results => {
-    log.debug('stageDates raw query results', results);
-  })
+STTClient.prototype.stageTATs = BPromise.method(function(options) {
+  return summaryQuery(this, summaryqueries.stageTATsRaw, options.data)
   .then(results => datamerge.propKeyReduce(
-    results, ['sampleId', 'changeStage', 'changeStatus']
-  ))
+    {items: results, propNames: ['sampleId', 'changeStage', 'changeStatus']}))
   .then(turnaroundtime.calculateTATs);
+});
+
+/**
+ * @method
+ * @param {SummaryQueryOptions} options [description]
+ * @throws {Error} If afterDate is undefined
+ */
+STTClient.prototype.stageDateCounts = BPromise.method(function(options) {
+  return summaryQuery(this, summaryqueries.totalsDateSeries, options.data)
+  .then(results => datamerge.propKeyReduce(
+    {items: results, propNames: ['statusDate'], many: true}));
 });
 
 /**

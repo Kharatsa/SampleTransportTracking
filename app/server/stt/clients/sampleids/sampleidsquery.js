@@ -23,9 +23,12 @@ const eitherIds = ids => {
     .map(id => ({stId: id}));
   const byLabId = BPromise.filter(ids, queryutils.deepTruthy)
     .map(id => ({labId: id}));
+  const byUUID = BPromise.filter(ids, queryutils.deepTruthy)
+    .map(id => ({uuid: id}));
 
-  return BPromise.join(byStId, byLabId)
-  .spread((whereStId, whereLabId) => [].concat(whereStId, whereLabId))
+  return BPromise.join(byStId, byLabId, byUUID)
+  .spread((whereStId, whereLabId, whereUUID) =>
+    [].concat(whereStId, whereLabId, whereUUID))
   .then(queryutils.wrapOr);
 };
 

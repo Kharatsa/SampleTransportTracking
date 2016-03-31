@@ -6,6 +6,22 @@ const checkRequired = params => {
   }
 };
 
+const TEST_DELETED_STATUS = 'DEL';
+
+/**
+ * @param  {Object} params  [description]
+ * @param  {Object} options [description]
+ * @return {string}         [description]
+ */
+const exceptDeletedTestsExpression = (params, options) => {
+  const labTestsAlias = options.labTestsAlias;
+  return `AND NOT EXISTS (
+    SELECT 1 FROM LabTests t2
+    INNER JOIN Changes c2 on c2.labTest = t2.uuid
+    WHERE t2.uuid = ${labTestsAlias}.uuid
+    AND c2.status = '${TEST_DELETED_STATUS}')`;
+};
+
 const isRegionChangesQuery = params => {
   return typeof params.regionKey !== 'undefined';
 };
@@ -65,6 +81,7 @@ const limitOffsetExpression = params => {
 
 module.exports = {
   checkRequired,
+  exceptDeletedTestsExpression,
   regionQueryInnerJoin,
   sampleIdCondition,
   sampleBeforeCondition,

@@ -12,17 +12,35 @@ const totalsRaw = params => {
   ${rawqueryutils.regionQueryInnerJoin(params)}
   LEFT OUTER JOIN Artifacts a ON a.sampleId = s.uuid
   LEFT OUTER JOIN LabTests t ON t.sampleId = s.uuid
-  LEFT OUTER JOIN Changes c on c.artifact = a.uuid
+  LEFT OUTER JOIN Changes c ON (c.artifact = a.uuid OR c.labTest = t.uuid)
   WHERE s.createdAt >= $afterDate
   ${rawqueryutils.sampleBeforeCondition(params)}
   ${rawqueryutils.originFacilityCondition(params) ||
     rawqueryutils.originRegionCondition(params)}
-  AND NOT EXISTS (
-    SELECT 1 FROM LabTests t2
-    INNER JOIN Changes c2 on c2.labTest = t2.uuid
-    WHERE t2.uuid = t.uuid
-    AND c2.status = 'DEL'
-  )`;
+  ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}`;
+};
+
+const totalsDateSeries = params => {
+  return `
+    SELECT
+      c.stage AS "Summary.stage",
+      c.status AS "Summary.status",
+      DATE(c.statusDate) AS "Summary.statusDate",
+      COUNT(DISTINCT s.uuid) AS "Summary.sampleIdsCount",
+      COUNT(DISTINCT a.uuid) AS "Summary.artifactsCount",
+      COUNT(DISTINCT t.uuid) AS "Summary.labTestsCount"
+    FROM SampleIds s
+    ${rawqueryutils.regionQueryInnerJoin(params)}
+    LEFT OUTER JOIN Artifacts a ON a.sampleId = s.uuid
+    LEFT OUTER JOIN LabTests t ON t.sampleId = s.uuid
+    LEFT OUTER JOIN Changes c ON (c.artifact = a.uuid OR c.labTest = t.uuid)
+    WHERE s.createdAt >= $afterDate
+    ${rawqueryutils.sampleBeforeCondition(params)}
+    ${rawqueryutils.originFacilityCondition(params) ||
+      rawqueryutils.originRegionCondition(params)}
+    ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}
+    GROUP BY "Summary.stage", "Summary.status", "Summary.statusDate"
+    ORDER BY "Summary.statusDate"`;
 };
 
 const artifactStagesRaw = params => {
@@ -58,16 +76,11 @@ const testStatusRaw = params => {
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-    AND NOT EXISTS (
-      SELECT 1 FROM LabTests t2
-      INNER JOIN Changes c2 on c2.labTest = t2.uuid
-      WHERE t2.uuid = t.uuid
-      AND c2.status = 'DEL'
-    )
+    ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}
     GROUP BY c.status, c.labRejection, t.testType`;
 };
 
-const stageDatesRaw = params => {
+const stageTATsRaw = params => {
   return `
       SELECT
       s.uuid AS "Summary.sampleId",
@@ -103,6 +116,7 @@ const stageDatesRaw = params => {
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
+    ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}
     GROUP BY
       "Summary.sampleIdsUUID",
       "Summary.sampleIdCreatedAt",
@@ -111,5 +125,5 @@ const stageDatesRaw = params => {
 };
 
 module.exports = {
-  totalsRaw, artifactStagesRaw, testStatusRaw, stageDatesRaw
+  totalsRaw, totalsDateSeries, artifactStagesRaw, testStatusRaw, stageTATsRaw
 };

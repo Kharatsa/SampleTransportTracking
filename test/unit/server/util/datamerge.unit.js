@@ -9,29 +9,47 @@ const merge = require('app/server/util/datamerge.js');
 describe('Data Merge Utilities', () => {
   const items = [
     {a: 1, b: 2, c: 3, d: 4},
-    {a: 5, b: 2, c: 3, d: 4},
+    {a: 5, b: 2, c: 7, d: 4},
     {a: 3, b: 4, c: 5, d: 6},
     {a: 5, b: 2, c: 3, d: 4},
     {a: 1, b: 99, c: 99, d: 4}
   ];
   const mapProps1 = ['a', 'd'];
 
-  const mapped = {
-    1: {
-      4: {a: 1, b: 99, c: 99, d: 4}
+  const mapped1 = {
+    '1': {
+      '4': {a: 1, b: 99, c: 99, d: 4}
     },
-    3: {
-      6: {a: 3, b: 4, c: 5, d: 6}
+    '3': {
+      '6': {a: 3, b: 4, c: 5, d: 6}
     },
-    5: {
-      4: {a: 5, b: 2, c: 3, d: 4}
+    '5': {
+      '4': {a: 5, b: 2, c: 3, d: 4}
     }
   };
 
-  it('should reduce an object array to a prop values map object', () =>
+  it('should reduce an object array to a prop values object', () =>
     expect(
-      merge.propKeyReduce(items, mapProps1)
-    ).to.eventually.deep.equal(mapped)
+      merge.propKeyReduce({items, propNames: mapProps1})
+    ).to.eventually.deep.equal(mapped1)
+  );
+
+  const mapped2 = {
+    '1': {
+      '4': [{a: 1, b: 2, c: 3, d: 4}, {a: 1, b: 99, c: 99, d: 4}]
+    },
+    '3': {
+      '6': [{a: 3, b: 4, c: 5, d: 6}]
+    },
+    '5': {
+      '4': [{a: 5, b: 2, c: 7, d: 4}, {a: 5, b: 2, c: 3, d: 4}]
+    }
+  };
+
+  it('should reduce an object array to a prop values object with arrays', () =>
+    expect(
+      merge.propKeyReduce({items, propNames: mapProps1, many: true})
+    ).to.eventually.deep.equal(mapped2)
   );
 
   const incoming1 = [

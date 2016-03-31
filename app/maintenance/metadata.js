@@ -156,6 +156,9 @@ const list = type => {
     if (type === 'facilities') {
       displayMetaTable(results,
         [{name: 'region', header: 'Region', width: 10}]);
+    } else if (type === 'labs') {
+      displayMetaTable(results,
+        [{name: 'district', header: 'District', width: 10}]);
     } else {
       displayMetaTable(results);
     }

@@ -182,7 +182,7 @@ const testTypeRefs = BPromise.method((testType, testMap) => {
  * @return {Promise.<Array.<Object>>}          [description]
  */
 const fillTestRefs = (changes, labTests) => {
-  return datamerge.propKeyReduce(labTests, ['testType'])
+  return datamerge.propKeyReduce({items: labTests, propNames: ['testType']})
   .then(testMap => {
     return BPromise.map(changes, change => {
       const labTestRef = testTypeRefs(change.labTestType, testMap);
