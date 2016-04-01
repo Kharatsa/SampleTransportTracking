@@ -4,10 +4,11 @@ import {
   FETCH_SAMPLE_DETAIL, FETCH_SAMPLE_DETAIL_FAILURE, RECEIVE_SAMPLE_DETAIL,
   FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA,
   FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
-  CHANGE_WINDOW_SIZE
+  FETCH_SUMMARY, FETCH_SUMMARY_FAILURE, RECEIVE_SUMMARY,
+  CHANGE_WINDOW_SIZE, CHANGE_SUMMARY_FILTER
 } from './actions.js';
 import * as api from '../api';
-import {WindowSize} from '../api/records.js';
+import {WindowSize, SummaryFilter} from '../api/records.js';
 
 const requestMetadata = () => ({type: FETCH_METADATA});
 
@@ -61,7 +62,7 @@ const receiveSampleDetail = ({
   changesByArtifactId, changesByLabTestId, changesByStage
 });
 
-const requestChanges = page => ({type: FETCH_CHANGES, page});
+const requestChanges = (summaryFilter, page) => ({type: FETCH_CHANGES, summaryFilter, page});
 
 const fetchChangesFailure = (error, page) => ({
   type: FETCH_CHANGES_FAILURE,
@@ -69,11 +70,13 @@ const fetchChangesFailure = (error, page) => ({
   prevPageNumber: page
 });
 
-export const fetchChanges = page => {
+export const fetchChanges = (summaryFilter, page) => {
+  // console.log(summaryFilter);
   page = Number.parseInt(page || 1);
+  console.log('page in fetch changes ', page);
   return dispatch => {
-    dispatch(requestChanges(page));
-    return api.getChanges({page: page}, (err, data) => {
+    dispatch(requestChanges(summaryFilter, page));
+    return api.getChanges(summaryFilter, {page: page}, (err, data) => {
       if (err) {
         dispatch(fetchChangesFailure(err, page));
       }
@@ -92,4 +95,42 @@ const receiveChanges = ({
 export const changeWindowSize = (innerWidth, innerHeight) => ({
   type: CHANGE_WINDOW_SIZE,
   size: new WindowSize({innerWidth, innerHeight})
+});
+
+const requestSummary = (summaryFilter) => ({type: FETCH_SUMMARY, summaryFilter});
+
+const fetchSummaryFailure = (error) => ({
+  type: FETCH_SUMMARY_FAILURE,
+  error
+});
+
+const receiveSummary = ({
+  artifacts, labTests, totals
+}) => ({
+  type: RECEIVE_SUMMARY,
+  artifacts,
+  labTests,
+  totals
+});
+
+export const fetchSummary = (summaryFilter) => {
+
+  //validity checking for region / facility here?
+
+  return dispatch => {
+    dispatch(requestSummary(summaryFilter));
+
+    return api.getSummary(summaryFilter, (err, data) => {
+      if (err) {
+        dispatch(fetchSummaryFailure(err));
+      }
+      console.log(data);
+      dispatch(receiveSummary(data));
+    });
+  };
+};
+
+export const changeSummaryFilter = (afterDate, beforeDate, regionKey, facilityKey) => ({
+  type: CHANGE_SUMMARY_FILTER,
+  summaryFilter: new SummaryFilter({afterDate, beforeDate, regionKey, facilityKey})
 });

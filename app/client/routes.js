@@ -10,10 +10,11 @@ import Facilities from './containers/Facilities.jsx';
 import Riders from './containers/Riders.jsx';
 import MissingRoute from './containers/MissingRoute.jsx';
 import TestCharts from './components/TestCharts.jsx';
+import SummaryView from './containers/Summary/SummaryView.jsx';
 
 export default (
   <Route path='/' component={App}>
-    <IndexRoute component={Changes}/>
+    <IndexRoute component={SummaryView}/>
     <Route path='changes(/:page)' component={Changes}/>
     <Route path='samples(/:sampleId)' component={Samples}/>
     <Route path='facilities' component={Facilities}/>

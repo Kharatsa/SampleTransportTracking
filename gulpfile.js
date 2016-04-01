@@ -109,14 +109,16 @@ const vendors = [
   'bower_components/pure/pure-min.css',
   'bower_components/pure/grids-responsive-min.css',
   'node_modules/fixed-data-table/dist/fixed-data-table.min.css',
-  'node_modules/chartist/dist/chartist.min.css'
+  'node_modules/chartist/dist/chartist.min.css',
+  'node_modules/react-datepicker/dist/react-datepicker.min.css'
 ];
 
 const vendorsDev = [
   'bower_components/pure/pure.css',
   'bower_components/pure/grids-responsive.css',
   'node_modules/fixed-data-table/dist/fixed-data-table.css',
-  'node_modules/chartist/dist/chartist.css'
+  'node_modules/chartist/dist/chartist.css',
+  'node_modules/react-datepicker/dist/react-datepicker.css'
 ];
 
 gulp.task('styles:vendors', () => {

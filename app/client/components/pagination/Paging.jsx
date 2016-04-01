@@ -6,9 +6,16 @@ import PageSummary from './PageSummary.jsx';
 
 // const MAX_BUTTON_COUNT = 5;
 
-export default ({total, perPage, currentPage, fetchPage}) => {
+export default ({total, perPage, currentPage}) => {
+
+
+  console.log('total = ', total)
+  console.log('per page = ', perPage)
+  console.log('current page = ', currentPage)
   const pageCount = Math.ceil(total / perPage);
 
+
+  console.log('page count = ', pageCount)
   const buttonsStyle = {
     textAlign: 'right'
   };
@@ -28,13 +35,11 @@ export default ({total, perPage, currentPage, fetchPage}) => {
       <div className='pure-u-1-2' style={buttonsStyle}>
         <PageButton
           linkTo={prevPageLink}
-          fetchPage={fetchPage}
           disabled={currentPage === 1}
           text='Previous' />
           {' '}
         <PageButton
           linkTo={nextPageLink}
-          fetchPage={fetchPage}
           disabled={currentPage === pageCount}
           text='Next' />
       </div>

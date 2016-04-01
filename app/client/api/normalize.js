@@ -2,10 +2,12 @@
 
 import {arrayOf, normalize} from 'normalizr';
 import {Map as ImmutableMap, Seq, List} from 'immutable';
-import {changeInclude, sample, metadata} from './schemas.js';
+import {
+  changeInclude, sample, metadata, sampleInclude
+} from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
-  KeyValueMetaRecord, FacilityMetaRecord
+  KeyValueMetaRecord, FacilityMetaRecord, SummaryTotal, ArtifactsCount, LabTestsCount
 } from './records.js';
 
 /**
@@ -108,3 +110,16 @@ export const normalizeChanges = ({data, count}) => {
   const samples = makeImmutable(entities.samples, SampleRecord);
   return {changes, changeIds, artifacts, labTests, samples, count};
 };
+
+const normalizeArtifacts = artifacts => {
+  return Seq(artifacts).map(artifact => new ArtifactsCount(artifact));
+}
+
+const normalizeLabTests = labTests => {
+  return Seq(labTests).map(labTest => new LabTestsCount(labTest));
+}
+
+export const normalizeSummary = data => {
+  const {artifacts, labTests, totals} = data;
+  return {artifacts: normalizeArtifacts(artifacts), labTests: normalizeLabTests(labTests), totals: new SummaryTotal(totals)};
+}
