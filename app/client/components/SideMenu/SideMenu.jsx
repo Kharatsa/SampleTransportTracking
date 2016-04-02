@@ -5,7 +5,9 @@ import classNames from 'classnames';
 import Link from 'react-router/lib/Link';
 
 const SideMenuHeader = ({header}) =>
-  <Link to='/' className='pure-menu-heading green-bg'>{header}</Link>;
+  <Link to='/' className='pure-menu-heading menu-title green-bg'>
+    {header}
+  </Link>;
 
 
 const SideMenuHamburger = ({isOpen, openMenu}) => {

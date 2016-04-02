@@ -124,19 +124,6 @@ textarea {
   #EAEAEA - light on dark text
 */
 
-a {
-  color: #406A9E;
-}
-
-.header {
-  line-height: 3em;
-  margin-bottom: 1em;
-}
-
-.content {
-  padding: 0 1rem 0 1rem;
-}
-
 .blue-bg {
   background: #406A9E;
 }
@@ -153,7 +140,15 @@ a {
   background: #32373A;
 }
 
-.pure-menu
+a {
+  color: #406A9E;
+}
+
+.content {
+  padding: 0 1rem 0 1rem;
+}
+
+.pure-menu,
 .blue-bg, .green-bg, .black-bg
 .pure-menu-item, .pure-menu-heading {
   color: #FFF;
@@ -161,7 +156,12 @@ a {
 
 .pure-menu-heading {
   font-weight: bold;
-  margin-bottom: 0.5em;
+}
+
+.menu-title {
+  font-size: 110%;
+  line-height: 3em;
+  margin-bottom: 1em;
 }
 
 .black-bg
@@ -227,7 +227,6 @@ appears on the left side of the page.
     left: 0;
     bottom: 0;
     z-index: 1000; /* so the menu or its navicon stays above all content */
-/*    background: #191818;*/
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
@@ -278,7 +277,6 @@ appears on the left side of the page.
     This styles the menu heading.
     */
     #menu .pure-menu-heading {
-        font-size: 110%;
         margin-top: 0;
         margin-left: 0;
         margin-right: 0;

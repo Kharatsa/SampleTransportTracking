@@ -1,10 +1,8 @@
 'use strict';
 
 import React from 'react'; // eslint-disable-line no-unused-vars
-import {
-  SideMenuLayout, SummaryFilter, TotalCounts
-} from '../containers';
-import ViewChangesButton from '../components/Summary/ViewChangesButton';
+import {SideMenuLayout, SummaryFilter, TotalCounts} from '../containers';
+import SummaryControls from '../SummaryControls';
 
 export const SummaryPage = ({appName}) => {
   const filterView = (
@@ -32,24 +30,13 @@ export const SummaryPage = ({appName}) => {
     </div>
   );
 
-  const content = (
-    <div>
-      {filterView}
-      {combinedMetricsView}
-    </div>
-  );
-
-  const menuItems = [
-    'TODO',
-    <ViewChangesButton />
-  ];
-
   return (
     <div>
       <SideMenuLayout
           menuHeader={appName}
-          menuItems={menuItems} >
-        {content}
+          menuItems={<SummaryControls />} >
+        {filterView}
+        {combinedMetricsView}
       </SideMenuLayout>
     </div>
   );
