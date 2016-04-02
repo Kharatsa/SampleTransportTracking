@@ -2,7 +2,7 @@
 
 import React from 'react'; // eslint-disable-line no-unused-vars
 import {SideMenuLayout, SummaryFilter, TotalCounts} from '../containers';
-import SummaryControls from '../SummaryControls';
+import SummaryControls from '../components/SummaryControls';
 
 export const SummaryPage = ({appName}) => {
   const filterView = (

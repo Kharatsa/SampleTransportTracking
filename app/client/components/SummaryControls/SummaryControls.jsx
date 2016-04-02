@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react'; // eslint-disable-line no-unused-vars
-import ViewChangesButton from '../components/Summary/ViewChangesButton';
+import ViewChangesButton from './ViewChangesButton';
 
 export const SummaryControls = () => {
   return (
