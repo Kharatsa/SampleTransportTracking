@@ -27,13 +27,16 @@ const handleChangesReq = (req, res, next) => {
 };
 
 const handleChangesExport = (req, res, next) => {
-  return client.changes.allChanges({noLimit: true, data: {
-    sampleId: req.params.sampleId,
-    facilityKey: req.params.facilityKey,
-    regionKey: req.params.regionKey,
-    afterDate: req.query.afterdate,
-    beforeDate: req.query.beforedate
-  }})
+  return client.changes.allChanges({
+    csvResult: true,
+    unlimited: true,
+    data: {
+      sampleId: req.params.sampleId,
+      facilityKey: req.params.facilityKey,
+      regionKey: req.params.regionKey,
+      afterDate: req.query.afterdate,
+      beforeDate: req.query.beforedate
+    }})
   .then(results => res.send(results))
   .catch(next);
 };
@@ -61,13 +64,21 @@ router.get('/region/:regionKey/changes.csv',
 router.get('/changes',
   pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
 
-router.get('/ids/:sampleId/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
-
 router.get('/facility/:facilityKey/changes',
   pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
 
 router.get('/region/:regionKey/changes',
   pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
+
+const handleSampleChangesReq = (req, res, next) => {
+  return client.changes.allChangesAndCount({
+    unlimited: true,
+    data: {sampleId: req.params.sampleId}})
+  .then(results => res.json(results))
+  .catch(next);
+};
+
+// Always return all the changes for an individual Sample ID
+router.get('/ids/:sampleId/changes', handleSampleChangesReq);
 
 module.exports = router;

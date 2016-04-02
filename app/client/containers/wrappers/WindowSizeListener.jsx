@@ -8,26 +8,25 @@ import {changeWindowSize} from '../../actions/actioncreators.js';
 
 const DEBOUNCE_MILLIS = 16;
 const NARROW_WIDTH_BUFFER = 0;
-
-
 const WIDTH_BUFFER_MENU = 275;
 const WIDTH_BUFFER = 75;
-
 const HEIGHT_BUFFER = 200;
 
 /**
- * [description]
- * @param  {React.Component} Component [description]
- * @param  {Object} options   [description]
- * @param {boolean} [options.width=true] [description]
- * @param {boolean} [options.height=true] [description]
- * @return {React.Component}           [description]
+ * Wrapper Component that updates innerWidth and innerHeight in state
+ *
+ * @param  {React.Component} Component
+ * @param  {Object} options
+ * @param {boolean} [options.width=true]
+ * @param {boolean} [options.height=true]
+ * @param {boolean} [options.avoidSideMenu=false]
+ * @return {React.Component}
  */
 export const WindowSizeListen = (Component, options) => {
   // Defaults
   options = options || {};
-  const {width=true, height=true, isMenuPage=false} = options;
-  const widthBuffer = isMenuPage ? WIDTH_BUFFER_MENU : WIDTH_BUFFER;
+  const {width=true, height=true, avoidSideMenu=false} = options;
+  const widthBuffer = avoidSideMenu ? WIDTH_BUFFER_MENU : WIDTH_BUFFER;
 
   const Wrapped = React.createClass({
     mixins: [PureRenderMixin],

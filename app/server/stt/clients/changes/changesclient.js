@@ -8,7 +8,6 @@ const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
 const ModelClient = require('app/server/stt/clients/modelclient.js');
 const changesquery = require('./changesquery.js');
-const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
 const changesresult = require('./changesresult.js');
 
 /**
@@ -61,8 +60,8 @@ ChangesClient.prototype.latest = function(options) {
   });
 };
 
-const handleRawChanges = (noLimit, rawChanges) => {
-  if (noLimit) {
+const handleRawChanges = (csvResult, rawChanges) => {
+  if (csvResult) {
     const parseHeaders = changesresult.csvHeader(rawChanges[0]);
     const headerRow = parseHeaders.then(headers => headers.join(','));
 
@@ -70,12 +69,8 @@ const handleRawChanges = (noLimit, rawChanges) => {
       BPromise.map(rawChanges, row => changesresult.csvRow(headers, row)));
 
 
-    return BPromise.join(headerRow, parseRows, (header, rows) => {
-      log.debug('HEADER ROW', header);
-      log.debug('ROWS', rows);
-      return [].concat(header, rows).join('\n');
-    });
-    // .then(rows => rows.join('\n'));
+    return BPromise.join(headerRow, parseRows, (header, rows) =>
+      [].concat(header, rows).join('\n'));
   }
   return BPromise.map(rawChanges, changesresult.recomposeRawChanges);
 };
@@ -86,16 +81,15 @@ const handleRawChanges = (noLimit, rawChanges) => {
  * @param {Date} [options.beforeDate]
  * @param {string} [options.regionKey]
  * @param {string} [options.facilityKey]
- * @param {boolean} [options.noLimit]
+ * @param {boolean} [options.unlimited]
  * @return {Promise.<Array.<Object>>}
  * @throws {Error} If afterDate is undefined
  */
 ChangesClient.prototype.allChanges = BPromise.method(function(options) {
-  const noLimit = !!options.noLimit;
-  const changesParams = _.defaults({}, options.data, {
-    limit: noLimit ? undefined : this.limit
-  });
-  rawqueryutils.checkRequired(changesParams);
+  // Defaults
+  const changesParams = Object.assign({}, {
+    limit: options.unlimited ? undefined : this.limit
+  }, options.data);
 
   log.debug('Raw query for all changes with params', changesParams);
   return this.db.query(changesquery.changesRaw(changesParams), {
@@ -103,7 +97,7 @@ ChangesClient.prototype.allChanges = BPromise.method(function(options) {
     type: this.db.QueryTypes.SELECT
   })
   // TODO: maybe stream the big CSV results as they're parsed
-  .then(results => handleRawChanges(noLimit, results));
+  .then(results => handleRawChanges(options.csvResult, results));
 });
 
 ChangesClient.prototype.allChangesCount = BPromise.method(function(options) {

@@ -113,13 +113,15 @@ textarea {
 }
 
 /*
-  rgba(28, 147, 82, 1) / #1C9352 - green
   #FFF - white
+  #1C9352 - green
+  rgba(28, 147, 82, 1) - green
   #406A9E - blue
   #32373A - black
   #3D4347 - black light
   #F9F9F9 - grey
   #DDD    - light grey
+  #EAEAEA - light on dark text
 */
 
 a {
@@ -151,18 +153,21 @@ a {
   background: #32373A;
 }
 
-.blue-bg,
-.green-bg,
-.black-bg {
-  color: #FFF;
-}
-
-.white-text {
+.pure-menu
+.blue-bg, .green-bg, .black-bg
+.pure-menu-item, .pure-menu-heading {
   color: #FFF;
 }
 
 .pure-menu-heading {
   font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.black-bg
+.pure-menu-item {
+  padding: .5em 1em;
+  color: #EAEAEA;
 }
 
 .pure-menu-link {
@@ -230,7 +235,6 @@ appears on the left side of the page.
     All anchors inside the menu should be styled like this.
     */
     #menu a {
-        color: #999;
         border: none;
         padding: 0.6em 0 0.6em 0.6em;
     }
@@ -263,13 +267,6 @@ appears on the left side of the page.
             background: #333;
         }
 
-    /*
-    This styles the selected menu item `<li>`.
-    */
-    #menu .pure-menu-selected,
-    #menu .pure-menu-heading {
-        background: #1f8dd6;
-    }
         /*
         This styles a link within a selected menu item `<li>`.
         */
@@ -282,8 +279,9 @@ appears on the left side of the page.
     */
     #menu .pure-menu-heading {
         font-size: 110%;
-        color: #fff;
-        margin: 0;
+        margin-top: 0;
+        margin-left: 0;
+        margin-right: 0;
     }
 
 /* -- Dynamic Button For Responsive Menu -------------------------------------*/

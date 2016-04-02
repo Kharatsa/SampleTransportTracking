@@ -5,23 +5,16 @@ import WaitOnFetch from '../containers/wrappers/WaitOnFetch.jsx';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import WindowSizeListener from '../containers/wrappers/WindowSizeListener.jsx';
 import ChangesTable from './ChangesTable';
-import Paging from './Pagination/Paging.jsx';
 
-const FlexAllWaysTable = WindowSizeListener(ChangesTable);
+const FlexAllWaysTable = WindowSizeListener(ChangesTable, {avoidSideMenu: true});
 
 const _ChangesListing = React.createClass({
   mixins: [PureRenderMixin],
 
   render() {
-    const {changesTotal, changeIds, page} = this.props;
-
     return (
       <div className='content'>
         <FlexAllWaysTable {...this.props} />
-        <Paging
-            total={changesTotal}
-            perPage={changeIds.size}
-            currentPage={page.get('current')} />
       </div>
     );
   }

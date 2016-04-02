@@ -19,13 +19,13 @@ import ChangesByLabTestIdReducer from './reducer_changesByLabTestId';
 import changesByStageReducer from './reducer_changesByStage';
 import SummaryFilterReducer from './reducer_summaryFilter';
 import SummaryReducer from './reducer_summary';
-import {windowSize, page, menuOpen} from './uireducers';
+import {windowSize, menuOpen} from './uireducers';
+import {
+  paginationTotal, paginationPerPage, paginationPage
+} from './paginationreducers';
 
 
 const rootReducer = combineReducers({
-  page,
-  windowSize,
-  menuOpen,
   isFetchingData: IsFetchingDataReducer,
   metadata: MetadataReducer,
   selectedSampleId: SelectedSampleIdReducer,
@@ -42,7 +42,12 @@ const rootReducer = combineReducers({
   changesByLabTestId: ChangesByLabTestIdReducer,
   changesByStage: changesByStageReducer,
   summaryFilter: SummaryFilterReducer,
-  summary: SummaryReducer
+  summary: SummaryReducer,
+  windowSize,
+  menuOpen,
+  paginationTotal,
+  paginationPerPage,
+  paginationPage
 });
 
 export default rootReducer;

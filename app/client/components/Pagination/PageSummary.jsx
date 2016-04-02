@@ -3,10 +3,10 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import {toLocaleStringSupportsLocales} from '../../util/stringformat.js';
 
-export default ({total=0, itemCount, currentPage, desc='items'}) => {
+export default ({total, itemCount, currentPage, desc='items'}) => {
   const first = (itemCount * (currentPage - 1)) + 1;
-  const last = itemCount * currentPage;
-  const text = desc;
+  const maybeLast = itemCount * currentPage;
+  const last = maybeLast < total ? maybeLast : total;
 
   let totalStr;
   let firstStr;
@@ -21,7 +21,7 @@ export default ({total=0, itemCount, currentPage, desc='items'}) => {
 
   return (
     <div>
-      {`Showing ${firstStr} to ${lastStr} of ${totalStr} ${text}`}
+      {`Showing ${firstStr} to ${lastStr} of ${totalStr} ${desc}`}
     </div>)
   ;
 };

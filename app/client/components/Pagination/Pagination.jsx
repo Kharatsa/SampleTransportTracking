@@ -4,24 +4,13 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import PageButton from './PageButton.jsx';
 import PageSummary from './PageSummary.jsx';
 
-// const MAX_BUTTON_COUNT = 5;
-
-export default ({total, perPage, currentPage}) => {
-
-
-  console.log('total = ', total)
-  console.log('per page = ', perPage)
-  console.log('current page = ', currentPage)
+export const Paging = ({total, perPage, page}) => {
+  const currentPage = page.get('current');
   const pageCount = Math.ceil(total / perPage);
-
-
-  console.log('page count = ', pageCount)
-  const buttonsStyle = {
-    textAlign: 'right'
-  };
 
   const prevPageLink = `/changes/${currentPage - 1}`;
   const nextPageLink = `/changes/${currentPage + 1}`;
+  const buttonsStyle = {textAlign: 'right'};
 
   return (
     <div className='pure-g panel'>
@@ -46,3 +35,5 @@ export default ({total, perPage, currentPage}) => {
     </div>
   );
 };
+
+export default Paging;

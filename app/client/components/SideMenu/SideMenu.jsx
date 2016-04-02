@@ -23,11 +23,10 @@ const SideMenuOpen = ({isOpen, header, children}) => {
     'black-bg': true
   });
 
-  const menuItems = (
-    Array.isArray(children) ?
-    children.map((child, i) => <SideMenuRow key={i}>{child}</SideMenuRow>) :
-    children
-  );
+  children = Array.isArray(children) ? children : [children];
+
+  const menuItems = children.map((child, i) =>
+    <SideMenuRow key={i}>{child}</SideMenuRow>);
 
   return (
     <div id='menu' className={clsn}>

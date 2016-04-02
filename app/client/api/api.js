@@ -2,28 +2,72 @@
 
 import request from '../util/request.js';
 import {
-  normalizeChanges, normalizeSamples, normalizeMetadata, normalizeSample, normalizeSummary
+  normalizeChanges, normalizeMetadata, normalizeSample,
+  normalizeSummary
 } from './normalize.js';
-import {fromJS} from 'Immutable';
 
-const pagedURL = (url, page) => `${url}?page=${page}`;
-// TODO: handle empty responses (res.json = {})
+const summaryFilterValues = summaryFilter => {
+  //validity checking for region / facility here?
+  const regionKey = summaryFilter.get('regionKey');
+  const facilityKey = summaryFilter.get('facilityKey');
 
-export const getSamples = (options, callback) => {
-  callback = typeof options === 'function' ? options : callback;
-  return request('/stt/ids', (err, res) => {
-    if (err) {
-      return callback(err);
-    }
-    callback(null, normalizeSamples(res.json));
-  });
+  const afterDateLocal = summaryFilter.get('afterDate');
+  const beforeDateLocal = summaryFilter.get('beforeDate');
+
+  return {afterDateLocal, beforeDateLocal, regionKey, facilityKey};
 };
 
-export const getSampleDetail = (options, callback) => {
-  if (!options.sampleId) {
+const pageURLParam = ({page, first=true}) => {
+  const prefix = first ? '?' : '&';
+  return page ? `${prefix}page=${page}` : '';
+};
+
+export const locationURLParams = ({facilityKey, regionKey}) => {
+  if (facilityKey && regionKey) {
+    throw new Error('Both of facilityKey and regionKey cannot be passed');
+  }
+
+  const facilityPart = facilityKey ? `/facility/${facilityKey}` : '';
+  const regionPart = regionKey ? `/region/${regionKey}` : '';
+
+  // Only 1 of regionKey and facilityKey may be included
+  return regionPart || facilityPart;
+};
+
+export const dateURLParams = ({afterDateLocal, beforeDateLocal}) => {
+  if (!(afterDateLocal && beforeDateLocal)) {
+    throw new Error('Missing required parameter afterDate or beforeDate');
+  }
+
+  const afterDatePart = `?afterDate=${afterDateLocal.toISOString()}`;
+  const beforeDatePart = `&beforeDate=${beforeDateLocal.toISOString()}`;
+
+  return `${afterDatePart}${beforeDatePart}`;
+};
+
+/**
+ * Applies standard filter parameters to the endpoint
+ *
+ * @param {string} endpoint
+ * @param {Immutable.Record} summaryFilter SummaryFilter type Immutable Record
+ * @return {string}
+ */
+export const filteredURL = (endpoint, summaryFilter, page=null) => {
+  const filterValues = summaryFilterValues(summaryFilter);
+
+  const paramsPart = locationURLParams(filterValues);
+  const queryPart = dateURLParams(filterValues);
+  const pagePart = pageURLParam({page, first: false});
+
+  return `/stt/${endpoint}${paramsPart}${queryPart}${pagePart}`;
+};
+
+export const getSampleDetail = (sampleId, callback) => {
+  if (typeof sampleId === 'undefined') {
     throw new Error(`Missing required options.sampleId parameter`);
   }
-  return request(`/stt/ids/${options.sampleId}/changes`, (err, res) => {
+
+  return request(`/stt/ids/${sampleId}/changes`, (err, res) => {
     if (err) {
       return callback(err);
     }
@@ -31,55 +75,9 @@ export const getSampleDetail = (options, callback) => {
   });
 };
 
-const urlWithParams = (url, params) => {
-  const immutableParams = fromJS(params);
-  console.log('immutableParams: ', immutableParams);
-  if (immutableParams.size > 0) {
-    const first = immutableParams.entrySeq().first()
-    console.log(first);
-    const startingString = `${url}?${first[0]}=${first[1]}`
-    console.log(startingString);
-    const returnURL = immutableParams.rest().reduce((acc, val, key) => {
-      return acc.concat(`&${key}=${val}`)
-    }, startingString);
-    console.log(returnURL);
-    return returnURL;
-  }
-  else {
-    return url;
-  }
-}
-
-const changesURLForFilterAndPage = (summaryFilter, page) => {
-
-  const afterDate = summaryFilter.get('afterDate');
-  const beforeDate = summaryFilter.get('beforeDate');
-  const regionKey = summaryFilter.get('regionKey');
-  const facilityKey = summaryFilter.get('facilityKey');
-
-  var url;
-  if (facilityKey) {
-    url = `/stt/facility/${facilityKey}/changes`
-  }
-  else if (regionKey) {
-    url = `/stt/region/${regionKey}/changes`
-  }
-  else {
-    url = `/stt/changes`
-  }
-  return urlWithParams(url, {
-    page: page,
-    afterDate: dateForAPI(afterDate),
-    beforeDate: dateForAPI(beforeDate)
-  })
-}
-
-export const getChanges = (summaryFilter, options, callback) => {
-  console.log(summaryFilter)
-  callback = typeof options === 'function' ? options : callback;
-  let {page} = options;
-  console.log('page in getChanges ', page)
-  const url = changesURLForFilterAndPage(summaryFilter, page);
+export const getChanges = (filter, page=1, callback) => {
+  page = Number.parseInt(page);
+  const url = filteredURL('changes', filter, page);
   return request(url, (err, res) => {
     if (err) {
       return callback(err);
@@ -88,36 +86,8 @@ export const getChanges = (summaryFilter, options, callback) => {
   });
 };
 
-
-const dateForAPI = momentDate => momentDate.format("YYYY-MM-DD")
-const urlWithDates = (url, afterDate, beforeDate) => `${url}?afterDate=${dateForAPI(afterDate)}&beforeDate=${dateForAPI(beforeDate)}`
-
-const summaryURLForFilter = (summaryFilter) => {
-
-  const afterDate = summaryFilter.get('afterDate');
-  const beforeDate = summaryFilter.get('beforeDate');
-  const regionKey = summaryFilter.get('regionKey');
-  const facilityKey = summaryFilter.get('facilityKey');
-
-  var url;
-  if (facilityKey) {
-    url = `/stt/facility/${facilityKey}/summary`
-  }
-  else if (regionKey) {
-    url = `/stt/region/${regionKey}/summary`
-  }
-  else {
-    url = `/stt/summary`
-  }
-  return urlWithParams(url, {
-    afterDate: dateForAPI(afterDate),
-    beforeDate: dateForAPI(beforeDate)
-  })
-}
-
-export const getSummary = (summaryFilter, callback) => {
-  const url = summaryURLForFilter(summaryFilter)
-  console.log('FETCH URL: ', url)
+export const getSummary = (filter, callback) => {
+  const url = filteredURL('summary', filter);
   return request(url, (err, res) => {
     if (err) {
       return callback(err);

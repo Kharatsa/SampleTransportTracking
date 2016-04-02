@@ -32,26 +32,23 @@ export const SummaryPage = ({appName}) => {
     </div>
   );
 
-  const buttonsStyle = {textAlign: 'right'};
-  const viewDetailsControls = (
-    <div className='panel' style={buttonsStyle}>
-      <ViewChangesButton />
-    </div>
-  );
-
   const content = (
     <div>
       {filterView}
       {combinedMetricsView}
-      {viewDetailsControls}
     </div>
   );
+
+  const menuItems = [
+    'TODO',
+    <ViewChangesButton />
+  ];
 
   return (
     <div>
       <SideMenuLayout
           menuHeader={appName}
-          menuItems={['Row 1', 'Row 2']} >
+          menuItems={menuItems} >
         {content}
       </SideMenuLayout>
     </div>

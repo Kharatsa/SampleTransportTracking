@@ -15,9 +15,8 @@ export const toggleMenu = () => ({type: TOGGLE_MENU});
 
 const requestMetadata = () => ({type: FETCH_METADATA});
 
-const fetchMetadataFailure = err => ({
-  type: FETCH_METADATA_FAILURE, error: err
-});
+const fetchMetadataFailure = err =>
+  ({type: FETCH_METADATA_FAILURE, error: err});
 
 const receiveMetadata = metadata => ({type: RECEIVE_METADATA, metadata});
 
@@ -47,7 +46,7 @@ const fetchSampleDetailFailure = error => ({
 export const fetchSampleDetail = sampleId => {
   return dispatch => {
     dispatch(requestSample(sampleId));
-    return api.getSampleDetail({sampleId}, (err, data) => {
+    return api.getSampleDetail(sampleId, (err, data) => {
       if (err) {
         dispatch(fetchSampleDetailFailure(err));
       }
@@ -65,7 +64,8 @@ const receiveSampleDetail = ({
   changesByArtifactId, changesByLabTestId, changesByStage
 });
 
-const requestChanges = (summaryFilter, page) => ({type: FETCH_CHANGES, summaryFilter, page});
+const requestChanges = (summaryFilter, page) =>
+  ({type: FETCH_CHANGES, summaryFilter, page});
 
 const fetchChangesFailure = (error, page) => ({
   type: FETCH_CHANGES_FAILURE,
@@ -74,11 +74,9 @@ const fetchChangesFailure = (error, page) => ({
 });
 
 export const fetchChanges = (summaryFilter, page) => {
-  page = Number.parseInt(page || 1);
-  console.log('page in fetch changes ', page);
   return dispatch => {
     dispatch(requestChanges(summaryFilter, page));
-    return api.getChanges(summaryFilter, {page: page}, (err, data) => {
+    return api.getChanges(summaryFilter, page, (err, data) => {
       if (err) {
         dispatch(fetchChangesFailure(err, page));
       }
@@ -106,27 +104,16 @@ const fetchSummaryFailure = (error) => ({
   error
 });
 
-const receiveSummary = ({
-  artifacts, labTests, totals
-}) => ({
-  type: RECEIVE_SUMMARY,
-  artifacts,
-  labTests,
-  totals
-});
+const receiveSummary = ({artifacts, labTests, totals}) =>
+  ({type: RECEIVE_SUMMARY, artifacts, labTests, totals});
 
 export const fetchSummary = (summaryFilter) => {
-
-  //validity checking for region / facility here?
-
   return dispatch => {
     dispatch(requestSummary(summaryFilter));
-
     return api.getSummary(summaryFilter, (err, data) => {
       if (err) {
         dispatch(fetchSummaryFailure(err));
       }
-      console.log(data);
       dispatch(receiveSummary(data));
     });
   };

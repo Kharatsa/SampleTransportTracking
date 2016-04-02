@@ -47,7 +47,7 @@ function bundle() {
 }
 
 bundler.on('log', $.util.log); // output build logs to terminal
-gulp.task('bundle', bundle); // so you can run `gulp js` to build the file
+gulp.task('bundle', ['lint'], bundle); // so you can run `gulp js` to build the file
 
 gulp.task('development', function() {
   bundler = watchify(bundler);

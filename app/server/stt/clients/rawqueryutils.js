@@ -1,11 +1,5 @@
 'use strict';
 
-const checkRequired = params => {
-  if (!params.afterDate) {
-    throw new Error('Missing required parameter afterDate');
-  }
-};
-
 const TEST_DELETED_STATUS = 'DEL';
 
 /**
@@ -36,6 +30,13 @@ const regionQueryInnerJoin = params => {
 const sampleIdCondition = params => {
   if (typeof params.sampleId !== 'undefined') {
     return 'AND (s.stId = $sampleId OR s.labId = $sampleId)';
+  }
+  return '';
+};
+
+const sampleAfterCondition = params => {
+  if (typeof params.beforeDate !== 'undefined') {
+    return `AND s.createdAt >= $afterDate`;
   }
   return '';
 };
@@ -80,10 +81,10 @@ const limitOffsetExpression = params => {
 };
 
 module.exports = {
-  checkRequired,
   exceptDeletedTestsExpression,
   regionQueryInnerJoin,
   sampleIdCondition,
+  sampleAfterCondition,
   sampleBeforeCondition,
   originFacilityCondition,
   originRegionCondition,
