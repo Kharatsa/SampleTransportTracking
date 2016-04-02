@@ -1,4 +1,6 @@
-import React from 'react';
+'use strict';
+
+import React from 'react'; // eslint-disable-line no-unused-vars
 import {Accordion, AccordionItem} from 'react-sanfona';
 
 const TotalCountsAccordion = ({items, metadata, outerItemKey, outerMetadataKey, innerItemKey, innerMetadataKey, itemCountsKey}) => {
@@ -22,15 +24,14 @@ const TotalCountsAccordion = ({items, metadata, outerItemKey, outerMetadataKey, 
           })}
         </ul>
       </AccordionItem>
-    )
-  }).toList()
+    );
+  }).toList();
 
   return (
     <Accordion allowMultiple={true} activeItems={[]}>
       {accordionItems}
     </Accordion>
-  )
-
-}
+  );
+};
 
 export default TotalCountsAccordion;

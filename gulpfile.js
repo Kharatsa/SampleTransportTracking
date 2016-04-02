@@ -23,7 +23,7 @@ const opts = Object.assign({}, watchify.args, browserifyOptions);
 var bundler = browserify(opts);
 bundler.transform(babelify.configure({
   presets: ['react', 'es2015'],
-  plugins: []
+  plugins: ['transform-object-rest-spread']
 }));
 
 bundler.transform(envify({
@@ -39,13 +39,15 @@ function bundle() {
     .on('error', $.util.log.bind($.util, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(buffer())
+    .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.init({loadMaps: true}))
       .pipe(IS_PRODUCTION ? uglify() : $.util.noop())
       .pipe($.filesize())
+    .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.write('./'))
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 }
 
 bundler.on('log', $.util.log); // output build logs to terminal
-gulp.task('bundle', bundle); // so you can run `gulp js` to build the file
+gulp.task('bundle', ['lint'], bundle); // so you can run `gulp js` to build the file
 
 gulp.task('development', function() {
   bundler = watchify(bundler);
@@ -96,10 +98,20 @@ gulp.task('nodemon', ['lint'], function(cb) {
   });
 });
 
+const vendorStatic = [
+  'node_modules/chartist/dist/chartist.css.map'
+];
+
+gulp.task('static:styles', () => {
+  return gulp.src(vendorStatic)
+  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
+});
+
 const vendors = [
   'bower_components/pure/pure-min.css',
   'bower_components/pure/grids-responsive-min.css',
   'node_modules/fixed-data-table/dist/fixed-data-table.min.css',
+  'node_modules/chartist/dist/chartist.min.css',
   'node_modules/react-datepicker/dist/react-datepicker.min.css'
 ];
 
@@ -107,6 +119,7 @@ const vendorsDev = [
   'bower_components/pure/pure.css',
   'bower_components/pure/grids-responsive.css',
   'node_modules/fixed-data-table/dist/fixed-data-table.css',
+  'node_modules/chartist/dist/chartist.css',
   'node_modules/react-datepicker/dist/react-datepicker.css'
 ];
 
@@ -122,7 +135,7 @@ const clientCSS = [
   'app/client/styles/**/*.css'
 ];
 
-gulp.task('styles', ['styles:vendors'], function() {
+gulp.task('styles', ['static:styles', 'styles:vendors'], () => {
   const loadSourceMaps = (
     IS_PRODUCTION ? $.util.noop : $.sourcemaps.init.bind({loadMaps: true}));
   const cssMinify = IS_PRODUCTION ? $.cssnano : $.util.noop;

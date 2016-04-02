@@ -1,5 +1,5 @@
 'use strict';
 
 export {
-  getChanges, getSamples, getSampleDetail, getMetadata, getSummary
+  filteredURL, getChanges, getSampleDetail, getMetadata, getSummary
 } from './api.js';

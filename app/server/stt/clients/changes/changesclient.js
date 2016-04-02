@@ -8,7 +8,6 @@ const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
 const ModelClient = require('app/server/stt/clients/modelclient.js');
 const changesquery = require('./changesquery.js');
-const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
 const changesresult = require('./changesresult.js');
 
 /**
@@ -61,45 +60,68 @@ ChangesClient.prototype.latest = function(options) {
   });
 };
 
+const handleRawChanges = (csvResult, rawChanges) => {
+  if (csvResult) {
+    const parseHeaders = changesresult.csvHeader(rawChanges[0]);
+    const headerRow = parseHeaders.then(headers => headers.join(','));
+
+    const parseRows = parseHeaders.then(headers =>
+      BPromise.map(rawChanges, row => changesresult.csvRow(headers, row)));
+
+
+    return BPromise.join(headerRow, parseRows, (header, rows) =>
+      [].concat(header, rows).join('\n'));
+  }
+  return BPromise.map(rawChanges, changesresult.recomposeRawChanges);
+};
+
 /**
  * @param {QueryOptions} options
  * @param {Date} options.afterDate
  * @param {Date} [options.beforeDate]
  * @param {string} [options.regionKey]
  * @param {string} [options.facilityKey]
+ * @param {boolean} [options.unlimited]
  * @return {Promise.<Array.<Object>>}
  * @throws {Error} If afterDate is undefined
  */
 ChangesClient.prototype.allChanges = BPromise.method(function(options) {
+  // Defaults
+  const changesParams = Object.assign({}, {
+    limit: options.unlimited ? undefined : this.limit
+  }, options.data);
+
+  log.debug('Raw query for all changes with params', changesParams);
+  return this.db.query(changesquery.changesRaw(changesParams), {
+    bind: changesParams,
+    type: this.db.QueryTypes.SELECT
+  })
+  // TODO: maybe stream the big CSV results as they're parsed
+  .then(results => handleRawChanges(options.csvResult, results));
+});
+
+ChangesClient.prototype.allChangesCount = BPromise.method(function(options) {
   // Count returns the unlimited number of results matching the query
   // parameters for use with paging parameters (i.e., limit & offset).
   const countParams = _.omit(options.data, ['offset', 'limit']);
 
-  const changesParams = _.defaults({}, options.data, {
-    limit: this.limit
-  });
-
-  rawqueryutils.checkRequired(changesParams);
-
   log.debug('Raw count query for all changes with params', countParams);
-  const countQuery = this.db.query(changesquery.changesRawCount(countParams), {
+  return this.db.query(changesquery.changesRawCount(countParams), {
     bind: countParams
   })
   .spread(results => results && results.length ? results[0].ChangesCount : 0)
   .tap(count => log.debug(`allChanges count result`, count));
+});
 
-  log.debug('Raw query for all changes with params', changesParams);
-  const changesQuery = this.db.query(changesquery.changesRaw(changesParams), {
-    bind: changesParams,
-    type: this.db.QueryTypes.SELECT
-  })
-  .map(changesresult.recomposeRawChanges);
+ChangesClient.prototype.allChangesAndCount = function(options) {
+  const countQuery = this.allChangesCount(options);
+  const changesQuery = this.allChanges(options);
 
   return BPromise.join(countQuery, changesQuery, (count, changes) => ({
     count,
     rows: changes
   }));
-});
+};
 
 /**
  * [description]

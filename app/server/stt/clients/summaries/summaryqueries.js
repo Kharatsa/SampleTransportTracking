@@ -2,6 +2,12 @@
 
 const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
 
+const checkRequired = params => {
+  if (!params.afterDate) {
+    throw new Error('Missing required parameter afterDate');
+  }
+};
+
 const totalsRaw = params => {
   return `
   SELECT
@@ -125,5 +131,6 @@ const stageTATsRaw = params => {
 };
 
 module.exports = {
+  checkRequired,
   totalsRaw, totalsDateSeries, artifactStagesRaw, testStatusRaw, stageTATsRaw
 };

@@ -1,9 +1,6 @@
 'use strict';
 
-import { combineReducers } from 'redux';
-
-import PageReducer from './reducer_page';
-import WindowSizeReducer from './reducer_windowSize';
+import {combineReducers} from 'redux';
 import IsFetchingDataReducer from './reducer_isFetchingData';
 import MetadataReducer from './reducer_metadata';
 import SelectedSampleIdReducer from './reducer_selectedSampleId';
@@ -21,11 +18,13 @@ import ChangesByLabTestIdReducer from './reducer_changesByLabTestId';
 import changesByStageReducer from './reducer_changesByStage';
 import SummaryFilterReducer from './reducer_summaryFilter';
 import SummaryReducer from './reducer_summary';
+import {windowSize, menuOpen} from './uireducers';
+import {
+  paginationTotal, paginationPerPage, paginationPage
+} from './paginationreducers';
 
 
 const rootReducer = combineReducers({
-  page: PageReducer,
-  windowSize: WindowSizeReducer,
   isFetchingData: IsFetchingDataReducer,
   metadata: MetadataReducer,
   selectedSampleId: SelectedSampleIdReducer,
@@ -42,7 +41,12 @@ const rootReducer = combineReducers({
   changesByLabTestId: ChangesByLabTestIdReducer,
   changesByStage: changesByStageReducer,
   summaryFilter: SummaryFilterReducer,
-  summary: SummaryReducer
+  summary: SummaryReducer,
+  windowSize,
+  menuOpen,
+  paginationTotal,
+  paginationPerPage,
+  paginationPage
 });
 
 export default rootReducer;

@@ -9,7 +9,6 @@ const changesclient = require('app/server/stt/clients/changes');
 const metaclients = require('app/server/stt/clients/metadata');
 const datamerge = require('app/server/util/datamerge.js');
 const dbresult = require('app/server/storage/dbresult.js');
-const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
 const summaryqueries = require('./summaries/summaryqueries.js');
 const summaryresult = require('./summaries/summaryresult.js');
 const turnaroundtime = require('./summaries/turnaroundtime.js');
@@ -102,7 +101,7 @@ function STTClient(options) {
  */
 
 const summaryQuery = (self, queryFunc, params) => {
-  rawqueryutils.checkRequired(params);
+  summaryqueries.checkRequired(params);
   log.debug('summary query params', params);
 
   return self.db.query(queryFunc(params), {

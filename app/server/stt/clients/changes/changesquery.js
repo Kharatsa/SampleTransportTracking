@@ -77,7 +77,8 @@ const changesRaw = params => {
     INNER JOIN Artifacts a ON a.uuid = c.artifact
     INNER JOIN SampleIds s ON s.uuid = a.sampleId
     ${rawqueryutils.regionQueryInnerJoin(params)}
-    WHERE s.createdAt >= $afterDate
+    WHERE 1
+    ${rawqueryutils.sampleAfterCondition(params)}
     ${rawqueryutils.sampleIdCondition(params)}
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
@@ -93,12 +94,12 @@ const changesRaw = params => {
     INNER JOIN LabTests r ON r.uuid = c.labTest
     INNER JOIN SampleIds s ON s.uuid = r.sampleId
     ${rawqueryutils.regionQueryInnerJoin(params)}
-    WHERE s.createdAt >= $afterDate
+    WHERE 1
+    ${rawqueryutils.sampleAfterCondition(params)}
     ${rawqueryutils.sampleIdCondition(params)}
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-
     ORDER BY c.statusDate DESC
     ${rawqueryutils.limitOffsetExpression(params)}`;
 };
@@ -110,7 +111,7 @@ const changesRaw = params => {
 const changesRawCount = params => {
   const countParams = _.omit(params, ['limit', 'offset']);
   return `SELECT
-    COUNT(DISTINCT "Change.uuid") AS "ChangesCount"
+    COUNT("Change.uuid") AS "ChangesCount"
     FROM (
       ${changesRaw(countParams)}
     )`;

@@ -6,25 +6,28 @@ import {Cell} from 'fixed-data-table';
 import MetaText from './MetaText.jsx';
 import {shortFormatDateTime} from '../util/stringformat.js';
 
-export const TextCell = ({rowIndex, data, col}) => (
-  <Cell>{data[rowIndex][col]}</Cell>
+export const TextCell = ({rowIndex, data, col, ...props}) => (
+  <Cell {...props}>{data[rowIndex][col]}</Cell>
 );
 
-export const LinkCell = ({rowIndex, data, col, route}) =>  {
+export const LinkCell = ({rowIndex, data, col, route, ...props}) =>  {
   const value = data[rowIndex][col] || '';
   const linkTo = `${route}/${value}`;
   if (value) {
-    return <Cell><Link to={linkTo}>{value}</Link></Cell>;
+    return <Cell {...props}><Link to={linkTo}>{value}</Link></Cell>;
   }
-  return <TextCell rowIndex={rowIndex} data={data} col={col} />;
+  return <TextCell {...props} rowIndex={rowIndex} data={data} col={col} />;
 };
 
-export const DateCell = ({rowIndex, data, col}) => {
+export const DateCell = ({rowIndex, data, col, ...props}) => {
   const dateStr = data[rowIndex][col];
-  return (<Cell>{shortFormatDateTime(dateStr)}</Cell>);
+  return (<Cell {...props}>{shortFormatDateTime(dateStr)}</Cell>);
 };
 
-export const MetadataCell = ({rowIndex, data, col, metadata}) => {
+export const MetadataCell = ({rowIndex, data, col, metadata, ...props}) => {
   const metaKey = data[rowIndex][col];
-  return <Cell><MetaText metadata={metadata} metaKey={metaKey} /></Cell>;
+  return (
+      <Cell {...props}>
+        <MetaText metadata={metadata} metaKey={metaKey} />
+      </Cell>);
 };

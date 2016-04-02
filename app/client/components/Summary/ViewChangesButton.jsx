@@ -1,21 +1,15 @@
-import React from 'react';
+'use strict';
+
+import React from 'react'; // eslint-disable-line no-unused-vars
 import Link from 'react-router/lib/Link';
+import SideMenuButton from '../SideMenu/SideMenuButton';
 
-const ChangesButton = () => {
-
-  const buttonStyle = {
-    display: 'inline-block'
-  };
-
+export const ChangesButton = () => {
   return (
     <Link to="/changes">
-      <button
-        className='pure-button'
-        style={buttonStyle}>
-        View Changes
-      </button>
+      <SideMenuButton>View Details</SideMenuButton>
     </Link>
-  )
-}
+  );
+};
 
 export default ChangesButton;

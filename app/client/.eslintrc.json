@@ -1,0 +1,26 @@
+{
+  "extends": "../../.eslintrc.json",
+  "globals": {
+    "process": true,
+    "module": true
+  },
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": false
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0,
+    "no-console": 1
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "plugins": ["babel"]
+}

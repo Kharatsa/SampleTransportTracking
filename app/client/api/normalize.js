@@ -2,12 +2,11 @@
 
 import {arrayOf, normalize} from 'normalizr';
 import {Map as ImmutableMap, Seq, List} from 'immutable';
-import {
-  changeInclude, sample, metadata, sampleInclude
-} from './schemas.js';
+import {changeInclude, metadata} from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
-  KeyValueMetaRecord, FacilityMetaRecord, SummaryTotal, ArtifactsCount, LabTestsCount
+  KeyValueMetaRecord, FacilityMetaRecord,
+  SummaryTotal, ArtifactsCount, LabTestsCount
 } from './records.js';
 
 /**
@@ -49,13 +48,6 @@ export const normalizeMetadata = data => {
     rejections: normalizeMeta(data.rejections, KeyValueMetaRecord),
     stages: normalizeMeta(data.stages, KeyValueMetaRecord)
   });
-};
-
-export const normalizeSamples = ({data, count}) => {
-  const {entities, result} = normalize(data, arrayOf(sample));
-  const samples = makeImmutable(entities.samples, SampleRecord);
-  const sampleIds = Seq(result);
-  return {samples, sampleIds, count};
 };
 
 /**
@@ -111,15 +103,17 @@ export const normalizeChanges = ({data, count}) => {
   return {changes, changeIds, artifacts, labTests, samples, count};
 };
 
-const normalizeArtifacts = artifacts => {
-  return Seq(artifacts).map(artifact => new ArtifactsCount(artifact));
-}
+const normalizeArtifacts = artifacts =>
+  Seq(artifacts).map(artifact => new ArtifactsCount(artifact));
 
-const normalizeLabTests = labTests => {
-  return Seq(labTests).map(labTest => new LabTestsCount(labTest));
-}
+const normalizeLabTests = labTests =>
+  Seq(labTests).map(labTest => new LabTestsCount(labTest));
 
 export const normalizeSummary = data => {
   const {artifacts, labTests, totals} = data;
-  return {artifacts: normalizeArtifacts(artifacts), labTests: normalizeLabTests(labTests), totals: new SummaryTotal(totals)};
-}
+  return {
+    artifacts: normalizeArtifacts(artifacts),
+    labTests: normalizeLabTests(labTests),
+    totals: new SummaryTotal(totals)
+  };
+};

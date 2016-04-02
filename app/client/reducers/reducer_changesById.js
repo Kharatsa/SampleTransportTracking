@@ -1,7 +1,7 @@
-import { RECEIVE_CHANGES, RECEIVE_SAMPLE_DETAIL } from '../actions/actions.js';
-import { Map as ImmutableMap } from 'immutable';
+import {RECEIVE_CHANGES, RECEIVE_SAMPLE_DETAIL} from '../actions/actions.js';
+import {Map as ImmutableMap} from 'immutable';
 
-const changesById = (state=ImmutableMap(), action) => {
+export const changesById = (state=ImmutableMap(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.changes;

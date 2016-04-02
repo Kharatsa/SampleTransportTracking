@@ -1,5 +1,5 @@
-import { RECEIVE_CHANGES, RECEIVE_SAMPLE_DETAIL } from '../actions/actions.js';
-import { Map as ImmutableMap } from 'immutable';
+import {RECEIVE_CHANGES, RECEIVE_SAMPLE_DETAIL} from '../actions/actions.js';
+import {Map as ImmutableMap} from 'immutable';
 
 const samplesById = (state=ImmutableMap(), action) => {
   switch (action.type) {

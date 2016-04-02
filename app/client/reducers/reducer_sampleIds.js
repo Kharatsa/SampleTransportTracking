@@ -1,5 +1,5 @@
-import { RECEIVE_SAMPLE_DETAIL, RECEIVE_CHANGES} from '../actions/actions.js';
-import { Seq } from 'immutable';
+import {RECEIVE_SAMPLE_DETAIL, RECEIVE_CHANGES} from '../actions/actions.js';
+import {Seq} from 'immutable';
 
 const sampleIds = (state=Seq(), action) => {
   switch (action.type) {

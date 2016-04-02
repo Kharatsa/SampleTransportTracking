@@ -14,7 +14,7 @@ const lowerCaseQueryKeys = normalizequery.lowerCaseQueryKeys();
 const pageOffset = offset(client.changes.limit);
 
 const handleChangesReq = (req, res, next) => {
-  return client.changes.allChanges({data: {
+  return client.changes.allChangesAndCount({data: {
     sampleId: req.params.sampleId,
     facilityKey: req.params.facilityKey,
     regionKey: req.params.regionKey,
@@ -26,20 +26,59 @@ const handleChangesReq = (req, res, next) => {
   .catch(next);
 };
 
-router.get('/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
-);
+const handleChangesExport = (req, res, next) => {
+  return client.changes.allChanges({
+    csvResult: true,
+    unlimited: true,
+    data: {
+      sampleId: req.params.sampleId,
+      facilityKey: req.params.facilityKey,
+      regionKey: req.params.regionKey,
+      afterDate: req.query.afterdate,
+      beforeDate: req.query.beforedate
+    }})
+  .then(results => res.send(results))
+  .catch(next);
+};
 
-router.get('/ids/:sampleId/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
-);
+const prepCSVRes = (req, res, next) => {
+  res.set({
+    'Content-Disposition': `attachment; filename=changes-${Date.now()}.csv`,
+    'Content-type': 'text/csv'
+  });
+  next();
+};
+
+router.get('/changes.csv',
+  pageOffset, lowerCaseQueryKeys, dateRange, prepCSVRes, handleChangesExport);
+
+router.get('/ids/:sampleId/changes.csv',
+  pageOffset, lowerCaseQueryKeys, dateRange, prepCSVRes, handleChangesExport);
+
+router.get('/facility/:facilityKey/changes.csv',
+  pageOffset, lowerCaseQueryKeys, dateRange, prepCSVRes, handleChangesExport);
+
+router.get('/region/:regionKey/changes.csv',
+  pageOffset, lowerCaseQueryKeys, dateRange, prepCSVRes, handleChangesExport);
+
+router.get('/changes',
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
 
 router.get('/facility/:facilityKey/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
-);
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
 
 router.get('/region/:regionKey/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
-);
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
+
+const handleSampleChangesReq = (req, res, next) => {
+  return client.changes.allChangesAndCount({
+    unlimited: true,
+    data: {sampleId: req.params.sampleId}})
+  .then(results => res.json(results))
+  .catch(next);
+};
+
+// Always return all the changes for an individual Sample ID
+router.get('/ids/:sampleId/changes', handleSampleChangesReq);
 
 module.exports = router;
