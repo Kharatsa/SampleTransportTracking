@@ -28,8 +28,6 @@ export const TOGGLE_MENU = 'TOGGLE_MENU';
 
 export const CHANGE_SUMMARY_FILTER = 'CHANGE_SUMMARY_FILTER';
 
-export const CHANGE_SUMMARY_FILTER = 'CHANGE_SUMMARY_FILTER';
-
 /*
  * other constants
  */

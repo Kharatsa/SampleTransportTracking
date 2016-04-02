@@ -1,6 +1,7 @@
 'use strict';
 
 import {combineReducers} from 'redux';
+
 import IsFetchingDataReducer from './reducer_isFetchingData';
 import MetadataReducer from './reducer_metadata';
 import SelectedSampleIdReducer from './reducer_selectedSampleId';

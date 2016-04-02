@@ -1,7 +1,6 @@
 'use strict';
 
 import {combineReducers} from 'redux';
-
 import {RECEIVE_SUMMARY} from '../actions/actions.js';
 import {SummaryTotal} from '../api/records';
 import {Seq} from 'immutable';

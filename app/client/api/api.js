@@ -61,6 +61,7 @@ export const filteredURL = (endpoint, summaryFilter, page=null) => {
   return `/stt/${endpoint}${paramsPart}${queryPart}${pagePart}`;
 };
 
+
 export const getSampleDetail = (sampleId, callback) => {
   if (typeof sampleId === 'undefined') {
     throw new Error(`Missing required options.sampleId parameter`);
@@ -84,7 +85,6 @@ export const getChanges = (filter, page=1, callback) => {
     callback(null, normalizeChanges(res.json));
   });
 };
-
 
 export const getSummary = (filter, callback) => {
   const url = filteredURL('summary', filter);
