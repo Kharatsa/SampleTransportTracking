@@ -59,3 +59,32 @@ export const Page = Record({
   last: null,
   current: 1
 });
+
+export const SummaryFilter = Record({
+  afterDate: null,
+  beforeDate: null,
+  regionKey: null,
+  facilityKey: null
+});
+
+export const SummaryTotal = Record({
+  artifactsCount:null,
+  labTestsCount:null,
+  sampleIdsCount:null
+});
+
+export const ArtifactsCount = Record({
+  stage:null,
+  status:null,
+  artifactType:null,
+  sampleIdsCount:0,
+  artifactsCount:0
+});
+
+export const LabTestsCount = Record({
+  status:null,
+  testType:null,
+  testRejection:null,
+  sampleIdsCount:0,
+  labTestsCount:0
+});
