@@ -81,7 +81,27 @@ const recomposeRawChanges = rawChange => {
   });
 };
 
+const csvHeader = rawChange => {
+  let result = [];
+  if (typeof rawChange !== 'undefined') {
+    result = Object.keys(rawChange);
+  }
+  return BPromise.resolve(result);
+};
+
+const escapeCommas = val => {
+  if (val && val.length) {
+    return val.replace(/,/g, '\\,');
+  }
+  return val;
+};
+
+const csvRow = (keys, rawChange) => {
+  return BPromise.map(keys, key => rawChange[key])
+  .map(escapeCommas)
+  .then(row => row.join(','));
+};
 
 module.exports = {
-  recomposeRawChanges
+  recomposeRawChanges, csvHeader, csvRow
 };

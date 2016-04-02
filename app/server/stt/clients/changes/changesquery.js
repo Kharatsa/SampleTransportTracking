@@ -98,7 +98,6 @@ const changesRaw = params => {
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-
     ORDER BY c.statusDate DESC
     ${rawqueryutils.limitOffsetExpression(params)}`;
 };
@@ -110,7 +109,7 @@ const changesRaw = params => {
 const changesRawCount = params => {
   const countParams = _.omit(params, ['limit', 'offset']);
   return `SELECT
-    COUNT(DISTINCT "Change.uuid") AS "ChangesCount"
+    COUNT("Change.uuid") AS "ChangesCount"
     FROM (
       ${changesRaw(countParams)}
     )`;

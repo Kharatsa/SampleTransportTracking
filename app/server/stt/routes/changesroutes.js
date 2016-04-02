@@ -14,7 +14,7 @@ const lowerCaseQueryKeys = normalizequery.lowerCaseQueryKeys();
 const pageOffset = offset(client.changes.limit);
 
 const handleChangesReq = (req, res, next) => {
-  return client.changes.allChanges({data: {
+  return client.changes.allChangesAndCount({data: {
     sampleId: req.params.sampleId,
     facilityKey: req.params.facilityKey,
     regionKey: req.params.regionKey,
@@ -26,20 +26,48 @@ const handleChangesReq = (req, res, next) => {
   .catch(next);
 };
 
+const handleChangesExport = (req, res, next) => {
+  return client.changes.allChanges({noLimit: true, data: {
+    sampleId: req.params.sampleId,
+    facilityKey: req.params.facilityKey,
+    regionKey: req.params.regionKey,
+    afterDate: req.query.afterdate,
+    beforeDate: req.query.beforedate
+  }})
+  .then(results => res.send(results))
+  .catch(next);
+};
+
+const prepCSVRes = (req, res, next) => {
+  res.set({
+    'Content-Disposition': `attachment; filename=changes-${Date.now()}.csv`,
+    'Content-type': 'text/csv'
+  });
+  next();
+};
+
+router.get('/changes.csv',
+  pageOffset, lowerCaseQueryKeys, dateRange, prepCSVRes, handleChangesExport);
+
+router.get('/ids/:sampleId/changes.csv',
+  pageOffset, lowerCaseQueryKeys, dateRange, prepCSVRes, handleChangesExport);
+
+router.get('/facility/:facilityKey/changes.csv',
+  pageOffset, lowerCaseQueryKeys, dateRange, prepCSVRes, handleChangesExport);
+
+router.get('/region/:regionKey/changes.csv',
+  pageOffset, lowerCaseQueryKeys, dateRange, prepCSVRes, handleChangesExport);
+
 router.get('/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
-);
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
 
 router.get('/ids/:sampleId/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
-);
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
 
 router.get('/facility/:facilityKey/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
-);
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
 
 router.get('/region/:regionKey/changes',
-  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq
-);
+  pageOffset, lowerCaseQueryKeys, dateRange, handleChangesReq);
 
 module.exports = router;
