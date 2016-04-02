@@ -1,28 +1,30 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
+'use strict';
+
+import React from 'react';
+import WaitOnFetch from '../../containers/wrappers/WaitOnFetch.jsx';
 import TotalCountsTable from './TotalCountsTable';
-import WaitOnFetch from '../../containers/wrap/WaitOnFetch.jsx';
 
 const TotalCountsTableWrapped = WaitOnFetch(TotalCountsTable);
 
-class TotalCounts extends React.Component {
-
+export const TotalCounts = React.createClass({
   componentWillMount() {
-    const {summaryFilter} = this.props;
-    const {fetchSummary} = this.props.actions;
-    fetchSummary(summaryFilter);
-  }
+    this.update(this.props.summaryFilter);
+  },
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.summaryFilter !== this.props.summaryFilter) {
-      const {fetchSummary} = this.props.actions;
-      fetchSummary(nextProps.summaryFilter);
+      this.update(nextProps.summaryFilter);
     }
-  }
+  },
+
+  update(filter) {
+    const {fetchSummary} = this.props.actions;
+    fetchSummary(filter);
+  },
 
   render() {
-    return <TotalCountsTable {...this.props} />;
+    return <TotalCountsTableWrapped {...this.props} />;
   }
-
-}
+});
 
 export default TotalCounts;

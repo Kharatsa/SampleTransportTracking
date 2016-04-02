@@ -1,12 +1,12 @@
 'use strict';
 
 import React from 'react'; // eslint-disable-line no-unused-vars
-import SampleBasics from './SampleBasics.jsx';
-import SampleStage from './SampleStage.jsx';
-import SampleArtifacts from './SampleArtifacts.jsx';
-import SampleTests from './SampleTests.jsx';
-import ChangesTable from '../ChangesTable.jsx';
-import WindowSizeListener from '../../containers/wrap/WindowSizeListener.jsx';
+import SampleBasics from './SampleBasics';
+import SampleStage from './SampleStage';
+import SampleArtifacts from './SampleArtifacts';
+import SampleTests from './SampleTests';
+import ChangesTable from '../ChangesTable';
+import WindowSizeListener from '../../containers/wrappers/WindowSizeListener';
 
 const FlexChangesTable = WindowSizeListener(ChangesTable, {height: false});
 

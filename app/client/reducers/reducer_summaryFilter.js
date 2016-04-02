@@ -1,5 +1,5 @@
-import { CHANGE_SUMMARY_FILTER } from '../actions/actions.js';
-import { SummaryFilter } from '../api/records';
+import {CHANGE_SUMMARY_FILTER} from '../actions/actions.js';
+import {SummaryFilter} from '../api/records';
 import Moment from 'moment';
 
 const summaryFilter = (state=SummaryFilter({

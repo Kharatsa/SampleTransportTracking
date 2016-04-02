@@ -8,7 +8,11 @@ import {changeWindowSize} from '../../actions/actioncreators.js';
 
 const DEBOUNCE_MILLIS = 16;
 const NARROW_WIDTH_BUFFER = 0;
-const WIDE_WIDTH_BUFFER = 75;
+
+
+const WIDTH_BUFFER_MENU = 275;
+const WIDTH_BUFFER = 75;
+
 const HEIGHT_BUFFER = 200;
 
 /**
@@ -21,7 +25,9 @@ const HEIGHT_BUFFER = 200;
  */
 export const WindowSizeListen = (Component, options) => {
   // Defaults
-  options = Object.assign({}, {width: true, height: true}, options);
+  options = options || {};
+  const {width=true, height=true, isMenuPage=false} = options;
+  const widthBuffer = isMenuPage ? WIDTH_BUFFER_MENU : WIDTH_BUFFER;
 
   const Wrapped = React.createClass({
     mixins: [PureRenderMixin],
@@ -63,7 +69,7 @@ export const WindowSizeListen = (Component, options) => {
       const win = window;
 
       const widthOffset = (
-        win.innerWidth < 680 ? NARROW_WIDTH_BUFFER : WIDE_WIDTH_BUFFER);
+        win.innerWidth < 680 ? NARROW_WIDTH_BUFFER : widthBuffer);
       const newWidth = win.innerWidth - widthOffset;
       const newHeight = win.innerHeight - HEIGHT_BUFFER;
 
@@ -80,10 +86,10 @@ export const WindowSizeListen = (Component, options) => {
   return connect(
     state => {
       let result = {};
-      if (options.width) {
+      if (width) {
         result.width = state.windowSize.get('innerWidth');
       }
-      if (options.height) {
+      if (height) {
         result.height = state.windowSize.get('innerHeight');
       }
       return result;

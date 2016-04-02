@@ -1,4 +1,4 @@
-import { RECEIVE_SAMPLE_DETAIL } from '../actions/actions.js';
+import {RECEIVE_SAMPLE_DETAIL} from '../actions/actions.js';
 
 const selectedSampleId = (state=null, action) => {
   switch (action.type) {

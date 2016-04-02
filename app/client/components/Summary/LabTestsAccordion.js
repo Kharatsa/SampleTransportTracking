@@ -1,8 +1,9 @@
-import React from 'react';
+'use strict';
+
+import React from 'react'; // eslint-disable-line no-unused-vars
 import TotalCountsAccordion from './TotalCountsAccordion';
 
-const LabTestsAccordion = ({labTests, metadata}) => {
-
+export const LabTestsAccordion = ({labTests, metadata}) => {
   return (
     <TotalCountsAccordion
       items={labTests}
@@ -13,10 +14,7 @@ const LabTestsAccordion = ({labTests, metadata}) => {
       innerMetadataKey={'labTests'}
       itemCountsKey={'labTestsCount'}
     />
-  )
-
-
-
-}
+  );
+};
 
 export default LabTestsAccordion;

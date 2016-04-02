@@ -5,10 +5,13 @@ import {
   FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA,
   FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
   FETCH_SUMMARY, FETCH_SUMMARY_FAILURE, RECEIVE_SUMMARY,
-  CHANGE_WINDOW_SIZE, CHANGE_SUMMARY_FILTER
+  CHANGE_WINDOW_SIZE, TOGGLE_MENU,
+  CHANGE_SUMMARY_FILTER
 } from './actions.js';
 import * as api from '../api';
 import {WindowSize, SummaryFilter} from '../api/records.js';
+
+export const toggleMenu = () => ({type: TOGGLE_MENU});
 
 const requestMetadata = () => ({type: FETCH_METADATA});
 
@@ -71,7 +74,6 @@ const fetchChangesFailure = (error, page) => ({
 });
 
 export const fetchChanges = (summaryFilter, page) => {
-  // console.log(summaryFilter);
   page = Number.parseInt(page || 1);
   console.log('page in fetch changes ', page);
   return dispatch => {

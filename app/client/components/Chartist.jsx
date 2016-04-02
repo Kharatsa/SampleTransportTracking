@@ -4,7 +4,7 @@ import React, {PropTypes} from 'react';
 import Chartist from 'chartist';
 
 /*
- * via https://github.com/fraserxu/react-chartist
+ * adapted from https://github.com/fraserxu/react-chartist
  */
 
 export const ChartistGraph = React.createClass({
@@ -64,7 +64,6 @@ export const ChartistGraph = React.createClass({
           }
         }
       }
-
     }
 
     return this.chartist;

@@ -1,12 +1,14 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
-import {List} from 'immutable';
+'use strict';
 
+import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {List} from 'immutable';
 import DatePicker from 'react-datepicker';
 import Moment from 'moment';
-
 import SummaryFilterVerticalMenu from './SummaryFilterVerticalMenu';
 
-class SummaryFilter extends React.Component {
+export const SummaryFilter = React.createClass({
+  mixins: [PureRenderMixin],
 
   render() {
     const {afterDate, beforeDate, regionKey, facilityKey} = this.props.summaryFilter;
@@ -31,9 +33,9 @@ class SummaryFilter extends React.Component {
           beforeDate,
           key,
           facilityKey
-        )
+        );
       }
-    }
+    };
 
     //disable facilities control unless a region has been selected??
     //first, filter facilities by selected region
@@ -43,11 +45,11 @@ class SummaryFilter extends React.Component {
       if (facilitiesMap) {
         if (regionKey) {
           return facilitiesMap.toList().sortBy(rec => rec.get('value')).filter( (rec) => {
-            return (regionKey === rec.get('region'))
-          })
+            return (regionKey === rec.get('region'));
+          });
         }
         else {
-          return facilitiesMap.toList().sortBy(rec => rec.get('value'))
+          return facilitiesMap.toList().sortBy(rec => rec.get('value'));
         }
 
       }
@@ -63,9 +65,9 @@ class SummaryFilter extends React.Component {
           beforeDate,
           regionKey,
           key
-        )
+        );
       }
-    }
+    };
 
     const afterDateSelection = (ad) => {
       //minimum before date is afterDate + 1 day
@@ -74,22 +76,22 @@ class SummaryFilter extends React.Component {
         var bd = (() => {
           const minBeforeDate = ad.clone().add(1, 'day');
           if ( beforeDate <= minBeforeDate ) {
-            return minBeforeDate
+            return minBeforeDate;
           }
           else {
-            return beforeDate
+            return beforeDate;
           }
-        })()
+        })();
 
         changeSummaryFilter(
           ad,
           bd,
           regionKey,
           facilityKey
-        )
+        );
       }
 
-    }
+    };
 
     const beforeDateSelection = (bd) => {
       //maximum afterDate date is beforeDate - 1 day
@@ -99,23 +101,21 @@ class SummaryFilter extends React.Component {
         var ad = (() => {
           const maxAfterDate = bd.clone().subtract(1, 'day');
           if ( afterDate >= maxAfterDate ) {
-            return maxAfterDate
+            return maxAfterDate;
           }
           else {
-            return afterDate
+            return afterDate;
           }
-        })()
+        })();
 
         changeSummaryFilter(
           ad,
           bd,
           regionKey,
           facilityKey
-        )
+        );
       }
-
-
-    }
+    };
 
     return (
       <div className="pure-g">
@@ -146,7 +146,6 @@ class SummaryFilter extends React.Component {
       </div>
     );
   }
-}
-
+});
 
 export default SummaryFilter;

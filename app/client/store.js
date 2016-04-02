@@ -4,7 +4,7 @@ import {createStore, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import reducers from './reducers';
-import DevTools from './containers/DevTools.jsx';
+import DevTools from './components/DevTools';
 
 let enhancer;
 if (process.env.NODE_ENV !== 'production') {

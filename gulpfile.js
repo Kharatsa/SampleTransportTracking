@@ -23,7 +23,7 @@ const opts = Object.assign({}, watchify.args, browserifyOptions);
 var bundler = browserify(opts);
 bundler.transform(babelify.configure({
   presets: ['react', 'es2015'],
-  plugins: []
+  plugins: ['transform-object-rest-spread']
 }));
 
 bundler.transform(envify({
@@ -39,8 +39,10 @@ function bundle() {
     .on('error', $.util.log.bind($.util, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(buffer())
+    .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.init({loadMaps: true}))
       .pipe(IS_PRODUCTION ? uglify() : $.util.noop())
       .pipe($.filesize())
+    .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.write('./'))
     .pipe(gulp.dest(config.server.PUBLIC_PATH));
 }
 

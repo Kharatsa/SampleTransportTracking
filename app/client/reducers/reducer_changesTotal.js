@@ -1,6 +1,6 @@
-import { RECEIVE_CHANGES, RECEIVE_SAMPLE_DETAIL } from '../actions/actions.js';
+import {RECEIVE_CHANGES, RECEIVE_SAMPLE_DETAIL} from '../actions/actions.js';
 
-const changesTotal = (state=null, action) => {
+export const changesTotal = (state=null, action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.count;

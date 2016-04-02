@@ -1,8 +1,8 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
-import { RECEIVE_SUMMARY } from '../actions/actions.js';
-import { SummaryTotal, ArtifactsCount, ArtifactsCountDetail } from '../api/records';
-import { Seq } from 'immutable';
+import {RECEIVE_SUMMARY} from '../actions/actions.js';
+import {SummaryTotal, ArtifactsCount, ArtifactsCountDetail} from '../api/records';
+import {Seq} from 'immutable';
 
 const totals = (state=SummaryTotal({}), action) => {
   switch(action.type) {

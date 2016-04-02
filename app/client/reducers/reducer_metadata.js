@@ -1,5 +1,5 @@
-import { RECEIVE_METADATA } from '../actions/actions.js';
-import { Map as ImmutableMap } from 'immutable';
+import {RECEIVE_METADATA} from '../actions/actions.js';
+import {Map as ImmutableMap} from 'immutable';
 
 const metadata = (state=ImmutableMap(), action) => {
   switch (action.type) {
