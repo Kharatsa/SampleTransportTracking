@@ -15,8 +15,6 @@ const ModelClient = require('app/server/stt/clients/modelclient.js');
  * @param {!Sequelize.Model} options.models.Users [description]
  */
 function AuthClient(options) {
-  log.debug('Creating STTClient');
-
   if (!options.db) {
     throw new Error('Database is a required parameter');
   }

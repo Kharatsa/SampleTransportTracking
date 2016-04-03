@@ -17,9 +17,6 @@ export const MissingSampleDetail = ({sampleId}) => {
       </div>
   );
 
-  // const body = `No ST ID or Lab ID "${sampleId || ''}" exists ` +
-  //              `in the Sample Tracking database`;
-
   return (
     <div className='pure-g'>
       <div className={gridClass} />

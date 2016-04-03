@@ -19,21 +19,6 @@ log.info(`Masking ODK Aggregate backup server with url ${ODK_MASK_URL}`);
 
 const lowerCaseQueryKeys = normalizequery.lowerCaseQueryKeys();
 
-let passport = null;
-let authenticate = null;
-if (process.env.NODE_ENV === 'production') {
-  log.info('Aggregate routes require authentication');
-  passport = require('app/server/auth/httpauth.js');
-  authenticate = passport.authenticate('basic', {session: false});
-} else {
-  log.info('Aggregate routes authentication disabled');
-  authenticate = (req, res, next) => {
-    req.user = 'test';
-    log.debug(`request username=${req.user}`);
-    next();
-  };
-}
-
 const prepareXMLResponse = (res, statusCode, body) => {
   res.set({'Content-Type': 'text/xml', 'Content-Length': body.length});
   res.status(statusCode);
@@ -61,7 +46,7 @@ const swapHostnames = (xml, fromHost, toHost) => {
   });
 };
 
-router.all('*', aggregate.setOpenRosaHeaders, authenticate);
+router.all('*', aggregate.setOpenRosaHeaders);
 
 router.head('/formList', handleHeadRequest);
 

@@ -3,7 +3,7 @@
 import React from 'react';
 
 const stripTrim = str => {
-  return str ? str.trim().split().join('') : '';
+  return str ? str.trim().split(' ').join('') : '';
 };
 
 export const SampleSearch = React.createClass({

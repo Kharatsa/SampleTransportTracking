@@ -45,12 +45,5 @@ module.exports = () => {
   .mapSeries(preload.metadata)
   .then(() => log.info('Metadata preload completed'))
   .catch(err => log.error(err, err.stack));
-
-  if (process.env.NODE_ENV === 'development') {
-    const fakedata = require('../../test/utils/fakedata.js');
-    return preloadMetadata.then(() => fakedata.load())
-    .catch(err => log.error(err, err.message));
-  }
-
   return preloadMetadata;
 };

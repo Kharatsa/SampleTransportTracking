@@ -5,12 +5,9 @@ import {Sample} from '../containers';
 import Header from '../components/Header';
 
 export const SamplePage = (props) => {
-  const {appName} = props;
-  // React.createElement(Sample, props)
-
   return (
     <div>
-      <Header appName={appName} />
+      <Header appName={props.appName} />
       <Sample {...props} />
     </div>);
 };

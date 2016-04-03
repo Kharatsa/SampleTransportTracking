@@ -17,12 +17,20 @@ const beforeDefaults = options => {
       process.env.NODE_ENV = 'production';
     }
 
+    log.debug('clibefore models', models);
+
     const config = require('app/config');
+    // Turn off detailed query logging when running CLI scripts
     const dbConfig = Object.assign({}, config.db, {logging: false});
 
     return BPromise.resolve()
     .then(() => storage.init({config: dbConfig}))
-    .then(() => storage.loadModels(models))
+    .then(() => {
+      if (Array.isArray(models)) {
+        return models.forEach(m => storage.loadModels(m));
+      }
+      return storage.loadModels(models);
+    })
     .then(() => storage.db.sync())
     .then(() => (storage));
   };

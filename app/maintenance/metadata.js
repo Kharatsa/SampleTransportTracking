@@ -6,11 +6,12 @@ const cli = require('commander');
 const BPromise = require('bluebird');
 const log = require('app/server/util/logapp.js');
 const metamodels = require('app/server/stt/models/metadata');
+const sttmodels = require('app/server/stt/models');
 const metaclients = require('app/server/stt/clients/metadata');
 const beforecli= require('./utils/clibefore.js');
 const clireport = require('./utils/clireport.js');
 
-const before = beforecli({models: metamodels});
+const before = beforecli({models: [metamodels, sttmodels]});
 
 cli.option('-d --development', 'Run commands on development database ' +
            '(default: production');
@@ -194,6 +195,20 @@ const handleDescribe = type => {
 cli.command('describe <type>')
   .description('Describe the metadata table schema by type.')
   .action(handleDescribe);
+
+
+const loadcsv = () => {
+  return before({dev: cli.development})
+  .then(() => {
+    const prepareserver = require('app/server/prepareserver.js');
+    return prepareserver();
+  })
+  .then(() => log.info('Finished server preload'));
+};
+
+cli.command('reloadcsv')
+  .description('Reload all CSV files')
+  .action(loadcsv);
 
 cli.on('--help', () => {
   console.log('  Valid metadata types:');

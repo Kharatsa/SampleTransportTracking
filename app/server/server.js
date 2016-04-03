@@ -11,9 +11,9 @@ storage.init({config: config.db});
 const metamodels = require('app/server/stt/models/metadata');
 const sttmodels = require('app/server/stt/models');
 const authmodels = require('app/server/auth/models');
-storage.loadModels(authmodels);
 storage.loadModels(metamodels);
 storage.loadModels(sttmodels);
+storage.loadModels(authmodels);
 const errors = require('app/server/middleware/errors.js');
 const shutdownhandler = require('app/server/util/shutdownhandler.js');
 const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
@@ -34,6 +34,16 @@ if (process.env.NODE_ENV === 'production') {
   app.set('json spaces', 2);
 }
 
+const passport = require('app/server/auth/httpauth.js');
+const authenticate = passport.authenticate('basic', {session: false});
+
+if (config.server.AUTH_ENABLED && process.env.NODE_ENV === 'production') {
+  log.info('Enabled required authentication on all routes');
+  app.all('*', authenticate);
+} else {
+  log.warn('Authentication disabled on all routes');
+}
+
 app.use(express.static(config.server.PUBLIC_PATH));
 log.info('Serving static files from', config.server.PUBLIC_PATH);
 app.use(favicon(config.server.PUBLIC_PATH + '/favicon.ico'));
@@ -50,8 +60,13 @@ app.get('/*', (req, res) => {
   res.sendFile(`${config.server.PUBLIC_PATH}/index.html`);
 });
 
-prepareserver()
-.then(() => log.info('Finished server preload'));
+if (process.env.NODE_ENV === 'development') {
+  const fakedata = require('../../test/utils/fakedata.js');
+  prepareserver()
+  .then(() => fakedata.load())
+  .catch(err => log.error(err, err.message))
+  .then(() => log.info('Finished server preload'));
+}
 
 app.use(errors.handleErrors);
 

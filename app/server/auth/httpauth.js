@@ -17,7 +17,7 @@ const client = authclient({db: storage.db, models: storage.models});
 // with a user object, which will be set at `req.user` in route handlers after
 // authentication.
 passport.use(new BasicStrategy(
-  function(username, password, callback) {
+  (username, password, callback) => {
     log.info(`Authenticating username=${username}`);
     return client.getUser({username})
     .then(user => {
