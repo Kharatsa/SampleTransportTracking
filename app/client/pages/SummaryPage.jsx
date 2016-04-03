@@ -1,15 +1,18 @@
 'use strict';
 
 import React from 'react'; // eslint-disable-line no-unused-vars
+import WaitOnFetch from '../containers/wrappers/WaitOnFetch';
 import {SideMenuLayout, SummaryFilter, TotalCounts} from '../containers';
 import {SampleSearch, ViewChangesButton} from '../components/SummaryControls/';
+
+const WrappedFilterControls = WaitOnFetch(SummaryFilter);
 
 export const SummaryPage = (props) => {
   const {appName, history} = props;
 
   const filterView = (
     <div className='panel'>
-      <SummaryFilter />
+      <WrappedFilterControls />
     </div>
   );
 

@@ -11,6 +11,8 @@ function MetaClient(options) {
 }
 util.inherits(MetaClient, ModelClient);
 
+const DEFAULT_SORT = [['value', 'ASC']];
+
 /**
  * @param  {QueryOptions} options
  * @return {Promise.<Array.<Object>>}
@@ -31,11 +33,11 @@ MetaClient.prototype.create = BPromise.method(function(options) {
 
 MetaClient.prototype.byKey = function(options) {
   return metaquery.key(options.data)
-  .then(where => this.Model.findAll({where}));
+  .then(where => this.Model.findAll({where, order: DEFAULT_SORT}));
 };
 
 MetaClient.prototype.all = function() {
-  return this.Model.findAll();
+  return this.Model.findAll({order: DEFAULT_SORT});
 };
 
 MetaClient.prototype.deleteByKey = function(options) {

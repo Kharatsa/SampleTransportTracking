@@ -26,8 +26,8 @@ export const locationURLParams = ({facilityKey, regionKey}) => {
     throw new Error('Both of facilityKey and regionKey cannot be passed');
   }
 
-  const facilityPart = facilityKey ? `/facility/${facilityKey}` : '';
-  const regionPart = regionKey ? `/region/${regionKey}` : '';
+  const facilityPart = facilityKey ? `facility/${facilityKey}/` : '';
+  const regionPart = regionKey ? `region/${regionKey}/` : '';
 
   // Only 1 of regionKey and facilityKey may be included
   return regionPart || facilityPart;
@@ -58,7 +58,7 @@ export const filteredURL = (endpoint, summaryFilter, page=null) => {
   const queryPart = dateURLParams(filterValues);
   const pagePart = pageURLParam({page, first: false});
 
-  return `/stt/${endpoint}${paramsPart}${queryPart}${pagePart}`;
+  return `/stt/${paramsPart}${endpoint}${queryPart}${pagePart}`;
 };
 
 

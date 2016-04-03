@@ -1,18 +1,18 @@
 'use strict';
 
-import {CHANGE_SUMMARY_FILTER} from '../actions/actions.js';
+import {CHANGE_SUMMARY_FILTER} from '../actions/actions';
 import {SummaryFilter} from '../api/records';
 import Moment from 'moment';
 
 const defaultAfterDate = Moment().subtract(1, 'months');
 const defaultBeforeDate = Moment();
 
-const defaultDateFilter = SummaryFilter({
+const defaultSummaryFilter = SummaryFilter({
   afterDate: defaultAfterDate,
   beforeDate: defaultBeforeDate
 });
 
-const summaryFilter = (state=defaultDateFilter, action) => {
+export const summaryFilter = (state=defaultSummaryFilter, action) => {
   switch (action.type) {
   case CHANGE_SUMMARY_FILTER:
     return action.summaryFilter;
@@ -20,5 +20,3 @@ const summaryFilter = (state=defaultDateFilter, action) => {
     return state;
   }
 };
-
-export default summaryFilter;
