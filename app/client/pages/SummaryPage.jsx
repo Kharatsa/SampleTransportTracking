@@ -2,9 +2,11 @@
 
 import React from 'react'; // eslint-disable-line no-unused-vars
 import {SideMenuLayout, SummaryFilter, TotalCounts} from '../containers';
-import SummaryControls from '../components/SummaryControls';
+import {SampleSearch, ViewChangesButton} from '../components/SummaryControls/';
 
-export const SummaryPage = ({appName}) => {
+export const SummaryPage = (props) => {
+  const {appName, history} = props;
+
   const filterView = (
     <div className='panel'>
       <SummaryFilter />
@@ -30,11 +32,15 @@ export const SummaryPage = ({appName}) => {
     </div>
   );
 
+  const summaryControls = [
+    <SampleSearch pushHistory={history.push} />, <ViewChangesButton />
+  ];
+
   return (
     <div>
       <SideMenuLayout
           menuHeader={appName}
-          menuItems={<SummaryControls />} >
+          menuItems={summaryControls} >
         {filterView}
         {combinedMetricsView}
       </SideMenuLayout>

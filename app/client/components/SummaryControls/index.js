@@ -1,5 +1,6 @@
 'use strict';
 
-import SummaryControls from './SummaryControls';
+import SampleSearch from './SampleSearch';
+import ViewChangesButton from './ViewChangesButton';
 
-export default SummaryControls;
+export {SampleSearch, ViewChangesButton};

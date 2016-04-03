@@ -44,7 +44,7 @@ var sanitizeUsername = BPromise.method(function(username) {
 const USERNAME_MAX_LENGTH = 50;
 
 AuthClient.prototype.all = function() {
-  log.debug(`Retrieving all Users`);
+  log.debug('Retrieving all Users');
   return this.models.Users.findAll();
 };
 

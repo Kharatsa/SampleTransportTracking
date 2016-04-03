@@ -140,7 +140,7 @@ const sttOptions = wrappedFunc => {
     } else {
       // When allow empty queries is false, and no data option parameter is
       // provided, resolve with an empty result array.
-      log.info(`Missing data query parameter. Returning empty result set`);
+      log.info('Missing data query parameter. Returning empty result set');
       query = BPromise.resolve([]);
     }
 

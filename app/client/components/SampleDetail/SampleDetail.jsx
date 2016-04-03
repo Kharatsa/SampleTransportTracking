@@ -7,10 +7,12 @@ import SampleArtifacts from './SampleArtifacts';
 import SampleTests from './SampleTests';
 import ChangesTable from '../ChangesTable';
 import WindowSizeListener from '../../containers/wrappers/WindowSizeListener';
+import MissingSample from './MissingSampleDetail';
 
 const FlexChangesTable = WindowSizeListener(ChangesTable, {height: false});
 
 export const SampleDetail = ({
+  routeParams,
   selectedSampleId, samplesById,
   changeIds, changesById,
   artifactsById, labTestsById,
@@ -84,7 +86,7 @@ export const SampleDetail = ({
     );
   }
 
-  return <span />;
+  return <MissingSample sampleId={routeParams.sampleId} />;
 };
 
 export default SampleDetail;

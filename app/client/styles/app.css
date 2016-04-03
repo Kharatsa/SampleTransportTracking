@@ -154,6 +154,22 @@ a {
   color: #FFF;
 }
 
+#menu
+.pure-menu-item {
+  border-bottom: 1px solid;
+  border-color: #3D4347;
+}
+
+#menu
+.pure-menu-item:last-child {
+  border-bottom: 0px;
+}
+
+.pure-menu label {
+  display: block;
+  padding-bottom: 0.5em;
+}
+
 .pure-menu-heading {
   font-weight: bold;
 }
@@ -161,12 +177,20 @@ a {
 .menu-title {
   font-size: 110%;
   line-height: 3em;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
+}
+
+.pure-menu-item {
+  padding: .5em .8em;
+}
+
+#menu
+.pure-button {
+  min-width: 160px;
 }
 
 .black-bg
 .pure-menu-item {
-  padding: .5em 1em;
   color: #EAEAEA;
 }
 
@@ -179,6 +203,11 @@ a {
 .pure-menu-link:hover,
 .pure-menu-link:focus {
   background-color: #3D4347;
+}
+
+.pure-menu-input {
+  line-height: 1.5em;
+  color: #32373A;
 }
 
 .pure-menu-link:active {

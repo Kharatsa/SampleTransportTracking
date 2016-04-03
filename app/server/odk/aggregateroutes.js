@@ -101,7 +101,7 @@ router.get('/view/submissionList',
   openRosaAcceptLength,
   lowerCaseQueryKeys,
   (req, res, next) => {
-    log.debug(`Requesting ODK submission list`);
+    log.debug('Requesting ODK submission list');
 
     let formId = req.query.formid;
     let numEntries = req.query.numentries;

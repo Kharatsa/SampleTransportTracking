@@ -24,9 +24,10 @@ const DEFAULT_PAGE = Page();
 
 export const paginationPage = (state=DEFAULT_PAGE, action) => {
   switch (action.type) {
-  case FETCH_CHANGES:
+  case FETCH_CHANGES: {
     const pageNum = Number(action.page || 1);
     return Page({last: state.current, current: pageNum});
+  }
   case FETCH_CHANGES_FAILURE:
     return Page({current: state.last});
   default:

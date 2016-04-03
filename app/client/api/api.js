@@ -64,7 +64,7 @@ export const filteredURL = (endpoint, summaryFilter, page=null) => {
 
 export const getSampleDetail = (sampleId, callback) => {
   if (typeof sampleId === 'undefined') {
-    throw new Error(`Missing required options.sampleId parameter`);
+    throw new Error('Missing required options.sampleId parameter');
   }
 
   return request(`/stt/ids/${sampleId}/changes`, (err, res) => {
