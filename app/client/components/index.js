@@ -4,7 +4,6 @@ import SideMenuLayout from './SideMenu/SideMenuLayout';
 import Changes from './Changes';
 import Sample from './Sample';
 import ChangesExportLink from './ChangesExportLink';
-import DropdownMenuSelect from './DropdownMenuSelect';
 
 export {
   App,
@@ -12,6 +11,5 @@ export {
   SideMenuLayout,
   Changes,
   ChangesExportLink,
-  Sample,
-  DropdownMenuSelect
+  Sample
 };

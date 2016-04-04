@@ -1,6 +1,5 @@
 import React from 'react';
 import Chartist from './Chartist';
-// import DropdownMenuSelect from './DropdownMenuSelect';
 import Select from 'react-select';
 
 export const TestChart = ({}) => {
