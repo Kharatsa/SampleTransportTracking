@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import MetaText from '../MetaText.jsx';
 import {shortFormatDate} from '../../util/stringformat.js';
 

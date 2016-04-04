@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import {Accordion, AccordionItem} from 'react-sanfona';
 
 const TotalCountsAccordion = ({items, metadata, outerItemKey, outerMetadataKey, innerItemKey, innerMetadataKey, itemCountsKey}) => {

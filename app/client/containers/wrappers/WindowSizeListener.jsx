@@ -1,10 +1,5 @@
-'use strict';
-
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {changeWindowSize} from '../../actions/actioncreators.js';
 
 const DEBOUNCE_MILLIS = 16;
 const NARROW_WIDTH_BUFFER = 0;
@@ -12,28 +7,44 @@ const WIDTH_BUFFER_MENU = 275;
 const WIDTH_BUFFER = 75;
 const HEIGHT_BUFFER = 200;
 
+const calculateSize = (widthBuffer) => {
+  const win = window;
+
+  const widthOffset = win.innerWidth < 680 ? NARROW_WIDTH_BUFFER : widthBuffer;
+
+  return {
+    width: win.innerWidth - widthOffset,
+    height: win.innerHeight - HEIGHT_BUFFER
+  };
+};
+
 /**
  * Wrapper Component that updates innerWidth and innerHeight in state
  *
  * @param  {React.Component} Component
  * @param  {Object} options
- * @param {boolean} [options.width=true]
- * @param {boolean} [options.height=true]
+ * @param {boolean} [options.changeWidth=true]
+ * @param {boolean} [options.changeHeight=true]
  * @param {boolean} [options.avoidSideMenu=false]
  * @return {React.Component}
  */
 export const WindowSizeListen = (Component, options) => {
   // Defaults
   options = options || {};
-  const {width=true, height=true, avoidSideMenu=false} = options;
+  const {changeWidth=true, changeHeight=true, avoidSideMenu=false} = options;
   const widthBuffer = avoidSideMenu ? WIDTH_BUFFER_MENU : WIDTH_BUFFER;
+  // const {width: originalWidth, height: originalHeight} = Component.props;
 
-  const Wrapped = React.createClass({
+  return React.createClass({
     mixins: [PureRenderMixin],
 
     propTypes: {
       width: PropTypes.number,
       height: PropTypes.number
+    },
+
+    getInitialState: function() {
+      return calculateSize(widthBuffer);
     },
 
     componentDidMount() {
@@ -62,39 +73,33 @@ export const WindowSizeListen = (Component, options) => {
     },
 
     _update() {
-      const {width, height} = this.props;
-      const {changeWindowSize} = this.props.actions;
-
-      const win = window;
-
-      const widthOffset = (
-        win.innerWidth < 680 ? NARROW_WIDTH_BUFFER : widthBuffer);
-      const newWidth = win.innerWidth - widthOffset;
-      const newHeight = win.innerHeight - HEIGHT_BUFFER;
+      const {width, height} = this.state;
+      const {width: newWidth, height: newHeight} = calculateSize(widthBuffer);
 
       if (!width || width !== newWidth || !height || height !== newHeight) {
-        changeWindowSize(newWidth, newHeight);
+        this.setState({
+          width: newWidth,
+          height: newHeight
+        });
       }
     },
 
     render() {
-      return <Component {...this.props} {...this.state} />;
+      const {width, height} = this.state;
+
+      let dimensionsProps = {};
+      if (changeWidth) {
+        dimensionsProps.width = width;
+      }
+      if (changeHeight) {
+        dimensionsProps.height = height;
+      }
+
+      const props = Object.assign({}, this.props, dimensionsProps);
+
+      return React.createElement(Component, props);
     }
   });
-
-  return connect(
-    state => {
-      let result = {};
-      if (width) {
-        result.width = state.windowSize.get('innerWidth');
-      }
-      if (height) {
-        result.height = state.windowSize.get('innerHeight');
-      }
-      return result;
-    },
-    dispatch => ({actions: bindActionCreators({changeWindowSize}, dispatch)})
-  )(Wrapped);
 };
 
 export default WindowSizeListen;

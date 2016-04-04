@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import {Column, Cell} from 'fixed-data-table';
 import {LinkCell, DateCell, MetadataCell} from '../CellTypes.jsx';
 

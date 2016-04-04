@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import Link from 'react-router/lib/Link';
 
 export const Header = ({appName}) =>

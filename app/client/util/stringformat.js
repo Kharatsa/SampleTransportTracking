@@ -1,5 +1,3 @@
-'use strict';
-
 // via https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Example:_Checking_for_support_for_locales_and_options_arguments
 export const toLocaleStringSupportsLocales = () => {
   let number = 0;

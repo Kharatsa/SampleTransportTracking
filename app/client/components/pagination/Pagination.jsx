@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import PageButton from './PageButton.jsx';
 import PageSummary from './PageSummary.jsx';
 

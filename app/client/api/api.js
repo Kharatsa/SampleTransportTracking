@@ -1,5 +1,3 @@
-'use strict';
-
 import request from '../util/request.js';
 import {
   normalizeChanges, normalizeMetadata, normalizeSample, normalizeSummary
@@ -22,15 +20,12 @@ const pageURLParam = ({page, first=true}) => {
 };
 
 export const locationURLParams = ({facilityKey, regionKey}) => {
-  if (facilityKey && regionKey) {
-    throw new Error('Both of facilityKey and regionKey cannot be passed');
-  }
-
   const facilityPart = facilityKey ? `facility/${facilityKey}/` : '';
   const regionPart = regionKey ? `region/${regionKey}/` : '';
 
-  // Only 1 of regionKey and facilityKey may be included
-  return regionPart || facilityPart;
+  // Only 1 of regionKey and facilityKey may be included. The facilityPart
+  // is more specific, so should be used if present.
+  return facilityPart || regionPart;
 };
 
 export const dateURLParams = ({afterDateLocal, beforeDateLocal}) => {

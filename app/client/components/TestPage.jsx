@@ -1,7 +1,7 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
-import Chartist from './Chartist.jsx';
+import React from 'react';
+import Chartist from './Chartist';
+// import DropdownMenuSelect from './DropdownMenuSelect';
+import Select from 'react-select';
 
 export const TestChart = ({}) => {
   var data = {
@@ -20,8 +20,19 @@ export const TestChart = ({}) => {
   // that is resolving to our chart container element. The Second parameter
   // is the actual data object.
 
-  return <div styles={'width: 50%;'}>
+  return <div>
+    <Select
+        name='form-field-name'
+        matchPos='start'
+        options={[{value: 1, label: 'ONE', value: 2, label: 'TWO'}]}
+        onChange={(selected) => console.log(selected)}
+    />
     <Chartist type='Line' data={data} options={options} />
+    <div className='pure-g'>
+      <div className='pure-u-1-3' />
+      <div className='pure-u-1-3 black-bg'>YO</div>
+      <div className='pure-u-1-3' />
+    </div>
   </div>;
 };
 

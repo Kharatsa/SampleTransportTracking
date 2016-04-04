@@ -1,11 +1,12 @@
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {changeSummaryFilter} from '../actions/actioncreators';
-import SummaryFilter from '../components/Summary/SummaryFilter';
+import {SummaryLocationFilters} from '../components/SummaryControls';
 import {getMetaRegions, getFilteredMetaFacilities} from '../selectors';
 
-export const SummaryFilterContainer = connect(
+export const SummaryLocationFilterContainer = connect(
   state => ({
+    isFetchingData: state.isFetchingData,
     metaRegionsByKey: state.metaRegionsByKey,
     metaFacilitiesByKey: state.metaRegionsByKey,
     summaryFilter: state.summaryFilter,
@@ -13,6 +14,6 @@ export const SummaryFilterContainer = connect(
     filteredMetaFacilities: getFilteredMetaFacilities(state)
   }),
   dispatch => ({actions: bindActionCreators({changeSummaryFilter}, dispatch)})
-)(SummaryFilter);
+)(SummaryLocationFilters);
 
-export default SummaryFilterContainer;
+export default SummaryLocationFilterContainer;

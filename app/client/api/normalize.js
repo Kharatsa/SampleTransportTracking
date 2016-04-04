@@ -1,5 +1,3 @@
-'use strict';
-
 import {arrayOf, normalize} from 'normalizr';
 import {Map as ImmutableMap, Seq, List} from 'immutable';
 import {changeInclude, metadata} from './schemas.js';

@@ -1,5 +1,3 @@
-'use strict';
-
 import {
   getMetaRegions, getFilteredMetaFacilities
 } from './metadataselectors';

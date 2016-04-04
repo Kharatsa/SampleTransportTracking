@@ -1,9 +1,8 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import {
-  SideMenuLayout, Changes, ChangesExportLink, Pagination
+  Changes, ChangesExportLink, Pagination
 } from '../containers';
+import SideMenuLayout from '../components/SideMenu/SideMenuLayout';
 import SideMenuButton from '../components/SideMenu/SideMenuButton';
 
 export const ChangesPage = (props) => {

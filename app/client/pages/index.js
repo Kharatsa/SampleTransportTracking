@@ -1,5 +1,3 @@
-'use strict';
-
 import App from './AppPage';
 import Summary from './SummaryPage';
 import Changes from './ChangesPage';

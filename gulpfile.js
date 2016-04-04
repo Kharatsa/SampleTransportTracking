@@ -103,8 +103,10 @@ const vendorStatic = [
 ];
 
 gulp.task('static:styles', () => {
-  return gulp.src(vendorStatic)
-  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
+  if (!IS_PRODUCTION) {
+    return gulp.src(vendorStatic)
+    .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
+  }
 });
 
 const vendors = [

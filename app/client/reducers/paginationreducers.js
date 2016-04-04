@@ -1,5 +1,3 @@
-'use strict';
-
 import {
   RECEIVE_CHANGES, FETCH_CHANGES, FETCH_CHANGES_FAILURE
 } from '../actions/actions.js';

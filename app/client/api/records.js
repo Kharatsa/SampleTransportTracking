@@ -1,5 +1,3 @@
-'use strict';
-
 import {Record} from 'immutable';
 
 export const KeyValueMetaRecord = Record({
@@ -48,11 +46,6 @@ export const SampleRecord = Record({
   outstanding: true,
   createdAt: null,
   updatedAt: null
-});
-
-export const WindowSize = Record({
-  innerWidth: 0,
-  innerHeight: 0
 });
 
 export const Page = Record({

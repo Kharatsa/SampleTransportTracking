@@ -1,5 +1,3 @@
-'use strict';
-
 import {Schema} from 'normalizr';
 
 export const sample = new Schema('samples', {idAttribute: 'uuid'});

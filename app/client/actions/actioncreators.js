@@ -1,17 +1,12 @@
-'use strict';
-
 import {
   FETCH_SAMPLE_DETAIL, FETCH_SAMPLE_DETAIL_FAILURE, RECEIVE_SAMPLE_DETAIL,
   FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA,
   FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
   FETCH_SUMMARY, FETCH_SUMMARY_FAILURE, RECEIVE_SUMMARY,
-  CHANGE_WINDOW_SIZE, TOGGLE_MENU,
   CHANGE_SUMMARY_FILTER
 } from './actions.js';
 import * as api from '../api';
-import {WindowSize, SummaryFilter} from '../api/records.js';
-
-export const toggleMenu = () => ({type: TOGGLE_MENU});
+import {SummaryFilter} from '../api/records.js';
 
 const requestMetadata = () => ({type: FETCH_METADATA});
 
@@ -90,11 +85,6 @@ const receiveChanges = ({
 }) => ({
   type: RECEIVE_CHANGES,
   changes, artifacts, labTests, samples, count, changeIds
-});
-
-export const changeWindowSize = (innerWidth, innerHeight) => ({
-  type: CHANGE_WINDOW_SIZE,
-  size: new WindowSize({innerWidth, innerHeight})
 });
 
 const requestSummary = (summaryFilter) => ({type: FETCH_SUMMARY, summaryFilter});

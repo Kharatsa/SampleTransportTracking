@@ -1,5 +1,3 @@
-'use strict';
-
 // https://github.com/acdlite/flux-standard-action
 // http://rackt.org/redux/docs/basics/Actions.html
 
@@ -22,9 +20,6 @@ export const RECEIVE_SAMPLE_DETAIL = 'RECEIVE_SAMPLE_DETAIL';
 export const FETCH_SUMMARY = 'FETCH_SUMMARY';
 export const FETCH_SUMMARY_FAILURE = 'FETCH_SUMMARY_FAILURE';
 export const RECEIVE_SUMMARY = 'RECEIVE_SUMMARY';
-
-export const CHANGE_WINDOW_SIZE = 'CHANGE_WINDOW_SIZE';
-export const TOGGLE_MENU = 'TOGGLE_MENU';
 
 export const CHANGE_SUMMARY_FILTER = 'CHANGE_SUMMARY_FILTER';
 

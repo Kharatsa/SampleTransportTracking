@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 import WaitOnFetch from '../../containers/wrappers/WaitOnFetch.jsx';
 import TotalCountsTable from './TotalCountsTable';

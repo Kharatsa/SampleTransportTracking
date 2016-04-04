@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import InfoPanel from '../InfoPanel.jsx';
 
 const gridClass = 'pure-u-1 pure-u-md-1-3';

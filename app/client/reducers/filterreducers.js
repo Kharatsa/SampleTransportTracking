@@ -1,5 +1,3 @@
-'use strict';
-
 import {CHANGE_SUMMARY_FILTER} from '../actions/actions';
 import {SummaryFilter} from '../api/records';
 import Moment from 'moment';

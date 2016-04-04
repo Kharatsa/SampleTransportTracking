@@ -1,5 +1,3 @@
-'use strict';
-
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import PureRenderMixin from 'react-addons-pure-render-mixin';

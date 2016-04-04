@@ -1,5 +1,3 @@
-'use strict';
-
 import {RECEIVE_SAMPLE_DETAIL, RECEIVE_CHANGES} from '../actions/actions.js';
 import {Seq, Map as ImmutableMap} from 'immutable';
 

@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import * as actions from '../actions/actioncreators.js';

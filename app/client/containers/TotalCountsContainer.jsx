@@ -1,5 +1,3 @@
-'use strict';
-
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fetchSummary} from '../actions/actioncreators';

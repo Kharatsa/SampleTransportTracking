@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import classnames from 'classnames';
 
 export const InfoPanel = ({title, body, color}) => {

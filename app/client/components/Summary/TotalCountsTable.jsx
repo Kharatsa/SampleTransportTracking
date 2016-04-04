@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import {Seq, List} from 'immutable';
 import {ArtifactsCount, LabTestsCount} from '../../api/records';
 import ArtifactsAccordion from './ArtifactsAccordion';

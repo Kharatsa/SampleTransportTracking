@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import SampleBasics from './SampleBasics';
 import SampleStage from './SampleStage';
 import SampleArtifacts from './SampleArtifacts';
@@ -9,7 +7,7 @@ import ChangesTable from '../ChangesTable';
 import WindowSizeListener from '../../containers/wrappers/WindowSizeListener';
 import MissingSample from './MissingSampleDetail';
 
-const FlexChangesTable = WindowSizeListener(ChangesTable, {height: false});
+const FlexChangesTable = WindowSizeListener(ChangesTable, {changeHeight: false});
 
 export const SampleDetail = ({
   routeParams,

@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import {shortFormatDateTime} from '../../util/stringformat.js';
 
 export const SamplePanelRow = ({label, change, facilities, people}) => {

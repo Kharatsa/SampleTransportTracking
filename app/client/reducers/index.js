@@ -1,11 +1,9 @@
-'use strict';
-
 import {combineReducers} from 'redux';
 
 import metadataReducer from './reducer_metadata';
 import * as changesReducers from './changesreducers';
 import * as artifactsReducers from './artifactsreducers';
-import * as labTestsReducers from './artifactsreducers';
+import * as labTestsReducers from './labtestsreducers';
 import * as sampleIdsReducers from './sampleidsreducers';
 import summaryReducer from './summaryreducers';
 import * as metadataReducers from './metadataReducers';

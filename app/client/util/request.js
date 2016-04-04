@@ -1,5 +1,3 @@
-'use strict';
-
 const loadHandler = request => {
   let response;
   if (request.status >= 200 && request.status < 400) {

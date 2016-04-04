@@ -1,5 +1,3 @@
-'use strict';
-
 // Load the memory profiler during development
 if (process.env.NODE_ENV !== 'production') {
   (function() {

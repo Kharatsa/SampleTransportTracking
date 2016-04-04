@@ -1,5 +1,3 @@
-'use strict';
-
 import {Map as ImmutableMap, Seq} from 'immutable';
 import {RECEIVE_METADATA} from '../actions/actions';
 
