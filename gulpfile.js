@@ -31,12 +31,19 @@ bundler.transform(envify({
 }));
 
 var uglify = function() {
-  return $.uglify().on('error', $.util.log);
+  return $.uglify().on('error', (err) => {
+    $.util.log(err);
+    if (IS_PRODUCTION) { throw err; }
+  });
 };
 
 function bundle() {
   return bundler.bundle()
-    .on('error', $.util.log.bind($.util, 'Browserify Error'))
+    .on('error', (err) => {
+      $.util.log(err);
+      if (IS_PRODUCTION) { throw err; }
+    })
+    // .on('error', $.util.log.bind($.util, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.init({loadMaps: true}))
