@@ -6,7 +6,7 @@ import * as artifactsReducers from './artifactsreducers';
 import * as labTestsReducers from './labtestsreducers';
 import * as sampleIdsReducers from './sampleidsreducers';
 import summaryReducer from './summaryreducers';
-import * as metadataReducers from './metadataReducers';
+import * as metadatareducers from './metadatareducers';
 import * as filterReducers from './filterreducers';
 import * as UIReducers from './uireducers';
 import * as paginationReducers from './paginationreducers';
