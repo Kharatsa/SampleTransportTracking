@@ -35,7 +35,7 @@ const sampleIdCondition = params => {
 };
 
 const sampleAfterCondition = params => {
-  if (typeof params.beforeDate !== 'undefined') {
+  if (typeof params.afterDate !== 'undefined') {
     return `AND s.createdAt >= $afterDate`;
   }
   return '';
