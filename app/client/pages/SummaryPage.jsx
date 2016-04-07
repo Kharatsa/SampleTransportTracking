@@ -18,19 +18,19 @@ export const SummaryPage = (props) => {
   );
 
   const countsView = (
-    <div className="panel pure-u-1 pure-u-md-1 pure-u-lg-1-2">
+    <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-2'>
       <TotalCounts />
     </div>
   );
 
   const tatView = (
-    <div className="panel pure-u-1 pure-u-md-1 pure-u-lg-1-2">
+    <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-2'>
       <span>Turn Around Time</span>
     </div>
   );
 
   const combinedMetricsView = (
-    <div className="pure-g">
+    <div className='pure-g'>
       {countsView}
       {tatView}
     </div>

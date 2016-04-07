@@ -7,18 +7,17 @@ const SideMenuHeader = ({header}) =>
     {header}
   </Link>;
 
-
-const SideMenuHamburger = ({isOpen, openMenu}) => {
-  const clsn = classNames({'active': isOpen, 'menu-link': true});
+const SideMenuHamburger = ({isMenuOpen, openMenu}) => {
+  const clsn = classNames({'active': isMenuOpen, 'menu-link': true});
   return <a id='menuLink' onClick={openMenu} className={clsn}><span></span></a>;
 };
 
 const SideMenuRow = ({children}) =>
   <li className='pure-menu-item'>{children}</li>;
 
-const SideMenuOpen = ({isOpen, header, children}) => {
+const SideMenuOpen = ({isMenuOpen, header, children}) => {
   const clsn = classNames({
-    'active': isOpen,
+    'active': isMenuOpen,
     'pure-menu': true,
     'black-bg': true
   });
@@ -38,10 +37,10 @@ const SideMenuOpen = ({isOpen, header, children}) => {
   );
 };
 
-export const SideMenu = ({isOpen, openMenu, header, children}) => {
+export const SideMenu = ({isMenuOpen, openMenu, header, children}) => {
   return <div>
-    <SideMenuHamburger isOpen={isOpen} openMenu={openMenu} />
-    <SideMenuOpen isOpen={isOpen} header={header}>
+    <SideMenuHamburger isMenuOpen={isMenuOpen} openMenu={openMenu} />
+    <SideMenuOpen isMenuOpen={isMenuOpen} header={header}>
       {children}
     </SideMenuOpen>
   </div>;

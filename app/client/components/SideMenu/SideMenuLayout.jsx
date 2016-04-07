@@ -8,21 +8,22 @@ export const SideMenuLayout = React.createClass({
   },
 
   getInitialState: function() {
-    return {menuOpen: false};
+    return {isMenuOpen: false};
   },
 
   toggleMenu() {
-    this.setState({menuOpen: !this.menuOpen});
+    this.setState({isMenuOpen: !this.state.isMenuOpen});
   },
 
   render() {
     const {menuHeader, menuItems, children} = this.props;
+    const {isMenuOpen} = this.state;
 
     return (
-      <div id='layout' className={this.menuOpen ? 'active' : ''}>
+      <div id='layout' className={isMenuOpen ? 'active' : ''}>
         <SideMenu
             header={menuHeader}
-            isOpen={this.menuOpen}
+            isMenuOpen={isMenuOpen}
             openMenu={this.toggleMenu} >
           {menuItems}
         </SideMenu>
