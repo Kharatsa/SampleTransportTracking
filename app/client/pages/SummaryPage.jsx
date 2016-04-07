@@ -17,21 +17,28 @@ export const SummaryPage = (props) => {
     </div>
   );
 
-  const countsView = (
-    <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-2'>
-      <TotalCounts />
+  const goodCountsView = (
+    <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-3'>
+      <TotalCounts goodCounts={true}/>
+    </div>
+  );
+
+  const badCountsView = (
+    <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-3'>
+      <TotalCounts goodCounts={false}/>
     </div>
   );
 
   const tatView = (
-    <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-2'>
+    <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-3'>
       <span>Turn Around Time</span>
     </div>
   );
 
   const combinedMetricsView = (
     <div className='pure-g'>
-      {countsView}
+      {goodCountsView}
+      {badCountsView}
       {tatView}
     </div>
   );
