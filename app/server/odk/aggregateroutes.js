@@ -193,6 +193,7 @@ router.post('/submission',
   openRosaAcceptLength,
   parseSubmissionFormData,
   (req, res, next) => {
+    req.user = req.user || {};
     const username = req.user.username || 'unknown';
     let submission = req.form.fields[SUBMISSION_PART_NAME];
     log.info(`ODK user '${username}' submission ${SUBMISSION_PART_NAME}:
