@@ -110,7 +110,7 @@ const calculateOneTAT = (stagePair, data) => {
   };
 
   if (_.isEmpty(data)) {
-    return measures;
+    return BPromise.resolve(measures);
   }
   const attrs = Object.keys(data);
 
