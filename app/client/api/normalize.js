@@ -4,7 +4,8 @@ import {changeInclude, metadata} from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
   KeyValueMetaRecord, FacilityMetaRecord,
-  SummaryTotal, ArtifactsCount, LabTestsCount
+  SummaryTotal, ArtifactsCount, LabTestsCount,
+  TurnAround
 } from './records.js';
 
 /**
@@ -115,3 +116,15 @@ export const normalizeSummary = data => {
     totals: new SummaryTotal(totals)
   };
 };
+
+export const normalizeTurnArounds = data => {
+  console.log('in normalize turn arounds', data)
+  return Seq(data).map(turnAround => new TurnAround({
+    from: turnAround.from,
+    to: turnAround.to,
+    averageTATms: ( () => {
+      if (!turnAround.samplesIdsAvgTATms || turnAround.samplesIdsAvgTATms < 0) { return 0; }
+      else { return turnAround.samplesIdsAvgTATms; }
+    }) ()
+  }))
+}

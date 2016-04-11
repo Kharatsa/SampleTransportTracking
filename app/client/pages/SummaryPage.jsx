@@ -1,7 +1,7 @@
 import React from 'react';
 import WaitOnFetch from '../containers/wrappers/WaitOnFetch';
 import {
-  SummaryFilter, TotalCounts, SummaryLocationFilters
+  SummaryFilter, TotalCounts, SummaryLocationFilters, TurnArounds
 } from '../containers';
 import {SideMenuLayout} from '../components';
 import {SampleSearch, ViewChangesButton} from '../components/SummaryControls/';
@@ -31,7 +31,7 @@ export const SummaryPage = (props) => {
 
   const tatView = (
     <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-3'>
-      <span>Turn Around Time</span>
+      <TurnArounds />
     </div>
   );
 

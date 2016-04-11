@@ -81,3 +81,9 @@ export const LabTestsCount = Record({
   sampleIdsCount:0,
   labTestsCount:0
 });
+
+export const TurnAround = Record({
+  from:null,
+  to:null,
+  averageTATms:0
+});

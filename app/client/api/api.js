@@ -1,6 +1,7 @@
 import request from '../util/request.js';
 import {
-  normalizeChanges, normalizeMetadata, normalizeSample, normalizeSummary
+  normalizeChanges, normalizeMetadata, normalizeSample,
+  normalizeSummary, normalizeTurnArounds
 } from './normalize.js';
 
 const summaryFilterValues = summaryFilter => {
@@ -98,5 +99,17 @@ export const getMetadata = (options, callback) => {
       return callback(err);
     }
     callback(null, normalizeMetadata(res.json));
+  });
+};
+
+export const getTurnArounds = (filter, callback) => {
+  const url = filteredURL('ids/tat', filter);
+  console.log('get tat url: ', url);
+  return request(url, (err, res) => {
+    if (err) {
+      return callback(err);
+    }
+    console.log('in get turn arounds ', res.json)
+    callback(null, normalizeTurnArounds(res.json));
   });
 };

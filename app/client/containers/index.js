@@ -6,6 +6,7 @@ import TotalCounts from './TotalCountsContainer';
 import Changes from './ChangesContainer';
 import Sample from './SampleContainer';
 import ChangesExportLink from './ChangesExportLinkContainer';
+import TurnArounds from './TurnAroundsContainer';
 
 export {
   App,
@@ -15,5 +16,6 @@ export {
   TotalCounts,
   Changes,
   Sample,
-  ChangesExportLink
+  ChangesExportLink,
+  TurnArounds
 };

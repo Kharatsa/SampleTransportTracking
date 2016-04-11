@@ -6,18 +6,30 @@ export const SummaryLocationFilters = React.createClass({
   mixins: [PureRenderMixin],
 
   _selectLocationFilter(selected, type) {
-    const {value: selectedKey} = selected;
+
     const {summaryFilter} = this.props;
+    const {changeSummaryFilter} = this.props.actions;
+    
     const afterDate = summaryFilter.get('afterDate');
     const beforeDate = summaryFilter.get('beforeDate');
     const facilityKey = summaryFilter.get('facilityKey');
     const regionKey = summaryFilter.get('regionKey');
 
-    const {changeSummaryFilter} = this.props.actions;
-    if (type === 'facility' && selectedKey !== facilityKey) {
-      changeSummaryFilter(afterDate, beforeDate, regionKey, selectedKey);
-    } else if (type === 'region') {
-      changeSummaryFilter(afterDate, beforeDate, selectedKey, facilityKey);
+    if (!selected) {
+      if (type === 'region') {
+        changeSummaryFilter(afterDate, beforeDate, null, null);
+      }
+      else {
+        changeSummaryFilter(afterDate, beforeDate, regionKey, null);
+      }
+    }
+    else {
+      const {value: selectedKey} = selected;
+      if (type === 'facility' && selectedKey !== facilityKey) {
+        changeSummaryFilter(afterDate, beforeDate, regionKey, selectedKey);
+      } else if (type === 'region') {
+        changeSummaryFilter(afterDate, beforeDate, selectedKey, facilityKey);
+      }
     }
   },
 

@@ -3,6 +3,7 @@ import {
   FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA,
   FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
   FETCH_SUMMARY, FETCH_SUMMARY_FAILURE, RECEIVE_SUMMARY,
+  FETCH_TURN_AROUNDS, FETCH_TURN_AROUNDS_FAILURE, RECEIVE_TURN_AROUNDS,
   CHANGE_SUMMARY_FILTER
 } from './actions.js';
 import * as api from '../api';
@@ -105,6 +106,28 @@ export const fetchSummary = (summaryFilter) => {
         dispatch(fetchSummaryFailure(err));
       }
       dispatch(receiveSummary(data));
+    });
+  };
+};
+
+const requestTurnArounds = (summaryFilter) => ({type: FETCH_TURN_AROUNDS, summaryFilter});
+
+const fetchTurnAroundsFailure = (error) => ({
+  type: FETCH_TURN_AROUNDS_FAILURE,
+  error
+});
+
+const receiveTurnArounds = (turnArounds) =>
+  ({type: RECEIVE_TURN_AROUNDS, turnArounds});
+
+export const fetchTurnArounds = (summaryFilter) => {
+  return dispatch => {
+    dispatch(requestTurnArounds(summaryFilter));
+    return api.getTurnArounds(summaryFilter, (err, data) => {
+      if (err) {
+        dispatch(fetchTurnAroundsFailure(err));
+      }
+      dispatch(receiveTurnArounds(data));
     });
   };
 };
