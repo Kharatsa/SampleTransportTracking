@@ -70,7 +70,7 @@ const metadata = BPromise.method((options) => {
   .then(() => log.info(`Finished metadata preload for "${options.filename}"`))
   .catch(err =>
     log.error(`Failed metadata preload for "${options.filename}": `,
-              err.message, err.errors)
+              err.message, err.errors, err.stack)
   );
 });
 
