@@ -6,8 +6,9 @@ const fakedata = require('./fakedata.js');
 const meta = {
   artifact: testmeta.metaArtifacts,
   labtest: testmeta.metaLabTests,
+  district: testmeta.metaDistricts,
+  lab: testmeta.metaLabs,
   facility: testmeta.metaFacilities,
-  region: testmeta.metaRegions,
   status: testmeta.metaStatuses,
   rejection: testmeta.metaRejections,
   person: testmeta.metaPeople,

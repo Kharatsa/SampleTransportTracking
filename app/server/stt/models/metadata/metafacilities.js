@@ -2,16 +2,17 @@
 
 const modelwrapper = require('server/storage/modelwrapper.js');
 const metaModelTemplate = require('./metamodeltemplate.js');
-const regions = require('./metaregions.js');
+// const regions = require('./metaregions.js');
+const labs = require('./metalabs.js');
 
 const modelName = 'MetaFacilities';
 
 const facilities = modelwrapper({
   name: modelName,
 
-  references: [regions],
+  references: [labs],
 
-  import: function(Regions) {
+  import: function(Labs) {
     return function(sequelize, DataTypes) {
       const template = Object.assign({}, metaModelTemplate(DataTypes));
 
@@ -23,7 +24,7 @@ const facilities = modelwrapper({
         allowNull: true,
         unique: 'facilityRegion',
         references: {
-          model: Regions,
+          model: Labs,
           key: 'key'
         },
         set: function(val) {
@@ -39,8 +40,8 @@ const facilities = modelwrapper({
 
           classMethods: {
             associate: function() {
-              facilities.model.belongsTo(Regions, {foreignKey: 'region'});
-              Regions.hasMany(facilities.model, {foreignKey: 'region'});
+              facilities.model.belongsTo(Labs, {foreignKey: 'region'});
+              Labs.hasMany(facilities.model, {foreignKey: 'region'});
             }
           }
         }

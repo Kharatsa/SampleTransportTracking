@@ -2,6 +2,7 @@
 <LabStatus xmlns="http://kharatsa.com/schemas/labstatus.xsd">
     <STID>ZXCBZXCB</STID>
     <LabID>LCC0231368</LabID>
+    <TestingLabID>LCC0231368</TestingLabID>
     <StatusTimestamp>2016-02-19T10:43:14</StatusTimestamp>
     <LabPrefix>
         <LabPrefixCode>LCC</LabPrefixCode>

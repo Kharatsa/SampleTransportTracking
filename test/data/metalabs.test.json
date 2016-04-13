@@ -1,0 +1,92 @@
+[
+  {
+    "value": "Berea",
+    "key": "LBE",
+    "district": "BE"
+  },
+  {
+    "value": "Butha Buthe",
+    "key": "LBB",
+    "district": "BB"
+  },
+  {
+    "value": "Machabeng",
+    "key": "LMC",
+    "district": "QN"
+  },
+  {
+    "value": "Mafeteng",
+    "key": "LMF",
+    "district": "MF"
+  },
+  {
+    "value": "Makoanyane Hospital",
+    "key": "LMM",
+    "district": "MS"
+  },
+  {
+    "value": "Maluti",
+    "key": "LML",
+    "district": "BE"
+  },
+  {
+    "value": "Mamahao",
+    "key": "LMU",
+    "district": "LE"
+  },
+  {
+    "value": "Mohale's Hoek Lab/Ntsekhe Lab",
+    "key": "LMH",
+    "district": "MH"
+  },
+  {
+    "value": "Mokhotlong",
+    "key": "LMK",
+    "district": "MK"
+  },
+  {
+    "value": "Motebang",
+    "key": "LMB",
+    "district": "LE"
+  },
+  {
+    "value": "National Reference Laboratory",
+    "key": "NRL",
+    "district": "MS"
+  },
+  {
+    "value": "Paray",
+    "key": "LPA",
+    "district": "TT"
+  },
+  {
+    "value": "Quthing",
+    "key": "LQT",
+    "district": "QT"
+  },
+  {
+    "value": "Scott Hospital",
+    "key": "LSC",
+    "district": "MS"
+  },
+  {
+    "value": "Seboche",
+    "key": "LSE",
+    "district": "BB"
+  },
+  {
+    "value": "St Joseph’s Hospital",
+    "key": "LJO",
+    "district": "MS"
+  },
+  {
+    "value": "St. James",
+    "key": "LJM",
+    "district": "TT"
+  },
+  {
+    "value": "Tebellong",
+    "key": "LTL",
+    "district": "QN"
+  }
+]

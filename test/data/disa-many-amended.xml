@@ -2,6 +2,7 @@
 <LabStatus xmlns="https://kharatsa.com/schemas/labstatus.xsd" >
   <STID>ABCD12345</STID>
   <LabID>ABC1234567</LabID>
+  <TestingLabID>ABC1234567</TestingLabID>
   <StatusTimestamp>2015-01-01T00:00:00</StatusTimestamp>
   <LabPrefix>
     <LabPrefixCode>ABC</LabPrefixCode>

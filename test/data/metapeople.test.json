@@ -2,11 +2,133 @@
   {
     "key": "PER1",
     "value": "Dudda Secundus"
-  }, {
+  },
+  {
     "key": "PER2",
     "value": "Hallvarðr Ealdræd"
-  }, {
+  },
+  {
     "key": "TEST",
     "value": "Antoninus Ælfstan"
+  },
+  {
+    "value": "Boipuso Nyaphisi",
+    "key": "BNYAPHISI"
+  },
+  {
+    "value": "Bokang Hlasa",
+    "key": "BHLASA"
+  },
+  {
+    "value": "Fusi Lesia",
+    "key": "FLESIA"
+  },
+  {
+    "value": "Katali Maetso",
+    "key": "KMAETSO"
+  },
+  {
+    "value": "Khahliso Bulane",
+    "key": "KBULANE"
+  },
+  {
+    "value": "Lebohang Lehula",
+    "key": "LLEHULA"
+  },
+  {
+    "value": "Lesole 'Mokele",
+    "key": "LMOKELE"
+  },
+  {
+    "value": "Malefetsane Ntsau",
+    "key": "MNTSAU"
+  },
+  {
+    "value": "Mohlophe Mohlophe",
+    "key": "MMOHLOPHE"
+  },
+  {
+    "value": "Mokhele Bereng",
+    "key": "MBERENG"
+  },
+  {
+    "value": "Neo Thupa",
+    "key": "NTHUPA"
+  },
+  {
+    "value": "Nkhaolise Mporo",
+    "key": "NMPORO"
+  },
+  {
+    "value": "Nthati Manyala",
+    "key": "NMANYALA"
+  },
+  {
+    "value": "Ntsele Moima",
+    "key": "NMOIMA"
+  },
+  {
+    "value": "Phakiso Sekulisa",
+    "key": "PSEKULISA"
+  },
+  {
+    "value": "Popa Kumi",
+    "key": "PKUMI"
+  },
+  {
+    "value": "Ramotselisi Lephoto",
+    "key": "RLEPHOTO"
+  },
+  {
+    "value": "Refiloe Phatela",
+    "key": "RPHATELA"
+  },
+  {
+    "value": "Retsélisitsoe Sekatle",
+    "key": "RSEKATLE"
+  },
+  {
+    "value": "Serabele Makha",
+    "key": "SMAKHA"
+  },
+  {
+    "value": "Sets'abi Tikiso",
+    "key": "STIKISO"
+  },
+  {
+    "value": "Taelo Chobokoane",
+    "key": "TCHOBOKOANE"
+  },
+  {
+    "value": "Tebello Setlaba",
+    "key": "TSETLABA"
+  },
+  {
+    "value": "Teboho Lesoli",
+    "key": "TLESOLI"
+  },
+  {
+    "value": "Thabiso Pholo",
+    "key": "TPHOLO"
+  },
+  {
+    "value": "Thabo Ntlele",
+    "key": "TNTLELE"
+  },
+  {
+    "value": "Tsietsi Sethabane",
+    "key": "TSETHABANE"
+  },
+  {
+    "value": "Tséliso Mojaki",
+    "key": "TMOJAKI"
+  },
+  {
+    "value": "Tséliso Seheshe",
+    "key": "TSEHESHE"
+  },
+  {
+    "value": "Tsépang Phatela",
+    "key": "TPHATELA"
   }
 ]

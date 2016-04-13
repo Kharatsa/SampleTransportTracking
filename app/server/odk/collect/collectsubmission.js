@@ -9,12 +9,12 @@ const handleSubmission = incoming => {
   // Unrecognized/new metadata parsed from collect submissions will be inserted
   // in the database, but with a null value (i.e., display name), since none is
   // metadata descriptions are included with collect submissions.
-  const metaRegion = sttsubmission.metaRegions([incoming.metaRegion]);
+  const metaLabs = sttsubmission.metaLabs([incoming.metaRegion]);
   // Facilies reference regions, so regions must finish inserts/updates first
-  const metaFacility = metaRegion.then(() =>
+  const metaFacility = metaLabs.then(() =>
     sttsubmission.metaFacilities([incoming.metaFacility]));
   const metaPerson = sttsubmission.metaPeople([incoming.metaPerson]);
-  const meta = BPromise.join(metaRegion, metaFacility, metaPerson);
+  const meta = BPromise.join(metaLabs, metaFacility, metaPerson);
 
   const sampleIds = sttsubmission.sampleIds(incoming.sampleIds);
   const allSampleIds = sampleIds.then(sttsubmission.syncedCombine);
@@ -34,7 +34,7 @@ const handleSubmission = incoming => {
   .spread(artifactRefs => sttsubmission.scanChanges(artifactRefs));
 
   return BPromise.props({
-    sampleIds, artifacts, changes, metaRegion, metaFacility, metaPerson
+    sampleIds, artifacts, changes, metaLabs, metaFacility, metaPerson
   })
   .tap(log.info);
 };

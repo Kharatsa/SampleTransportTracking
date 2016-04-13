@@ -48,7 +48,8 @@ describe('Sample Transport Tracking Sample IDs client', () => {
     .then(() => prepareserver())
     .then(() => testmeta.load())
     .then(() => models.SampleIds.bulkCreate(sampleIds))
-    .then(() => done());
+    .then(() => done())
+    .catch(err => console.error(err, err.message, err.stack));
   });
 
   const stIds1 = [

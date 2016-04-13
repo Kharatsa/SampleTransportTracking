@@ -2,29 +2,778 @@
   {
     "key": "ABC",
     "value": "Altoona"
-  }, {
+  },
+  {
     "key": "DEF",
     "value": "Horn Head House"
-  }, {
+  },
+  {
     "key": "GHI",
     "value": "Bantry House"
-  }, {
-    "key": "STMN",
-    "value": "St. Monicas",
-    "region": "LRB"
-  }, {
-    "key": "STG",
-    "value": "St. Gabriel",
-    "region": "QTH"
-  }, {
-    "key": "PNT",
-    "value": "Summerhill House",
-    "region": "LRB"
-  }, {
+  },
+  {
+    "value": "Auray H/C",
+    "key": "AUR",
+    "region": "LJM"
+  },
+  {
+    "value": "BERNARD CLINIC",
+    "key": "BRN",
+    "region": "LJO"
+  },
+  {
+    "value": "Baylor College of Medicine",
+    "key": "BCM",
+    "region": "NRL"
+  },
+  {
+    "value": "Berea Hospital",
+    "key": "BER",
+    "region": "LBE"
+  },
+  {
+    "value": "Bethany Clinic",
+    "key": "BETH",
+    "region": "LBE"
+  },
+  {
+    "value": "Bethel",
+    "key": "BET",
+    "region": "LMH"
+  },
+  {
+    "value": "Boiketsiso",
+    "key": "BOIK",
+    "region": "LSE"
+  },
+  {
+    "value": "Bull Nose",
+    "key": "BULN",
+    "region": "NRL"
+  },
+  {
+    "value": "Butha Buthe Hospital",
+    "key": "BUTH",
+    "region": "LBB"
+  },
+  {
+    "value": "Correctional Services",
+    "key": "COR",
+    "region": "LMF"
+  },
+  {
+    "value": "Dilli-Dilli",
+    "key": "DDL",
+    "region": "LQT"
+  },
+  {
+    "value": "Domiciliary",
+    "key": "DOMIC",
+    "region": "NRL"
+  },
+  {
+    "value": "EMMAUSE",
+    "key": "EMMA",
+    "region": "LSC"
+  },
+  {
+    "value": "Emmanuel Health Clinic",
+    "key": "EMM",
+    "region": "LMB"
+  },
+  {
+    "value": "Fatima Clinic",
+    "key": "FAT",
+    "region": "LJO"
+  },
+  {
+    "value": "Fobane",
+    "key": "FOB",
+    "region": "LML"
+  },
+  {
+    "value": "Good Shepherd Clinic",
+    "key": "GOOD",
+    "region": "LBE"
+  },
+  {
+    "value": "Ha Mopeli",
+    "key": "HMP",
+    "region": "LTL"
+  },
+  {
+    "value": "Ha-Seng",
+    "key": "HASE",
+    "region": "NRL"
+  },
+  {
+    "value": "Hermitage",
+    "key": "HERM",
+    "region": "LMC"
+  },
+  {
+    "value": "Holy Cross Clinic",
+    "key": "HOC",
+    "region": "LMH"
+  },
+  {
+    "value": "Holy Family Clinic",
+    "key": "HFC",
+    "region": "LBE"
+  },
+  {
+    "value": "Immaculate Clinic",
+    "key": "IMM",
+    "region": "LML"
+  },
+  {
+    "value": "Jesse Poly Clinic",
+    "key": "JPC",
+    "region": "LMB"
+  },
+  {
+    "value": "KAO",
+    "key": "KAO",
+    "region": "LMU"
+  },
+  {
+    "value": "Katse Clinic",
+    "key": "KTC",
+    "region": "LPA"
+  },
+  {
+    "value": "Khabo",
     "key": "KHB",
-    "value": "Killarney House"
-  }, {
-    "key": "THBP",
-    "value": "Lismore Castle"
+    "region": "LMB"
+  },
+  {
+    "value": "Khohlo-Ntso Clinic",
+    "key": "KHN",
+    "region": "LPA"
+  },
+  {
+    "value": "Khubetsoana Clinic",
+    "key": "KHUB",
+    "region": "NRL"
+  },
+  {
+    "value": "Koali Clinic",
+    "key": "KOALI",
+    "region": "LBE"
+  },
+  {
+    "value": "Kolo Clinic - Mafeteng",
+    "key": "KOLO",
+    "region": "LSC"
+  },
+  {
+    "value": "Kolojane Clinic",
+    "key": "KOL",
+    "region": "LML"
+  },
+  {
+    "value": "Koro-Koro Clinic",
+    "key": "KOR",
+    "region": "LJO"
+  },
+  {
+    "value": "L.D.F",
+    "key": "LDF",
+    "region": "NRL"
+  },
+  {
+    "value": "LEHCOOP CLINIC",
+    "key": "LEHC",
+    "region": "LMF"
+  },
+  {
+    "value": "LITSOENENG CLINIC",
+    "key": "LITS",
+    "region": "LMF"
+  },
+  {
+    "value": "Lephoi",
+    "key": "LEP",
+    "region": "LJM"
+  },
+  {
+    "value": "Leseli Clinic",
+    "key": "LES",
+    "region": "LBB"
+  },
+  {
+    "value": "Libibing Clinic",
+    "key": "LBB",
+    "region": "LMK"
+  },
+  {
+    "value": "Likalaneng Clinic",
+    "key": "LIKA",
+    "region": "NRL"
+  },
+  {
+    "value": "Likotsi",
+    "key": "LIKO",
+    "region": "NRL"
+  },
+  {
+    "value": "Linakaneng Clinic",
+    "key": "MLI",
+    "region": "LMK"
+  },
+  {
+    "value": "Linakeng Clinic - Paray",
+    "key": "LNK",
+    "region": "LPA"
+  },
+  {
+    "value": "Linotsing",
+    "key": "LIN",
+    "region": "LMB"
+  },
+  {
+    "value": "Liphiring Clinic",
+    "key": "LIP",
+    "region": "LMH"
+  },
+  {
+    "value": "Lithipeng Clinic",
+    "key": "LTP",
+    "region": "LMH"
+  },
+  {
+    "value": "Little Flower",
+    "key": "LITT",
+    "region": "LBE"
+  },
+  {
+    "value": "Loretto Clinic",
+    "key": "LORE",
+    "region": "NRL"
+  },
+  {
+    "value": "Louis Gerard",
+    "key": "LOUIS",
+    "region": "LMB"
+  },
+  {
+    "value": "MAPUTSOE SDA",
+    "key": "MSDA",
+    "region": "LMB"
+  },
+  {
+    "value": "MT OLIVET HEALTH CENTRE",
+    "key": "OLIVE",
+    "region": "LMF"
+  },
+  {
+    "value": "MT TABOR HEALTH CENTRE",
+    "key": "TABOR",
+    "region": "LMF"
+  },
+  {
+    "value": "Mabote",
+    "key": "MABO",
+    "region": "NRL"
+  },
+  {
+    "value": "Mafa",
+    "key": "MAF",
+    "region": "LJM"
+  },
+  {
+    "value": "Mahlatsa Clinic",
+    "key": "MAH",
+    "region": "LBE"
+  },
+  {
+    "value": "Mahobong H.C",
+    "key": "MHC",
+    "region": "LMB"
+  },
+  {
+    "value": "Makhunoane Clinic",
+    "key": "MAK",
+    "region": "LSE"
+  },
+  {
+    "value": "Makoae",
+    "key": "MKE",
+    "region": "LQT"
+  },
+  {
+    "value": "Malea-lea Clinic - Mafeteng",
+    "key": "MALEA",
+    "region": "LSC"
+  },
+  {
+    "value": "Mapheleng",
+    "key": "MPG",
+    "region": "LML"
+  },
+  {
+    "value": "Mapholaneng Clinic",
+    "key": "MMP",
+    "region": "LMK"
+  },
+  {
+    "value": "Maputsoe Filter Clinic",
+    "key": "MAFC",
+    "region": "LMB"
+  },
+  {
+    "value": "Maqokho clinic",
+    "key": "MQK",
+    "region": "LQT"
+  },
+  {
+    "value": "Maryland",
+    "key": "MARY",
+    "region": "LMB"
+  },
+  {
+    "value": "Masemouse",
+    "key": "MASE",
+    "region": "LSC"
+  },
+  {
+    "value": "Masia nokeng",
+    "key": "MASIA",
+    "region": "NRL"
+  },
+  {
+    "value": "Matelile Clinic - Mafeteng",
+    "key": "MATA",
+    "region": "LSC"
+  },
+  {
+    "value": "Matlameng",
+    "key": "MAT",
+    "region": "LMB"
+  },
+  {
+    "value": "Matsieng Clinic",
+    "key": "MATS",
+    "region": "LSC"
+  },
+  {
+    "value": "Matukeng Clinic",
+    "key": "MATU",
+    "region": "NRL"
+  },
+  {
+    "value": "Medical Arts Clinic",
+    "key": "MAC",
+    "region": "LMB"
+  },
+  {
+    "value": "Melikane",
+    "key": "MELI",
+    "region": "LMC"
+  },
+  {
+    "value": "Moeketsane Clilnic",
+    "key": "MOE",
+    "region": "LMK"
+  },
+  {
+    "value": "Mofoka Clinic - Maseru",
+    "key": "MOFO",
+    "region": "LSC"
+  },
+  {
+    "value": "Mofumahali oa Rosari",
+    "key": "MOR",
+    "region": "LMH"
+  },
+  {
+    "value": "Mohale Clinic",
+    "key": "MC",
+    "region": "NRL"
+  },
+  {
+    "value": "Mohalinyane Clinic",
+    "key": "MOH",
+    "region": "LMH"
+  },
+  {
+    "value": "Mohlanapeng Clinic",
+    "key": "MHP",
+    "region": "LPA"
+  },
+  {
+    "value": "Mohlapiso",
+    "key": "MOHLA",
+    "region": "LMC"
+  },
+  {
+    "value": "Molika-liko",
+    "key": "MLL",
+    "region": "LMK"
+  },
+  {
+    "value": "Mootsinyane Clinic",
+    "key": "MOO",
+    "region": "LMH"
+  },
+  {
+    "value": "Morifi Clinic",
+    "key": "MOF",
+    "region": "LMH"
+  },
+  {
+    "value": "Mositi",
+    "key": "MOS",
+    "region": "LMB"
+  },
+  {
+    "value": "Motete Clinic",
+    "key": "MTT",
+    "region": "LMU"
+  },
+  {
+    "value": "Mount Martre",
+    "key": "MMR",
+    "region": "LJM"
+  },
+  {
+    "value": "Mphaki Clinic",
+    "key": "MPK",
+    "region": "LQT"
+  },
+  {
+    "value": "Mpharane",
+    "key": "MPN",
+    "region": "LMH"
+  },
+  {
+    "value": "Muela Clinic",
+    "key": "MUE",
+    "region": "LSE"
+  },
+  {
+    "value": "National Reference Laboratory",
+    "key": "NRL",
+    "region": "NRL"
+  },
+  {
+    "value": "Nazareth Clinic",
+    "key": "NAZ",
+    "region": "LJO"
+  },
+  {
+    "value": "Ngoajane Clinic",
+    "key": "NGO",
+    "region": "LSE"
+  },
+  {
+    "value": "PSHATLELLA",
+    "key": "PSHA",
+    "region": "LSC"
+  },
+  {
+    "value": "Paballong Clinic",
+    "key": "PABA",
+    "region": "LBE"
+  },
+  {
+    "value": "Paki Clinic",
+    "key": "PAKI",
+    "region": "NRL"
+  },
+  {
+    "value": "Peka",
+    "key": "PEKA",
+    "region": "LMB"
+  },
+  {
+    "value": "Phamong Clinic",
+    "key": "PHA",
+    "region": "LMH"
+  },
+  {
+    "value": "Pilot Clinic",
+    "key": "PILOT",
+    "region": "LBE"
+  },
+  {
+    "value": "Pontmain",
+    "key": "PONT",
+    "region": "LMB"
+  },
+  {
+    "value": "Popa",
+    "key": "POP",
+    "region": "LJM"
+  },
+  {
+    "value": "Q.F.C",
+    "key": "QFC",
+    "region": "NRL"
+  },
+  {
+    "value": "Queen Elizabeth II Hospital",
+    "key": "QE2",
+    "region": "NRL"
+  },
+  {
+    "value": "Rampai Clilnic",
+    "key": "RAM",
+    "region": "LMU"
+  },
+  {
+    "value": "Rankakala",
+    "key": "RANK",
+    "region": "LMC"
+  },
+  {
+    "value": "Ribaneng",
+    "key": "RIBA",
+    "region": "LSC"
+  },
+  {
+    "value": "S.D.A",
+    "key": "SDA",
+    "region": "NRL"
+  },
+  {
+    "value": "SAMARIA HEALTH CENTRE",
+    "key": "SAMA",
+    "region": "LMF"
+  },
+  {
+    "value": "SEKAMENG CLINIC",
+    "key": "SEKAM",
+    "region": "LMF"
+  },
+  {
+    "value": "ST.ANDREWS - Maseru",
+    "key": "STAND",
+    "region": "LSC"
+  },
+  {
+    "value": "ST.Ann",
+    "key": "STA",
+    "region": "LMB"
+  },
+  {
+    "value": "ST.BARNABAS - Maseru",
+    "key": "STBAR",
+    "region": "LSC"
+  },
+  {
+    "value": "ST.Claire Clinic",
+    "key": "STC",
+    "region": "LMH"
+  },
+  {
+    "value": "ST.Denis",
+    "key": "STD",
+    "region": "LMB"
+  },
+  {
+    "value": "ST.Magdalena Clinic",
+    "key": "MAG",
+    "region": "LBE"
+  },
+  {
+    "value": "ST.Margaret",
+    "key": "STM",
+    "region": "LMB"
+  },
+  {
+    "value": "ST.Monicas",
+    "key": "MONIC",
+    "region": "LMB"
+  },
+  {
+    "value": "ST.PETER - Claver",
+    "key": "STPET",
+    "region": "LSC"
+  },
+  {
+    "value": "ST.RODRIGUE - Maseru",
+    "key": "STROD",
+    "region": "LSC"
+  },
+  {
+    "value": "ST.Rose",
+    "key": "STR",
+    "region": "LMB"
+  },
+  {
+    "value": "ST.Theresa PARAY",
+    "key": "STT",
+    "region": "LPA"
+  },
+  {
+    "value": "Sacred Heart Clinic",
+    "key": "SCH",
+    "region": "LTL"
+  },
+  {
+    "value": "Scott",
+    "key": "LSC",
+    "region": "LSC"
+  },
+  {
+    "value": "Sebetia Clinic",
+    "key": "SBT",
+    "region": "LML"
+  },
+  {
+    "value": "Seetsa",
+    "key": "SEET",
+    "region": "LMB"
+  },
+  {
+    "value": "Sehlaba Thebe",
+    "key": "SEH",
+    "region": "LMC"
+  },
+  {
+    "value": "Sehong-hong",
+    "key": "SHH",
+    "region": "LPA"
+  },
+  {
+    "value": "Sekake Clinic",
+    "key": "SKK",
+    "region": "LTL"
+  },
+  {
+    "value": "Semenanyane Clinic",
+    "key": "SMN",
+    "region": "LPA"
+  },
+  {
+    "value": "Semonkong",
+    "key": "SEM",
+    "region": "NRL"
+  },
+  {
+    "value": "Seshote",
+    "key": "SES",
+    "region": "LMU"
+  },
+  {
+    "value": "Sion Clinic",
+    "key": "SIO",
+    "region": "LML"
+  },
+  {
+    "value": "St. Josepth's Laboratory",
+    "key": "LJO",
+    "region": "LJO"
+  },
+  {
+    "value": "St. Leornard Clinic",
+    "key": "STL",
+    "region": "NRL"
+  },
+  {
+    "value": "St.Benedict Clinic",
+    "key": "BEN",
+    "region": "LJO"
+  },
+  {
+    "value": "St.David Health Clinic",
+    "key": "STDAV",
+    "region": "LBE"
+  },
+  {
+    "value": "St.Francis",
+    "key": "STFR",
+    "region": "LMC"
+  },
+  {
+    "value": "St.Gabriel",
+    "key": "SGB",
+    "region": "LQT"
+  },
+  {
+    "value": "St.James Clinic",
+    "key": "SJAM",
+    "region": "LMK"
+  },
+  {
+    "value": "St.Matthews",
+    "key": "SMT",
+    "region": "LQT"
+  },
+  {
+    "value": "St.Paul Health Centre",
+    "key": "STPC",
+    "region": "LBB"
+  },
+  {
+    "value": "St.Peters Clinic - Seboche",
+    "key": "STP",
+    "region": "LSE"
+  },
+  {
+    "value": "St.Theresia MALUTI",
+    "key": "STTB",
+    "region": "LML"
+  },
+  {
+    "value": "THABA TSOEU HEALTH CENTRE",
+    "key": "TSOEU",
+    "region": "LMF"
+  },
+  {
+    "value": "THABANA-MORENA HEALTH CENTRE",
+    "key": "THABM",
+    "region": "LMF"
+  },
+  {
+    "value": "TSAKHOLO CLINIC",
+    "key": "TSAK",
+    "region": "LMF"
+  },
+  {
+    "value": "Thaba Patsoa",
+    "key": "TBP",
+    "region": "LMB"
+  },
+  {
+    "value": "Thababosiu Clinic",
+    "key": "THABA",
+    "region": "NRL"
+  },
+  {
+    "value": "Thamae Clinic",
+    "key": "THAM",
+    "region": "NRL"
+  },
+  {
+    "value": "Thusanang Health Centre",
+    "key": "THU",
+    "region": "LBB"
+  },
+  {
+    "value": "Tlali Clinic",
+    "key": "TLA",
+    "region": "LJO"
+  },
+  {
+    "value": "Tsatsane Clinic",
+    "key": "TSS",
+    "region": "LQT"
+  },
+  {
+    "value": "Tsepo Clinic",
+    "key": "TSP",
+    "region": "LMH"
+  },
+  {
+    "value": "Tsime Health Centre",
+    "key": "THC",
+    "region": "LBB"
+  },
+  {
+    "value": "Villa Maria Clinic",
+    "key": "VMR",
+    "region": "LQT"
   }
 ]

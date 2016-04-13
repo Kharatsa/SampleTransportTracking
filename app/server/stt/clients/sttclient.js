@@ -38,14 +38,14 @@ function STTClient(options) {
   this.models = options.models;
 
   // Metadata clients
+  this.metaDistricts = metaclients.districts({
+    db: this.db, model: this.models.MetaDistricts});
+  this.metaLabs = metaclients.labs({
+    db: this.db, model: this.models.MetaLabs});
   this.metaFacilities = metaclients.facilities({
     db: this.db, model: this.models.MetaFacilities});
-  this.metaRegions = metaclients.regions({
-    db: this.db, model: this.models.MetaRegions});
-  this.metaDistricts = metaclients.facilities({
-    db: this.db, model: this.models.MetaDistricts});
-  this.metaLabs = metaclients.regions({
-    db: this.db, model: this.models.MetaLabs});
+  // this.metaRegions = metaclients.regions({
+  //   db: this.db, model: this.models.MetaRegions});
   this.metaPeople = metaclients.people({
     db: this.db, model: this.models.MetaPeople});
   this.metaArtifacts = metaclients.artifacts({

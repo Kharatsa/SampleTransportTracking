@@ -39,8 +39,8 @@ const labs = modelwrapper({
 
           classMethods: {
             associate: function() {
-              labs.model.belongsTo(Districts, {foreignKey: 'region'});
-              Districts.hasMany(labs.model, {foreignKey: 'region'});
+              labs.model.belongsTo(Districts, {foreignKey: 'district'});
+              Districts.hasMany(labs.model, {foreignKey: 'district'});
             }
           }
         }

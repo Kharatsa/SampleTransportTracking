@@ -87,10 +87,10 @@ const metaHandler = (model, modelName, uniques) => {
   };
 };
 
-const metaRegions = metaHandler(client.metaRegions, 'MetaRegions');
-const metaFacilities = metaHandler(client.metaFacilities, 'MetaFacilities');
+// const metaRegions = metaHandler(client.metaRegions, 'MetaRegions');
 const metaDistricts = metaHandler(client.metaDistricts, 'MetaDistricts');
 const metaLabs = metaHandler(client.metaLabs, 'MetaLabs');
+const metaFacilities = metaHandler(client.metaFacilities, 'MetaFacilities');
 const metaArtifacts = metaHandler(client.metaArtifacts, 'MetaArtifacts');
 const metaLabTests = metaHandler(client.metaLabTests, 'MetaLabTests');
 const metaPeople = metaHandler(client.metaPeople, 'MetaPeople');
@@ -168,7 +168,7 @@ const labChanges = incoming => {
 module.exports = {
   syncedCombine,
   sampleIds,
-  metaRegions,
+  // metaRegions,
   metaFacilities,
   metaDistricts,
   metaLabs,

@@ -327,7 +327,8 @@ const load = (changesNum) => {
       artifact: testmeta.metaArtifacts,
       labtest: testmeta.metaLabTests,
       facility: testmeta.metaFacilities,
-      region: testmeta.metaRegions,
+      district: testmeta.metaDistricts,
+      lab: testmeta.metaLabs,
       status: testmeta.metaStatuses,
       rejection: testmeta.metaRejections,
       person: testmeta.metaPeople,
@@ -356,7 +357,7 @@ const load = (changesNum) => {
     .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog));
   })
   .then(() => log.info('Finihsed loading fake data'))
-  .catch(err => log.error('Error creating fake data', err, err.message));
+  .catch(err => log.error('Error creating fake data', err, err.message, err.stack));
 };
 
 module.exports = {
