@@ -4,8 +4,8 @@ const BPromise = require('bluebird');
 const request = require('request');
 const FormData = require('form-data');
 const Auth = require('request/lib/auth').Auth;
-const config = require('app/config');
-const log = require('app/server/util/logapp.js');
+const config = require('config');
+const log = require('server/util/logapp.js');
 
 /**
  * This module replicates the pull functions of the Briefcase Aggregate API.

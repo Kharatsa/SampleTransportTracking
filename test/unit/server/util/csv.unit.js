@@ -4,7 +4,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const csv = require('app/server/util/csv.js');
+const csv = require('server/util/csv.js');
 
 describe('CSV parser', () => {
 

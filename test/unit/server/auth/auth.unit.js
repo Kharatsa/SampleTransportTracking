@@ -4,11 +4,11 @@ const chai = require('chai');
 const expect = chai.expect;
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
-const config = require('app/config');
-const credentials = require('app/server/auth/credentials.js');
-const users = require('app/server/auth/models/users.js');
-const storage = require('app/server/storage');
-const authclient = require('app/server/auth/authclient.js');
+const config = require('config');
+const credentials = require('server/auth/credentials.js');
+const users = require('server/auth/models/users.js');
+const storage = require('server/storage');
+const authclient = require('server/auth/authclient.js');
 
 describe('Authentication Components', () => {
 

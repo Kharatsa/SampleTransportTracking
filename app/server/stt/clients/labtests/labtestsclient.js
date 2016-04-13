@@ -3,7 +3,7 @@
 /** @module stt/sttclient/labtests */
 
 const util = require('util');
-const ModelClient = require('app/server/stt/clients/modelclient.js');
+const ModelClient = require('server/stt/clients/modelclient.js');
 const labtestsquery = require('./labtestsquery.js');
 
 /**

@@ -11,7 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const Bluebird = require('bluebird');
 const readFileAsync = Bluebird.promisify(fs.readFile);
-const transform = require('app/server/odk/collect/collecttransform.js');
+const transform = require('server/odk/collect/collecttransform.js');
 
 const basePath = path.join(__dirname, '..', 'data');
 const filenames = [

@@ -1,7 +1,7 @@
 'use strict';
 
-const log = require('app/server/util/logapp.js');
-const aggregate = require('app/server/odk/aggregateapi.js');
+const log = require('server/util/logapp.js');
+const aggregate = require('server/odk/aggregateapi.js');
 
 const submit = submission => {
   return aggregate.makeSubmission(submission)

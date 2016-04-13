@@ -1,25 +1,30 @@
 'use strict';
 
+// for better require()s
+const path = require('path');
+require('app-module-path').addPath(path.join(__dirname, '../../app'));
+require('app-module-path').addPath(path.join(__dirname, '../../test'));
+
 const express = require('express');
 const helmet = require('helmet');
 const favicon = require('serve-favicon');
-const config = require('app/config');
-const log = require('app/server/util/logapp.js');
-const requestLog = require('app/server/util/logrequest.js');
-const storage = require('app/server/storage');
+const config = require('config');
+const log = require('server/util/logapp.js');
+const requestLog = require('server/util/logrequest.js');
+const storage = require('server/storage');
 storage.init({config: config.db});
-const metamodels = require('app/server/stt/models/metadata');
-const sttmodels = require('app/server/stt/models');
-const authmodels = require('app/server/auth/models');
+const metamodels = require('server/stt/models/metadata');
+const sttmodels = require('server/stt/models');
+const authmodels = require('server/auth/models');
 storage.loadModels(metamodels);
 storage.loadModels(sttmodels);
 storage.loadModels(authmodels);
-const errors = require('app/server/middleware/errors.js');
-const shutdownhandler = require('app/server/util/shutdownhandler.js');
-const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
-const STTRoutes = require('app/server/stt/sttroutes.js');
-const DisaRoutes = require('app/server/disa/disaroutes.js');
-const prepareserver = require('app/server/prepareserver.js');
+const errors = require('server/middleware/errors.js');
+const shutdownhandler = require('server/util/shutdownhandler.js');
+const AggregateRoutes = require('server/odk/aggregateroutes.js');
+const STTRoutes = require('server/stt/sttroutes.js');
+const DisaRoutes = require('server/disa/disaroutes.js');
+const prepareserver = require('server/prepareserver.js');
 
 shutdownhandler.init();
 
@@ -34,7 +39,7 @@ if (process.env.NODE_ENV === 'production') {
   app.set('json spaces', 2);
 }
 
-const passport = require('app/server/auth/httpauth.js');
+const passport = require('server/auth/httpauth.js');
 const authenticate = passport.authenticate('basic', {session: false});
 
 if (config.server.AUTH_ENABLED && process.env.NODE_ENV === 'production') {
@@ -61,7 +66,7 @@ app.get('/*', (req, res) => {
 });
 
 if (process.env.NODE_ENV === 'development') {
-  const fakedata = require('../../test/utils/fakedata.js');
+  const fakedata = require('utils/fakedata.js');
   prepareserver()
   .then(() => fakedata.load())
   .catch(err => log.error(err, err.message))

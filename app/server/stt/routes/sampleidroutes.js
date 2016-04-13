@@ -2,10 +2,10 @@
 
 const express = require('express');
 const router = express.Router();
-const offset = require('app/server/middleware/pageoffset.js');
-const storage = require('app/server/storage');
-const sttclient = require('app/server/stt/clients/sttclient.js');
-const dbresult = require('app/server/storage/dbresult.js');
+const offset = require('server/middleware/pageoffset.js');
+const storage = require('server/storage');
+const sttclient = require('server/stt/clients/sttclient.js');
+const dbresult = require('server/storage/dbresult.js');
 
 const client = sttclient({db: storage.db, models: storage.models});
 

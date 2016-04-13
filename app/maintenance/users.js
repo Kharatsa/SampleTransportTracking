@@ -2,12 +2,16 @@
 
 'use strict';
 
+// for better require()s
+const path = require('path');
+require('app-module-path').addPath(path.join(__dirname, '../../app'));
+
 const cli = require('commander');
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const authModels = require('app/server/auth/models');
-const authclient = require('app/server/auth/authclient.js');
-const credentials = require('app/server/auth/credentials.js');
+const log = require('server/util/logapp.js');
+const authModels = require('server/auth/models');
+const authclient = require('server/auth/authclient.js');
+const credentials = require('server/auth/credentials.js');
 const clibefore = require('./utils/clibefore.js');
 const clireport = require('./utils/clireport.js');
 

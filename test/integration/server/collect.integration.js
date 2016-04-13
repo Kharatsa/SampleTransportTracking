@@ -7,16 +7,16 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const express = require('express');
-const config = require('app/config');
-const metamodels = require('app/server/stt/models/metadata');
-const sttmodels = require('app/server/stt/models');
-const storage = require('app/server/storage');
+const config = require('config');
+const metamodels = require('server/stt/models/metadata');
+const sttmodels = require('server/stt/models');
+const storage = require('server/storage');
 storage.init({config: config.db});
 storage.loadModels(metamodels);
 storage.loadModels(sttmodels);
-const prepareserver = require('app/server/prepareserver.js');
+const prepareserver = require('server/prepareserver.js');
 const testmeta = require('../../utils/testmeta.js');
-const AggregateRoutes = require('app/server/odk/aggregateroutes.js');
+const AggregateRoutes = require('server/odk/aggregateroutes.js');
 
 const app = express();
 app.use('/odk', AggregateRoutes);

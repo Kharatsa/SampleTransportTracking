@@ -1,9 +1,9 @@
 'use strict';
 
-const log = require('app/server/util/logapp.js');
-const storage = require('app/server/storage');
-const preload = require('app/server/storage/preload.js');
-const sttsubmission = require('app/server/stt/sttsubmission.js');
+const log = require('server/util/logapp.js');
+const storage = require('server/storage');
+const preload = require('server/storage/preload.js');
+const sttsubmission = require('server/stt/sttsubmission.js');
 
 module.exports = () => {
   const preloadMetadata = storage.db.sync()

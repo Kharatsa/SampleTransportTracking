@@ -1,7 +1,7 @@
 'use strict';
 
 const expressWinston = require('express-winston');
-const appLogger = require('app/server/util/logapp.js');
+const appLogger = require('server/util/logapp.js');
 
 var requestLogger = expressWinston.logger({
   winstonInstance: appLogger,

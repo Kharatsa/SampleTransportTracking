@@ -4,8 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const BPromise = require('bluebird');
 BPromise.promisifyAll(fs);
-const log = require('app/server/util/logapp.js');
-const csv = require('app/server/util/csv.js');
+const log = require('server/util/logapp.js');
+const csv = require('server/util/csv.js');
 
 /**
  * Converts metadata parsed from CSV to an Object for to a database model

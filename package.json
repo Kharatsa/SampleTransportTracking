@@ -1,23 +1,31 @@
 {
-  "name": "kharatsa",
+  "name": "STT",
   "private": true,
   "version": "0.1.0",
-  "description": "Sample Transport Tracking",
+  "description": "Lesotho Ministry of Health Sample Transport Tracking (STT) service",
+  "author": "Sean Herman <sjh293@cornell.edu>",
+  "license": "Apache-2.0",
   "main": "app/server/server.js",
   "scripts": {
     "build": "NODE_ENV=production gulp build",
     "start": "NODE_ENV=production node --harmony app/server/server.js",
-    "syncdb": "node app/maintenance/data.js sync",
     "test": "NODE_ENV=test npm run test-unit && NODE_ENV=test npm run test-integration",
     "test-unit": "NODE_ENV=test npm run test-unit-server",
-    "test-unit-server": "NODE_ENV=test mocha --harmony --reporter spec 'test/unit/server/**/*.js'",
+    "test-unit-server": "NODE_ENV=test mocha 'test/unit/server/**/*.js'",
     "test-integration": "NODE_ENV=test npm run test-integration-server",
-    "test-integration-server": "NODE_ENV=test mocha --harmony --reporter spec 'test/integration/server/**/*.js'",
-    "docs": "jsdoc app/server -r -R README.md -d docs"
+    "test-integration-server": "NODE_ENV=test mocha 'test/integration/server/**/*.js'",
+    "docs": "jsdoc app/server -r -R README.md -d docs",
+    "sttdata": "./app/maintenance/data.js",
+    "sttmetadata": "./app/maintenance/metadata.js",
+    "sttusers": "./app/maintenance/users.js"
   },
-  "author": "Sean Herman <sjh293@cornell.edu>",
-  "license": "Apache-2.0",
+  "bin": {
+    "sttdata": "./app/maintenance/data.js",
+    "sttmetadata": "./app/maintenance/metadata.js",
+    "sttusers": "./app/maintenance/users.js"
+  },
   "dependencies": {
+    "app-module-path": "^1.0.6",
     "bluebird": "^3.3.4",
     "body-parser": "^1.15.0",
     "chartist": "^0.9.7",

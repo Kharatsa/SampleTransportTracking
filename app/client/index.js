@@ -5,7 +5,6 @@ import Root from './containers/Root';
 import store from './store';
 import './util/memorystats';
 
-
 // https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
 

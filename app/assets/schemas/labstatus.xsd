@@ -106,6 +106,7 @@
   <xs:sequence>
     <xs:element name="STID" type="STIDType" maxOccurs="1"/>
     <xs:element name="LabID" type="LabIDType" maxOccurs="1"/>
+    <xs:element name="TestingLabID" type="LabIDType" maxOccurs="1"/>
     <xs:element name="StatusTimestamp" type="StatusTimestampType" maxOccurs="1"/>
     <xs:element name="Origin" type="OriginType" maxOccurs="1"/>
     <xs:element name="LabPrefix" type="LabPrefixType" maxOccurs="1"/>

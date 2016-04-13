@@ -1,7 +1,7 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const log = require('app/server/util/logapp.js');
+const log = require('server/util/logapp.js');
 
 /**
  * Maintains the database connection and models

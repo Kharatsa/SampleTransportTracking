@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
+const log = require('server/util/logapp.js');
 
 // Pairs of workflow stages between which turn around time (TAT) should be
 // calculated.

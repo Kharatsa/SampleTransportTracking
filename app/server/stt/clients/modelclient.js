@@ -2,8 +2,8 @@
 
 /** @module stt/clients */
 
-const wrap = require('app/server/util/wrap.js');
-const queryutils = require('app/server/storage/queryutils.js');
+const wrap = require('server/util/wrap.js');
+const queryutils = require('server/storage/queryutils.js');
 
 const DEFAULT_RESULTS_LIMIT = 50;
 

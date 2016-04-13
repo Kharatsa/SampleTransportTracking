@@ -2,15 +2,29 @@
 
 'use strict';
 
-const config = require('app/config');
-const log = require('app/server/util/logapp.js');
-const authmodels = require('app/server/auth/models');
-const metamodels = require('app/server/stt/models/metadata');
-const sttmodels = require('app/server/stt/models');
-const storage = require('app/server/storage');
+// for better require()s
+const path = require('path');
+require('app-module-path').addPath(path.join(__dirname, '../../app'));
+
+const config = require('config');
+const log = require('server/util/logapp.js');
+const authmodels = require('server/auth/models');
+const metamodels = require('server/stt/models/metadata');
+const sttmodels = require('server/stt/models');
+const storage = require('server/storage');
 const cli = require('commander');
 
+cli.option('-d --development', 'Run commands on development database ' +
+           '(default: production');
+
 function before() {
+  if (cli.development) {
+    log.debug('Applying commands to development database');
+  } else {
+    log.debug('Applying commands to production database');
+    process.env.NODE_ENV = 'production';
+  }
+
   storage.init({config: config.db});
   storage.loadModels(authmodels);
   storage.loadModels(metamodels);

@@ -3,8 +3,8 @@
 const util = require('util');
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const ModelClient = require('app/server/stt/clients/modelclient.js');
+const log = require('server/util/logapp.js');
+const ModelClient = require('server/stt/clients/modelclient.js');
 
 /**
  * [AuthClient description]
@@ -76,13 +76,22 @@ AuthClient.prototype.changePassword = BPromise.method(function(options) {
   if (!(options.username && options.salt && options.digest)) {
     throw new Error('Missing required parameter username, salt, or digest');
   }
-  const username = options.username;
 
-  return this.models.Users.update(
-    {salt: options.salt, digest: options.digest},
-    {where: {username}, fields: ['salt', 'digest']})
-  .then(affectedCount => log.debug(`changePassword affected=${affectedCount}`))
-  .then(() => this.getUser({username}));
+  log.debug('Username:', options.username);
+  log.debug('New salt:', options.salt);
+  log.debug('New digest:', options.digest);
+
+  const getUsername = sanitizeUsername(options.username);
+
+  const update = getUsername.then(username =>
+    this.models.Users.update(
+      {salt: options.salt, digest: options.digest},
+      {where: {username}, fields: ['salt', 'digest']}
+  ))
+  .then(affectedCount => log.debug(`changePassword affected=${affectedCount}`));
+
+  return BPromise.join(getUsername, update, (username) =>
+    this.getUser({username}));
 });
 
 /**

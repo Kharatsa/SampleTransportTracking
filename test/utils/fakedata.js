@@ -304,11 +304,11 @@ const removeFakeData = storage => {
 };
 
 const load = (changesNum) => {
-  const config = require('app/config');
-  const log = require('app/server/util/logapp.js');
-  const storage = require('app/server/storage');
+  const config = require('config');
+  const log = require('server/util/logapp.js');
+  const storage = require('server/storage');
   storage.init({config: config.db});
-  const sttmodels = require('app/server/stt/models');
+  const sttmodels = require('server/stt/models');
   storage.loadModels(sttmodels);
 
   const noLog = {logging: false};

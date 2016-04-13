@@ -3,7 +3,7 @@
 /** @module stt/sttclient/labtests */
 
 const BPromise = require('bluebird');
-const queryutils = require('app/server/storage/queryutils.js');
+const queryutils = require('server/storage/queryutils.js');
 
 /**
  * [description]

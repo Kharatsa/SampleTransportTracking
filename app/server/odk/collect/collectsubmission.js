@@ -1,9 +1,9 @@
 'use strict';
 
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const sttsubmission = require('app/server/stt/sttsubmission.js');
-const collecttransform = require('app/server/odk/collect/collecttransform.js');
+const log = require('server/util/logapp.js');
+const sttsubmission = require('server/stt/sttsubmission.js');
+const collecttransform = require('server/odk/collect/collecttransform.js');
 
 const handleSubmission = incoming => {
   // Unrecognized/new metadata parsed from collect submissions will be inserted

@@ -1,6 +1,6 @@
 'use strict';
 
-const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
+const rawqueryutils = require('server/stt/clients/rawqueryutils.js');
 
 const checkRequired = params => {
   if (!params.afterDate) {

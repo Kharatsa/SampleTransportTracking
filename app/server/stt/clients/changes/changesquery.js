@@ -4,8 +4,8 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const queryutils = require('app/server/storage/queryutils.js');
-const rawqueryutils = require('app/server/stt/clients/rawqueryutils.js');
+const queryutils = require('server/storage/queryutils.js');
+const rawqueryutils = require('server/stt/clients/rawqueryutils.js');
 
 /**
  * @method changesTestsAndDate

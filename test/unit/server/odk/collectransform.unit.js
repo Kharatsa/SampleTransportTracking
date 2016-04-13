@@ -8,7 +8,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const transform = require('app/server/odk/collect/collecttransform.js');
+const transform = require('server/odk/collect/collecttransform.js');
 
 describe('ODK Collect Tranforms', () => {
   const basePath = path.join(__dirname, '..', '..', '..', 'data');

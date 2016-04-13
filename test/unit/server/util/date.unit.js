@@ -4,7 +4,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const dates = require('app/server/util/dates.js');
+const dates = require('server/util/dates.js');
 
 describe('Date parser', () => {
 

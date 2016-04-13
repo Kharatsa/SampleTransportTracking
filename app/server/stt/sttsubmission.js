@@ -1,10 +1,10 @@
 'use strict';
 
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const datamerge = require('app/server/util/datamerge.js');
-const storage = require('app/server/storage');
-const sttclient = require('app/server/stt/clients/sttclient.js');
+const log = require('server/util/logapp.js');
+const datamerge = require('server/util/datamerge.js');
+const storage = require('server/storage');
+const sttclient = require('server/stt/clients/sttclient.js');
 
 const client = sttclient({db: storage.db, models: storage.models});
 

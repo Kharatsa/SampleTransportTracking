@@ -3,10 +3,10 @@
 const express = require('express');
 const router = express.Router();
 const BPromise = require('bluebird');
-const transformkeys = require('app/server/middleware/transformkeys.js');
-const storage = require('app/server/storage');
-const sttclient = require('app/server/stt/clients/sttclient.js');
-const dbresult = require('app/server/storage/dbresult.js');
+const transformkeys = require('server/middleware/transformkeys.js');
+const storage = require('server/storage');
+const sttclient = require('server/stt/clients/sttclient.js');
+const dbresult = require('server/storage/dbresult.js');
 
 const sttClient = sttclient({db: storage.db, models: storage.models});
 const uppercaseParams = transformkeys.upperCaseParamsMiddleware(['key']);

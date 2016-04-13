@@ -1,7 +1,7 @@
 'use strict';
 
 const BPromise = require('bluebird');
-const queryutils = require('app/server/storage/queryutils.js');
+const queryutils = require('server/storage/queryutils.js');
 
 /**
  * @method key

@@ -5,10 +5,10 @@ const BPromise = require('bluebird');
 const xml2js = require('xml2js');
 BPromise.promisifyAll(xml2js);
 const xmlBuilder = new xml2js.Builder({renderOpts: {pretty: false}});
-const log = require('app/server/util/logapp.js');
-const string = require('app/common/string.js');
-const datamerge = require('app/server/util/datamerge.js');
-const uuid = require('app/server/util/uuid.js');
+const log = require('server/util/logapp.js');
+const string = require('common/string.js');
+const datamerge = require('server/util/datamerge.js');
+const uuid = require('server/util/uuid.js');
 
 // TODO: Define new jsdoc typedefs for lab status objects
 
