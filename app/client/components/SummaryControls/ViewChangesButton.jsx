@@ -4,7 +4,7 @@ import SideMenuButton from '../SideMenu/SideMenuButton';
 
 export const ChangesButton = () => {
   return (
-    <Link to="/changes">
+    <Link to='/changes'>
       <SideMenuButton>View Details</SideMenuButton>
     </Link>
   );

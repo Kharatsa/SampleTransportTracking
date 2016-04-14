@@ -4,17 +4,6 @@ import {
   normalizeSummary, normalizeTurnArounds
 } from './normalize.js';
 
-const summaryFilterValues = summaryFilter => {
-  //validity checking for region / facility here?
-  const regionKey = summaryFilter.get('regionKey');
-  const facilityKey = summaryFilter.get('facilityKey');
-
-  const afterDateLocal = summaryFilter.get('afterDate');
-  const beforeDateLocal = summaryFilter.get('beforeDate');
-
-  return {afterDateLocal, beforeDateLocal, regionKey, facilityKey};
-};
-
 const pageURLParam = ({page, first=true}) => {
   const prefix = first ? '?' : '&';
   return page ? `${prefix}page=${page}` : '';
@@ -29,13 +18,13 @@ export const locationURLParams = ({facilityKey, regionKey}) => {
   return facilityPart || regionPart;
 };
 
-export const dateURLParams = ({afterDateLocal, beforeDateLocal}) => {
-  if (!(afterDateLocal && beforeDateLocal)) {
+export const dateURLParams = ({afterDate, beforeDate}) => {
+  if (!(afterDate && beforeDate)) {
     throw new Error('Missing required parameter afterDate or beforeDate');
   }
 
-  const afterDatePart = `?afterDate=${afterDateLocal.toISOString()}`;
-  const beforeDatePart = `&beforeDate=${beforeDateLocal.toISOString()}`;
+  const afterDatePart = `?afterDate=${afterDate.toISOString()}`;
+  const beforeDatePart = `&beforeDate=${beforeDate.toISOString()}`;
 
   return `${afterDatePart}${beforeDatePart}`;
 };
@@ -47,16 +36,13 @@ export const dateURLParams = ({afterDateLocal, beforeDateLocal}) => {
  * @param {Immutable.Record} summaryFilter SummaryFilter type Immutable Record
  * @return {string}
  */
-export const filteredURL = (endpoint, summaryFilter, page=null) => {
-  const filterValues = summaryFilterValues(summaryFilter);
-
-  const paramsPart = locationURLParams(filterValues);
-  const queryPart = dateURLParams(filterValues);
+export const filteredURL = (endpoint, filter, page=null) => {
+  const paramsPart = locationURLParams(filter);
+  const queryPart = dateURLParams(filter);
   const pagePart = pageURLParam({page, first: false});
 
   return `/stt/${paramsPart}${endpoint}${queryPart}${pagePart}`;
 };
-
 
 export const getSampleDetail = (sampleId, callback) => {
   if (typeof sampleId === 'undefined') {
@@ -71,7 +57,7 @@ export const getSampleDetail = (sampleId, callback) => {
   });
 };
 
-export const getChanges = (filter, page=1, callback) => {
+export const getChanges = (filter={}, page=1, callback) => {
   page = Number.parseInt(page);
   const url = filteredURL('changes', filter, page);
   return request(url, (err, res) => {
@@ -82,7 +68,7 @@ export const getChanges = (filter, page=1, callback) => {
   });
 };
 
-export const getSummary = (filter, callback) => {
+export const getSummary = (filter={}, callback) => {
   const url = filteredURL('summary', filter);
   return request(url, (err, res) => {
     if (err) {
@@ -102,14 +88,12 @@ export const getMetadata = (options, callback) => {
   });
 };
 
-export const getTurnArounds = (filter, callback) => {
+export const getTurnArounds = (filter={}, callback) => {
   const url = filteredURL('ids/tat', filter);
-  console.log('get tat url: ', url);
   return request(url, (err, res) => {
     if (err) {
       return callback(err);
     }
-    console.log('in get turn arounds ', res.json)
     callback(null, normalizeTurnArounds(res.json));
   });
 };

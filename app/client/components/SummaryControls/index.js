@@ -1,7 +1,8 @@
 import SampleSearch from './SampleSearch';
 import ViewChangesButton from './ViewChangesButton';
-import SummaryLocationFilters from './SummaryLocationFilters';
+import LocationFilters from './LocationFilters';
+import DateFilters from './DateFilters';
 
 export {
-  SampleSearch, ViewChangesButton, SummaryLocationFilters
+  SampleSearch, ViewChangesButton, LocationFilters, DateFilters
 };

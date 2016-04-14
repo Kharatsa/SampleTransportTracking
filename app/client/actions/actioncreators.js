@@ -51,6 +51,13 @@ export const fetchSampleDetail = sampleId => {
   };
 };
 
+const getFilterValues = filter => ({
+  afterDate: filter.get('afterDate', null),
+  beforeDate: filter.get('beforeDate', null),
+  regionKey: filter.get('regionKey', null),
+  facilityKey: filter.get('facilityKey', null)
+});
+
 const receiveSampleDetail = ({
   samples, sampleId, changes, artifacts, labTests,
   changesByArtifactId, changesByLabTestId, changesByStage
@@ -72,7 +79,7 @@ const fetchChangesFailure = (error, page) => ({
 export const fetchChanges = (summaryFilter, page) => {
   return dispatch => {
     dispatch(requestChanges(summaryFilter, page));
-    return api.getChanges(summaryFilter, page, (err, data) => {
+    return api.getChanges(getFilterValues(summaryFilter), page, (err, data) => {
       if (err) {
         dispatch(fetchChangesFailure(err, page));
       }
@@ -88,7 +95,8 @@ const receiveChanges = ({
   changes, artifacts, labTests, samples, count, changeIds
 });
 
-const requestSummary = (summaryFilter) => ({type: FETCH_SUMMARY, summaryFilter});
+const requestSummary = (summaryFilter) =>
+  ({type: FETCH_SUMMARY, summaryFilter});
 
 const fetchSummaryFailure = (error) => ({
   type: FETCH_SUMMARY_FAILURE,
@@ -101,7 +109,7 @@ const receiveSummary = ({artifacts, labTests, totals}) =>
 export const fetchSummary = (summaryFilter) => {
   return dispatch => {
     dispatch(requestSummary(summaryFilter));
-    return api.getSummary(summaryFilter, (err, data) => {
+    return api.getSummary(getFilterValues(summaryFilter), (err, data) => {
       if (err) {
         dispatch(fetchSummaryFailure(err));
       }
@@ -110,7 +118,8 @@ export const fetchSummary = (summaryFilter) => {
   };
 };
 
-const requestTurnArounds = (summaryFilter) => ({type: FETCH_TURN_AROUNDS, summaryFilter});
+const requestTurnArounds = (summaryFilter) =>
+  ({type: FETCH_TURN_AROUNDS, summaryFilter});
 
 const fetchTurnAroundsFailure = (error) => ({
   type: FETCH_TURN_AROUNDS_FAILURE,
@@ -123,7 +132,7 @@ const receiveTurnArounds = (turnArounds) =>
 export const fetchTurnArounds = (summaryFilter) => {
   return dispatch => {
     dispatch(requestTurnArounds(summaryFilter));
-    return api.getTurnArounds(summaryFilter, (err, data) => {
+    return api.getTurnArounds(getFilterValues(summaryFilter), (err, data) => {
       if (err) {
         dispatch(fetchTurnAroundsFailure(err));
       }
@@ -132,7 +141,11 @@ export const fetchTurnArounds = (summaryFilter) => {
   };
 };
 
-export const changeSummaryFilter = (afterDate, beforeDate, regionKey, facilityKey) => ({
+export const changeSummaryFilter = ({
+  afterDate, beforeDate, regionKey, facilityKey
+}) => ({
   type: CHANGE_SUMMARY_FILTER,
-  summaryFilter: new SummaryFilter({afterDate, beforeDate, regionKey, facilityKey})
+  summaryFilter: new SummaryFilter({
+    afterDate, beforeDate, regionKey, facilityKey
+  })
 });

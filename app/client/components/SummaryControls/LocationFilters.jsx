@@ -2,39 +2,37 @@ import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Select from 'react-select';
 
-export const SummaryLocationFilters = React.createClass({
+export const LocationFilters = React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
     isFetchingData: PropTypes.bool.isRequired,
     metaRegions: PropTypes.object.isRequired,
     filteredMetaFacilities: PropTypes.object.isRequired,
-    summaryFilter: PropTypes.object.isRequired,
+    filterRegionKey: PropTypes.string,
+    filterFacilityKey: PropTypes.string,
     actions: PropTypes.object.isRequired
   },
 
   _selectLocationFilter(selected, type) {
-
-    const {summaryFilter} = this.props;
+    const {filterRegionKey, filterFacilityKey} = this.props;
     const {changeSummaryFilter} = this.props.actions;
-
-    const afterDate = summaryFilter.get('afterDate');
-    const beforeDate = summaryFilter.get('beforeDate');
-    const facilityKey = summaryFilter.get('facilityKey');
-    const regionKey = summaryFilter.get('regionKey');
 
     if (!selected) {
       if (type === 'region') {
-        changeSummaryFilter(afterDate, beforeDate, null, null);
+        changeSummaryFilter({regionKey: null, facilityKey: null});
       } else {
-        changeSummaryFilter(afterDate, beforeDate, regionKey, null);
+        changeSummaryFilter({regionKey: filterRegionKey, facilityKey: null});
       }
     } else {
+
       const {value: selectedKey} = selected;
-      if (type === 'facility' && selectedKey !== facilityKey) {
-        changeSummaryFilter(afterDate, beforeDate, regionKey, selectedKey);
+      if (type === 'facility' && selectedKey !== filterFacilityKey) {
+        changeSummaryFilter(
+          {regionKey: filterRegionKey, facilityKey: selectedKey});
       } else if (type === 'region') {
-        changeSummaryFilter(afterDate, beforeDate, selectedKey, facilityKey);
+        changeSummaryFilter(
+          {regionKey: selectedKey, facilityKey: filterFacilityKey});
       }
     }
   },
@@ -52,10 +50,11 @@ export const SummaryLocationFilters = React.createClass({
       isFetchingData,
       metaRegions,
       filteredMetaFacilities,
-      summaryFilter
+      filterRegionKey, filterFacilityKey
     } = this.props;
-    const facilityKey = summaryFilter.get('facilityKey');
-    const regionKey = summaryFilter.get('regionKey');
+
+    const regionKey = filterRegionKey;
+    const facilityKey = filterFacilityKey;
 
     const regionOptions = metaRegions.map(region =>
       ({value: region.get('key'), label: region.get('value')}
@@ -90,9 +89,8 @@ export const SummaryLocationFilters = React.createClass({
             options={facilityOptions}
             onChange={this.selectFacility}
         />
-      </div>
-      );
+      </div>);
   }
 });
 
-export default SummaryLocationFilters;
+export default LocationFilters;

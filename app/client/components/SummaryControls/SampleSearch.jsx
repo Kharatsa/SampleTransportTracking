@@ -28,18 +28,16 @@ export const SampleSearch = React.createClass({
 
   render() {
     return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <label htmlFor='search'>Sample ID Search</label>
-          <input
-              id='search'
-              type='text'
-              value={this.state.value}
-              placeholder='Sample ID'
-              className='pure-menu-input'
-              onChange={this.handleChange} />
-        </form>
-      </div>
+      <form onSubmit={this.handleSubmit} className='pure-form'>
+        <label htmlFor='search'>Sample ID Search</label>
+        <input
+            id='search'
+            type='text'
+            value={this.state.value}
+            placeholder='Sample ID'
+            className='pure-menu-input'
+            onChange={this.handleChange} />
+      </form>
     );
   }
 });

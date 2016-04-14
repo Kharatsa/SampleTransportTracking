@@ -1,19 +1,11 @@
 import React, {PropTypes} from 'react';
-import WaitOnFetch from '../containers/wrappers/WaitOnFetch';
 import {
-  SummaryFilter, TotalCounts, SummaryLocationFilters, TurnArounds
+  DateFilters, LocationFilters, TotalCounts, TurnArounds
 } from '../containers';
 import {SideMenuLayout} from '../components';
 import {SampleSearch, ViewChangesButton} from '../components/SummaryControls/';
 
-const WrappedFilterControls = WaitOnFetch(SummaryFilter);
-
 export const SummaryPage = ({appName, history}) => {
-  const filterView = (
-    <div className='panel'>
-      <WrappedFilterControls />
-    </div>
-  );
 
   const goodCountsView = (
     <div className='panel pure-u-1 pure-u-md-1 pure-u-lg-1-3'>
@@ -42,9 +34,10 @@ export const SummaryPage = ({appName, history}) => {
   );
 
   const summaryControls = [
+    <LocationFilters />,
+    <DateFilters />,
     <SampleSearch pushHistory={history.push} />,
-    <ViewChangesButton />,
-    <SummaryLocationFilters />
+    <ViewChangesButton />
   ];
 
   return (
@@ -52,7 +45,6 @@ export const SummaryPage = ({appName, history}) => {
       <SideMenuLayout
           menuHeader={appName}
           menuItems={summaryControls} >
-        {filterView}
         {combinedMetricsView}
       </SideMenuLayout>
     </div>

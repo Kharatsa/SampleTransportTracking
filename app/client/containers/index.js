@@ -1,7 +1,7 @@
 import App from './AppContainer';
 import Pagination from './PaginationContainer';
-import SummaryFilter from './SummaryFilterContainer';
-import SummaryLocationFilters from './SummaryLocationFiltersContainer';
+import DateFilters from './DateFiltersContainer';
+import LocationFilters from './LocationFiltersContainer';
 import TotalCounts from './TotalCountsContainer';
 import Changes from './ChangesContainer';
 import Sample from './SampleContainer';
@@ -11,8 +11,8 @@ import TurnArounds from './TurnAroundsContainer';
 export {
   App,
   Pagination,
-  SummaryFilter, // TODO: remove
-  SummaryLocationFilters,
+  DateFilters,
+  LocationFilters,
   TotalCounts,
   Changes,
   Sample,
