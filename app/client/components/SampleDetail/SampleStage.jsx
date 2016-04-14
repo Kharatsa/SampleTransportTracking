@@ -22,26 +22,26 @@ export const SampleRequest = ({
     delivery = change ? changesById.get(change.get('uuid')) : null;
   }
 
-  const body = (
-    <ul className='table-list'>
-      <li>
-        <SamplePanelRow
-            label='Pickup'
-            change={pickup}
-            facilities={facilities}
-            people={people} />
-      </li>
-      <li>
-        <SamplePanelRow
-            label='Delivery'
-            change={delivery}
-            facilities={facilities}
-            people={people} />
-      </li>
-    </ul>
-  );
-
-  return <InfoPanel title={label} body={body} color={color} />;
+  return (
+    <InfoPanel title={label} color={color}>
+      <ul className='table-list'>
+        <li>
+          <SamplePanelRow
+              label='Pickup'
+              change={pickup}
+              facilities={facilities}
+              people={people} />
+        </li>
+        <li>
+          <SamplePanelRow
+              label='Delivery'
+              change={delivery}
+              facilities={facilities}
+              people={people} />
+        </li>
+      </ul>
+    </InfoPanel>
+    );
 };
 
 export default SampleRequest;

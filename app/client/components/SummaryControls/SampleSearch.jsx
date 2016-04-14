@@ -1,10 +1,14 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 
 const stripTrim = str => {
   return str ? str.trim().split(' ').join('') : '';
 };
 
 export const SampleSearch = React.createClass({
+  propTypes: {
+    pushHistory: PropTypes.func.isRequired
+  },
+
   getInitialState() {
     return {value: null};
   },

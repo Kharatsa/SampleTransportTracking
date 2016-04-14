@@ -80,8 +80,8 @@ export const SummaryFilter = React.createClass({
     const {filteredMetaFacilities, metaRegions} = this.props;
 
     return (
-      <div className="pure-g">
-        <div className="pure-u-1 pure-u-md-1-2">
+      <div className='pure-g'>
+        <div className='pure-u-1 pure-u-md-1-2'>
           <span>After Date</span>
           <br/>
           <DatePicker
@@ -89,7 +89,7 @@ export const SummaryFilter = React.createClass({
             maxDate={Moment().subtract(1, 'day')}
             onChange={this.selectAfterDate} />
         </div>
-        <div className="pure-u-1 pure-u-md-1-2">
+        <div className='pure-u-1 pure-u-md-1-2'>
           <span>Before Date</span>
           <br/>
           <DatePicker

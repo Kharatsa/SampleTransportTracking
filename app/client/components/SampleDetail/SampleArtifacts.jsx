@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import ChangeRefItem from './ChangeRefItem.jsx';
 import InfoPanel from '../InfoPanel.jsx';
 
@@ -22,9 +22,16 @@ export const SampleArtifacts = ({
     );
   });
 
-  const body = (<ul className='table-list'>{artifactElems}</ul>);
+  return (
+    <InfoPanel title='Artifacts'>
+      <ul className='table-list'>{artifactElems}</ul>
+    </InfoPanel>);
+};
 
-  return <InfoPanel title='Artifacts' body={body} />;
+SampleArtifacts.propTypes = {
+  artifactsById: PropTypes.object,
+  changesByArtifactId: PropTypes.object,
+  metadata: PropTypes.object
 };
 
 export default SampleArtifacts;

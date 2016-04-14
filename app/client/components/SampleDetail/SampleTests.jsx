@@ -22,9 +22,11 @@ export const SampleTests = ({
     );
   });
 
-  const body = (<ul className='table-list'>{testElems}</ul>);
-
-  return <InfoPanel title='Lab Tests' body={body} />;
+  return (
+    <InfoPanel title='Lab Tests'>
+      <ul className='table-list'>{testElems}</ul>
+    </InfoPanel>
+    );
 };
 
 export default SampleTests;

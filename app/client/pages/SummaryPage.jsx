@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import WaitOnFetch from '../containers/wrappers/WaitOnFetch';
 import {
   SummaryFilter, TotalCounts, SummaryLocationFilters, TurnArounds
@@ -8,9 +8,7 @@ import {SampleSearch, ViewChangesButton} from '../components/SummaryControls/';
 
 const WrappedFilterControls = WaitOnFetch(SummaryFilter);
 
-export const SummaryPage = (props) => {
-  const {appName, history} = props;
-
+export const SummaryPage = ({appName, history}) => {
   const filterView = (
     <div className='panel'>
       <WrappedFilterControls />
@@ -59,6 +57,11 @@ export const SummaryPage = (props) => {
       </SideMenuLayout>
     </div>
   );
+};
+
+SummaryPage.propTypes = {
+  appName: PropTypes.string,
+  history: PropTypes.object.isRequired
 };
 
 export default SummaryPage;

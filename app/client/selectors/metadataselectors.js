@@ -1,20 +1,24 @@
 import {createSelector} from 'reselect';
 import {Seq} from 'immutable';
 
+const getMetaFacilitiesKey = (state) => state.metaFacilitiesKeys;
 const getMetaFacilitiesByKey = (state) => state.metaFacilitiesByKey;
 const getSummaryFilter = (state) => state.summaryFilter;
+const getMetaRegionsKeys = (state) => state.metaRegionsKeys;
 const getMetaRegionsByKey = (state) => state.metaRegionsByKey;
 
 // Filter the facilities by the filter's regionKey value. When no regionKey is
 // specified in the filter, return an empty sequence (as opposed to
 // all facilities).
 export const getFilteredMetaFacilities = createSelector(
-  [getMetaFacilitiesByKey, getSummaryFilter],
-  (facilitiesByKey, summaryFilter) => {
+  [getMetaFacilitiesKey, getMetaFacilitiesByKey, getSummaryFilter],
+  (facilitiyKeys, facilitiesByKey, summaryFilter) => {
     const regionKey = summaryFilter.get('regionKey');
     if (regionKey !== null) {
-      return facilitiesByKey.valueSeq().filter((value) =>
-        value.get('region') === regionKey);
+      return (
+        facilitiyKeys
+        .map(key => facilitiesByKey.get(key))
+        .filter(facility => facility.get('region') === regionKey));
     }
     return Seq();
   }
@@ -23,6 +27,6 @@ export const getFilteredMetaFacilities = createSelector(
 // The summary filters won't affect the regions, but a regions selector is
 // provided here for a common interface with facilities
 export const getMetaRegions = createSelector(
-  [getMetaRegionsByKey],
-  (metaRegionsByKey) => metaRegionsByKey.valueSeq()
-);
+  [getMetaRegionsKeys, getMetaRegionsByKey], (regionKeys, regionsByKey) => {
+    return regionKeys.map(key => regionsByKey.get(key));
+  });

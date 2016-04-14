@@ -6,7 +6,7 @@ const keySeqFromMap = metadata =>
 
 const metaTypeKeysReducer = type => {
   return (state=Seq(), action) => {
-    switch(action.type) {
+    switch (action.type) {
     case RECEIVE_METADATA: {
       return keySeqFromMap(action.metadata.get(type));
     }
@@ -18,7 +18,7 @@ const metaTypeKeysReducer = type => {
 
 const metaTypeReducer = type => {
   return (state=ImmutableMap(), action) => {
-    switch(action.type) {
+    switch (action.type) {
     case RECEIVE_METADATA: {
       return action.metadata.get(type);
     }

@@ -1,15 +1,23 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Select from 'react-select';
 
 export const SummaryLocationFilters = React.createClass({
   mixins: [PureRenderMixin],
 
+  propTypes: {
+    isFetchingData: PropTypes.bool.isRequired,
+    metaRegions: PropTypes.object.isRequired,
+    filteredMetaFacilities: PropTypes.object.isRequired,
+    summaryFilter: PropTypes.object.isRequired,
+    actions: PropTypes.object.isRequired
+  },
+
   _selectLocationFilter(selected, type) {
 
     const {summaryFilter} = this.props;
     const {changeSummaryFilter} = this.props.actions;
-    
+
     const afterDate = summaryFilter.get('afterDate');
     const beforeDate = summaryFilter.get('beforeDate');
     const facilityKey = summaryFilter.get('facilityKey');
@@ -18,12 +26,10 @@ export const SummaryLocationFilters = React.createClass({
     if (!selected) {
       if (type === 'region') {
         changeSummaryFilter(afterDate, beforeDate, null, null);
-      }
-      else {
+      } else {
         changeSummaryFilter(afterDate, beforeDate, regionKey, null);
       }
-    }
-    else {
+    } else {
       const {value: selectedKey} = selected;
       if (type === 'facility' && selectedKey !== facilityKey) {
         changeSummaryFilter(afterDate, beforeDate, regionKey, selectedKey);
@@ -44,8 +50,8 @@ export const SummaryLocationFilters = React.createClass({
   render() {
     const {
       isFetchingData,
-      metaRegionsByKey, metaRegions,
-      metaFacilitiesByKey, filteredMetaFacilities,
+      metaRegions,
+      filteredMetaFacilities,
       summaryFilter
     } = this.props;
     const facilityKey = summaryFilter.get('facilityKey');
@@ -61,7 +67,7 @@ export const SummaryLocationFilters = React.createClass({
 
     return (
       <div>
-        <label htmlFor='regionFilter'>Region Filter</label>
+        <label htmlFor='regionFilter'>Laboratory Filter</label>
         <Select
             id='regionFilter'
             isLoading={isFetchingData}

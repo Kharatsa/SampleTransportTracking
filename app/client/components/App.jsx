@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 
 const APP_NAME = 'Sample Tracking';
 
 export const AppComponent = React.createClass({
+  propTypes: {
+    actions: PropTypes.object,
+    children: PropTypes.any
+  },
+
   componentWillMount() {
     const {fetchMetadata} = this.props.actions;
     fetchMetadata();

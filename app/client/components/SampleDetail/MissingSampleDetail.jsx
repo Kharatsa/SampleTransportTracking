@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import InfoPanel from '../InfoPanel.jsx';
 
 const gridClass = 'pure-u-1 pure-u-md-1-3';
@@ -19,11 +19,15 @@ export const MissingSampleDetail = ({sampleId}) => {
     <div className='pure-g'>
       <div className={gridClass} />
       <div className={gridClass}>
-        <InfoPanel title={title} body={body} />
+        <InfoPanel title={title}>{body}</InfoPanel>
       </div>
       <div className={gridClass} />
     </div>
   );
+};
+
+MissingSampleDetail.propTypes = {
+  sampleId: PropTypes.string
 };
 
 export default MissingSampleDetail;
