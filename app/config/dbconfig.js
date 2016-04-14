@@ -3,7 +3,7 @@
 const path = require('path');
 const BPromise = require('bluebird');
 const statAsync = BPromise.promisify(require('fs').stat);
-const log = require('app/server/util/logapp.js');
+const log = require('server/util/logapp.js');
 
 const databasePath = '/var/lib/strack';
 statAsync(databasePath)

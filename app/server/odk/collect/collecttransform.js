@@ -4,9 +4,9 @@ const _ = require('lodash');
 const BPromise = require('bluebird');
 const xml2js = require('xml2js');
 BPromise.promisifyAll(xml2js);
-const log = require('app/server/util/logapp.js');
-const dates = require('app/server/util/dates.js');
-const datamerge = require('app/server/util/datamerge.js');
+const log = require('server/util/logapp.js');
+const dates = require('server/util/dates.js');
+const datamerge = require('server/util/datamerge.js');
 
 const metaFields = {
   START_DATE: 'start',

@@ -2,11 +2,11 @@
 
 const express = require('express');
 const router = express.Router();
-const offset = require('app/server/middleware/pageoffset.js');
-const daterange = require('app/server/middleware/daterange.js');
-const normalizequery = require('app/server/middleware/normalizequery.js');
-const storage = require('app/server/storage');
-const sttclient = require('app/server/stt/clients/sttclient.js');
+const offset = require('server/middleware/pageoffset.js');
+const daterange = require('server/middleware/daterange.js');
+const normalizequery = require('server/middleware/normalizequery.js');
+const storage = require('server/storage');
+const sttclient = require('server/stt/clients/sttclient.js');
 
 const client = sttclient({db: storage.db, models: storage.models});
 const dateRange = daterange.dateRangeMiddleware();

@@ -1,6 +1,6 @@
 'use strict';
 
-const modelwrapper = require('app/server/storage/modelwrapper.js');
+const modelwrapper = require('server/storage/modelwrapper.js');
 const metaModelTemplate = require('./metamodeltemplate.js');
 const districts = require('./metadistricts.js');
 
@@ -39,8 +39,8 @@ const labs = modelwrapper({
 
           classMethods: {
             associate: function() {
-              labs.model.belongsTo(Districts, {foreignKey: 'region'});
-              Districts.hasMany(labs.model, {foreignKey: 'region'});
+              labs.model.belongsTo(Districts, {foreignKey: 'district'});
+              Districts.hasMany(labs.model, {foreignKey: 'district'});
             }
           }
         }

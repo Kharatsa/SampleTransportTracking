@@ -14,6 +14,7 @@ RUN npm install -q -g ${NODE_DEPS}
 ENV STT_DATA_PATH='/var/lib/strack' \
     STT_APP_PATH='/var/www/strack' \
     STT_LOG_PATH='/var/log/strack' \
+    STT_PUBLIC_PATH='/var/www/strack/app/public' \
     STT_LISTEN_PORT='8081' \
     STT_LISTEN_HOST='0.0.0.0'
 
@@ -34,17 +35,15 @@ RUN npm install -q \
 RUN bower install --allow-root \
     && bower cache clean --allow-root
 
-# Create a symlink in node modules for easier require()s
-WORKDIR node_modules
-RUN ln -s ../app app
-WORKDIR ${STT_APP_PATH}
-
 # Run the build & database sync scripts
 RUN npm run build
 RUN node app/maintenance/data.js sync
+RUN node app/maintenance/metadata.js reloadcsv
+RUN node app/maintenance/users.js add admin unsafepassword
 RUN npm prune -q --production
 
 VOLUME ${STT_DATA_PATH}
+VOLUME ${STT_PUBLIC_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
 CMD npm start

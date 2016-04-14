@@ -2,8 +2,8 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const dbresult = require('app/server/storage/dbresult.js');
+const log = require('server/util/logapp.js');
+const dbresult = require('server/storage/dbresult.js');
 
 const wrapOr = ands => ({$or: ands});
 

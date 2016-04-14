@@ -304,11 +304,11 @@ const removeFakeData = storage => {
 };
 
 const load = (changesNum) => {
-  const config = require('app/config');
-  const log = require('app/server/util/logapp.js');
-  const storage = require('app/server/storage');
+  const config = require('config');
+  const log = require('server/util/logapp.js');
+  const storage = require('server/storage');
   storage.init({config: config.db});
-  const sttmodels = require('app/server/stt/models');
+  const sttmodels = require('server/stt/models');
   storage.loadModels(sttmodels);
 
   const noLog = {logging: false};
@@ -327,7 +327,8 @@ const load = (changesNum) => {
       artifact: testmeta.metaArtifacts,
       labtest: testmeta.metaLabTests,
       facility: testmeta.metaFacilities,
-      region: testmeta.metaRegions,
+      district: testmeta.metaDistricts,
+      lab: testmeta.metaLabs,
       status: testmeta.metaStatuses,
       rejection: testmeta.metaRejections,
       person: testmeta.metaPeople,
@@ -356,7 +357,7 @@ const load = (changesNum) => {
     .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog));
   })
   .then(() => log.info('Finihsed loading fake data'))
-  .catch(err => log.error('Error creating fake data', err, err.message));
+  .catch(err => log.error('Error creating fake data', err, err.message, err.stack));
 };
 
 module.exports = {

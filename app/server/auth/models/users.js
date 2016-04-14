@@ -1,6 +1,6 @@
 'use strict';
 
-const modelwrapper = require('app/server/storage/modelwrapper.js');
+const modelwrapper = require('server/storage/modelwrapper.js');
 
 /**
  * @typedef {User}

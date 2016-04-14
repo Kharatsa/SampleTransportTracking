@@ -1,9 +1,9 @@
 'use strict';
 
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const sttsubmission = require('app/server/stt/sttsubmission.js');
-const disatransform = require('app/server/disa/disatransform.js');
+const log = require('server/util/logapp.js');
+const sttsubmission = require('server/stt/sttsubmission.js');
+const disatransform = require('server/disa/disatransform.js');
 
 const handleSubmission = incoming => {
   // Facilies reference regions, so regions must finish inserts/updates first

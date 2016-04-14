@@ -7,7 +7,7 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 const BPromise = require('bluebird');
-const disatransform = require('app/server/disa/disatransform.js');
+const disatransform = require('server/disa/disatransform.js');
 
 describe('Disa Labs Status Tranforms', () => {
 

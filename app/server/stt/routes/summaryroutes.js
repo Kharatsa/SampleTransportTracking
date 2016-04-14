@@ -3,12 +3,12 @@
 const express = require('express');
 const router = express.Router();
 const BPromise = require('bluebird');
-const transformkeys = require('app/server/middleware/transformkeys.js');
-const normalizequery = require('app/server/middleware/normalizequery.js');
-const storage = require('app/server/storage');
-const sttclient = require('app/server/stt/clients/sttclient.js');
-const daterange = require('app/server/middleware/daterange.js');
-const dbresult = require('app/server/storage/dbresult.js');
+const transformkeys = require('server/middleware/transformkeys.js');
+const normalizequery = require('server/middleware/normalizequery.js');
+const storage = require('server/storage');
+const sttclient = require('server/stt/clients/sttclient.js');
+const daterange = require('server/middleware/daterange.js');
+const dbresult = require('server/storage/dbresult.js');
 
 const client = sttclient({db: storage.db, models: storage.models});
 

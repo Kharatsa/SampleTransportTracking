@@ -3,10 +3,10 @@
 const express = require('express');
 const router = express.Router();
 const BPromise = require('bluebird');
-const transformkeys = require('app/server/middleware/transformkeys.js');
-const storage = require('app/server/storage');
-const sttclient = require('app/server/stt/clients/sttclient.js');
-const dbresult = require('app/server/storage/dbresult.js');
+const transformkeys = require('server/middleware/transformkeys.js');
+const storage = require('server/storage');
+const sttclient = require('server/stt/clients/sttclient.js');
+const dbresult = require('server/storage/dbresult.js');
 
 const sttClient = sttclient({db: storage.db, models: storage.models});
 const uppercaseParams = transformkeys.upperCaseParamsMiddleware(['key']);
@@ -41,11 +41,6 @@ router.get('/meta/regions/:key/facilities', uppercaseParams,
     .catch(next);
   }
 );
-
-const getRegions = getMetadata(sttClient.metaRegions);
-const getRegionsKey = getMetaByKey(sttClient.metaRegions);
-router.get('/meta/regions', getRegions);
-router.get('/meta/regions/:key', uppercaseParams, getRegionsKey);
 
 const getDistricts = getMetadata(sttClient.metaDistricts);
 const getDistrictsKey = getMetaByKey(sttClient.metaDistricts);
@@ -85,10 +80,11 @@ router.get('/meta/stages/:key', uppercaseParams, getStagesKey);
 router.get('/meta', (req, res, next) => {
   // TODO: optimize this insane 8 query endpoint
   return BPromise.props({
-    facilities: sttClient.metaFacilities.all({allowEmpty: true}),
-    regions: sttClient.metaRegions.all({allowEmpty: true}),
     districts: sttClient.metaDistricts.all({allowEmpty: true}),
-    labs: sttClient.metaLabs.all({allowEmpty: true}),
+    regions: sttClient.metaLabs.all({allowEmpty: true}),
+    facilities: sttClient.metaFacilities.all({allowEmpty: true}),
+    // regions: sttClient.metaRegions.all({allowEmpty: true}),
+    // labs: sttClient.metaLabs.all({allowEmpty: true}),
     people: sttClient.metaPeople.all({allowEmpty: true}),
     artifacts: sttClient.metaArtifacts.all({allowEmpty: true}),
     labTests: sttClient.metaLabTests.all({allowEmpty: true}),

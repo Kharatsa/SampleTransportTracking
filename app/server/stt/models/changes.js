@@ -1,6 +1,6 @@
 'use strict';
 
-const modelwrapper = require('app/server/storage/modelwrapper.js');
+const modelwrapper = require('server/storage/modelwrapper.js');
 const modelutils = require('./modelutils.js');
 const sampleids = require('./sampleids.js');
 const artifacts = require('./artifacts.js');

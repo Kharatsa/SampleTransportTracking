@@ -5,11 +5,11 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 const BPromise = require('bluebird');
-const config = require('app/config');
-const storage = require('app/server/storage');
-const metamodels = require('app/server/stt/models/metadata');
-const sttmodels = require('app/server/stt/models');
-const dbresult = require('app/server/storage/dbresult.js');
+const config = require('config');
+const storage = require('server/storage');
+const metamodels = require('server/stt/models/metadata');
+const sttmodels = require('server/stt/models');
+const dbresult = require('server/storage/dbresult.js');
 
 describe('Sample Transport Tracking Database Models', () => {
   var models;
@@ -18,7 +18,7 @@ describe('Sample Transport Tracking Database Models', () => {
     storage.init({config: config.db});
     storage.loadModels(metamodels);
     storage.loadModels(sttmodels);
-    const prepareserver = require('app/server/prepareserver.js');
+    const prepareserver = require('server/prepareserver.js');
     const testmeta = require('../../../utils/testmeta.js');
     models = storage.models;
     Sequelize = storage.Sequelize;

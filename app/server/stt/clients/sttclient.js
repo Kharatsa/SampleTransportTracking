@@ -1,14 +1,14 @@
 'use strict';
 
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const sampleidsclient = require('app/server/stt/clients/sampleids');
-const artifactsclient = require('app/server/stt/clients/artifacts');
-const labtestsclient = require('app/server/stt/clients/labtests');
-const changesclient = require('app/server/stt/clients/changes');
-const metaclients = require('app/server/stt/clients/metadata');
-const datamerge = require('app/server/util/datamerge.js');
-const dbresult = require('app/server/storage/dbresult.js');
+const log = require('server/util/logapp.js');
+const sampleidsclient = require('server/stt/clients/sampleids');
+const artifactsclient = require('server/stt/clients/artifacts');
+const labtestsclient = require('server/stt/clients/labtests');
+const changesclient = require('server/stt/clients/changes');
+const metaclients = require('server/stt/clients/metadata');
+const datamerge = require('server/util/datamerge.js');
+const dbresult = require('server/storage/dbresult.js');
 const summaryqueries = require('./summaries/summaryqueries.js');
 const summaryresult = require('./summaries/summaryresult.js');
 const turnaroundtime = require('./summaries/turnaroundtime.js');
@@ -38,14 +38,14 @@ function STTClient(options) {
   this.models = options.models;
 
   // Metadata clients
+  this.metaDistricts = metaclients.districts({
+    db: this.db, model: this.models.MetaDistricts});
+  this.metaLabs = metaclients.labs({
+    db: this.db, model: this.models.MetaLabs});
   this.metaFacilities = metaclients.facilities({
     db: this.db, model: this.models.MetaFacilities});
-  this.metaRegions = metaclients.regions({
-    db: this.db, model: this.models.MetaRegions});
-  this.metaDistricts = metaclients.facilities({
-    db: this.db, model: this.models.MetaDistricts});
-  this.metaLabs = metaclients.regions({
-    db: this.db, model: this.models.MetaLabs});
+  // this.metaRegions = metaclients.regions({
+  //   db: this.db, model: this.models.MetaRegions});
   this.metaPeople = metaclients.people({
     db: this.db, model: this.models.MetaPeople});
   this.metaArtifacts = metaclients.artifacts({

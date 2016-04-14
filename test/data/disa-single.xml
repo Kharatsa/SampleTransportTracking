@@ -2,6 +2,7 @@
 <LabStatus xmlns="https://kharatsa.com/schemas/labstatus.xsd" >
   <STID>ABCD12345</STID>
   <LabID>MHL1234567</LabID>
+  <TestingLabID>MHL1234567</TestingLabID>
   <StatusTimestamp>2016-01-01T00:00:00</StatusTimestamp>
   <LabPrefix>
     <LabPrefixCode>MHL</LabPrefixCode>

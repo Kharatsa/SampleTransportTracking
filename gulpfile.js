@@ -1,5 +1,8 @@
 'use strict';
 
+const path = require('path');
+require('app-module-path').addPath(path.join(__dirname, 'app'));
+
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const nodemon = require('gulp-nodemon');
@@ -9,7 +12,7 @@ const babelify = require('babelify');
 const envify = require('envify/custom');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-const config = require('app/config');
+const config = require('config');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 

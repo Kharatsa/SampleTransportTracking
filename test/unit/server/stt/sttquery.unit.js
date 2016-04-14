@@ -4,7 +4,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const sampleidsquery = require('app/server/stt/clients/sampleids/' +
+const sampleidsquery = require('server/stt/clients/sampleids/' +
                                'sampleidsquery.js');
 
 describe('Sample Transport Tracking Query Builders', () => {

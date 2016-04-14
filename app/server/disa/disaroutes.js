@@ -4,16 +4,16 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const transform = require('app/server/disa/disatransform.js');
-const disasubmission = require('app/server/disa/disasubmission.js');
-const aggregatesubmission = require('app/server/odk/aggregatesubmission.js');
-const aggregate = require('app/server/odk/aggregateapi.js');
+const log = require('server/util/logapp.js');
+const transform = require('server/disa/disatransform.js');
+const disasubmission = require('server/disa/disasubmission.js');
+const aggregatesubmission = require('server/odk/aggregatesubmission.js');
+const aggregate = require('server/odk/aggregateapi.js');
 
 let passport = null;
 let authenticate = null;
 if (process.env.NODE_ENV === 'production') {
-  passport = require('app/server/auth/httpauth.js');
+  passport = require('server/auth/httpauth.js');
   authenticate = passport.authenticate('basic', {session: false});
 } else {
   authenticate = (req, res, next) => next(); // noop

@@ -1,6 +1,6 @@
 'use strict';
 
-const log = require('app/server/util/logapp.js');
+const log = require('server/util/logapp.js');
 
 const handleJSONErrors = (err, req, res, next) => {
   if (err.status) {

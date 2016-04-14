@@ -1,8 +1,8 @@
 'use strict';
 
 const BPromise = require('bluebird');
-const storage = require('app/server/storage');
-const log = require('app/server/util/logapp.js');
+const storage = require('server/storage');
+const log = require('server/util/logapp.js');
 
 const beforeDefaults = options => {
   let models = options.models;
@@ -19,7 +19,7 @@ const beforeDefaults = options => {
 
     log.debug('clibefore models', models);
 
-    const config = require('app/config');
+    const config = require('config');
     // Turn off detailed query logging when running CLI scripts
     const dbConfig = Object.assign({}, config.db, {logging: false});
 

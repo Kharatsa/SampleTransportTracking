@@ -5,8 +5,8 @@
 const util = require('util');
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const ModelClient = require('app/server/stt/clients/modelclient.js');
+const log = require('server/util/logapp.js');
+const ModelClient = require('server/stt/clients/modelclient.js');
 const changesquery = require('./changesquery.js');
 const changesresult = require('./changesresult.js');
 

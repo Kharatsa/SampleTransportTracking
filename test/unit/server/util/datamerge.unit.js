@@ -4,7 +4,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const merge = require('app/server/util/datamerge.js');
+const merge = require('server/util/datamerge.js');
 
 describe('Data Merge Utilities', () => {
   const items = [

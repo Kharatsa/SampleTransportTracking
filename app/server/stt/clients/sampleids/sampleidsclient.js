@@ -1,7 +1,7 @@
 'use strict';
 
 const util = require('util');
-const ModelClient = require('app/server/stt/clients/modelclient.js');
+const ModelClient = require('server/stt/clients/modelclient.js');
 const sampleidsquery = require('./sampleidsquery.js');
 
 function SampleIdsClient(options) {

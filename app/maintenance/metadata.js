@@ -2,13 +2,17 @@
 
 'use strict';
 
+// for better require()s
+const path = require('path');
+require('app-module-path').addPath(path.join(__dirname, '../../app'));
+
 const cli = require('commander');
 const BPromise = require('bluebird');
-const log = require('app/server/util/logapp.js');
-const metamodels = require('app/server/stt/models/metadata');
-const sttmodels = require('app/server/stt/models');
-const metaclients = require('app/server/stt/clients/metadata');
-const beforecli= require('./utils/clibefore.js');
+const log = require('server/util/logapp.js');
+const metamodels = require('server/stt/models/metadata');
+const sttmodels = require('server/stt/models');
+const metaclients = require('server/stt/clients/metadata');
+const beforecli = require('./utils/clibefore.js');
 const clireport = require('./utils/clireport.js');
 
 const before = beforecli({models: [metamodels, sttmodels]});
@@ -20,7 +24,8 @@ const metaModelPrefix = 'Meta';
 const metaModelNames = Object.keys(metamodels).map(key => metamodels[key].name);
 const metaTypes = metaModelNames.map(name => {
   if (!name.startsWith(metaModelPrefix)) {
-    throw new Error(`Metadata model missing required prefix: "${metaModelPrefix}"`);
+    throw new Error(`Metadata model missing required prefix: ` +
+                    `"${metaModelPrefix}"`);
   }
   const lower = name.substr(metaModelPrefix.length, 1).toLowerCase();
   const rest = name.substr(metaModelPrefix.length + 1);
@@ -196,11 +201,10 @@ cli.command('describe <type>')
   .description('Describe the metadata table schema by type.')
   .action(handleDescribe);
 
-
 const loadcsv = () => {
   return before({dev: cli.development})
   .then(() => {
-    const prepareserver = require('app/server/prepareserver.js');
+    const prepareserver = require('server/prepareserver.js');
     return prepareserver();
   })
   .then(() => log.info('Finished server preload'));

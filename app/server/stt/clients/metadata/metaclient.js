@@ -2,8 +2,8 @@
 
 const util = require('util');
 const BPromise = require('bluebird');
-const ModelClient = require('app/server/stt/clients/modelclient.js');
-const queryutils = require('app/server/storage/queryutils.js');
+const ModelClient = require('server/stt/clients/modelclient.js');
+const queryutils = require('server/storage/queryutils.js');
 const metaquery = require('./metaquery.js');
 
 function MetaClient(options) {

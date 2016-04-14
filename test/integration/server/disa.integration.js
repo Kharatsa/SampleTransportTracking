@@ -8,15 +8,15 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const express = require('express');
-const config = require('app/config');
-const metamodels = require('app/server/stt/models/metadata');
-const sttmodels = require('app/server/stt/models');
-const storage = require('app/server/storage');
+const config = require('config');
+const metamodels = require('server/stt/models/metadata');
+const sttmodels = require('server/stt/models');
+const storage = require('server/storage');
 storage.init({config: config.db});
 storage.loadModels(metamodels);
 storage.loadModels(sttmodels);
-const prepareserver = require('app/server/prepareserver.js');
-const DisaRoutes = require('app/server/disa/disaroutes.js');
+const prepareserver = require('server/prepareserver.js');
+const DisaRoutes = require('server/disa/disaroutes.js');
 
 const app = express();
 app.use('/disa', DisaRoutes);

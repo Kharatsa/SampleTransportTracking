@@ -1,6 +1,6 @@
 'use strict';
 
-const log = require('app/server/util/logapp.js');
+const log = require('server/util/logapp.js');
 
 const handleRemoveResult = (count, type, keyName, key) => {
   if (count > 0) {

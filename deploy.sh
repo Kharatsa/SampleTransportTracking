@@ -17,7 +17,9 @@ docker run -d \
   -v /var/lib/strack:/var/lib/strack \
   -v /var/log/strack:/var/log/strack \
   -p $STT_LISTEN_PORT:$STT_LISTEN_PORT \
-  --log-driver=json-file --log-opt max-size=50m \
+  --log-driver=json-file \
+  --log-opt max-size=50m \
+  --log-opt max-file=100 \
   -e "STT_LISTEN_PORT=$STT_LISTEN_PORT" \
   -e "STT_LISTEN_HOST=$STT_LISTEN_HOST" \
   -e "STT_PUBLIC_URL=$STT_PUBLIC_URL" \

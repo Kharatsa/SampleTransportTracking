@@ -4,7 +4,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const dbresult = require('app/server/storage/dbresult.js');
+const dbresult = require('server/storage/dbresult.js');
 
 describe('Database Results Helper Functions', () => {
   const source = {

@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
-const dbresult = require('app/server/storage/dbresult.js');
+const dbresult = require('server/storage/dbresult.js');
 
 /**
  * Nest the object beneath new object wrappers. When combined with other wrapped
