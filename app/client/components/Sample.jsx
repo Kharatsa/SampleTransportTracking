@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import WaitOnFetch from '../containers/wrappers/WaitOnFetch.jsx';
 import SampleDetail from './SampleDetail';
@@ -7,6 +7,11 @@ const WrappedSampleDetail = WaitOnFetch(SampleDetail);
 
 export const Sample = React.createClass({
   mixins: [PureRenderMixin],
+
+  propTypes: {
+    params: PropTypes.shape({sampleId: PropTypes.string}),
+    actions: PropTypes.shape({fetchSampleDetail: PropTypes.func.isRequired})
+  },
 
   componentWillMount() {
     const {sampleId} = this.props.params;

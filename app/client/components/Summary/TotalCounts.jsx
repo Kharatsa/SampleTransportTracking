@@ -1,10 +1,18 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import WaitOnFetch from '../../containers/wrappers/WaitOnFetch.jsx';
 import TotalCountsTable from './TotalCountsTable';
 
 const TotalCountsTableWrapped = WaitOnFetch(TotalCountsTable);
 
 export const TotalCounts = React.createClass({
+  mixins: [PureRenderMixin],
+
+  propTypes: {
+    summaryFilter: PropTypes.object,
+    actions: PropTypes.objectOf(PropTypes.func).isRequired
+  },
+
   componentWillMount() {
     this._update(this.props.summaryFilter);
   },

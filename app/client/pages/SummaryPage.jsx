@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {
-  DateFilters, LocationFilters, TotalCounts, TurnArounds
+  SampleCounts, DateFilters, LocationFilters, TotalCounts, TurnArounds
 } from '../containers';
 import {SideMenuLayout} from '../components';
 import {SampleSearch, ViewChangesButton} from '../components/SummaryControls/';
@@ -26,10 +26,13 @@ export const SummaryPage = ({appName, history}) => {
   );
 
   const combinedMetricsView = (
-    <div className='pure-g'>
-      {goodCountsView}
-      {badCountsView}
-      {tatView}
+    <div>
+      <SampleCounts />
+      <div className='pure-g'>
+        {goodCountsView}
+        {badCountsView}
+        {tatView}
+      </div>
     </div>
   );
 

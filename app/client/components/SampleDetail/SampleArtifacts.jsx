@@ -1,9 +1,11 @@
 import React, {PropTypes} from 'react';
+import {Map as ImmutableMap} from 'immutable';
 import ChangeRefItem from './ChangeRefItem.jsx';
 import InfoPanel from '../InfoPanel.jsx';
 
 export const SampleArtifacts = ({
-  artifactsById, changesByArtifactId, metadata
+  artifactsById, changesByArtifactId,
+  metaArtifacts, metaStatuses, metaStages
 }) => {
   const artifactElems = changesByArtifactId.entrySeq().map(entry => {
     const id = entry[0];
@@ -15,9 +17,9 @@ export const SampleArtifacts = ({
             changes={changes}
             refItem={artifact}
             refType='artifactType'
-            refMeta={metadata.get('artifacts')}
-            statuses={metadata.get('statuses')}
-            stages={metadata.get('stages')} />
+            refMeta={metaArtifacts}
+            statuses={metaStatuses}
+            stages={metaStages} />
       </li>
     );
   });
@@ -29,9 +31,11 @@ export const SampleArtifacts = ({
 };
 
 SampleArtifacts.propTypes = {
-  artifactsById: PropTypes.object,
-  changesByArtifactId: PropTypes.object,
-  metadata: PropTypes.object
+  artifactsById: PropTypes.instanceOf(ImmutableMap).isRequired,
+  changesByArtifactId: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaArtifacts: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaStages: PropTypes.instanceOf(ImmutableMap).isRequired
 };
 
 export default SampleArtifacts;

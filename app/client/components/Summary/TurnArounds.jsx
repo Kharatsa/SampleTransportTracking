@@ -1,10 +1,13 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import WaitOnFetch from '../../containers/wrappers/WaitOnFetch.jsx';
 import TurnAroundsTable from './TurnAroundsTable';
 
 const TurnAroundsTableWrapped = WaitOnFetch(TurnAroundsTable);
 
 export const TurnArounds = React.createClass({
+  mixins: [PureRenderMixin],
+
   componentWillMount() {
     this._update(this.props.summaryFilter);
   },

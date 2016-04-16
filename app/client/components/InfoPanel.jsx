@@ -21,7 +21,7 @@ export const InfoPanel = ({title, color, children}) => {
 InfoPanel.propTypes = {
   title: PropTypes.string.isRequired,
   color: PropTypes.string,
-  children: PropTypes.any
+  children: PropTypes.node
 };
 
 export default InfoPanel;

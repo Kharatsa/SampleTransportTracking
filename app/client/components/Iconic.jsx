@@ -43,7 +43,9 @@ const fallBackPNG = (name, size) => {
 export const Iconic = React.createClass({
   propTypes: {
     name: PropTypes.string.isRequired,
-    classNames: PropTypes.string
+    className: PropTypes.string,
+    sizePx: PropTypes.number,
+    color: PropTypes.string
   },
 
   getInitialState: function() {

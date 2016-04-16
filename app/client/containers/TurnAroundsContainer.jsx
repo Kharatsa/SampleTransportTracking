@@ -7,7 +7,7 @@ export const TurnAroundsContainer = connect(
   state => ({
     summaryFilter: state.summaryFilter,
     metadata: state.metadata,
-    turnArounds: state.summary.turnArounds
+    turnArounds: state.summaryTurnArounds
   }),
   dispatch => ({actions: bindActionCreators({fetchTurnArounds}, dispatch)})
 )(TurnArounds);

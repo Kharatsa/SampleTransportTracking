@@ -1,18 +1,34 @@
-import {combineReducers} from 'redux';
 import {RECEIVE_SUMMARY, RECEIVE_TURN_AROUNDS} from '../actions/actions.js';
-import {SummaryTotal} from '../api/records';
 import {Seq} from 'immutable';
 
-const totals = (state=SummaryTotal({}), action) => {
+export const summaryTotalSampleIds = (state=0, action) => {
   switch (action.type) {
   case RECEIVE_SUMMARY:
-    return action.totals;
+    return action.totals.sampleIdsCount;
   default:
     return state;
   }
 };
 
-const artifacts = (state=Seq(), action) => {
+export const summaryTotalArtifacts = (state=0, action) => {
+  switch (action.type) {
+  case RECEIVE_SUMMARY:
+    return action.totals.artifactsCount;
+  default:
+    return state;
+  }
+};
+
+export const summaryTotalLabTests = (state=0, action) => {
+  switch (action.type) {
+  case RECEIVE_SUMMARY:
+    return action.totals.labTestsCount;
+  default:
+    return state;
+  }
+};
+
+export const summaryArtifacts = (state=Seq(), action) => {
   switch (action.type) {
   case RECEIVE_SUMMARY:
     return action.artifacts;
@@ -21,7 +37,7 @@ const artifacts = (state=Seq(), action) => {
   }
 };
 
-const labTests = (state=Seq(), action) => {
+export const summaryLabTests = (state=Seq(), action) => {
   switch (action.type) {
   case RECEIVE_SUMMARY:
     return action.labTests;
@@ -30,7 +46,7 @@ const labTests = (state=Seq(), action) => {
   }
 };
 
-const turnArounds = (state=Seq(), action) => {
+export const summaryTurnArounds = (state=Seq(), action) => {
   switch (action.type) {
   case RECEIVE_TURN_AROUNDS:
     return action.turnArounds;
@@ -38,12 +54,3 @@ const turnArounds = (state=Seq(), action) => {
     return state;
   }
 };
-
-const summaryReducer = combineReducers({
-  totals,
-  artifacts,
-  labTests,
-  turnArounds
-});
-
-export default summaryReducer;

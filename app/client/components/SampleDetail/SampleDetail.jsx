@@ -9,19 +9,26 @@ import MissingSample from './MissingSampleDetail';
 
 const FlexChangesTable = WindowSizeListener(ChangesTable, {changeHeight: false});
 
-export const SampleDetail = ({
-  routeParams,
-  selectedSampleId, samplesById,
-  changeIds, changesById,
-  artifactsById, labTestsById,
-  changesByArtifactId, changesByLabTestId, changesByStage,
-  metadata
-}) => {
+export const SampleDetail = (props) => {
+  const {
+    routeParams,
+    selectedSampleId, samplesById,
+    changeIds, changesById,
+    artifactsById, labTestsById,
+    changesByArtifactId, changesByLabTestId, changesByStage,
+    metaPeople,
+    metaFacilities,
+    metaArtifacts,
+    metaStatuses,
+    metaStages,
+    metaLabTests,
+  } = props;
+
   const sample = samplesById.get(selectedSampleId);
 
   if (sample) {
-    const people = metadata.get('people');
-    const facilities = metadata.get('facilities');
+    // const people = metadata.get('people');
+    // const facilities = metadata.get('facilities');
 
     const stId = sample.get('stId');
     const labId = sample.get('labId');
@@ -35,8 +42,8 @@ export const SampleDetail = ({
             <SampleStage
                 label='Requests'
                 color='blue'
-                people={people}
-                facilities={facilities}
+                people={metaPeople}
+                facilities={metaFacilities}
                 pickupStageName='SDEPART'
                 deliveryStageName='SARRIVE'
                 changesById={changesById}
@@ -46,8 +53,8 @@ export const SampleDetail = ({
             <SampleStage
                 label='Results'
                 color='green'
-                people={people}
-                facilities={facilities}
+                people={metaPeople}
+                facilities={metaFacilities}
                 pickupStageName='RDEPART'
                 deliveryStageName='RARRIVE'
                 changesById={changesById}
@@ -57,11 +64,12 @@ export const SampleDetail = ({
         <div className='pure-g panel'>
           <div className='pure-u-1 pure-u-md-1-2'>
             <SampleArtifacts
-                // changeIds={changeIds}
-                // changesById={changesById}
                 artifactsById={artifactsById}
                 changesByArtifactId={changesByArtifactId}
-                metadata={metadata} />
+                metaArtifacts={metaArtifacts}
+                metaStatuses={metaStatuses}
+                metaStages={metaStages}
+            />
           </div>
           <div className='pure-u-1 pure-u-md-1-2'>
             <SampleTests
@@ -69,17 +77,15 @@ export const SampleDetail = ({
                 changesById={changesById}
                 labTestsById={labTestsById}
                 changesByLabTestId={changesByLabTestId}
-                metadata={metadata} />
+                metaLabTests={metaLabTests}
+                metaStatuses={metaStatuses}
+                metaStages={metaStages}
+            />
           </div>
         </div>
         <FlexChangesTable
           height={400}
-          samplesById={samplesById}
-          changeIds={changeIds}
-          changesById={changesById}
-          artifactsById={artifactsById}
-          labTestsById={labTestsById}
-          metadata={metadata} />
+          {...props} />
       </div>
     );
   }

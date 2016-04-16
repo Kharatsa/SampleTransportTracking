@@ -7,7 +7,8 @@ export const TotalCountsContainer = connect(
   state => ({
     summaryFilter: state.summaryFilter,
     metadata: state.metadata,
-    summary: state.summary
+    artifacts: state.summaryArtifacts,
+    labTests: state.summaryLabTests
   }),
   dispatch => ({actions: bindActionCreators({fetchSummary}, dispatch)})
 )(TotalCounts);

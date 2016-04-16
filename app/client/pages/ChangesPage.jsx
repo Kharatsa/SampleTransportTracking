@@ -1,7 +1,5 @@
-import React from 'react';
-import {
-  Changes, ChangesExportLink, Pagination
-} from '../containers';
+import React, {PropTypes} from 'react';
+import {Changes, ChangesExportLink, Pagination} from '../containers';
 import SideMenuLayout from '../components/SideMenu/SideMenuLayout';
 import SideMenuButton from '../components/SideMenu/SideMenuButton';
 
@@ -18,10 +16,14 @@ export const ChangesPage = (props) => {
   return (
     <SideMenuLayout
         menuHeader={appName}
-        menuItems={exportButton} >
+        menuItems={[exportButton]} >
       {changes}
       <Pagination />
     </SideMenuLayout>);
+};
+
+ChangesPage.propTypes = {
+  appName: PropTypes.string
 };
 
 export default ChangesPage;

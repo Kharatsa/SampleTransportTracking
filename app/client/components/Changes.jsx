@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import WaitOnFetch from '../containers/wrappers/WaitOnFetch.jsx';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import WindowSizeListener from '../containers/wrappers/WindowSizeListener.jsx';
@@ -21,6 +21,11 @@ const _ChangesListing = React.createClass({
 export const ChangesListingWrapped = WaitOnFetch(_ChangesListing);
 
 export const Changes = React.createClass({
+  propTypes: {
+    page: PropTypes.any,
+    summaryFilter: PropTypes.object
+  },
+
   componentWillReceiveProps(nextProps) {
     const {page} = this.props.params;
     const nextPage = nextProps.params.page;

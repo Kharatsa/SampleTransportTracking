@@ -5,7 +5,7 @@ const APP_NAME = 'Sample Tracking';
 export const AppComponent = React.createClass({
   propTypes: {
     actions: PropTypes.object,
-    children: PropTypes.any
+    children: PropTypes.node
   },
 
   componentWillMount() {

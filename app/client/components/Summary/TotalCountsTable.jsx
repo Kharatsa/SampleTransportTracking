@@ -5,7 +5,9 @@ import ArtifactsAccordion from './ArtifactsAccordion';
 import LabTestsAccordion from './LabTestsAccordion';
 
 
-const TotalCountsTable = ({summary, metadata, goodCounts}) => {
+const TotalCountsTable = ({
+  artifacts, labTests, metadata, goodCounts
+}) => {
 
   const cartesianGenerator = (seq) => {
     return seq.butLast().reduceRight( (acc, l) => {
@@ -42,7 +44,8 @@ const TotalCountsTable = ({summary, metadata, goodCounts}) => {
       return new ArtifactsCount({status: s.get(0), stage: s.get(1), artifactType: s.get(2)})
     })
 
-  const mergedRequests = merge(defaultRequests, summary.artifacts, Seq(['status', 'stage', 'artifactType']))
+  const mergedRequests = merge(defaultRequests, artifacts, Seq(['status', 'stage', 'artifactType']))
+  // const mergedRequests = merge(defaultRequests, summary.artifacts, Seq(['status', 'stage', 'artifactType']))
 
   // **************************************************************************************
   // Results
@@ -54,7 +57,8 @@ const TotalCountsTable = ({summary, metadata, goodCounts}) => {
       return new ArtifactsCount({status: s.get(0), stage: s.get(1), artifactType: s.get(2)})
     })
 
-  const mergedResults = merge(defaultResults, summary.artifacts, Seq(['status', 'stage', 'artifactType']))
+  const mergedResults = merge(defaultResults, artifacts, Seq(['status', 'stage', 'artifactType']))
+  // const mergedResults = merge(defaultResults, summary.artifacts, Seq(['status', 'stage', 'artifactType']))
 
   // **************************************************************************************
   // Lab Tests
@@ -80,7 +84,8 @@ const TotalCountsTable = ({summary, metadata, goodCounts}) => {
       return new LabTestsCount({status: s.get(0), testType: s.get(1), testRejection: s.get(2)})
     })
 
-  const mergedLabTestsCounts =  merge(defaultLabTestsCounts, summary.labTests, Seq(['status', 'testType', 'testRejection']))
+  const mergedLabTestsCounts =  merge(defaultLabTestsCounts, labTests, Seq(['status', 'testType', 'testRejection']))
+  // const mergedLabTestsCounts =  merge(defaultLabTestsCounts, summary.labTests, Seq(['status', 'testType', 'testRejection']))
 
   return (
     <div>

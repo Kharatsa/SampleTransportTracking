@@ -32,5 +32,3 @@ export const paginationPage = (state=DEFAULT_PAGE, action) => {
     return state;
   }
 };
-
-

@@ -5,15 +5,18 @@ import {Changes} from '../components';
 
 export const ChangesContainer = connect(
   state => ({
+    isFetchingData: state.isFetchingData,
     changeIds: state.changeIds,
     changesById: state.changesById,
-    changesTotal: state.changesTotal,
     samplesById: state.samplesById,
     artifactsById: state.artifactsById,
     labTestsById: state.labTestsById,
-    isFetchingData: state.isFetchingData,
-    metadata: state.metadata,
-    page: state.page,
+    metaStages: state.metaStagesByKey,
+    metaStatuses: state.metaStatusesByKey,
+    metaArtifacts: state.metaArtifactsByKey,
+    metaLabTests: state.metaLabTestsByKey,
+    metaFacilities: state.metaFacilitiesByKey,
+    metaPeople: state.metaPeopleByKey,
     summaryFilter: state.summaryFilter
   }),
   dispatch => ({actions: bindActionCreators({fetchChanges}, dispatch)})

@@ -9,7 +9,6 @@ const log = require('server/util/logapp.js');
 const TAT_STAGE_PAIRS = [
   {from: {stage: 'SDEPART'}, to:  {stage: 'SARRIVE'}},
   {from: {stage: 'SARRIVE'}, to:  {stage: 'LABSTATUS', status: 'REQ'}},
-  {from: {stage: 'SARRIVE'}, to:  {stage: 'LABSTATUS', status: 'REQ'}},
   {
     from: {stage: 'LABSTATUS', status: 'REQ'},
     to:  {stage: 'LABSTATUS', status: 'RVW'}

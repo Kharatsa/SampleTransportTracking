@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
+import {Map as ImmutableMap} from 'immutable';
 import ChangeRefItem from './ChangeRefItem.jsx';
 import InfoPanel from '../InfoPanel.jsx';
 
 export const SampleTests = ({
-  labTestsById, changesByLabTestId, metadata
+  labTestsById, changesByLabTestId,
+  metaLabTests, metaStatuses, metaStages
 }) => {
   const testElems = changesByLabTestId.entrySeq().map(entry => {
     const id = entry[0];
@@ -15,9 +17,10 @@ export const SampleTests = ({
             changes={changes}
             refItem={labTest}
             refType='testType'
-            refMeta={metadata.get('labTests')}
-            statuses={metadata.get('statuses')}
-            stages={metadata.get('stages')} />
+            refMeta={metaLabTests}
+            statuses={metaStatuses}
+            stages={metaStages}
+        />
       </li>
     );
   });
@@ -27,6 +30,14 @@ export const SampleTests = ({
       <ul className='table-list'>{testElems}</ul>
     </InfoPanel>
     );
+};
+
+SampleTests.propTypes = {
+  labTestsById: PropTypes.instanceOf(ImmutableMap).isRequired,
+  changesByLabTestId: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaLabTests: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaStages: PropTypes.instanceOf(ImmutableMap).isRequired
 };
 
 export default SampleTests;

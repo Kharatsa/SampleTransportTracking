@@ -538,6 +538,40 @@ a {
   padding: 0 1rem 0 1rem;
 }
 
+.dashboard-top-bar {
+  text-align: center;
+  margin: 0.5rem 0 0.5rem 0;
+}
+
+.infobox {
+  margin: 0.2rem 1rem 0.2rem 1rem;
+  color: #3D4347;
+  background: #FAFAFA;
+  border: 1px solid #DDD;
+}
+
+.infobox-icon {
+  margin: 0 0.6rem 0 0.6rem;
+  vertical-align: baseline;
+  color: #3D4347 !important;
+  width: 23px !important;
+  height: 23px !important;
+}
+
+.infobox-header {
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  margin: 0 0.5rem 0 0.5rem;
+  border-bottom: 1px solid #DDD;
+}
+
+.infobox-value {
+  font-size: 2rem;
+  margin: 0.2rem 0 0;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+  font-weight: 80;
+}
+
 .pure-menu-item {
   background: #32373A;
 }
@@ -545,10 +579,6 @@ a {
 .pure-menu-heading {
   font-weight: bold;
 }
-
-/*.pure-menu-link {
-  cursor: pointer;
-}*/
 
 .black-bg
 .pure-menu-link:active {

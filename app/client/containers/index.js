@@ -3,6 +3,7 @@ import Pagination from './PaginationContainer';
 import DateFilters from './DateFiltersContainer';
 import LocationFilters from './LocationFiltersContainer';
 import TotalCounts from './TotalCountsContainer';
+import SampleCounts from './SampleCountsContainer';
 import Changes from './ChangesContainer';
 import Sample from './SampleContainer';
 import ChangesExportLink from './ChangesExportLinkContainer';
@@ -14,6 +15,7 @@ export {
   DateFilters,
   LocationFilters,
   TotalCounts,
+  SampleCounts,
   Changes,
   Sample,
   ChangesExportLink,

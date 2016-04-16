@@ -49,7 +49,7 @@ export const DateFilters = React.createClass({
 
     return (
       <form className='pure-form'>
-        <label htmlFor='regionFilter'>After Date Filter</label>
+        <label htmlFor='regionFilter'>After Date</label>
         <DatePicker
             selected={afterDateFilter}
             maxDate={Moment().subtract(1, 'day')}
@@ -57,7 +57,7 @@ export const DateFilters = React.createClass({
             className='pure-menu-input'
         />
 
-        <label htmlFor='regionFilter'>Before Date Filter</label>
+        <label htmlFor='regionFilter'>Before Date</label>
         <DatePicker
             selected={beforeDateFilter}
             maxDate={Moment()}

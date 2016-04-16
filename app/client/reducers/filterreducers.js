@@ -10,8 +10,13 @@ const defaultSummaryFilter = SummaryFilter({
   beforeDate: defaultBeforeDate
 });
 
-const getFilterValue = (updated, existing, attr) =>
-  updated.get(attr, existing.get(attr));
+const getFilterValue = (updated, existing, attr) => {
+  const filterValue = updated.get(attr);
+  if (typeof filterValue !== 'undefined') {
+    return filterValue;
+  }
+  return existing.get(attr);
+};
 
 export const summaryFilter = (state=defaultSummaryFilter, action) => {
   switch (action.type) {

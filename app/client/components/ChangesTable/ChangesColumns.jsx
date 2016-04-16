@@ -23,20 +23,22 @@ const linkColumnComponent = (header='', changeProp, route='/') =>
 export const stIdsCol = linkColumnComponent('ST ID', 'stId', '/samples');
 export const labIdsCol = linkColumnComponent('Lab ID', 'labId', '/samples');
 
-const metadataColumnComponent = (header, changeProp, isResizable=true, flexGrow=1) =>
-  ({data, width=DEFAULT_WIDTH, metadata}) => (
-    <Column
-        key={changeProp}
-        columnKey={changeProp}
-        header={<Cell>{header}</Cell>}
-        width={width}
-        isResizable={isResizable}
-        flexGrow={flexGrow}
-        cell={<MetadataCell
-                data={data}
-                col={changeProp}
-                metadata={metadata} />} />
-  );
+const metadataColumnComponent = (
+  header, changeProp, isResizable=false, flexGrow=1
+) => ({data, width=DEFAULT_WIDTH, metadata}) => (
+  <Column
+      key={changeProp}
+      columnKey={changeProp}
+      header={<Cell>{header}</Cell>}
+      width={width}
+      isResizable={isResizable}
+      flexGrow={flexGrow}
+      cell={<MetadataCell
+              data={data}
+              col={changeProp}
+              metadata={metadata}
+            />}
+  />);
 
 export const stagesCol = metadataColumnComponent('Stage', 'stage');
 export const statusesCol = metadataColumnComponent('Status', 'status');

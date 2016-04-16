@@ -17,7 +17,13 @@ export default connect(
     changesByArtifactId: state.changesByArtifactId,
     changesByLabTestId: state.changesByLabTestId,
     changesByStage: state.changesByStage,
-    metadata: state.metadata
+    metaArtifacts: state.metaArtifactsByKey,
+    metaStatuses: state.metaStatusesByKey,
+    metaStages: state.metaStagesByKey,
+    metaPeople: state.metaPeopleByKey,
+    metaFacilities: state.metaFacilitiesByKey,
+    metaLabTests: state.metaLabTestsByKey
+    // metadata: state.metadata
   }),
   dispatch => ({actions: bindActionCreators({fetchSampleDetail}, dispatch)})
 )(Sample);

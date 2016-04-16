@@ -24,7 +24,7 @@ const metaModelPrefix = 'Meta';
 const metaModelNames = Object.keys(metamodels).map(key => metamodels[key].name);
 const metaTypes = metaModelNames.map(name => {
   if (!name.startsWith(metaModelPrefix)) {
-    throw new Error(`Metadata model missing required prefix: ` +
+    throw new Error('Metadata model missing required prefix: ' +
                     `"${metaModelPrefix}"`);
   }
   const lower = name.substr(metaModelPrefix.length, 1).toLowerCase();

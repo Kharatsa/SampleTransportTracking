@@ -4,7 +4,8 @@ import SideMenu from './SideMenu';
 export const SideMenuLayout = React.createClass({
   propTypes: {
     menuHeader: PropTypes.string.isRequired,
-    menuItems: PropTypes.array
+    menuItems: PropTypes.arrayOf(PropTypes.node),
+    children: PropTypes.node
   },
 
   getInitialState: function() {
@@ -19,13 +20,15 @@ export const SideMenuLayout = React.createClass({
     const {menuHeader, menuItems, children} = this.props;
     const {isMenuOpen} = this.state;
 
+    const items = menuItems.map((item, i) => <span key={i}>{item}</span>);
+
     return (
       <div id='layout' className={isMenuOpen ? 'active' : ''}>
         <SideMenu
             header={menuHeader}
             isMenuOpen={isMenuOpen}
             openMenu={this.toggleMenu} >
-          {menuItems}
+          {items}
         </SideMenu>
         <div id='main'>
           {children}

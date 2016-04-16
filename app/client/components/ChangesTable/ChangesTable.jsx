@@ -1,5 +1,4 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Seq, Map as ImmutableMap} from 'immutable';
 import {Table} from 'fixed-data-table';
 import {
@@ -34,49 +33,63 @@ const changeRow = ({
   };
 };
 
-export default React.createClass({
-  mixins: [PureRenderMixin],
+export const ChangesTable = (props) => {
+  const {
+    height, width,
+    changeIds, changesById,
+    samplesById, artifactsById, labTestsById,
+    metaStages, metaStatuses, metaArtifacts,
+    metaLabTests, metaFacilities, metaPeople
+  } = props;
 
-  propTypes: {
-    changeIds: PropTypes.instanceOf(Seq),
-    changesById: PropTypes.instanceOf(ImmutableMap)
-  },
+  const data = changeIds.map(changeUUID =>
+    changeRow({
+      changeUUID,
+      changesById,
+      labTestsById,
+      artifactsById,
+      samplesById
+    })
+  ).toArray();
 
-  render() {
-    const {height, width} = this.props;
-    const {changeIds, changesById} = this.props;
-    const {samplesById, artifactsById, labTestsById, metadata} = this.props;
+  return (
+    <div className='panel'>
+      <Table
+          rowHeight={ROW_HEIGHT}
+          headerHeight={HEADER_HEIGHT}
+          rowsCount={data.length}
+          width={width}
+          height={height}
+          {...props}>
+        {stIdsCol({data})}
+        {labIdsCol({data})}
+        {stagesCol({data, metadata: metaStages})}
+        {statusesCol({data, metadata: metaStatuses})}
+        {artifactsCol({data, metadata: metaArtifacts})}
+        {labTestsCol({data, metadata: metaLabTests})}
+        {facilitiesCol({data, metadata: metaFacilities})}
+        {peopleCol({data, metadata: metaPeople})}
+        {statusDatesCol({data, width: 200})}
+      </Table>
+    </div>
+  );
+};
 
-    const data = changeIds.map(changeUUID =>
-      changeRow({
-        changeUUID,
-        changesById,
-        labTestsById,
-        artifactsById,
-        samplesById
-      })
-    ).toArray();
+ChangesTable.propTypes = {
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  isFetchingData: PropTypes.bool.isRequired,
+  changeIds: PropTypes.instanceOf(Seq).isRequired,
+  changesById: PropTypes.instanceOf(ImmutableMap).isRequired,
+  samplesById: PropTypes.instanceOf(ImmutableMap).isRequired,
+  artifactsById: PropTypes.instanceOf(ImmutableMap).isRequired,
+  labTestsById: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaArtifacts: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaLabTests: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaFacilities: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaPeople: PropTypes.instanceOf(ImmutableMap).isRequired
+};
 
-    return (
-      <div className='panel'>
-        <Table
-            rowHeight={ROW_HEIGHT}
-            headerHeight={HEADER_HEIGHT}
-            rowsCount={data.length}
-            width={width}
-            height={height}
-            {...this.props}>
-          {stIdsCol({data})}
-          {labIdsCol({data})}
-          {stagesCol({data, metadata: metadata.get('stages')})}
-          {statusesCol({data, metadata: metadata.get('statuses')})}
-          {artifactsCol({data, metadata: metadata.get('artifacts')})}
-          {labTestsCol({data, metadata: metadata.get('labTests')})}
-          {facilitiesCol({data, metadata: metadata.get('facilities')})}
-          {peopleCol({data, metadata: metadata.get('people')})}
-          {statusDatesCol({data, width: 200})}
-        </Table>
-      </div>
-    );
-  }
-});
+export default ChangesTable;

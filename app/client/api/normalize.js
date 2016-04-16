@@ -4,7 +4,8 @@ import {changeInclude, metadata} from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
   KeyValueMetaRecord, FacilityMetaRecord,
-  SummaryTotal, ArtifactsCount, LabTestsCount,
+  ArtifactsCount, LabTestsCount,
+  // SummaryTotal,
   TurnAround
 } from './records.js';
 
@@ -32,12 +33,15 @@ const makeImmutable = (source, ImmutableRecord) => {
 };
 
 const normalizeMeta = (data, Record) => {
-  let {entities} = normalize(data, arrayOf(metadata));
-  return makeImmutable(entities.metadata, Record);
+  let {entities, result} = normalize(data, arrayOf(metadata));
+  return {
+    entities: makeImmutable(entities.metadata, Record),
+    result: List(result)
+  };
 };
 
 export const normalizeMetadata = data => {
-  return ImmutableMap({
+  const normalized = {
     regions: normalizeMeta(data.regions, KeyValueMetaRecord),
     facilities: normalizeMeta(data.facilities, FacilityMetaRecord),
     people: normalizeMeta(data.people, KeyValueMetaRecord),
@@ -46,6 +50,25 @@ export const normalizeMetadata = data => {
     statuses: normalizeMeta(data.statuses, KeyValueMetaRecord),
     rejections: normalizeMeta(data.rejections, KeyValueMetaRecord),
     stages: normalizeMeta(data.stages, KeyValueMetaRecord)
+  };
+
+  return ImmutableMap({
+    regions: normalized.regions.entities,
+    regionsKeys: normalized.regions.result,
+    facilities: normalized.facilities.entities,
+    facilitiesKeys: normalized.facilities.result,
+    people: normalized.people.entities,
+    peopleKeys: normalized.people.result,
+    labTests: normalized.labTests.entities,
+    labTestsKeys: normalized.labTests.result,
+    artifacts: normalized.artifacts.entities,
+    artifactsKeys: normalized.artifacts.result,
+    statuses: normalized.statuses.entities,
+    statusesKeys: normalized.statuses.result,
+    rejections: normalized.rejections.entities,
+    rejectionsKeys: normalized.rejections.result,
+    stages: normalized.stages.entities,
+    stagesKeys: normalized.stages.result
   });
 };
 
@@ -113,18 +136,27 @@ export const normalizeSummary = data => {
   return {
     artifacts: normalizeArtifacts(artifacts),
     labTests: normalizeLabTests(labTests),
-    totals: new SummaryTotal(totals)
+    totals
+    // totals: new SummaryTotal(totals)
   };
 };
 
+const getAvgTAT = turnAround => {
+  const tat = turnAround.samplesIdsAvgTATms;
+  if (tat && tat >= 0) {
+    return tat;
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(`Replaced invalid sample turnaround time "${tat}" with 0`);
+  }
+  return 0;
+};
+
 export const normalizeTurnArounds = data => {
-  console.log('in normalize turn arounds', data)
   return Seq(data).map(turnAround => new TurnAround({
     from: turnAround.from,
     to: turnAround.to,
-    averageTATms: ( () => {
-      if (!turnAround.samplesIdsAvgTATms || turnAround.samplesIdsAvgTATms < 0) { return 0; }
-      else { return turnAround.samplesIdsAvgTATms; }
-    }) ()
-  }))
-}
+    averageTATms: getAvgTAT(turnAround)
+  }));
+};

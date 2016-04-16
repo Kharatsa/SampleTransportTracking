@@ -66,18 +66,18 @@ export const LocationFilters = React.createClass({
 
     return (
       <div>
-        <label htmlFor='regionFilter'>Laboratory Filter</label>
+        <label htmlFor='regionFilter'>Laboratory</label>
         <Select
             id='regionFilter'
             isLoading={isFetchingData}
             matchPos='any'
             matchProp='label'
-            placeholder='Select Region...'
+            placeholder='Select Laboratory...'
             value={regionKey}
             options={regionOptions}
             onChange={this.selectRegion}
         />
-        <label htmlFor='facilityFilter'>Facility Filter</label>
+        <label htmlFor='facilityFilter'>Facility</label>
         <Select
             id='facilityFilter'
             disabled={regionKey === null}
