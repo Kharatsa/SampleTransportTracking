@@ -44,8 +44,6 @@ function STTClient(options) {
     db: this.db, model: this.models.MetaLabs});
   this.metaFacilities = metaclients.facilities({
     db: this.db, model: this.models.MetaFacilities});
-  // this.metaRegions = metaclients.regions({
-  //   db: this.db, model: this.models.MetaRegions});
   this.metaPeople = metaclients.people({
     db: this.db, model: this.models.MetaPeople});
   this.metaArtifacts = metaclients.artifacts({
@@ -118,7 +116,8 @@ const summaryQuery = (self, queryFunc, params) => {
  * @throws {Error} If afterDate is undefined
  */
 STTClient.prototype.artifactCounts = BPromise.method(function(options) {
-  return summaryQuery(this, summaryqueries.artifactStagesRaw, options.data);
+  return summaryQuery(this, summaryqueries.artifactStagesRaw, options.data)
+  .then(summaryresult.composeCountGroups);
 });
 
 /**
@@ -128,7 +127,8 @@ STTClient.prototype.artifactCounts = BPromise.method(function(options) {
  * @throws {Error} If afterDate is undefined
  */
 STTClient.prototype.labTestCounts = BPromise.method(function(options) {
-  return summaryQuery(this, summaryqueries.testStatusRaw, options.data);
+  return summaryQuery(this, summaryqueries.testStatusRaw, options.data)
+  .then(summaryresult.composeLabTestGroup);
 });
 
 /**

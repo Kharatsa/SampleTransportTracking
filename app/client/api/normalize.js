@@ -1,12 +1,9 @@
 import {arrayOf, normalize} from 'normalizr';
-import {Map as ImmutableMap, Seq, List} from 'immutable';
+import {fromJS, Map as ImmutableMap, List} from 'immutable';
 import {changeInclude, metadata} from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
-  KeyValueMetaRecord, FacilityMetaRecord,
-  ArtifactsCount, LabTestsCount,
-  // SummaryTotal,
-  TurnAround
+  KeyValueMetaRecord, FacilityMetaRecord, TurnAround
 } from './records.js';
 
 /**
@@ -23,7 +20,7 @@ const makeImmutable = (source, ImmutableRecord) => {
       key => {
         const record = source[key];
         if (Array.isArray(record)) {
-          return [key, Seq(record.map(item => new ImmutableRecord(item)))];
+          return [key, List(record.map(item => new ImmutableRecord(item)))];
         }
         return [key, new ImmutableRecord(record)];
       }
@@ -32,7 +29,7 @@ const makeImmutable = (source, ImmutableRecord) => {
   return ImmutableMap({});
 };
 
-const normalizeMeta = (data, Record) => {
+const normalizeOneMeta = (data, Record) => {
   let {entities, result} = normalize(data, arrayOf(metadata));
   return {
     entities: makeImmutable(entities.metadata, Record),
@@ -42,14 +39,14 @@ const normalizeMeta = (data, Record) => {
 
 export const normalizeMetadata = data => {
   const normalized = {
-    regions: normalizeMeta(data.regions, KeyValueMetaRecord),
-    facilities: normalizeMeta(data.facilities, FacilityMetaRecord),
-    people: normalizeMeta(data.people, KeyValueMetaRecord),
-    labTests: normalizeMeta(data.labTests, KeyValueMetaRecord),
-    artifacts: normalizeMeta(data.artifacts, KeyValueMetaRecord),
-    statuses: normalizeMeta(data.statuses, KeyValueMetaRecord),
-    rejections: normalizeMeta(data.rejections, KeyValueMetaRecord),
-    stages: normalizeMeta(data.stages, KeyValueMetaRecord)
+    regions: normalizeOneMeta(data.regions, KeyValueMetaRecord),
+    facilities: normalizeOneMeta(data.facilities, FacilityMetaRecord),
+    people: normalizeOneMeta(data.people, KeyValueMetaRecord),
+    labTests: normalizeOneMeta(data.labTests, KeyValueMetaRecord),
+    artifacts: normalizeOneMeta(data.artifacts, KeyValueMetaRecord),
+    statuses: normalizeOneMeta(data.statuses, KeyValueMetaRecord),
+    rejections: normalizeOneMeta(data.rejections, KeyValueMetaRecord),
+    stages: normalizeOneMeta(data.stages, KeyValueMetaRecord)
   };
 
   return ImmutableMap({
@@ -118,26 +115,20 @@ export const normalizeSample = data => {
 export const normalizeChanges = ({data, count}) => {
   const {entities, result} = normalize(data, arrayOf(changeInclude));
   const changes = makeImmutable(entities.changeIncludes, ChangeRecord);
-  const changeIds = Seq(result);
+  const changeIds = List(result);
   const artifacts = makeImmutable(entities.artifactSamples, ArtifactRecord);
   const labTests = makeImmutable(entities.labTestSamples, LabTestRecord);
   const samples = makeImmutable(entities.samples, SampleRecord);
   return {changes, changeIds, artifacts, labTests, samples, count};
 };
 
-const normalizeArtifacts = artifacts =>
-  Seq(artifacts).map(artifact => new ArtifactsCount(artifact));
-
-const normalizeLabTests = labTests =>
-  Seq(labTests).map(labTest => new LabTestsCount(labTest));
-
 export const normalizeSummary = data => {
-  const {artifacts, labTests, totals} = data;
+  const {sampleIdsCount, artifactsCount, labTestsCount, totalsCount} = data;
   return {
-    artifacts: normalizeArtifacts(artifacts),
-    labTests: normalizeLabTests(labTests),
-    totals
-    // totals: new SummaryTotal(totals)
+    sampleIds: fromJS(sampleIdsCount),
+    artifacts: fromJS(artifactsCount),
+    labTests: fromJS(labTestsCount),
+    totals: fromJS(totalsCount)
   };
 };
 
@@ -154,7 +145,7 @@ const getAvgTAT = turnAround => {
 };
 
 export const normalizeTurnArounds = data => {
-  return Seq(data).map(turnAround => new TurnAround({
+  return List(data).map(turnAround => new TurnAround({
     from: turnAround.from,
     to: turnAround.to,
     averageTATms: getAvgTAT(turnAround)

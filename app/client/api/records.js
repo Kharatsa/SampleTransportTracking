@@ -60,24 +60,8 @@ export const SummaryFilter = Record({
   facilityKey: null
 });
 
-export const ArtifactsCount = Record({
-  stage:null,
-  status:null,
-  artifactType:null,
-  sampleIdsCount:0,
-  artifactsCount:0
-});
-
-export const LabTestsCount = Record({
-  status:null,
-  testType:null,
-  testRejection:null,
-  sampleIdsCount:0,
-  labTestsCount:0
-});
-
 export const TurnAround = Record({
-  from:null,
-  to:null,
-  averageTATms:0
+  from: null,
+  to: null,
+  averageTATms: 0
 });

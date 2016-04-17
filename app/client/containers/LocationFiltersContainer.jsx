@@ -2,7 +2,9 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {changeSummaryFilter} from '../actions/actioncreators';
 import {LocationFilters} from '../components/SummaryControls';
-import {getMetaRegions, getFilteredMetaFacilities} from '../selectors';
+import {
+  getMetaRegions, getFilteredMetaFacilities
+} from '../selectors/metadataselectors';
 
 export const LocationFilterContainer = connect(
   state => ({

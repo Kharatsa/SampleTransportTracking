@@ -1,9 +1,9 @@
 import App from './AppContainer';
-import Pagination from './PaginationContainer';
+import SummaryCounts from './SummaryCountsContainer';
+import StageCounts from './StageCountsContainer';
 import DateFilters from './DateFiltersContainer';
 import LocationFilters from './LocationFiltersContainer';
-import TotalCounts from './TotalCountsContainer';
-import SampleCounts from './SampleCountsContainer';
+import Pagination from './PaginationContainer';
 import Changes from './ChangesContainer';
 import Sample from './SampleContainer';
 import ChangesExportLink from './ChangesExportLinkContainer';
@@ -14,8 +14,8 @@ export {
   Pagination,
   DateFilters,
   LocationFilters,
-  TotalCounts,
-  SampleCounts,
+  SummaryCounts,
+  StageCounts,
   Changes,
   Sample,
   ChangesExportLink,

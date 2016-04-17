@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {Seq, Map as ImmutableMap} from 'immutable';
+import {List, Map as ImmutableMap} from 'immutable';
 import {Table} from 'fixed-data-table';
 import {
   stIdsCol, labIdsCol, stagesCol, statusesCol, artifactsCol,
@@ -79,7 +79,7 @@ ChangesTable.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   isFetchingData: PropTypes.bool.isRequired,
-  changeIds: PropTypes.instanceOf(Seq).isRequired,
+  changeIds: PropTypes.instanceOf(List).isRequired,
   changesById: PropTypes.instanceOf(ImmutableMap).isRequired,
   samplesById: PropTypes.instanceOf(ImmutableMap).isRequired,
   artifactsById: PropTypes.instanceOf(ImmutableMap).isRequired,

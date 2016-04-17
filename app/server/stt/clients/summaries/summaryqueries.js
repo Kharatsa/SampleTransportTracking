@@ -50,7 +50,24 @@ const totalsDateSeries = params => {
 };
 
 const artifactStagesRaw = params => {
-  return `SELECT
+  return `
+    SELECT
+      c.stage AS "Summary.stage",
+      NULL AS "Summary.status",
+      NULL AS "Summary.artifactType",
+      COUNT(DISTINCT s.uuid) AS "Summary.sampleIdsCount",
+      NULL  AS "Summary.artifactsCount"
+    FROM SampleIds s
+    INNER JOIN Artifacts a ON a.sampleId = s.uuid
+    INNER JOIN Changes c on c.artifact = a.uuid
+    ${rawqueryutils.regionQueryInnerJoin(params)}
+    WHERE s.createdAt >= $afterDate
+    ${rawqueryutils.sampleBeforeCondition(params)}
+    ${rawqueryutils.originFacilityCondition(params) ||
+      rawqueryutils.originRegionCondition(params)}
+    GROUP BY "Summary.stage"
+    UNION ALL
+    SELECT
       c.stage AS "Summary.stage",
       c.status AS "Summary.status",
       a.artifactType AS "Summary.artifactType",
@@ -64,11 +81,12 @@ const artifactStagesRaw = params => {
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-    GROUP BY c.stage, c.status, a.artifactType`;
+    GROUP BY "Summary.stage", "Summary.status", "Summary.artifactType"`;
 };
 
 const testStatusRaw = params => {
   return `SELECT
+      c.stage AS "Summary.stage",
       t.testType AS "Summary.testType",
       c.status AS "Summary.status",
       c.labRejection AS "Summary.testRejection",
@@ -83,7 +101,8 @@ const testStatusRaw = params => {
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
     ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}
-    GROUP BY c.status, c.labRejection, t.testType`;
+    GROUP BY "Summary.stage", "Summary.status", "Summary.testType",
+      "Summary.testRejection"`;
 };
 
 const stageTATsRaw = params => {

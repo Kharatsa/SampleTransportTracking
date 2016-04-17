@@ -1,7 +1,7 @@
 import App from './AppPage';
-import Summary from './SummaryPage';
+import Dashboard from './DashboardPage';
 import Changes from './ChangesPage';
 import Sample from './SamplePage';
 import MissingRoute from './MissingRoute';
 
-export {App, Summary, Changes, Sample, MissingRoute};
+export {App, Dashboard, Changes, Sample, MissingRoute};

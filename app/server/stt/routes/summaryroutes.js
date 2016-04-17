@@ -26,12 +26,15 @@ const summaryKeyParams = req => ({
 });
 
 const handleSummaryReq = (req, res, next) => {
-  const artifacts = client.artifactCounts({data: summaryKeyParams(req)});
-  const labTests = client.labTestCounts({data: summaryKeyParams(req)});
-  const totals = client.totalCounts({data: summaryKeyParams(req)})
+  const getScanCounts = client.artifactCounts({data: summaryKeyParams(req)});
+  const getTestCounts = client.labTestCounts({data: summaryKeyParams(req)});
+  const getTotalCounts = client.totalCounts({data: summaryKeyParams(req)})
   .then(dbresult.oneResult);
 
-  return BPromise.props({artifacts, labTests, totals})
+  return BPromise.join(getScanCounts, getTestCounts, getTotalCounts)
+  .spread((scans, tests, totals) => {
+    return Object.assign({}, scans, tests, {totalsCount: totals});
+  })
   .then(results => res.json(results))
   .catch(next);
 };

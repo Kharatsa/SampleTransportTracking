@@ -4,7 +4,8 @@ import SideMenuLayout from './SideMenu/SideMenuLayout';
 import Changes from './Changes';
 import Sample from './Sample';
 import ChangesExportLink from './ChangesExportLink';
-import SampleCounts from './Summary/SampleCounts';
+import SummaryCounts from './Dashboard/SummaryCounts';
+import StageCounts from './Dashboard/StageCounts';
 
 export {
   App,
@@ -13,5 +14,6 @@ export {
   Changes,
   ChangesExportLink,
   Sample,
-  SampleCounts
+  SummaryCounts,
+  StageCounts
 };

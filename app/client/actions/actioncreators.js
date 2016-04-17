@@ -103,8 +103,8 @@ const fetchSummaryFailure = (error) => ({
   error
 });
 
-const receiveSummary = ({artifacts, labTests, totals}) =>
-  ({type: RECEIVE_SUMMARY, artifacts, labTests, totals});
+const receiveSummary = ({sampleIds, artifacts, labTests, totals}) =>
+  ({type: RECEIVE_SUMMARY, sampleIds, artifacts, labTests, totals});
 
 export const fetchSummary = (summaryFilter) => {
   return dispatch => {

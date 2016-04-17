@@ -1,10 +1,10 @@
 import {RECEIVE_SUMMARY, RECEIVE_TURN_AROUNDS} from '../actions/actions.js';
-import {Seq} from 'immutable';
+import {List} from 'immutable';
 
 export const summaryTotalSampleIds = (state=0, action) => {
   switch (action.type) {
   case RECEIVE_SUMMARY:
-    return action.totals.sampleIdsCount;
+    return action.totals.get('sampleIdsCount');
   default:
     return state;
   }
@@ -13,7 +13,7 @@ export const summaryTotalSampleIds = (state=0, action) => {
 export const summaryTotalArtifacts = (state=0, action) => {
   switch (action.type) {
   case RECEIVE_SUMMARY:
-    return action.totals.artifactsCount;
+    return action.totals.get('artifactsCount');
   default:
     return state;
   }
@@ -22,13 +22,22 @@ export const summaryTotalArtifacts = (state=0, action) => {
 export const summaryTotalLabTests = (state=0, action) => {
   switch (action.type) {
   case RECEIVE_SUMMARY:
-    return action.totals.labTestsCount;
+    return action.totals.get('labTestsCount');
   default:
     return state;
   }
 };
 
-export const summaryArtifacts = (state=Seq(), action) => {
+export const summarySampleIds = (state=List(), action) => {
+  switch (action.type) {
+  case RECEIVE_SUMMARY:
+    return action.sampleIds;
+  default:
+    return state;
+  }
+};
+
+export const summaryArtifacts = (state=List(), action) => {
   switch (action.type) {
   case RECEIVE_SUMMARY:
     return action.artifacts;
@@ -37,7 +46,7 @@ export const summaryArtifacts = (state=Seq(), action) => {
   }
 };
 
-export const summaryLabTests = (state=Seq(), action) => {
+export const summaryLabTests = (state=List(), action) => {
   switch (action.type) {
   case RECEIVE_SUMMARY:
     return action.labTests;
@@ -46,7 +55,7 @@ export const summaryLabTests = (state=Seq(), action) => {
   }
 };
 
-export const summaryTurnArounds = (state=Seq(), action) => {
+export const summaryTurnArounds = (state=List(), action) => {
   switch (action.type) {
   case RECEIVE_TURN_AROUNDS:
     return action.turnArounds;

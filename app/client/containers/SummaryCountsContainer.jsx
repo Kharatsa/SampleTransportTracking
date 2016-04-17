@@ -1,13 +1,13 @@
 import {connect} from 'react-redux';
-import {SampleCounts} from '../components';
+import {SummaryCounts} from '../components';
 
-export const SampleCountsContainer = connect(
+export const SummaryCountsContainer = connect(
   state => ({
     isFetchingData: state.isFetchingData,
     numSampleIds: state.summaryTotalSampleIds,
     numArtifacts: state.summaryTotalArtifacts,
     numLabTests: state.summaryTotalLabTests
   })
-)(SampleCounts);
+)(SummaryCounts);
 
-export default SampleCountsContainer;
+export default SummaryCountsContainer;

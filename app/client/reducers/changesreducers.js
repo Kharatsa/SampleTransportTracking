@@ -12,6 +12,9 @@ export const changeIds = (state=Seq(), action) => {
   }
 };
 
+// TODO: move these re-arranged change objects into selectors (i.e., don't
+// re-arrange in normalize)
+
 export const changesByArtifactId = (state=ImmutableMap(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:

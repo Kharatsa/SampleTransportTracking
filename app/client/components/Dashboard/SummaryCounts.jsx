@@ -9,7 +9,7 @@ const displayValue = (isFetchingData, val) => {
   return val && val.toLocaleString ? val.toLocaleString() : val;
 };
 
-export const AggregatedCounts = ({
+export const SummaryCounts = ({
   isFetchingData, numSampleIds, numArtifacts, numLabTests
 }) => {
   return (
@@ -24,7 +24,7 @@ export const AggregatedCounts = ({
         </InfoBox>
       </div>
       <div className='pure-u-1 pure-u-md-1-3'>
-        <InfoBox header='Samples'>
+        <InfoBox header='Samples & Forms'>
           <span>
             {displayValue(isFetchingData, numArtifacts)}
             <Iconic className='infobox-icon' name='droplet'/>
@@ -44,11 +44,11 @@ export const AggregatedCounts = ({
   );
 };
 
-AggregatedCounts.propTypes = {
+SummaryCounts.propTypes = {
   isFetchingData: PropTypes.bool.isRequired,
   numSampleIds: PropTypes.number.isRequired,
   numArtifacts: PropTypes.number.isRequired,
   numLabTests: PropTypes.number.isRequired
 };
 
-export default AggregatedCounts;
+export default SummaryCounts;

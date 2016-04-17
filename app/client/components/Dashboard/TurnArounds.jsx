@@ -1,11 +1,20 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {Map as ImmutableMap, List} from 'immutable';
 import WaitOnFetch from '../../containers/wrappers/WaitOnFetch.jsx';
 import TurnAroundsTable from './TurnAroundsTable';
 
 const TurnAroundsTableWrapped = WaitOnFetch(TurnAroundsTable);
 
 export const TurnArounds = React.createClass({
+  propTypes: {
+    summaryFilter: PropTypes.object,
+    actions: PropTypes.objectOf(PropTypes.func).isRequired,
+    metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
+    metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
+    turnArounds: PropTypes.instanceOf(List).isRequired
+  },
+
   mixins: [PureRenderMixin],
 
   componentWillMount() {
@@ -24,7 +33,18 @@ export const TurnArounds = React.createClass({
   },
 
   render() {
-    return <TurnAroundsTableWrapped {...this.props} />;
+    const {metaStages, metaStatuses, turnArounds} = this.props;
+
+    return (
+      <div>
+        <strong>Turn Around Times</strong>
+        <TurnAroundsTableWrapped
+          metaStages={metaStages}
+          metaStatuses={metaStatuses}
+          turnArounds={turnArounds}
+        />
+      </div>
+      );
   }
 });
 
