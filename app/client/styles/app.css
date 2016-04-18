@@ -620,6 +620,26 @@ ul.ct-legend {
   border-color: #33a02c;
 }
 
+.widget {
+  border-width: 1px;
+  border-style: solid;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+  border-color: lightgray;
+}
+
+.widget .widget-header {
+  padding: 0 10px;
+  height: 35px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: lightgray;
+  background-color: #eeeeee;
+}
+
+.widget .widget-content {
+  padding: 20px 10px;
+}
 
 .infobox {
   margin: 0.2rem 1rem 0.2rem 1rem;

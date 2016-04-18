@@ -1,5 +1,9 @@
 'use strict';
 
+// for better require()s
+const path = require('path');
+require('app-module-path').addPath(path.join(__dirname, '../../app'));
+
 const _ = require('lodash');
 const testmeta = require('./testmeta.js');
 
@@ -90,18 +94,24 @@ const makeChange = options => {
   };
 };
 
-const buildStages = count => {
+const buildStages = () => {
   let stages = ['SDEPART'];
-  if (count > 1) {
+  let hasSARRIVE = false;
+  let hasLABSTATUS = false;
+  let hasRDEPART = false;
+  if (Math.random() < 0.85) {
     stages.push('SARRIVE');
+    hasSARRIVE = true;
   }
-  if (count > 2) {
+  if ((Math.random() < 0.85) && hasSARRIVE) {
     stages.push('LABSTATUS');
+    hasLABSTATUS = true;
   }
-  if (count > 3) {
+  if ((Math.random() < 0.85) && hasLABSTATUS) {
     stages.push('RDEPART');
+    hasRDEPART = true;
   }
-  if (count > 4) {
+  if ((Math.random() < 0.85) && hasRDEPART) {
     stages.push('RARRIVE');
   }
   return stages;
@@ -206,7 +216,7 @@ const buildResultChanges = (
     let statusKey;
     let stages = [];
 
-    if (Math.random() > 0.75) {
+    if (Math.random() < 0.75) {
       artifact = makeArtifact(sample, 'RESULT');
       artifacts.push(artifact);
       statusKey = Math.random() < 0.9 ? 'OK' : 'BAD';
@@ -221,7 +231,7 @@ const buildResultChanges = (
       }));
     }
 
-    if (Math.random() > 0.75 && !!artifact) {
+    if (Math.random() < 0.75 && !!artifact) {
       const facility = meta.facility[randomInt(meta.facility.length)];
       statusKey = Math.random() < 0.9 ? 'OK' : 'BAD';
 
@@ -273,8 +283,8 @@ const buildChanges = (startDate, stages, sample, artifacts, labTests, meta) => {
 };
 
 const buildEntities = meta => {
-  const stageCount = randomInt(STAGE_ORDER.length) + 1;
-  const stages = buildStages(stageCount);
+  const stages = buildStages();
+  const stageCount = stages.length;
 
   const startDate = randomPastDate();
 
@@ -308,8 +318,12 @@ const load = (changesNum) => {
   const log = require('server/util/logapp.js');
   const storage = require('server/storage');
   storage.init({config: config.db});
+  const metamodels = require('server/stt/models/metadata');
   const sttmodels = require('server/stt/models');
+  const authmodels = require('server/auth/models');
+  storage.loadModels(metamodels);
   storage.loadModels(sttmodels);
+  storage.loadModels(authmodels);
 
   const noLog = {logging: false};
 
@@ -357,10 +371,12 @@ const load = (changesNum) => {
     .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog));
   })
   .then(() => log.info('Finihsed loading fake data'))
-  .catch(err => log.error('Error creating fake data', err, err.message, err.stack));
+  .catch(err => log.error('Error creating fake data',
+                          err, err.message, err.stack));
 };
 
 module.exports = {
+  FAKE_CHANGES_NUM,
   buildEntities,
   removeFakeData,
   load
