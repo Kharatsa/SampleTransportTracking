@@ -6,7 +6,7 @@
 const path = require('path');
 require('app-module-path').addPath(path.join(__dirname, '../../app'));
 
-const config = require('config');
+
 const log = require('server/util/logapp.js');
 const authmodels = require('server/auth/models');
 const metamodels = require('server/stt/models/metadata');
@@ -24,6 +24,8 @@ function before() {
     log.debug('Applying commands to production database');
     process.env.NODE_ENV = 'production';
   }
+
+  const config = require('config');
 
   storage.init({config: config.db});
   storage.loadModels(authmodels);
