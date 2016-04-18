@@ -1,7 +1,7 @@
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {changeSummaryFilter} from '../actions/actioncreators';
-import {LocationFilters} from '../components/SummaryControls';
+import {LocationFilters} from '../components/DashboardControls';
 import {
   getMetaRegions, getFilteredMetaFacilities
 } from '../selectors/metadataselectors';

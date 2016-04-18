@@ -11,9 +11,6 @@ import {
 } from '../../common/sttworkflow';
 
 const getSampleIdCounts = (state) => state.summarySampleIds;
-const getArtifactCounts = (state) => state.summaryArtifacts;
-const getLabTestCounts = (state) => state.summaryLabTests;
-const getMetaLabTestKeys = (state) => state.metaLabTestsKeys;
 
 // Returns Array of Objects
 // Elements of array each represent a stage
@@ -48,9 +45,13 @@ const getOneStageArtifactCounts = (stageArtifacts, counts) => {
   });
 };
 
-// Array of Arrays
-//  Outer Array represents workflow stages
-//  Inner Arrays represent Artifacts at each stage
+const getArtifactCounts = (state) => state.summaryArtifacts;
+
+/**
+ * Array of Arrays
+ * Outer Array workflow stages
+ * Inner Arrays Artifacts at each stage
+ */
 export const getArtifactStageCounts = createSelector(
   [getArtifactCounts],
   (counts) => {
@@ -83,6 +84,10 @@ const getOneLabTestStatusCounts = (test, counts) => {
     ImmutableMap({status, count: counts.get(status) || 0})));
 };
 
+const getLabTestCounts = (state) => state.summaryLabTests;
+const getMetaLabTestKeys = (state) => state.metaLabTestsKeys;
+
+// List of Maps
 export const getLabTestStatusCounts = createSelector(
   [getMetaLabTestKeys, getLabTestCounts],
   (testKeys, counts) => {
@@ -95,5 +100,25 @@ export const getLabTestStatusCounts = createSelector(
       test,
       statuses: getOneLabTestStatusCounts(test, labStatusCounts.get(test))
     })));
+  }
+);
+
+const getMetaStages = (state) => state.metaStagesByKey;
+const getStageDatesRaw = (state) => state.summaryStageCountsDates;
+const getStageDatesCounts = (state) => state.summaryStageCountsByDate;
+
+export const getStageCountsChartData = createSelector(
+  [getStageDatesRaw, getStageDatesCounts, getMetaStages],
+  (dates, counts, metaStages) => {
+    if (dates.size === 0) {
+      return [];
+    }
+
+    return SCAN_STAGES_ORDER.map(stage => {
+      return {
+        name: metaStages.get(stage).get('value'),
+        data: dates.map(date => counts.get(date).get(stage)).toArray()
+      };
+    });
   }
 );

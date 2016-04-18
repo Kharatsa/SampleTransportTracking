@@ -1,6 +1,6 @@
 import {arrayOf, normalize} from 'normalizr';
 import {fromJS, Map as ImmutableMap, List} from 'immutable';
-import {changeInclude, metadata} from './schemas.js';
+import {changeInclude, metadata, dateStage} from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
   KeyValueMetaRecord, FacilityMetaRecord, TurnAround
@@ -150,4 +150,13 @@ export const normalizeTurnArounds = data => {
     to: turnAround.to,
     averageTATms: getAvgTAT(turnAround)
   }));
+};
+
+export const normalizeStageDates = data => {
+  const {entities, result} = normalize(data, arrayOf(dateStage));
+
+  return {
+    dates: List(result),
+    summary: fromJS(entities.dateStage || {})
+  };
 };

@@ -2,7 +2,9 @@
 
 const _ = require('lodash');
 const BPromise = require('bluebird');
+const moment = require('moment');
 const sttworkflow = require('common/sttworkflow');
+const datecalc = require('common/datecalc');
 // const log = require('server/util/logapp.js');
 
 const recomposeRawSummary = (data, options) => {
@@ -132,6 +134,53 @@ const composeLabTestGroup = data => {
   then(() => ({labTestsCount: result}));
 };
 
+const composeDateSampleIdCount = (date, data) => {
+  return BPromise.reduce(sttworkflow.SCAN_STAGES_ORDER, (reduced, stage) => {
+    if (typeof data[stage] !== 'undefined') {
+      reduced[stage] = data[stage].sampleIdsCount || 0;
+    } else {
+      reduced[stage] = 0;
+    }
+    return reduced;
+  }, {date});
+};
+
+// Target shape:
+// Array of
+//  {
+//    date: 'some date',
+//    SDEPART: some_value,
+//    SARRIVE: some_value
+//    ...
+//  }
+
+/**
+ * @param {Object} data               Date series counts grouped by Date
+ * @param {Object} options
+ * @param {string} options.afterDate  ISO8601 Date string
+ * @param {string} options.beforeDate ISO8601 Date string
+ * @return {Array.<Object>}
+ */
+const composeDateSeriesCounts = (data, options) => {
+  options = options || {};
+  const afterDate = (new Date(options.afterDate));
+  const beforeDate = options.beforeDate || moment.utc().toISOString();
+  if (!options.afterDate) {
+    throw new Error('Missing required parameter afterDate');
+  }
+
+  const datesRange = datecalc.allDatesBetween({afterDate, beforeDate});
+
+  return BPromise.map(datesRange, momentDate => {
+    const dateStr = momentDate.format('YYYY-MM-DD');
+    const dateData = data[dateStr] || {};
+    return composeDateSampleIdCount(momentDate.toISOString(), dateData);
+  });
+};
+
 module.exports = {
-  recomposeRawSummary, composeCountGroups, composeLabTestGroup
+  recomposeRawSummary,
+  composeCountGroups,
+  composeLabTestGroup,
+  composeDateSeriesCounts
 };

@@ -53,8 +53,13 @@ const handleDateStageCountsReq = (req, res, next) => {
   .catch(next);
 };
 
-router.get('/stages', lowerCaseQueryKeys, dateRange,
+router.get('/stage[Dd]ates', lowerCaseQueryKeys, dateRange,
   handleDateStageCountsReq);
+
+router.get('/facility/:facilityKey/stage[Dd]ates', lowerCaseQueryKeys,
+  dateRange, handleDateStageCountsReq);
+router.get('/region/:regionKey/stage[Dd]ates', lowerCaseQueryKeys,
+  dateRange, handleDateStageCountsReq);
 
 router.get('/facility/:facilityKey/stages', lowerCaseQueryKeys,
   dateRange, handleDateStageCountsReq);

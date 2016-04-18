@@ -15,7 +15,7 @@ export const SummaryCounts = ({
   return (
     <div className='pure-g dashboard-top-bar'>
       <div className='pure-u-1 pure-u-md-1-3'>
-        <InfoBox header='Sample IDs'>
+        <InfoBox header='Total Sample IDs'>
           <span>
             {displayValue(isFetchingData, numSampleIds)}
             <Iconic className='infobox-icon' name='clipboard'/>
@@ -24,7 +24,7 @@ export const SummaryCounts = ({
         </InfoBox>
       </div>
       <div className='pure-u-1 pure-u-md-1-3'>
-        <InfoBox header='Samples & Forms'>
+        <InfoBox header='Total Samples & Forms'>
           <span>
             {displayValue(isFetchingData, numArtifacts)}
             <Iconic className='infobox-icon' name='droplet'/>
@@ -33,7 +33,7 @@ export const SummaryCounts = ({
       </div>
 
       <div className='pure-u-1 pure-u-md-1-3'>
-        <InfoBox header='Lab Tests'>
+        <InfoBox header='Total Lab Tests'>
           <span>
             {displayValue(isFetchingData, numLabTests)}
             <Iconic className='infobox-icon' name='medical-cross'/>

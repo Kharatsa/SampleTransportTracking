@@ -543,6 +543,84 @@ a {
   margin: 0.5rem 0 0.5rem 0;
 }
 
+/**
+ * Chartist stacked bar chart - Dashboard stages by date counts
+ *
+ * Chart colors via http://colorbrewer2.org
+ */
+
+.ct-series-a .ct-bar {
+  stroke: #a6cee3;
+}
+
+.ct-series-b .ct-bar {
+  stroke: #1f78b4;
+}
+
+.ct-series-c .ct-bar {
+  stroke: #b2df8a;
+}
+
+.ct-series-d .ct-bar {
+  stroke: #33a02c;
+}
+
+/**
+ * Chartist legend
+ */
+.ct-legend {
+  position: relative;
+  z-index: 10;
+  list-style: none;
+}
+ul.ct-legend {
+  padding: 0;
+  margin: auto;
+  width: 50%;
+}
+.ct-legend li {
+  margin: auto;
+  width: 50%;
+  position: relative;
+  padding-left: 23px;
+  margin-bottom: 3px;
+  cursor: pointer;
+}
+.ct-legend li:before {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  left: 0;
+  content: '';
+  border: 3px solid transparent;
+  border-radius: 2px;
+}
+.ct-legend li.inactive:before {
+  background: transparent;
+}
+.ct-legend.ct-legend-inside {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.ct-legend .ct-series-0:before {
+  background-color: #a6cee3;
+  border-color: #a6cee3;
+}
+.ct-legend .ct-series-1:before {
+  background-color: #1f78b4;
+  border-color: #1f78b4;
+}
+.ct-legend .ct-series-2:before {
+  background-color: #b2df8a;
+  border-color: #b2df8a;
+}
+.ct-legend .ct-series-3:before {
+  background-color: #33a02c;
+  border-color: #33a02c;
+}
+
+
 .infobox {
   margin: 0.2rem 1rem 0.2rem 1rem;
   color: #3D4347;

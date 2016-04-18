@@ -1,13 +1,13 @@
 import React, {PropTypes} from 'react';
 import {
-  SummaryCounts, StageCounts, TurnArounds,
+  SummaryCounts, StageDatesCounts, StageCounts, TurnArounds,
   DateFilters, LocationFilters
 } from '../containers';
 import {SideMenuLayout} from '../components';
-import {SampleSearch, ViewChangesButton} from '../components/SummaryControls/';
+import {SampleSearch, ViewChangesButton} from '../components/DashboardControls';
 
 export const DashboardPage = ({appName, history}) => {
-  const summaryControls = [
+  const controls = [
     <LocationFilters />,
     <DateFilters />,
     <SampleSearch pushHistory={history.push} />,
@@ -15,9 +15,13 @@ export const DashboardPage = ({appName, history}) => {
   ];
 
   return (
-    <SideMenuLayout menuHeader={appName} menuItems={summaryControls}>
+    <SideMenuLayout
+      menuHeader={appName}
+      menuItems={controls}
+    >
       <div>
         <SummaryCounts />
+        <StageDatesCounts />
         <StageCounts />
         <TurnArounds />
       </div>

@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux';
 import {fetchSummary} from '../actions/actioncreators';
 import {
   getSampleIdsStageCounts, getArtifactStageCounts, getLabTestStatusCounts
-} from '../selectors/summaryselectors';
+} from '../selectors/dashboardselectors';
 import {StageCounts} from '../components';
 
 export const StageCountsContainer = connect(

@@ -2,6 +2,7 @@
 &lt;LabStatus xmlns="http://kharatsa.com/schemas/labstatus.xsd"&gt;
     &lt;STID&gt;ZXCBZXCB&lt;/STID&gt;
     &lt;LabID&gt;LCC0231368&lt;/LabID&gt;
+    &lt;TestingLabID&gt;LCC0231368&lt;/TestingLabID&gt;
     &lt;StatusTimestamp&gt;2016-02-19T10:43:14&lt;/StatusTimestamp&gt;
     &lt;LabPrefix&gt;
         &lt;LabPrefixCode&gt;LCC&lt;/LabPrefixCode&gt;
@@ -52,4 +53,4 @@
      &lt;/Rejection&gt;
     &lt;/SampleTest&gt;
 &lt;/LabStatus&gt;
-</rawxml><meta><instanceID>uuid:836eba48-9edd-53cd-a082-cf27073f2093</instanceID></meta></labstatus>
+</rawxml><meta><instanceID>uuid:79cbdded-dbc7-50aa-b81b-a4bac220b186</instanceID></meta></labstatus>

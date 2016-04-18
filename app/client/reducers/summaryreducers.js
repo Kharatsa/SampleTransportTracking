@@ -1,5 +1,7 @@
-import {RECEIVE_SUMMARY, RECEIVE_TURN_AROUNDS} from '../actions/actions.js';
-import {List} from 'immutable';
+import {
+  RECEIVE_SUMMARY, RECEIVE_TURN_AROUNDS, RECEIVE_DATE_SUMMARY
+} from '../actions/actions.js';
+import {List, Map as ImmutableMap} from 'immutable';
 
 export const summaryTotalSampleIds = (state=0, action) => {
   switch (action.type) {
@@ -59,6 +61,24 @@ export const summaryTurnArounds = (state=List(), action) => {
   switch (action.type) {
   case RECEIVE_TURN_AROUNDS:
     return action.turnArounds;
+  default:
+    return state;
+  }
+};
+
+export const summaryStageCountsDates = (state=List(), action) => {
+  switch (action.type) {
+  case RECEIVE_DATE_SUMMARY:
+    return action.dates;
+  default:
+    return state;
+  }
+};
+
+export const summaryStageCountsByDate = (state=ImmutableMap(), action) => {
+  switch (action.type) {
+  case RECEIVE_DATE_SUMMARY:
+    return action.summary;
   default:
     return state;
   }

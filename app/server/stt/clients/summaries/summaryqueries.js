@@ -30,22 +30,17 @@ const totalsDateSeries = params => {
   return `
     SELECT
       c.stage AS "Summary.stage",
-      c.status AS "Summary.status",
       DATE(c.statusDate) AS "Summary.statusDate",
-      COUNT(DISTINCT s.uuid) AS "Summary.sampleIdsCount",
-      COUNT(DISTINCT a.uuid) AS "Summary.artifactsCount",
-      COUNT(DISTINCT t.uuid) AS "Summary.labTestsCount"
+      COUNT(DISTINCT s.uuid) AS "Summary.sampleIdsCount"
     FROM SampleIds s
     ${rawqueryutils.regionQueryInnerJoin(params)}
-    LEFT OUTER JOIN Artifacts a ON a.sampleId = s.uuid
-    LEFT OUTER JOIN LabTests t ON t.sampleId = s.uuid
-    LEFT OUTER JOIN Changes c ON (c.artifact = a.uuid OR c.labTest = t.uuid)
+    INNER JOIN Artifacts a ON a.sampleId = s.uuid
+    INNER JOIN Changes c ON c.artifact = a.uuid
     WHERE s.createdAt >= $afterDate
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-    ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}
-    GROUP BY "Summary.stage", "Summary.status", "Summary.statusDate"
+    GROUP BY "Summary.stage", "Summary.statusDate"
     ORDER BY "Summary.statusDate"`;
 };
 

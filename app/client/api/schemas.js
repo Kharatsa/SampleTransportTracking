@@ -23,3 +23,6 @@ labTestSample.define({
 artifactSample.define({
   SampleId: sample
 });
+
+export const dateStage = new Schema('dateStage', {idAttribute: 'date'});
+

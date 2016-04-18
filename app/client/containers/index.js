@@ -1,5 +1,6 @@
 import App from './AppContainer';
 import SummaryCounts from './SummaryCountsContainer';
+import StageDatesCounts from './StageDatesCountsContainer';
 import StageCounts from './StageCountsContainer';
 import DateFilters from './DateFiltersContainer';
 import LocationFilters from './LocationFiltersContainer';
@@ -15,6 +16,7 @@ export {
   DateFilters,
   LocationFilters,
   SummaryCounts,
+  StageDatesCounts,
   StageCounts,
   Changes,
   Sample,

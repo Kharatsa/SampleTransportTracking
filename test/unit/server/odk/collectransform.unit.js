@@ -37,7 +37,7 @@ describe('ODK Collect Tranforms', () => {
     ).to.eventually.deep.equal([])
   );
 
-  const expectedSampleIds4 = [{stId: '396f99229', labId: null, origin: 'STG'}];
+  const expectedSampleIds4 = [{stId: '396f99229', labId: null, origin: 'BRN'}];
 
   it('should parse sample depart sample ids', () =>
     expect(
@@ -64,7 +64,7 @@ describe('ODK Collect Tranforms', () => {
   const expectedChanges4 = [
     {statusDate: new Date('Tue Mar 15 2016 11:33:11.116 GMT-0400 (EDT)'),
       stage: 'SDEPART',
-      facility: 'STG',
+      facility: 'BRN',
       person: null,
       stId: '396f99229',
       labId: null,
@@ -72,7 +72,7 @@ describe('ODK Collect Tranforms', () => {
       status: 'BAD'},
     {statusDate: new Date('Tue Mar 15 2016 11:33:11.116 GMT-0400 (EDT)'),
       stage: 'SDEPART',
-      facility: 'STG',
+      facility: 'BRN',
       person: null,
       stId: '396f99229',
       labId: null,
@@ -80,7 +80,7 @@ describe('ODK Collect Tranforms', () => {
       status: 'OK'},
     {statusDate: new Date('Tue Mar 15 2016 11:33:11.116 GMT-0400 (EDT)'),
       stage: 'SDEPART',
-      facility: 'STG',
+      facility: 'BRN',
       person: null,
       stId: '396f99229',
       labId: null,

@@ -155,14 +155,20 @@ STTClient.prototype.stageTATs = BPromise.method(function(options) {
 });
 
 /**
+ * Date series of Sample ID counts by Stage
  * @method
  * @param {SummaryQueryOptions} options [description]
  * @throws {Error} If afterDate is undefined
  */
 STTClient.prototype.stageDateCounts = BPromise.method(function(options) {
+  const afterDate = options.data.afterDate;
+  const beforeDate = options.data.beforeDate;
+
   return summaryQuery(this, summaryqueries.totalsDateSeries, options.data)
   .then(results => datamerge.propKeyReduce(
-    {items: results, propNames: ['statusDate'], many: true}));
+    {items: results, propNames: ['statusDate', 'stage']}))
+  .then(results =>
+    summaryresult.composeDateSeriesCounts(results, {afterDate, beforeDate}));
 });
 
 /**

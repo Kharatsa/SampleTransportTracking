@@ -1,7 +1,8 @@
 import request from '../util/request.js';
 import {
   normalizeChanges, normalizeMetadata, normalizeSample,
-  normalizeSummary, normalizeTurnArounds
+  normalizeSummary, normalizeTurnArounds,
+  normalizeStageDates
 } from './normalize.js';
 
 const pageURLParam = ({page, first=true}) => {
@@ -78,16 +79,6 @@ export const getSummary = (filter={}, callback) => {
   });
 };
 
-export const getMetadata = (options, callback) => {
-  callback = typeof options === 'function' ? options : callback;
-  return request('/stt/meta', (err, res) => {
-    if (err) {
-      return callback(err);
-    }
-    callback(null, normalizeMetadata(res.json));
-  });
-};
-
 export const getTurnArounds = (filter={}, callback) => {
   const url = filteredURL('ids/tat', filter);
   return request(url, (err, res) => {
@@ -95,5 +86,25 @@ export const getTurnArounds = (filter={}, callback) => {
       return callback(err);
     }
     callback(null, normalizeTurnArounds(res.json));
+  });
+};
+
+export const getStageDates = (filter={}, callback) => {
+  const url = filteredURL('stageDates', filter);
+  return request(url, (err, res) => {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, normalizeStageDates(res.json));
+  });
+};
+
+export const getMetadata = (options, callback) => {
+  callback = typeof options === 'function' ? options : callback;
+  return request('/stt/meta', (err, res) => {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, normalizeMetadata(res.json));
   });
 };
