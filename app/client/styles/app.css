@@ -621,11 +621,12 @@ ul.ct-legend {
 }
 
 .widget {
-  border-width: 1px;
+  margin: 0.5em;
+  line-height: 1.5em;
+  border: 1px;
   border-style: solid;
-  margin-bottom: 20px;
-  background-color: #f9f9f9;
-  border-color: lightgray;
+  background-color: #FAFAFA;
+  border-color: #DDD;
 }
 
 .widget .widget-header {
@@ -633,7 +634,7 @@ ul.ct-legend {
   height: 35px;
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  border-bottom-color: lightgray;
+  border-bottom-color: #DDD;
   background-color: #eeeeee;
 }
 
@@ -641,14 +642,32 @@ ul.ct-legend {
   padding: 20px 10px;
 }
 
-.infobox {
+.widget .widget-header h3 {
+  display: inline-block;
+  vertical-align: middle;
+  font-family: "Gill Sans Extrabold", Helvetica, sans-serif;
+  font-size: 1em;
+  margin: 0;
+  line-height: 35px;
+  float: left;
+}
+
+.widget .widget-header em {
+  float: left;
+  font-size: 0.9em;
+  color: #a4a4a4;
+  line-height: 35px;
+  margin-left: 4px;
+}
+
+.hero-data {
   margin: 0.2rem 1rem 0.2rem 1rem;
   color: #3D4347;
   background: #FAFAFA;
   border: 1px solid #DDD;
 }
 
-.infobox-icon {
+.hero-data-icon {
   margin: 0 0.6rem 0 0.6rem;
   vertical-align: baseline;
   color: #3D4347 !important;
@@ -656,14 +675,14 @@ ul.ct-legend {
   height: 23px !important;
 }
 
-.infobox-header {
+.hero-data-header {
   font-size: 1.1rem;
   padding: 0.5rem;
   margin: 0 0.5rem 0 0.5rem;
   border-bottom: 1px solid #DDD;
 }
 
-.infobox-value {
+.hero-data-value {
   font-size: 2rem;
   margin: 0.2rem 0 0;
   padding: 0.5rem 1.5rem 0.5rem 1.5rem;

@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import {Map as ImmutableMap, List} from 'immutable';
+import DashboardPanel from '../DashboardPanel';
 import MetaText from '../MetaText';
 
 const stageArtifactElements = (metaArtifacts, item, index) => {
@@ -31,10 +32,9 @@ export const StageArtifactCounts = ({
     stageElements(metaStages, metaArtifacts, stage, i));
 
   return (
-    <div>
-      <strong>Artifacts by Stage</strong>
+    <DashboardPanel heading='Artifacts by Stage'>
       <ul>{artifactCounts}</ul>
-    </div>
+    </DashboardPanel>
   );
 };
 

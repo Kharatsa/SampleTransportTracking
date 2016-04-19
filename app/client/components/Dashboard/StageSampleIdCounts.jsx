@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import {Map as ImmutableMap, List} from 'immutable';
+import DashboardPanel from '../DashboardPanel';
 import MetaText from '../MetaText';
 
 export const StageSampleIdCounts = ({metaStages, sampleIdsStageCounts}) => {
@@ -12,10 +13,9 @@ export const StageSampleIdCounts = ({metaStages, sampleIdsStageCounts}) => {
     </li>);
 
   return (
-    <div>
-      <strong>Sample IDs by Stage</strong>
+    <DashboardPanel heading='Sample IDs by Stage'>
       <ul>{stageCounts}</ul>
-    </div>
+    </DashboardPanel>
   );
 };
 

@@ -49,21 +49,27 @@ export const StageCounts = React.createClass({
     } = this.props;
 
     return (
-        <div>
-          <WrappedSampleIdCounts
-            metaStages={metaStages}
-            sampleIdsStageCounts={sampleIdsStageCounts}
-          />
-          <WrappedArtifactCounts
-            metaStages={metaStages}
-            metaArtifacts={metaArtifacts}
-            artifactStageCounts={artifactStageCounts}
-          />
-          <WrappedLabCounts
-            metaStatuses={metaStatuses}
-            metaLabTests={metaLabTests}
-            labTestCounts={labTestCounts}
-          />
+        <div className='pure-g'>
+          <div className='pure-u-1 pure-u-lg-1-3'>
+            <WrappedSampleIdCounts
+              metaStages={metaStages}
+              sampleIdsStageCounts={sampleIdsStageCounts}
+            />
+          </div>
+          <div className='pure-u-1 pure-u-lg-1-3'>
+            <WrappedArtifactCounts
+              metaStages={metaStages}
+              metaArtifacts={metaArtifacts}
+              artifactStageCounts={artifactStageCounts}
+            />
+          </div>
+          <div className='pure-u-1 pure-u-lg-1-3'>
+            <WrappedLabCounts
+              metaStatuses={metaStatuses}
+              metaLabTests={metaLabTests}
+              labTestCounts={labTestCounts}
+            />
+          </div>
         </div>
     );
   }

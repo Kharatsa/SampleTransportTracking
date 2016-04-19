@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Map as ImmutableMap, List} from 'immutable';
+import DashboardPanel from '../DashboardPanel';
 import WaitOnFetch from '../../containers/wrappers/WaitOnFetch.jsx';
 import TurnAroundsTable from './TurnAroundsTable';
 
@@ -36,15 +37,13 @@ export const TurnArounds = React.createClass({
     const {metaStages, metaStatuses, turnArounds} = this.props;
 
     return (
-      <div>
-        <strong>Turn Around Times</strong>
+      <DashboardPanel heading='Turn Around Times (TAT)'>
         <TurnAroundsTableWrapped
           metaStages={metaStages}
           metaStatuses={metaStatuses}
           turnArounds={turnArounds}
         />
-      </div>
-      );
+      </DashboardPanel>);
   }
 });
 

@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import Iconic from '../Iconic';
-import InfoBox from '../InfoBox';
+import HeroDataPanel from '../HeroDataPanel';
 
 const displayValue = (isFetchingData, val) => {
   if (isFetchingData) {
@@ -15,30 +15,30 @@ export const SummaryCounts = ({
   return (
     <div className='pure-g dashboard-top-bar'>
       <div className='pure-u-1 pure-u-md-1-3'>
-        <InfoBox header='Total Sample IDs'>
+        <HeroDataPanel header='Total Sample IDs'>
           <span>
             {displayValue(isFetchingData, numSampleIds)}
-            <Iconic className='infobox-icon' name='clipboard'/>
+            <Iconic className='hero-data-icon' name='clipboard'/>
           </span>
 
-        </InfoBox>
+        </HeroDataPanel>
       </div>
       <div className='pure-u-1 pure-u-md-1-3'>
-        <InfoBox header='Total Samples & Forms'>
+        <HeroDataPanel header='Total Samples & Forms'>
           <span>
             {displayValue(isFetchingData, numArtifacts)}
-            <Iconic className='infobox-icon' name='droplet'/>
+            <Iconic className='hero-data-icon' name='droplet'/>
           </span>
-        </InfoBox>
+        </HeroDataPanel>
       </div>
 
       <div className='pure-u-1 pure-u-md-1-3'>
-        <InfoBox header='Total Lab Tests'>
+        <HeroDataPanel header='Total Lab Tests'>
           <span>
             {displayValue(isFetchingData, numLabTests)}
-            <Iconic className='infobox-icon' name='medical-cross'/>
+            <Iconic className='hero-data-icon' name='medical-cross'/>
           </span>
-        </InfoBox>
+        </HeroDataPanel>
       </div>
     </div>
   );
