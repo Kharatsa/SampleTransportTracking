@@ -92,13 +92,20 @@ function STTClient(options) {
  * @property {string} [facilityKey] [description]
  */
 
+const maybeConvertDates = (results, dateCols) => {
+  if (dateCols && dateCols.length) {
+    return BPromise.map(results, row =>
+      dbresult.convertToISODate(row, dateCols));
+  }
+  return results;
+};
+
 /**
  * @typedef {Object} SummaryQueryOptions
  * @extends {QueryOptions}
  * @extends {SummaryQueryParams}
  */
-
-const summaryQuery = (self, queryFunc, params) => {
+const summaryQuery = (self, queryFunc, params, dateCols) => {
   summaryqueries.checkRequired(params);
   log.debug('summary query params', params);
 
@@ -106,6 +113,7 @@ const summaryQuery = (self, queryFunc, params) => {
     bind: params,
     type: self.db.QueryTypes.SELECT
   })
+  .then(results => maybeConvertDates(results, dateCols))
   .map(row => summaryresult.recomposeRawSummary(row, {parent: 'Summary'}));
 };
 
@@ -148,7 +156,11 @@ STTClient.prototype.totalCounts = BPromise.method(function(options) {
  * @throws {Error} If afterDate is undefined
  */
 STTClient.prototype.stageTATs = BPromise.method(function(options) {
-  return summaryQuery(this, summaryqueries.stageTATsRaw, options.data)
+  return summaryQuery(
+    this,
+    summaryqueries.stageTATsRaw,
+    options.data,
+    summaryqueries.tatDateCols)
   .then(results => datamerge.propKeyReduce(
     {items: results, propNames: ['sampleId', 'changeStage', 'changeStatus']}))
   .then(turnaroundtime.calculateTATs);

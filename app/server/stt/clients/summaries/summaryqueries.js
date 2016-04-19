@@ -100,6 +100,11 @@ const testStatusRaw = params => {
       "Summary.testRejection"`;
 };
 
+const tatDateCols = [
+  'Summary.sampleIdCreatedAt',
+  'Summary.changeFirstDate'
+];
+
 const stageTATsRaw = params => {
   return `
       SELECT
@@ -146,5 +151,6 @@ const stageTATsRaw = params => {
 
 module.exports = {
   checkRequired,
-  totalsRaw, totalsDateSeries, artifactStagesRaw, testStatusRaw, stageTATsRaw
+  totalsRaw, totalsDateSeries, artifactStagesRaw, testStatusRaw,
+  tatDateCols, stageTATsRaw
 };

@@ -80,7 +80,7 @@ export const getSummary = (filter={}, callback) => {
 };
 
 export const getTurnArounds = (filter={}, callback) => {
-  const url = filteredURL('ids/tat', filter);
+  const url = filteredURL('tat', filter);
   return request(url, (err, res) => {
     if (err) {
       return callback(err);

@@ -8,6 +8,7 @@ const BPromise = require('bluebird');
 const log = require('server/util/logapp.js');
 const ModelClient = require('server/stt/clients/modelclient.js');
 const changesquery = require('./changesquery.js');
+const dbresult = require('server/storage/dbresult.js');
 const changesresult = require('./changesresult.js');
 
 /**
@@ -68,7 +69,6 @@ const handleRawChanges = (csvResult, rawChanges) => {
     const parseRows = parseHeaders.then(headers =>
       BPromise.map(rawChanges, row => changesresult.csvRow(headers, row)));
 
-
     return BPromise.join(headerRow, parseRows, (header, rows) =>
       [].concat(header, rows).join('\n'));
   }
@@ -96,6 +96,7 @@ ChangesClient.prototype.allChanges = BPromise.method(function(options) {
     bind: changesParams,
     type: this.db.QueryTypes.SELECT
   })
+  .map(row => dbresult.convertToISODate(row, changesquery.changesRawDateCols))
   // TODO: maybe stream the big CSV results as they're parsed
   .then(results => handleRawChanges(options.csvResult, results));
 });
@@ -110,7 +111,7 @@ ChangesClient.prototype.allChangesCount = BPromise.method(function(options) {
     bind: countParams
   })
   .spread(results => results && results.length ? results[0].ChangesCount : 0)
-  .tap(count => log.debug(`allChanges count result`, count));
+  .tap(count => log.debug('allChanges count result', count));
 });
 
 ChangesClient.prototype.allChangesAndCount = function(options) {

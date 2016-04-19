@@ -73,10 +73,10 @@ const handleTATIdsReq = (req, res, next) => {
   .catch(next);
 };
 
-router.get('/ids/tat', lowerCaseQueryKeys, dateRange, handleTATIdsReq);
-router.get('/facility/:facilityKey/ids/tat',
+router.get('/tat', lowerCaseQueryKeys, dateRange, handleTATIdsReq);
+router.get('/facility/:facilityKey/tat',
   lowerCaseQueryKeys, dateRange, handleTATIdsReq);
-router.get('/region/:regionKey/ids/tat', lowerCaseQueryKeys, dateRange,
+router.get('/region/:regionKey/tat', lowerCaseQueryKeys, dateRange,
   handleTATIdsReq);
 
 module.exports = router;

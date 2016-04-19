@@ -64,6 +64,16 @@ const sampleIdsSelectExpression = queryutils.makeSelectExpression(
  *
  */
 
+const changesRawDateCols = [
+  'Change.statusDate',
+  'Change.createdAt',
+  'Change.updatedAt',
+  'SampleId.createdAt',
+  'SampleId.updatedAt',
+  'Ref.createdAt',
+  'Ref.updatedAt'
+];
+
 /**
  * @param  {ChangesQueryParams} params
  * @return {string} Raw SQL query string
@@ -118,5 +128,6 @@ const changesRawCount = params => {
 };
 
 module.exports = {
-  labTestsAndDates, artifactsAndDates, changesRaw, changesRawCount
+  labTestsAndDates, artifactsAndDates,
+  changesRaw, changesRawDateCols, changesRawCount
 };

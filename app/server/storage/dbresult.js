@@ -1,6 +1,8 @@
 'use strict';
 
 const _ = require('lodash');
+const BPromise = require('bluebird');
+const moment = require('moment');
 
 /**
  * Converts Sequelize instances to plain objects. Empty objects passed to this
@@ -69,10 +71,28 @@ const commonPropsEqual = (source, target) => {
   });
 };
 
+/**
+ * Replace the specified properties with ISO8601 date strings
+ *
+ * @param  {Object} result
+ * @param  {Array.<string>} propNames
+ * @return {Promise.<Object>} Original result with altered date strings
+ */
+const convertToISODate = (result, propNames) => {
+  return BPromise.each(propNames, prop => {
+    const dateVal = result[prop] ? moment(result[prop]) : null;
+    if (dateVal && dateVal.isValid()) {
+      result[prop] = dateVal.toISOString();
+    }
+  })
+  .then(() => result);
+};
+
 module.exports = {
   plain,
   oneResult,
   omitDateDBCols,
   omitDBCols,
-  commonPropsEqual
+  commonPropsEqual,
+  convertToISODate
 };
