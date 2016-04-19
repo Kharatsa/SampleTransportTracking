@@ -1,15 +1,31 @@
 import React, {PropTypes} from 'react';
 import {Map as ImmutableMap, List} from 'immutable';
 import DashboardPanel from '../DashboardPanel';
+import Iconic from '../Iconic';
 import MetaText from '../MetaText';
 
 const stageArtifactElements = (metaArtifacts, item, index) => {
   const artifactKey = item.get('artifact');
+  const goodCount = item.get('goodCount');
+  const badCount = item.get('badCount');
+  const exceptionIcon = (
+    badCount > 0 ?
+    <Iconic
+      className='widget-table-icon stt-icon'
+      color='orange'
+      name='warning'/> :
+    null
+  );
+
   return (
-    <li key={index}>
-      <MetaText metadata={metaArtifacts} metaKey={artifactKey} />:
-      {`Good=${item.get('goodCount')}, Bad=${item.get('badCount')}`}
-    </li>);
+    <tr key={index}>
+      <td>
+        <MetaText metadata={metaArtifacts} metaKey={artifactKey} />
+      </td>
+      <td>{goodCount + badCount}</td>
+      <td>{badCount}{exceptionIcon}</td>
+    </tr>
+  );
 };
 
 const stageElements = (metaStages, metaArtifacts, item, index) => {
@@ -18,10 +34,22 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
 
   const stageKey = item.get('stage');
   return (
-    <li key={index}>
-      <MetaText metadata={metaStages} metaKey={stageKey} /> Scans
-      <ul>{counts}</ul>
-    </li>
+    <div>
+      <table className='widget-table' key={index}>
+        <thead>
+          <tr>
+            <th>
+              <MetaText metadata={metaStages} metaKey={stageKey} /> Scan Type
+            </th>
+            <th>Scans</th>
+            <th>Exceptions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {counts}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
@@ -32,8 +60,11 @@ export const StageArtifactCounts = ({
     stageElements(metaStages, metaArtifacts, stage, i));
 
   return (
-    <DashboardPanel heading='Artifacts by Stage'>
-      <ul>{artifactCounts}</ul>
+    <DashboardPanel
+      heading='Samples & Forms'
+      subheading=''
+    >
+      {artifactCounts}
     </DashboardPanel>
   );
 };

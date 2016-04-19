@@ -38,13 +38,11 @@ export const StageDatesCounts = React.createClass({
     const {stageDates, stageCountsChartData} = this.props;
 
     return (
-      <div>
-        <StageDatesChartWrapped
-          stageDates={stageDates}
-          stageCountsChartData={stageCountsChartData}
-        />
-      </div>
-      );
+      <StageDatesChartWrapped
+        stageDates={stageDates}
+        stageCountsChartData={stageCountsChartData}
+      />
+    );
   }
 });
 

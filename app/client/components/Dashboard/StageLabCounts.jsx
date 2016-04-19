@@ -6,10 +6,11 @@ import MetaText from '../MetaText';
 const statusElements = (metaStatuses, item, index) => {
   const statusKey = item.get('status');
   return (
-    <li key={index}>
-      <MetaText metadata={metaStatuses} metaKey={statusKey} />:
-       {item.get('count')}
-    </li>);
+    <tr key={index}>
+      <td><MetaText metadata={metaStatuses} metaKey={statusKey} /></td>
+      <td>{item.get('count')}</td>
+    </tr>
+  );
 };
 
 const testElements = (metaStatuses, metaLabTests, item, index) => {
@@ -18,10 +19,19 @@ const testElements = (metaStatuses, metaLabTests, item, index) => {
 
   const testKey = item.get('test');
   return (
-    <li key={index}>
-      <MetaText metadata={metaLabTests} metaKey={testKey} />
-      <ul>{counts}</ul>
-    </li>
+    <table className='widget-table' key={index}>
+      <thead>
+        <tr>
+          <th>
+            <MetaText metadata={metaLabTests} metaKey={testKey} /> Updates
+          </th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {counts}
+      </tbody>
+    </table>
   );
 };
 
@@ -30,8 +40,10 @@ export const StageLabCounts = ({metaStatuses, metaLabTests, labTestCounts}) => {
     testElements(metaStatuses, metaLabTests, test, i));
 
   return (
-    <DashboardPanel heading='Lab Tests Status' subheading='Yadda Yadda'>
-      <ul>{testCounts}</ul>
+    <DashboardPanel
+      heading='Lab Tests'
+      subheading='Status updates from laboratories'>
+      {testCounts}
     </DashboardPanel>
   );
 };

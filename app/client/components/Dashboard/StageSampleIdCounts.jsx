@@ -5,16 +5,33 @@ import MetaText from '../MetaText';
 
 export const StageSampleIdCounts = ({metaStages, sampleIdsStageCounts}) => {
   const stageCounts = sampleIdsStageCounts.map((item, i) =>
-    <li key={i}>
-      <MetaText
-        metadata={metaStages}
-        metaKey={item.get('stage')}
-      /> {item.get('count')}
-    </li>);
+    <tr key={i}>
+      <td>
+        <MetaText
+          metadata={metaStages}
+          metaKey={item.get('stage')}
+        />
+      </td>
+      <td>{item.get('count')}</td>
+    </tr>);
 
   return (
-    <DashboardPanel heading='Sample IDs by Stage'>
-      <ul>{stageCounts}</ul>
+    <DashboardPanel
+      heading='Sample IDs'
+      subheading='Package Scans'
+    >
+      <table className='widget-table'>
+        <thead>
+          <tr>
+            <th>Scan Stage</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stageCounts}
+        </tbody>
+      </table>
+
     </DashboardPanel>
   );
 };

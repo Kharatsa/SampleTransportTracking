@@ -18,7 +18,7 @@ export const SummaryCounts = ({
         <HeroDataPanel header='Total Sample IDs'>
           <span>
             {displayValue(isFetchingData, numSampleIds)}
-            <Iconic className='hero-data-icon' name='clipboard'/>
+            <Iconic className='hero-data-icon stt-icon' name='clipboard'/>
           </span>
 
         </HeroDataPanel>
@@ -27,7 +27,7 @@ export const SummaryCounts = ({
         <HeroDataPanel header='Total Samples & Forms'>
           <span>
             {displayValue(isFetchingData, numArtifacts)}
-            <Iconic className='hero-data-icon' name='droplet'/>
+            <Iconic className='hero-data-icon stt-icon' name='droplet'/>
           </span>
         </HeroDataPanel>
       </div>
@@ -36,7 +36,7 @@ export const SummaryCounts = ({
         <HeroDataPanel header='Total Lab Tests'>
           <span>
             {displayValue(isFetchingData, numLabTests)}
-            <Iconic className='hero-data-icon' name='medical-cross'/>
+            <Iconic className='hero-data-icon stt-icon' name='medical-cross'/>
           </span>
         </HeroDataPanel>
       </div>

@@ -69,10 +69,12 @@ export const ChartistGraph = React.createClass({
 
   render() {
     const {className, style} = this.props;
-
-    return <div className={`ct-chart ${className}`}
-                ref={c => this._chart = c}
-                style={style} />;
+    return (
+      <div
+        className={`ct-chart ${className}`}
+        ref={c => this._chart = c}
+        style={style}
+      />);
   }
 });
 

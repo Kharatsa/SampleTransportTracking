@@ -619,14 +619,32 @@ ul.ct-legend {
   background-color: #33a02c;
   border-color: #33a02c;
 }
+.ct-chart {
+  position: relative;
+}
+.ct-legend.ct-legend-inside {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
 
 .widget {
   margin: 0.5em;
   line-height: 1.5em;
   border: 1px;
   border-style: solid;
-  background-color: #FAFAFA;
+  background-color: #FFF;
   border-color: #DDD;
+}
+
+.stt-icon {
+  margin: 0 0.6rem 0 0.6rem;
+  vertical-align: baseline;
+}
+
+.widget-table-icon {
+  width: 15px !important;
+  height: 15px !important;
 }
 
 .widget .widget-header {
@@ -660,6 +678,50 @@ ul.ct-legend {
   margin-left: 4px;
 }
 
+.widget
+.widget-table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.widget
+.widget-table > thead > tr {
+  font-size: 0.9em;
+  background-color: #f2f2f2
+}
+
+.widget
+.widget-table >thead:first-child>tr:first-child>th {
+  border-top: 0;
+}
+
+.widget
+.widget-table>thead>tr>th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #ddd;
+}
+
+.widget
+.widget-table>tbody>tr>td,
+.widget
+.widget-table>tbody>tr>th,
+.widget
+.widget-table>tfoot>tr>td,
+.widget
+.widget-table>tfoot>tr>th,
+.widget
+.widget-table>thead>tr>td,
+.widget
+.widget-table>thead>tr>th {
+  text-align: left;
+  padding: 0.5em;
+  line-height: 1.2em;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+
+
 .hero-data {
   margin: 0.2rem 1rem 0.2rem 1rem;
   color: #3D4347;
@@ -668,8 +730,6 @@ ul.ct-legend {
 }
 
 .hero-data-icon {
-  margin: 0 0.6rem 0 0.6rem;
-  vertical-align: baseline;
   color: #3D4347 !important;
   width: 23px !important;
   height: 23px !important;

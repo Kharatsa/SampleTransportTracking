@@ -39,14 +39,20 @@ const spacedLabels = stageDates => {
     return '';
   });
 };
-//
+
 export const StagesChart = ({stageDates, stageCountsChartData}) => {
   const data = {
     labels: spacedLabels(stageDates).toArray(),
     series: stageCountsChartData
   };
 
-  return <Chartist type='Bar' data={data} options={CHART_OPTIONS} />;
+  return (
+    <Chartist
+      type='Bar'
+      data={data}
+      options={CHART_OPTIONS}
+    />
+  );
 };
 
 StagesChart.propTypes = {

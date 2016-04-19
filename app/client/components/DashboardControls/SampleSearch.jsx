@@ -29,12 +29,12 @@ export const SampleSearch = React.createClass({
   render() {
     return (
       <form onSubmit={this.handleSubmit} className='pure-form'>
-        <label htmlFor='search'>Sample ID Search</label>
+        <label htmlFor='search'>Lookup Sample ID</label>
         <input
             id='search'
             type='text'
             value={this.state.value}
-            placeholder='Sample ID'
+            placeholder='Sample ID...'
             className='pure-menu-input'
             onChange={this.handleChange} />
       </form>
