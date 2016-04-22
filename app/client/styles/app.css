@@ -424,49 +424,6 @@ textarea {
   }
 }
 
-/* ==========================================================================
-   React Sanfona
-   ========================================================================== */
-
-.react-sanfona {
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  margin-bottom: 70px;
-}
-
-.react-sanfona-item-title {
-  background-color: #fafafa;
-  border-top: 1px solid #ccc;
-  color: #333;
-  padding: 20px;
-  text-transform: uppercase;
-  transition: background-color .3s;
-}
-
-.react-sanfona-item:first-child .react-sanfona-item-title {
-  border-top: none;
-}
-
-.react-sanfona-item-expanded .react-sanfona-item-title {
-  background-color: #406A9E;
-  color: #fff;
-}
-
-.react-sanfona-item-body-wrapper {
-  color: #666;
-  padding: 20px;
-  position: relative;
-}
-
-.react-sanfona-item-body-wrapper:hover .tooltip {
-  opacity: 1;
-}
-
-.react-sanfona-item img {
-  display: block;
-  max-width: 100%;
-}
-
 .tooltip {
   background-color: #000;
   bottom: -10px;
@@ -548,7 +505,6 @@ a {
  *
  * Chart colors via http://colorbrewer2.org
  */
-
 .ct-series-a .ct-bar {
   stroke: #a6cee3;
 }
@@ -565,22 +521,46 @@ a {
   stroke: #33a02c;
 }
 
+.ct-series-e .ct-bar {
+  stroke: #fb9a99;
+}
+
+.ct-series-f .ct-bar {
+  stroke: #e31a1c;
+}
+
+#stages-chart {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+
+#stages-chart ul.ct-legend {
+  flex: 1 1 15%;
+  margin: 0px 10px;
+}
+
+#stages-chart svg.ct-chart-bar {
+  flex: 1 1 85%;
+  margin: 0px 10px;
+}
+
 /**
  * Chartist legend
  */
 .ct-legend {
+  margin: auto;
   position: relative;
   z-index: 10;
   list-style: none;
 }
 ul.ct-legend {
   padding: 0;
-  margin: auto;
-  width: 50%;
 }
 .ct-legend li {
-  margin: auto;
-  width: 50%;
   position: relative;
   padding-left: 23px;
   margin-bottom: 3px;
@@ -642,31 +622,39 @@ ul.ct-legend {
   vertical-align: baseline;
 }
 
-.widget-table-icon {
-  width: 15px !important;
-  height: 15px !important;
+.widget-buttons button {
+  margin: 10px 0px;
+}
+
+.widget-buttons div:first-child {
+  margin-left: 5px;
+}
+
+.widget-buttons div:last-child: {
+  margin-right: 5px;
+}
+
+.widget-buttons-pressed {
+  color: #DDD;
+  background: #406A9E;
 }
 
 .widget .widget-header {
-  padding: 0 10px;
-  height: 35px;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: #DDD;
-  background-color: #eeeeee;
+  padding: 10px 10px 0px 10px;
+  height: 30px;
+  background-color: #FFF;
 }
 
 .widget .widget-content {
-  padding: 20px 10px;
+  padding: 10px 10px;
 }
 
 .widget .widget-header h3 {
   display: inline-block;
   vertical-align: middle;
-  font-family: "Gill Sans Extrabold", Helvetica, sans-serif;
   font-size: 1em;
   margin: 0;
-  line-height: 35px;
+  line-height: 1em;
   float: left;
 }
 
@@ -674,12 +662,13 @@ ul.ct-legend {
   float: left;
   font-size: 0.9em;
   color: #a4a4a4;
-  line-height: 35px;
+  line-height: 1em;
   margin-left: 4px;
 }
 
 .widget
 .widget-table {
+  table-layout: fixed;
   width: 100%;
   max-width: 100%;
   margin-bottom: 20px;
@@ -721,6 +710,62 @@ ul.ct-legend {
   border-top: 1px solid #ddd;
 }
 
+.widget-table .col-1-of-2 {
+  width: 60%;
+}
+
+.widget-table .col-2-of-2 {
+  width: 40%;
+}
+
+.widget-table .col-1-of-3 {
+  width: 40%;
+}
+
+.widget-table .col-2-of-3 {
+  width: 30%;
+}
+
+.widget-table .col-3-of-3 {
+  width: 30%;
+}
+
+#tat-chart .ct-bar {
+  stroke-width: 150px;
+}
+
+#tat-table {
+  table-layout: fixed;
+  width: 100%;
+  white-space: nowrap;
+}
+
+#tat-table th, td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#tat-table .col-from {
+  width: 30%;
+}
+
+#tat-table .col-to {
+  width: 30%;
+}
+
+#tat-table .col-tat {
+  width: 20%;
+}
+
+#tat-table .col-total {
+  width: 20%;
+}
+
+.widget-table-icon {
+  width: 15px !important;
+  height: 15px !important;
+}
 
 .hero-data {
   margin: 0.2rem 1rem 0.2rem 1rem;

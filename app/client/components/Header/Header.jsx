@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Link from 'react-router/lib/Link';
 
 export const Header = ({appName}) =>
@@ -9,5 +9,9 @@ export const Header = ({appName}) =>
       </Link>
     </div>
   </div>;
+
+Header.propTypes = {
+  appName: PropTypes.string
+};
 
 export default Header;

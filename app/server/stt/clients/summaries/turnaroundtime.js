@@ -3,23 +3,43 @@
 const _ = require('lodash');
 const BPromise = require('bluebird');
 const log = require('server/util/logapp.js');
+const sttworkflow = require('common/sttworkflow');
+
+const ScanStages = sttworkflow.SCAN_STAGES;
+const LabStage = sttworkflow.LAB_STAGES.TESTING;
+const LabStatuses = sttworkflow.LAB_STATUSES;
 
 // Pairs of workflow stages between which turn around time (TAT) should be
 // calculated.
 const TAT_STAGE_PAIRS = [
-  {from: {stage: 'SDEPART'}, to:  {stage: 'SARRIVE'}},
-  {from: {stage: 'SARRIVE'}, to:  {stage: 'LABSTATUS', status: 'REQ'}},
   {
-    from: {stage: 'LABSTATUS', status: 'REQ'},
-    to:  {stage: 'LABSTATUS', status: 'RVW'}
+    from: {stage: ScanStages.SAMPLE_PICKUP},
+    to:  {stage: ScanStages.SAMPLE_DELIVERY}
   },
   {
-    from: {stage: 'LABSTATUS', status: 'RVW'},
-    to:  {stage: 'LABSTATUS', status: 'PRT'}
+    from: {stage: ScanStages.SAMPLE_DELIVERY},
+    to:  {stage: LabStage, status: LabStatuses.REQUESTED}
   },
-  {from: {stage: 'LABSTATUS', status: 'PRT'}, to:  {stage: 'RDEPART'}},
-  {from: {stage: 'RDEPART'}, to:  {stage: 'RARRIVE'}},
-  {from: {stage: 'SDEPART'}, to:  {stage: 'RARRIVE'}}
+  {
+    from: {stage: LabStage, status: LabStatuses.REQUESTED},
+    to:  {stage: LabStage, status: LabStatuses.REVIEWED}
+  },
+  {
+    from: {stage: LabStage, status: LabStatuses.REVIEWED},
+    to:  {stage: LabStage, status: LabStatuses.PRINTED}
+  },
+  {
+    from: {stage: LabStage, status: LabStatuses.PRINTED},
+    to:  {stage: ScanStages.RESULT_PICKUP}
+  },
+  {
+    from: {stage: ScanStages.RESULT_PICKUP},
+    to:  {stage: ScanStages.RESULT_DELIVERY}
+  },
+  {
+    from: {stage: ScanStages.SAMPLE_PICKUP},
+    to: {stage: ScanStages.RESULT_DELIVERY}
+  }
 ];
 
 /**

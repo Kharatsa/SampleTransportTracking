@@ -6,6 +6,7 @@ import SampleTests from './SampleTests';
 import ChangesTable from '../ChangesTable';
 import WindowSizeListener from '../../containers/wrappers/WindowSizeListener';
 import MissingSample from './MissingSampleDetail';
+import {SCAN_STAGES} from '../../../common/sttworkflow';
 
 const FlexChangesTable = WindowSizeListener(ChangesTable, {changeHeight: false});
 
@@ -44,8 +45,8 @@ export const SampleDetail = (props) => {
                 color='blue'
                 people={metaPeople}
                 facilities={metaFacilities}
-                pickupStageName='SDEPART'
-                deliveryStageName='SARRIVE'
+                pickupStageName={SCAN_STAGES.SAMPLE_PICKUP}
+                deliveryStageName={SCAN_STAGES.SAMPLE_DELIVERY}
                 changesById={changesById}
                 changesByStage={changesByStage} />
           </div>
@@ -55,8 +56,8 @@ export const SampleDetail = (props) => {
                 color='green'
                 people={metaPeople}
                 facilities={metaFacilities}
-                pickupStageName='RDEPART'
-                deliveryStageName='RARRIVE'
+                pickupStageName={SCAN_STAGES.RESULT_PICKUP}
+                deliveryStageName={SCAN_STAGES.RESULT_DELIVERY}
                 changesById={changesById}
                 changesByStage={changesByStage}/>
           </div>

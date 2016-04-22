@@ -48,6 +48,7 @@ export const StagesChart = ({stageDates, stageCountsChartData}) => {
 
   return (
     <Chartist
+      id='stages-chart'
       type='Bar'
       data={data}
       options={CHART_OPTIONS}

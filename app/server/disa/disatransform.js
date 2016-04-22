@@ -9,6 +9,7 @@ const log = require('server/util/logapp.js');
 const string = require('common/string.js');
 const datamerge = require('server/util/datamerge.js');
 const uuid = require('server/util/uuid.js');
+const sttworkflow = require('common/sttworkflow');
 
 // TODO: Define new jsdoc typedefs for lab status objects
 
@@ -138,7 +139,7 @@ const getOneChange = change => {
   });
 };
 
-const CHANGE_STAGE = 'LABSTATUS';
+const CHANGE_STAGE = sttworkflow.LAB_STAGES.TESTING;
 
 /**
  * Pulls an Array of status updates from the parsed object.

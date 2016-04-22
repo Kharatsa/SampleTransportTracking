@@ -10,6 +10,7 @@ export const ChartistGraph = React.createClass({
     type: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
     className: PropTypes.string,
+    id: PropTypes.string,
     options: PropTypes.object,
     responsiveOptions: PropTypes.array,
     style: PropTypes.object
@@ -68,9 +69,11 @@ export const ChartistGraph = React.createClass({
   },
 
   render() {
-    const {className, style} = this.props;
+    const {className='', style, id=null} = this.props;
+
     return (
       <div
+       id={id}
         className={`ct-chart ${className}`}
         ref={c => this._chart = c}
         style={style}

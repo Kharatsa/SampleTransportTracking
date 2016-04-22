@@ -23,8 +23,8 @@ export const StageSampleIdCounts = ({metaStages, sampleIdsStageCounts}) => {
       <table className='widget-table'>
         <thead>
           <tr>
-            <th>Scan Stage</th>
-            <th>Total</th>
+            <th className='col-1-of-2'>Stage</th>
+            <th className='col-2-of-2'>Scans</th>
           </tr>
         </thead>
         <tbody>

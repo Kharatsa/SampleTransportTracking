@@ -34,22 +34,20 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
 
   const stageKey = item.get('stage');
   return (
-    <div>
-      <table className='widget-table' key={index}>
-        <thead>
-          <tr>
-            <th>
-              <MetaText metadata={metaStages} metaKey={stageKey} /> Scan Type
-            </th>
-            <th>Scans</th>
-            <th>Exceptions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {counts}
-        </tbody>
-      </table>
-    </div>
+    <table className='widget-table' key={index}>
+      <thead>
+        <tr>
+          <th className='col-1-of-3'>
+            <MetaText metadata={metaStages} metaKey={stageKey} /> Scan Type
+          </th>
+          <th className='col-2-of-3'>Scans</th>
+          <th className='col-3-of-3'>Exceptions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {counts}
+      </tbody>
+    </table>
   );
 };
 
@@ -62,7 +60,6 @@ export const StageArtifactCounts = ({
   return (
     <DashboardPanel
       heading='Samples & Forms'
-      subheading=''
     >
       {artifactCounts}
     </DashboardPanel>

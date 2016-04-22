@@ -1,7 +1,17 @@
 import React, {PropTypes} from 'react';
-import {Map as ImmutableMap, List} from 'immutable';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {Map as ImmutableMap, List, Record} from 'immutable';
 import Moment from 'moment';
+import DashboardPanel from '../DashboardPanel';
+import PushButtons from '../PushButtons';
 import MetaText from '../MetaText';
+
+// Subset of available moment duration units relevant for TAT display
+// http://momentjs.com/docs/#/durations/creating/
+const TimeUnits = [
+  {value: 'days', label: 'Days'},
+  {value: 'hours', label: 'Hours'}
+];
 
 const descTATElem = (metaStatuses, metaStages, step) => {
   const stageKey = step.stage;
@@ -22,22 +32,74 @@ const descTATElem = (metaStatuses, metaStages, step) => {
   return <span>{statusDesc || stageDesc}</span>;
 };
 
-export const TurnAroundsTable = ({metaStages, metaStatuses, turnArounds}) => {
-  const turnaroundTimes = turnArounds.map((turnAround, index) => {
-    const fromDescElem = descTATElem(metaStatuses, metaStages, turnAround.from);
-    const toDescElem = descTATElem(metaStatuses, metaStages, turnAround.to);
-    const timeDesc = Moment.duration(turnAround.averageTATms).humanize();
+export const TurnAroundsTable = React.createClass({
+  propTypes: {
+    metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
+    metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
+    stagesTATs: PropTypes.instanceOf(List).isRequired,
+    endToEndTAT: PropTypes.instanceOf(Record).isRequired,
+    timeUnit: PropTypes.string
+  },
 
-    return <li key={index}>{fromDescElem} - {toDescElem}: {timeDesc}</li>;
-  });
+  mixins: [PureRenderMixin],
 
-  return <ul>{turnaroundTimes}</ul>;
-};
+  getInitialState() {
+    return {timeUnit: TimeUnits[0]};
+  },
 
-TurnAroundsTable.propTypes = {
-  metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
-  metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
-  turnArounds: PropTypes.instanceOf(List).isRequired
-};
+  _changeTimeUnit(index) {
+    if (index < TimeUnits.length) {
+      this.setState({timeUnit: TimeUnits[index]});
+    }
+  },
+
+  render() {
+    const {metaStages, metaStatuses, stagesTATs, endToEndTAT} = this.props;
+    const {timeUnit} = this.state;
+
+    const totalTAT = endToEndTAT.get('averageTATms');
+
+    const turnaroundTimes = stagesTATs.map((tat, index) => {
+      const fromDescElem = descTATElem(metaStatuses, metaStages, tat.get('from'));
+      const toDescElem = descTATElem(metaStatuses, metaStages, tat.get('to'));
+      const msTAT = tat.get('averageTATms');
+      const durationVal = Moment.duration(msTAT).as(timeUnit.value);
+      const durationDesc = durationVal.toFixed(1);
+      const pctTotal = totalTAT > 0 ? (msTAT / totalTAT * 100).toFixed(1) : null;
+      const pctTotalDesc = pctTotal ? `${pctTotal}%` : 'N/A';
+
+      return (
+        <tr key={index}>
+          <td>{fromDescElem}</td>
+          <td>{toDescElem}</td>
+          <td>{durationDesc}</td>
+          <td>{pctTotalDesc}</td>
+        </tr>
+      );
+    });
+
+    return (
+      <DashboardPanel heading='Turn Around Times (TAT)'>
+        <table className='widget-table' id='tat-table'>
+          <thead>
+            <tr>
+              <th className='col-from'>From Stage</th>
+              <th className='col-to'>To Stage</th>
+              <th className='col-tat'>{`TAT (${timeUnit.value})`}</th>
+              <th className='col-total'>% Total TAT</th>
+            </tr>
+          </thead>
+          <tbody>
+            {turnaroundTimes}
+          </tbody>
+        </table>
+        <PushButtons
+          className='widget-buttons'
+          handleClick={this._changeTimeUnit}
+          labels={TimeUnits.map(unit => unit.label)}/>
+      </DashboardPanel>
+    );
+  }
+});
 
 export default TurnAroundsTable;

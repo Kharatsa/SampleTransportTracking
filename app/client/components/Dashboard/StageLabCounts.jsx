@@ -22,10 +22,10 @@ const testElements = (metaStatuses, metaLabTests, item, index) => {
     <table className='widget-table' key={index}>
       <thead>
         <tr>
-          <th>
-            <MetaText metadata={metaLabTests} metaKey={testKey} /> Updates
+          <th className='col-1-of-2'>
+            <MetaText metadata={metaLabTests} metaKey={testKey} />
           </th>
-          <th>Total</th>
+          <th className='col-2-of-2'>Updates</th>
         </tr>
       </thead>
       <tbody>

@@ -22,6 +22,7 @@ export const DashboardPage = ({appName, history}) => {
       <div>
         <SummaryCounts />
         <StageDatesCounts />
+        <br style={{'clear': 'left'}} />
         <StageCounts />
         <TurnArounds />
       </div>

@@ -23,7 +23,6 @@ export default connect(
     metaPeople: state.metaPeopleByKey,
     metaFacilities: state.metaFacilitiesByKey,
     metaLabTests: state.metaLabTestsByKey
-    // metadata: state.metadata
   }),
   dispatch => ({actions: bindActionCreators({fetchSampleDetail}, dispatch)})
 )(Sample);

@@ -1,6 +1,8 @@
 import {fromJS, List, Map as ImmutableMap} from 'immutable';
+import {TurnAround} from '../api/records';
 import {createSelector} from 'reselect';
 import {
+  SCAN_STAGES,
   SCAN_STAGES_ORDER,
   REQUEST_SCAN_ARTIFACTS,
   RESULT_SCAN_ARTIFACTS,
@@ -114,11 +116,30 @@ export const getStageCountsChartData = createSelector(
       return [];
     }
 
-    return SCAN_STAGES_ORDER.map(stage => {
-      return {
-        name: metaStages.get(stage).get('value'),
-        data: dates.map(date => counts.get(date).get(stage)).toArray()
-      };
-    });
+    return SCAN_STAGES_ORDER.map(stage => ({
+      name: metaStages.get(stage).get('value'),
+      data: dates.map(date => counts.get(date).get(stage)).toArray()
+    }));
   }
+);
+
+const getTAT = (state) => state.summaryTurnArounds;
+
+const isEndToEndTAT = (tatFrom, tatTo) => (
+  tatFrom && tatFrom.stage === SCAN_STAGES.SAMPLE_PICKUP &&
+  tatTo && tatTo.stage === SCAN_STAGES.RESULT_DELIVERY);
+
+export const getStagesTATs = createSelector(
+  [getTAT],
+  (tats) =>
+    tats.filter(tat => !isEndToEndTAT(tat.get('from'), tat.get('to')))
+);
+
+export const getEndToEndTAT = createSelector(
+  [getTAT],
+  (tats) => (
+    tats
+    .filter(tat => isEndToEndTAT(tat.get('from'), tat.get('to')))
+    .first() ||
+    TurnAround())
 );
