@@ -112,7 +112,7 @@ const getStageDatesCounts = (state) => state.summaryStageCountsByDate;
 export const getStageCountsChartData = createSelector(
   [getStageDatesRaw, getStageDatesCounts, getMetaStages],
   (dates, counts, metaStages) => {
-    if (dates.size === 0) {
+    if (dates.size === 0 || metaStages.size === 0) {
       return [];
     }
 

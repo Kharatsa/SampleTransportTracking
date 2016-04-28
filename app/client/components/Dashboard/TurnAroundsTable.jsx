@@ -79,7 +79,10 @@ export const TurnAroundsTable = React.createClass({
     });
 
     return (
-      <DashboardPanel heading='Turn Around Times (TAT)'>
+      <DashboardPanel
+        heading='Turn Around Times'
+        subheading='average times between stages'
+      >
         <table className='widget-table' id='tat-table'>
           <thead>
             <tr>

@@ -18,7 +18,7 @@ export const StageSampleIdCounts = ({metaStages, sampleIdsStageCounts}) => {
   return (
     <DashboardPanel
       heading='Sample IDs'
-      subheading='Package Scans'
+      subheading='request package scans'
     >
       <table className='widget-table'>
         <thead>

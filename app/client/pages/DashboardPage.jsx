@@ -21,9 +21,12 @@ export const DashboardPage = ({appName, history}) => {
     >
       <div>
         <SummaryCounts />
+        <h3 className='dashboard-title'>Sample ID Stages by Date</h3>
         <StageDatesCounts />
         <br style={{'clear': 'left'}} />
+        <h3 className='dashboard-title'>Sample & Lab Stage Updates</h3>
         <StageCounts />
+        <h3 className='dashboard-title'>Turn Around Time (TAT) Averages</h3>
         <TurnArounds />
       </div>
     </SideMenuLayout>

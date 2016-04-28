@@ -42,7 +42,7 @@ export const StageLabCounts = ({metaStatuses, metaLabTests, labTestCounts}) => {
   return (
     <DashboardPanel
       heading='Lab Tests'
-      subheading='Status updates from laboratories'>
+      subheading='status updates from laboratories'>
       {testCounts}
     </DashboardPanel>
   );

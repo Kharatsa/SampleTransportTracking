@@ -500,6 +500,15 @@ a {
   margin: 0.5rem 0 0.5rem 0;
 }
 
+h3.dashboard-title {
+  font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: center;
+  font-weight: 200;
+  line-height: 1.5;
+  margin: 1em 0 0.2em 0;
+  color: #3D4347;
+}
+
 /**
  * Chartist stacked bar chart - Dashboard stages by date counts
  *
@@ -530,7 +539,7 @@ a {
 }
 
 .ct-legend {
-  margin: 0px 10px;
+  margin: 0px 1em;
 }
 
 #stages-chart {
@@ -631,6 +640,7 @@ ul.ct-legend {
 
 .widget-buttons button {
   margin: 10px 0px;
+  border-radius: 0;
 }
 
 .widget-buttons div:first-child {
@@ -660,6 +670,7 @@ ul.ct-legend {
   display: inline-block;
   vertical-align: middle;
   font-size: 1em;
+  font-weight: 500;
   margin: 0;
   line-height: 1em;
   float: left;
@@ -742,19 +753,20 @@ ul.ct-legend {
 }
 
 #tat-chart {
-  flex-direction: column-reverse;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   align-content: center;
 }
 
 #tat-chart svg.ct-chart-bar {
-  /*order: -1;*/
+  order: -1;
   flex: 1 1 auto;
 }
 
 #tat-chart ul.ct-legend {
-  /*order: 1;*/
+  order: 1;
   flex: 1 1 auto;
 }
 
@@ -806,6 +818,7 @@ ul.ct-legend {
 
 .hero-data-header {
   font-size: 1.1rem;
+  font-weight: 100;
   padding: 0.5rem;
   margin: 0 0.5rem 0 0.5rem;
   border-bottom: 1px solid #DDD;
@@ -815,7 +828,7 @@ ul.ct-legend {
   font-size: 2rem;
   margin: 0.2rem 0 0;
   padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  font-weight: 80;
+  font-weight: 100;
 }
 
 .pure-menu-item {
