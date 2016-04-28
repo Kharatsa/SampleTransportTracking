@@ -1,23 +1,29 @@
 import React, {PropTypes} from 'react';
+// import {withRouter} from 'react-router';
 
 const stripTrim = str => {
   return str ? str.trim().split(' ').join('') : '';
 };
 
 export const SampleSearch = React.createClass({
+// const SampleSearchBase = React.createClass({
   propTypes: {
-    pushHistory: PropTypes.func.isRequired
+    pushHistory: PropTypes.func.isRequired,
+    // router: PropTypes.object
   },
 
   getInitialState() {
-    return {value: null};
+    return {value: ''};
   },
 
   handleSubmit(event) {
     event.preventDefault();
+
+    // const {router} = this.props;
     const {pushHistory} = this.props;
     const sampleId = stripTrim(this.state.value);
     if (sampleId.length) {
+      // router.push(`/samples/${sampleId}`);
       pushHistory(`/samples/${sampleId}`);
     }
   },
@@ -41,5 +47,7 @@ export const SampleSearch = React.createClass({
     );
   }
 });
+
+// export const SampleSearch = withRouter(SampleSearchBase);
 
 export default SampleSearch;

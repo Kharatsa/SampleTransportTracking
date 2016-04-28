@@ -2,8 +2,8 @@ import React, {PropTypes} from 'react';
 import {List} from 'immutable';
 import moment from 'moment';
 import Chartist from '../Chartist';
-import ChartistLib from 'chartist';
-import 'chartist-plugin-legend';
+import legend from 'chartist-plugin-legend';
+import ctAxisTitle from 'chartist-plugin-axistitle';
 
 const formatDateLabel = date => {
   if (date && date.length) {
@@ -12,17 +12,34 @@ const formatDateLabel = date => {
   return '';
 };
 
+const AXIS_TITLE_OPTIONS = {
+  axisX: {
+    axisTitle: 'Dates',
+    axisClass: 'ct-axis-title',
+    offset: {x: 0, y: 60},
+    textAnchor: 'middle'
+  },
+  axisY: {
+    axisTitle: 'Unique Sample IDs',
+    axisClass: 'ct-axis-title',
+    offset: {x: 0, y: 25},
+    textAnchor: 'middle',
+    flipTitle: true
+  }
+};
+
 const CHART_OPTIONS = {
   stackBars: true,
-  plugins: [ChartistLib.plugins.legend()],
+  plugins: [ctAxisTitle(AXIS_TITLE_OPTIONS), legend()],
   height: '250px',
   axisX: {
     showGrid: false,
-    offset: 50,
+    offset: 70,
     labelInterpolationFnc: formatDateLabel
   },
   axisY: {
-    onlyInteger: true
+    onlyInteger: true,
+    offset: 50
   }
 };
 

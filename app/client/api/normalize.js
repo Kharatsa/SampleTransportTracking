@@ -137,10 +137,6 @@ const getAvgTAT = turnAround => {
   if (tat && tat >= 0) {
     return tat;
   }
-
-  if (process.env.NODE_ENV !== 'production') {
-    console.warn(`Replaced invalid sample turnaround time "${tat}" with 0`);
-  }
   return 0;
 };
 

@@ -7,7 +7,7 @@ import TestPage from './components/TestPage';
 export default (
   <Route path='/' component={App}>
     <IndexRoute component={Dashboard} />
-    <Route path='summary' component={Dashboard} />
+    <Route path='dashboard' component={Dashboard} />
     <Route path='changes(/:page)' component={Changes} />
     <Route path='samples(/:sampleId)' component={Sample} />
     <Route path='test' component={TestPage} />

@@ -22,7 +22,7 @@ const isRegionChangesQuery = params => {
 
 const regionQueryInnerJoin = params => {
   if (isRegionChangesQuery(params)) {
-    return `INNER JOIN MetaFacilities mf ON mf.key = s.origin`;
+    return 'INNER JOIN MetaFacilities mf ON mf.key = s.origin';
   }
   return '';
 };
@@ -36,21 +36,21 @@ const sampleIdCondition = params => {
 
 const sampleAfterCondition = params => {
   if (typeof params.afterDate !== 'undefined') {
-    return `AND s.createdAt >= $afterDate`;
+    return 'AND s.createdAt >= $afterDate';
   }
   return '';
 };
 
 const sampleBeforeCondition = params => {
   if (typeof params.beforeDate !== 'undefined') {
-    return `AND s.createdAt < $beforeDate`;
+    return 'AND s.createdAt < $beforeDate';
   }
   return '';
 };
 
 const originFacilityCondition = params => {
   if (typeof params.facilityKey !== 'undefined') {
-    return `AND s.origin = $facilityKey`;
+    return 'AND s.origin = $facilityKey';
   }
   return '';
 };

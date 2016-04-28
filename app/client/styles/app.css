@@ -529,6 +529,10 @@ a {
   stroke: #e31a1c;
 }
 
+.ct-legend {
+  margin: 0px 10px;
+}
+
 #stages-chart {
   display: flex;
   flex-direction: row;
@@ -540,21 +544,16 @@ a {
 
 #stages-chart ul.ct-legend {
   flex: 1 1 15%;
-  margin: 0px 10px;
 }
 
 #stages-chart svg.ct-chart-bar {
   flex: 1 1 85%;
-  margin: 0px 10px;
 }
 
 /**
  * Chartist legend
  */
 .ct-legend {
-  margin: auto;
-  position: relative;
-  z-index: 10;
   list-style: none;
 }
 ul.ct-legend {
@@ -598,6 +597,14 @@ ul.ct-legend {
 .ct-legend .ct-series-3:before {
   background-color: #33a02c;
   border-color: #33a02c;
+}
+.ct-legend .ct-series-4:before {
+  background-color: #fb9a99;
+  border-color: #fb9a99;
+}
+.ct-legend .ct-series-5:before {
+  background-color: #e31a1c;
+  border-color: #e31a1c;
 }
 .ct-chart {
   position: relative;
@@ -731,7 +738,24 @@ ul.ct-legend {
 }
 
 #tat-chart .ct-bar {
-  stroke-width: 150px;
+  stroke-width: 120px;
+}
+
+#tat-chart {
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+#tat-chart svg.ct-chart-bar {
+  /*order: -1;*/
+  flex: 1 1 auto;
+}
+
+#tat-chart ul.ct-legend {
+  /*order: 1;*/
+  flex: 1 1 auto;
 }
 
 #tat-table {
@@ -770,7 +794,7 @@ ul.ct-legend {
 .hero-data {
   margin: 0.2rem 1rem 0.2rem 1rem;
   color: #3D4347;
-  background: #FAFAFA;
+  background: #FFF;
   border: 1px solid #DDD;
 }
 

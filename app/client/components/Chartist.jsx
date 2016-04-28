@@ -1,10 +1,14 @@
+/* global window */
+
 import React, {PropTypes} from 'react';
 import Chartist from 'chartist';
+
+// Chartist plugins all require that Charist to exist on window
+window.Chartist = Chartist;
 
 /*
  * adapted from https://github.com/fraserxu/react-chartist
  */
-
 export const ChartistGraph = React.createClass({
   propTypes: {
     type: PropTypes.string.isRequired,
