@@ -13,7 +13,7 @@
 
 <xs:simpleType name="LabIDType">
   <xs:restriction base="xs:token">
-      <xs:pattern value="[A-Za-z]{3}[0-9]{7}"/>
+      <xs:pattern value="[A-Z]{3}[\w]{7}"/>
   </xs:restriction>
 </xs:simpleType>
 
