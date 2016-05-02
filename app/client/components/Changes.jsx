@@ -35,7 +35,7 @@ export const Changes = React.createClass({
   },
 
   shouldComponentUpdate(nextProps) {
-    if (nextProps.isFetchingData) {
+    if (nextProps.isLoading) {
       return false;
     }
 

@@ -5,10 +5,11 @@ import {LocationFilters} from '../components/DashboardControls';
 import {
   getMetaRegions, getFilteredMetaFacilities
 } from '../selectors/metadataselectors';
+import {getIsLoading} from '../selectors/uiselectors';
 
 export const LocationFilterContainer = connect(
   state => ({
-    isFetchingData: state.isFetchingData,
+    isLoading: getIsLoading(state),
     metaRegionsByKey: state.metaRegionsByKey,
     metaFacilitiesByKey: state.metaRegionsByKey,
     filterRegionKey: state.summaryFilter.get('regionKey', null),

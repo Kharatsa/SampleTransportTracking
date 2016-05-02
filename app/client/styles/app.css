@@ -107,7 +107,7 @@ textarea {
   box-sizing: border-box;
 }
 .Select.is-disabled > .Select-control {
-  background-color: #f9f9f9;
+  background-color: #DDD;
 }
 .Select.is-disabled > .Select-control:hover {
   box-shadow: none;

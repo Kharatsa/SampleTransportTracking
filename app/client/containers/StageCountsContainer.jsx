@@ -8,7 +8,6 @@ import {StageCounts} from '../components';
 
 export const StageCountsContainer = connect(
   state => ({
-    isFetchingData: state.isFetchingData,
     summaryFilter: state.summaryFilter,
     metaStages: state.metaStagesByKey,
     sampleIdsStageCounts: getSampleIdsStageCounts(state),

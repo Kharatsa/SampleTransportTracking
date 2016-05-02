@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {getIsLoading} from '../../selectors/uiselectors';
 import LoadingIndicator from '../../components/LoadingIndicator.jsx';
 
 /**
@@ -19,12 +20,11 @@ export const ShowLoading = Component => {
     mixins: [PureRenderMixin],
 
     propTypes: {
-      isFetchingData: PropTypes.bool.isRequired
+      isLoading: PropTypes.bool.isRequired
     },
 
     _isLoading() {
-      const {isFetchingData, metadata} = this.props;
-      return isFetchingData || metadata.size === 0;
+      return this.props.isLoading;
     },
 
     render() {
@@ -36,8 +36,7 @@ export const ShowLoading = Component => {
   });
 
   return connect(state => ({
-    isFetchingData: state.isFetchingData,
-    metadata: state.metadata
+    isLoading: getIsLoading(state)
   }))(Wrapped);
 };
 

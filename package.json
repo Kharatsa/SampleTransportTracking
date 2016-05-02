@@ -7,8 +7,8 @@
   "license": "Apache-2.0",
   "main": "app/server/server.js",
   "scripts": {
-    "build": "NODE_ENV=production gulp build",
-    "start": "NODE_ENV=production node --harmony app/server/server.js",
+    "build": "gulp build",
+    "start": "node app/server/server.js",
     "test": "NODE_ENV=test npm run test-unit && NODE_ENV=test npm run test-integration",
     "test-unit": "NODE_ENV=test npm run test-unit-server",
     "test-unit-server": "NODE_ENV=test mocha 'test/unit/server/**/*.js'",

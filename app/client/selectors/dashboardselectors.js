@@ -83,7 +83,7 @@ export const getArtifactStageCounts = createSelector(
 
 const getOneLabTestStatusCounts = (test, counts) => {
   return List(LAB_STATUSES_ORDER.map(status =>
-    ImmutableMap({status, count: counts.get(status) || 0})));
+    ImmutableMap({status, count: counts && status ? counts.get(status) : 0})));
 };
 
 const getLabTestCounts = (state) => state.summaryLabTests;

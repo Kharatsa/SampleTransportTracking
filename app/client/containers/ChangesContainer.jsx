@@ -1,11 +1,12 @@
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {fetchChanges} from '../actions/actioncreators';
+import {getIsLoading} from '../selectors/uiselectors';
 import {Changes} from '../components';
 
 export const ChangesContainer = connect(
   state => ({
-    isFetchingData: state.isFetchingData,
+    isLoading: getIsLoading(state),
     changeIds: state.changeIds,
     changesById: state.changesById,
     samplesById: state.samplesById,

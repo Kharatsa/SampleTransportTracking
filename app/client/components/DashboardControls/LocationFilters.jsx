@@ -6,7 +6,7 @@ export const LocationFilters = React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    isFetchingData: PropTypes.bool.isRequired,
+    isLoading: PropTypes.bool.isRequired,
     metaRegions: PropTypes.object.isRequired,
     filteredMetaFacilities: PropTypes.object.isRequired,
     filterRegionKey: PropTypes.string,
@@ -47,7 +47,7 @@ export const LocationFilters = React.createClass({
 
   render() {
     const {
-      isFetchingData,
+      isLoading,
       metaRegions,
       filteredMetaFacilities,
       filterRegionKey, filterFacilityKey
@@ -69,7 +69,7 @@ export const LocationFilters = React.createClass({
         <label htmlFor='regionFilter'>Laboratory</label>
         <Select
             id='regionFilter'
-            isLoading={isFetchingData}
+            isLoading={isLoading}
             matchPos='any'
             matchProp='label'
             placeholder='Select Laboratory...'
@@ -81,7 +81,7 @@ export const LocationFilters = React.createClass({
         <Select
             id='facilityFilter'
             disabled={regionKey === null}
-            isLoading={isFetchingData}
+            isLoading={isLoading}
             matchPos='any'
             matchProp='label'
             placeholder='Select Facility...'
