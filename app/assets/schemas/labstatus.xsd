@@ -2,11 +2,12 @@
 <xs:schema targetNamespace="http://kharatsa.com/schemas/labstatus.xsd"
     xmlns="http://kharatsa.com/schemas/labstatus.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    elementFormDefault="qualified" >
+    elementFormDefault="qualified"
+    version="20160502" >
 
 <xs:simpleType name="STIDType">
   <xs:restriction base="xs:token">
-      <xs:pattern value="[\w]{9}" />
+      <xs:pattern value="[A-Za-z0-9]{9}[0-9]{3}" />
   </xs:restriction>
 </xs:simpleType>
 
