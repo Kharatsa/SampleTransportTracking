@@ -34,21 +34,6 @@ export const Changes = React.createClass({
     }
   },
 
-  shouldComponentUpdate(nextProps) {
-    if (nextProps.isLoading) {
-      return false;
-    }
-
-    // Strict equality for speed
-    return !(
-      this.props.changesById === nextProps.changesById &&
-      this.props.samplesById === nextProps.samplesById &&
-      this.props.artifactsById === nextProps.artifactsById &&
-      this.props.labTestsById === nextProps.labTestsById &&
-      this.props.metadata === nextProps.metadata
-    );
-  },
-
   componentWillMount() {
     const {page} = this.props.params;
     this._update(this.props.summaryFilter, page);

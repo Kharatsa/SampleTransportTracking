@@ -1,12 +1,12 @@
 import {RECEIVE_CHANGES, RECEIVE_SAMPLE_DETAIL} from '../actions/actions.js';
-import {Seq, Map as ImmutableMap} from 'immutable';
+import {List, Map as ImmutableMap} from 'immutable';
 
-export const changeIds = (state=Seq(), action) => {
+export const changeIds = (state=List(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.changeIds;
   case RECEIVE_SAMPLE_DETAIL:
-    return action.changes.keySeq();
+    return action.changes.keySeq().toList();
   default:
     return state;
   }

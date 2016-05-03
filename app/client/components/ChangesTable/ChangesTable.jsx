@@ -51,6 +51,11 @@ export const ChangesTable = (props) => {
       samplesById
     })
   ).toArray();
+  if (process.env.NODE_ENV !== 'production') {
+    console.debug('ChangesTable props', props);
+    console.debug('Loading ChangesTable data', data);
+    console.debug('Loading ChangesTable changeIds', changeIds);
+  }
 
   return (
     <div className='panel'>
@@ -78,7 +83,6 @@ export const ChangesTable = (props) => {
 ChangesTable.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  isFetchingData: PropTypes.bool.isRequired,
   changeIds: PropTypes.instanceOf(List).isRequired,
   changesById: PropTypes.instanceOf(ImmutableMap).isRequired,
   samplesById: PropTypes.instanceOf(ImmutableMap).isRequired,

@@ -9,7 +9,8 @@ RUN apt-get -q update && apt-get -q -y install \
     && apt-get -q clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -q -g ${NODE_DEPS}
+RUN npm install -q -g ${NODE_DEPS} \
+    && npm link ${NODE_DEPS}
 
 ENV STT_DATA_PATH='/var/lib/strack' \
     STT_APP_PATH='/var/www/strack' \
@@ -28,19 +29,20 @@ WORKDIR ${STT_APP_PATH}
 
 # Install node packages
 RUN npm install -q \
-    && npm prune -q \
     && npm cache clean -q
 
 # Install bower packages
 RUN bower install --allow-root \
     && bower cache clean --allow-root
 
+ENV NODE_ENV='production'
+
 # Run the build & database sync scripts
-RUN npm run build
+RUN gulp build
 RUN node app/maintenance/data.js sync
 RUN node app/maintenance/metadata.js reloadcsv
 RUN node app/maintenance/users.js add admin unsafepassword
-RUN npm prune -q --production
+RUN npm prune -q
 
 VOLUME ${STT_DATA_PATH}
 VOLUME ${STT_PUBLIC_PATH}
