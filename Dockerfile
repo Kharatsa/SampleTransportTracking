@@ -2,8 +2,7 @@ FROM node:argon-slim
 MAINTAINER Sean Herman <sjh293@cornell.edu>
 
 ENV BUILD_DEPS='sqlite3 git' \
-    NODE_DEPS='gulp bower mocha jsdoc' \
-    NODE_ENV='production'
+    NODE_DEPS='gulp bower mocha jsdoc'
 
 RUN apt-get -q update && apt-get -q -y install \
     ${BUILD_DEPS} --no-install-recommends \
