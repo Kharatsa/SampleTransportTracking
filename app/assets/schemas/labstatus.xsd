@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<xs:schema targetNamespace="http://kharatsa.com/schemas/labstatus.xsd"
-    xmlns="http://kharatsa.com/schemas/labstatus.xsd"
+<xs:schema targetNamespace="https://www.sampletracking.gov.ls/schemas/labstatus.xsd"
+    xmlns="https://www.sampletracking.gov.ls/schemas/labstatus.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     elementFormDefault="qualified"
     version="20160502" >

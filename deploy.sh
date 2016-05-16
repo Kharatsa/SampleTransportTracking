@@ -27,7 +27,6 @@ docker run -d \
   -e "ODK_HOSTNAME=$ODK_HOSTNAME" \
   -e "ODK_USERNAME=$ODK_USERNAME" \
   -e "ODK_PASSWORD=$ODK_PASSWORD" \
-  -e "NODE_ENV=$NODE_ENV" \
   kharatsa/strack@latest
 
 docker logs -f strack
