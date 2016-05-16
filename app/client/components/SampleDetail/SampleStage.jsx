@@ -26,6 +26,14 @@ export const SampleRequest = ({
     <InfoPanel title={label} color={color}>
       <ul className='table-list'>
         <li>
+          <div className='pure-g'>
+            <div className='pure-u-1 pure-u-md-3-24'><strong>Stage</strong></div>
+            <div className='pure-u-1 pure-u-md-7-24'><strong>Facility</strong></div>
+            <div className='pure-u-1 pure-u-md-7-24'><strong>Rider</strong></div>
+            <div className='pure-u-1 pure-u-md-7-24'><strong>StatusDate</strong></div>
+          </div>
+        </li>
+        <li>
           <SamplePanelRow
               label='Pickup'
               change={pickup}

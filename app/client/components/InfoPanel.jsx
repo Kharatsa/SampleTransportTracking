@@ -10,7 +10,7 @@ export const InfoPanel = ({title, color, children}) => {
 
   return (
     <div className='info-panel'>
-      <div className={`info-panel-title ${color}-bg`}>
+        <div className={`info-panel-title ${color}-bg`}>
         <span className={headerTextClass}>{title}</span>
       </div>
       <div className='info-panel-body'>{children}</div>

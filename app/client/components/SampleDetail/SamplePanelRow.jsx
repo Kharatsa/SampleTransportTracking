@@ -20,7 +20,7 @@ export const SamplePanelRow = ({label, change, facilities, people}) => {
 
   return (
     <div className='pure-g'>
-      <div className='pure-u-1 pure-u-md-3-24'><strong>{label}</strong></div>
+      <div className='pure-u-1 pure-u-md-3-24'>{label}</div>
       <div className='pure-u-1 pure-u-md-7-24'>{facilityName}</div>
       <div className='pure-u-1 pure-u-md-7-24'>{personName}</div>
       <div className='pure-u-1 pure-u-md-7-24'>{statusDate}</div>

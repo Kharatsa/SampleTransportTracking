@@ -65,6 +65,7 @@ export const SampleDetail = (props) => {
         <div className='pure-g panel'>
           <div className='pure-u-1 pure-u-md-1-2'>
             <SampleArtifacts
+                color='black'
                 artifactsById={artifactsById}
                 changesByArtifactId={changesByArtifactId}
                 metaArtifacts={metaArtifacts}
@@ -74,6 +75,7 @@ export const SampleDetail = (props) => {
           </div>
           <div className='pure-u-1 pure-u-md-1-2'>
             <SampleTests
+                color='black'
                 changeIds={changeIds}
                 changesById={changesById}
                 labTestsById={labTestsById}

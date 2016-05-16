@@ -4,6 +4,7 @@ import ChangeRefItem from './ChangeRefItem.jsx';
 import InfoPanel from '../InfoPanel.jsx';
 
 export const SampleTests = ({
+  color,
   labTestsById, changesByLabTestId,
   metaLabTests, metaStatuses, metaStages
 }) => {
@@ -26,7 +27,7 @@ export const SampleTests = ({
   });
 
   return (
-    <InfoPanel title='Lab Tests'>
+    <InfoPanel title='Lab Tests' color = {color}>
       <ul className='table-list'>{testElems}</ul>
     </InfoPanel>
     );

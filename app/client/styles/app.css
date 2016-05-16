@@ -487,7 +487,7 @@ textarea {
   background: #32373A;
 }
 
-a {
+.a {
   color: #406A9E;
 }
 
@@ -1121,18 +1121,37 @@ Hides the menu at `48em`, but modify this based on your app's needs.
     }
 }
 
-.info-panel {
+.info-panel{
   border: 1px solid #DDD;
   margin: 0 0.5rem 2rem 0;
   padding: 0 0 0.3rem 0;
 }
 
-.info-panel-title {
+.info-panel-title{
   font-size: 1.5rem;
   margin: 0;
   font-weight: 100;
   padding: 0.5rem;
 }
+
+.blue-bg {
+  background: #406A9E;
+  color: #FFF;
+}
+
+.green-bg {
+ background: #1C9352;
+}
+
+.grey-bg {
+ background: #DDD;
+}
+
+.black-bg {
+  background: #32373A;
+  color: #FFF;
+}
+
 
 .info-panel-body {
   font-size: 1em;
