@@ -32,6 +32,27 @@ const descTATElem = (metaStatuses, metaStages, step) => {
   return <span>{statusDesc || stageDesc}</span>;
 };
 
+const makeTATRow = (
+  tat, index, metaStatuses, metaStages, timeUnit, totalTAT
+) => {
+  const fromDescElem = descTATElem(metaStatuses, metaStages, tat.get('from'));
+  const toDescElem = descTATElem(metaStatuses, metaStages, tat.get('to'));
+  const msTAT = tat.get('averageTATms');
+  const durationVal = Moment.duration(msTAT).as(timeUnit.value);
+  const durationDesc = durationVal.toFixed(1);
+  const pctTotal = totalTAT > 0 ? (msTAT / totalTAT * 100).toFixed(1) : null;
+  const pctTotalDesc = pctTotal ? `${pctTotal}%` : 'N/A';
+
+  return (
+    <tr key={index}>
+      <td>{fromDescElem}</td>
+      <td>{toDescElem}</td>
+      <td>{durationDesc}</td>
+      <td>{pctTotalDesc}</td>
+    </tr>
+  );
+};
+
 export const TurnAroundsTable = React.createClass({
   propTypes: {
     metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
@@ -58,25 +79,11 @@ export const TurnAroundsTable = React.createClass({
     const {timeUnit} = this.state;
 
     const totalTAT = endToEndTAT.get('averageTATms');
+    const turnaroundTimes = stagesTATs.map((tat, index) =>
+      makeTATRow(tat, index, metaStatuses, metaStages, timeUnit, totalTAT));
 
-    const turnaroundTimes = stagesTATs.map((tat, index) => {
-      const fromDescElem = descTATElem(metaStatuses, metaStages, tat.get('from'));
-      const toDescElem = descTATElem(metaStatuses, metaStages, tat.get('to'));
-      const msTAT = tat.get('averageTATms');
-      const durationVal = Moment.duration(msTAT).as(timeUnit.value);
-      const durationDesc = durationVal.toFixed(1);
-      const pctTotal = totalTAT > 0 ? (msTAT / totalTAT * 100).toFixed(1) : null;
-      const pctTotalDesc = pctTotal ? `${pctTotal}%` : 'N/A';
-
-      return (
-        <tr key={index}>
-          <td>{fromDescElem}</td>
-          <td>{toDescElem}</td>
-          <td>{durationDesc}</td>
-          <td>{pctTotalDesc}</td>
-        </tr>
-      );
-    });
+    const endToEndTurnaroundTime = (
+      makeTATRow(endToEndTAT, 0, metaStatuses, metaStages, timeUnit, totalTAT));
 
     return (
       <DashboardPanel
@@ -94,6 +101,19 @@ export const TurnAroundsTable = React.createClass({
           </thead>
           <tbody>
             {turnaroundTimes}
+          </tbody>
+        </table>
+        <table className='widget-table' id='tat-table'>
+          <thead>
+            <tr>
+              <th className='col-from'>From Stage</th>
+              <th className='col-to'>To Stage</th>
+              <th className='col-tat'>{`TAT (${timeUnit.value})`}</th>
+              <th className='col-total'>% Total TAT</th>
+            </tr>
+          </thead>
+          <tbody>
+            {endToEndTurnaroundTime}
           </tbody>
         </table>
         <PushButtons

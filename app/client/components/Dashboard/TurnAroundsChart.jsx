@@ -22,7 +22,6 @@ const CHART_OPTIONS = {
   ],
   height: '280px',
   stackBars: true,
-  reverseData: true,
   horizontalBars: true,
   axisX: {
     onlyInteger: true,

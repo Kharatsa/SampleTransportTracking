@@ -62,7 +62,9 @@ export const StageCounts = React.createClass({
             metaStages={metaStages}
             sampleIdsStageCounts={sampleIdsStageCounts}
           />
-         <WrappedLabCounts
+        </div>
+        <div className='pure-u-1'>
+          <WrappedLabCounts
             metaStatuses={metaStatuses}
             metaLabTests={metaLabTests}
             labTestCounts={labTestCounts}
