@@ -28,5 +28,8 @@ export const getFilteredMetaFacilities = createSelector(
 // provided here for a common interface with facilities
 export const getMetaRegions = createSelector(
   [getMetaRegionsKeys, getMetaRegionsByKey], (regionKeys, regionsByKey) => {
-    return regionKeys.map(key => regionsByKey.get(key));
+    if (regionKeys) {
+      return regionKeys.map(key => regionsByKey.get(key));
+    }
+    return Seq([]);
   });
