@@ -17,13 +17,13 @@ export const StageCounts = React.createClass({
   propTypes: {
     summaryFilter: PropTypes.instanceOf(SummaryFilter).isRequired,
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
-    metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
     sampleIdsStageCounts: PropTypes.instanceOf(List).isRequired,
-    metaArtifacts: PropTypes.instanceOf(ImmutableMap).isRequired,
     artifactStageCounts: PropTypes.instanceOf(List).isRequired,
-    metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
-    metaLabTests: PropTypes.instanceOf(ImmutableMap).isRequired,
-    labTestCounts: PropTypes.instanceOf(List).isRequired
+    labTestCounts: PropTypes.instanceOf(List).isRequired,
+    metaArtifacts: PropTypes.instanceOf(ImmutableMap),
+    metaStages: PropTypes.instanceOf(ImmutableMap),
+    metaStatuses: PropTypes.instanceOf(ImmutableMap),
+    metaLabTests: PropTypes.instanceOf(ImmutableMap)
   },
 
   componentWillMount() {
@@ -62,7 +62,9 @@ export const StageCounts = React.createClass({
             metaStages={metaStages}
             sampleIdsStageCounts={sampleIdsStageCounts}
           />
-         <WrappedLabCounts
+        </div>
+        <div className='pure-u-1'>
+          <WrappedLabCounts
             metaStatuses={metaStatuses}
             metaLabTests={metaLabTests}
             labTestCounts={labTestCounts}

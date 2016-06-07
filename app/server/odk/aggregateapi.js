@@ -219,9 +219,9 @@ const SUBMISSION_OPTIONS = Object.assign({}, ODK_REQUEST_OPTIONS, {
  */
 function makeSubmission(submission) {
   if (!submission) {
-    let err = new Error('Missing submission XML');
-    BPromise.reject(err);
+    return BPromise.reject(new Error('Missing submission XML'));
   }
+
   log.debug('Making ODK Aggregate form submission', submission);
 
   return new BPromise((resolve, reject) => {

@@ -18,12 +18,12 @@ export const getIsMetaLoading = createSelector(
     getMetaPeople
   ],
   (stages, statuses, artifacts, tests, facilities, people) =>
-    stages.size === 0 ||
-    statuses.size === 0 ||
-    artifacts.size === 0 ||
-    tests.size === 0 ||
-    facilities.size === 0 ||
-    people.size === 0
+    stages === null ||
+    statuses === null ||
+    artifacts === null ||
+    tests === null ||
+    facilities === null ||
+    people === null
 );
 
 export const getIsLoading = createSelector(

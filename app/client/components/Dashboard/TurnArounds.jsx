@@ -14,10 +14,10 @@ export const TurnArounds = React.createClass({
   propTypes: {
     summaryFilter: PropTypes.object,
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
-    metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
-    metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
     stagesTATs: PropTypes.instanceOf(List).isRequired,
-    endToEndTAT: PropTypes.instanceOf(Record).isRequired
+    endToEndTAT: PropTypes.instanceOf(Record).isRequired,
+    metaStages: PropTypes.instanceOf(ImmutableMap),
+    metaStatuses: PropTypes.instanceOf(ImmutableMap)
   },
 
   componentWillMount() {

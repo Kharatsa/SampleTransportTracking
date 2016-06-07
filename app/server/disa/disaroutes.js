@@ -8,7 +8,6 @@ const log = require('server/util/logapp.js');
 const transform = require('server/disa/disatransform.js');
 const disasubmission = require('server/disa/disasubmission.js');
 const aggregatesubmission = require('server/odk/aggregatesubmission.js');
-const aggregate = require('server/odk/aggregateapi.js');
 
 let passport = null;
 let authenticate = null;
@@ -82,8 +81,7 @@ router.post('/status',
       )
     )
     .tap(xform => log.info('Built Lab Status XForm', xform))
-    .then(aggregatesubmission.submit)
-    .then(aggregate.makeSubmission);
+    .then(aggregatesubmission.submit);
 
     return BPromise.join(saveSubmission, backup, (results, odkBody) => {
       log.info('Finished saving lab submission & ODK backup');

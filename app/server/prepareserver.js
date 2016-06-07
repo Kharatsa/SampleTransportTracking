@@ -17,6 +17,10 @@ module.exports = () => {
       handler: sttsubmission.metaStatuses,
       attributes: {key: 'cond_key', value: 'cond'}
     }, {
+      filename: 'labstatus.csv',
+      handler: sttsubmission.metaStatuses,
+      attributes: {key: 'status_key', value: 'status'}
+    }, {
       filename: 'districts.csv',
       handler: sttsubmission.metaDistricts,
       attributes: {key: 'district_key', value: 'district'}

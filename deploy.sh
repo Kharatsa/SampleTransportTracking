@@ -2,7 +2,7 @@
 
 docker pull kharatsa/strack:latest
 
-if [ $(docker ps -q) ]; then
+if [[ $(docker ps -q) ]]; then
   docker stop strack
   docker rm strack
 fi
@@ -27,7 +27,7 @@ docker run -d \
   -e "ODK_HOSTNAME=$ODK_HOSTNAME" \
   -e "ODK_USERNAME=$ODK_USERNAME" \
   -e "ODK_PASSWORD=$ODK_PASSWORD" \
-  -e "NODE_ENV=$NODE_ENV" \
-  kharatsa/strack@latest
+  -e "NODE_ENV=${NODE_ENV-production}" \
+  kharatsa/strack:latest
 
 docker logs -f strack

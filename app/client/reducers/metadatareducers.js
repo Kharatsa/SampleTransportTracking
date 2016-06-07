@@ -1,8 +1,7 @@
-import {Map as ImmutableMap, Seq} from 'immutable';
 import {RECEIVE_METADATA} from '../actions/actions';
 
 const metaTypeKeysReducer = type => {
-  return (state=Seq(), action) => {
+  return (state=null, action) => {
     switch (action.type) {
     case RECEIVE_METADATA: {
       return action.metadata.get(`${type}Keys`);
@@ -14,7 +13,7 @@ const metaTypeKeysReducer = type => {
 };
 
 const metaTypeReducer = type => {
-  return (state=ImmutableMap(), action) => {
+  return (state=null, action) => {
     switch (action.type) {
     case RECEIVE_METADATA: {
       return action.metadata.get(type);
