@@ -200,7 +200,7 @@ function buildAuthorizationHeader(req, res, method) {
 }
 
 function authorizationRequired(res) {
-  return res.statusCode === 401;
+  return res && res.statusCode === 401;
 }
 
 const SUBMISSION_OPTIONS = Object.assign({}, ODK_REQUEST_OPTIONS, {
@@ -242,10 +242,14 @@ function makeSubmission(submission) {
         form.getHeaders()
       );
 
-      if (authorizationRequired(res)) {
-        postHeaders.Authorization = buildAuthorizationHeader(
-          headReq, res, 'POST'
-        );
+      try {
+        if (authorizationRequired(res)) {
+          postHeaders.Authorization = buildAuthorizationHeader(
+            headReq, res, 'POST'
+          );
+        }
+      } catch(odkAuthErr) {
+        reject(odkAuthErr);
       }
 
       var postOptions = Object.assign({},

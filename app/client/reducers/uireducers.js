@@ -1,10 +1,11 @@
 import {
   FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
   FETCH_SAMPLE_DETAIL, FETCH_SAMPLE_DETAIL_FAILURE, RECEIVE_SAMPLE_DETAIL,
-  FETCH_SUMMARY, FETCH_SUMMARY_FAILURE, RECEIVE_SUMMARY
+  FETCH_SUMMARY, FETCH_SUMMARY_FAILURE, RECEIVE_SUMMARY,
+  FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA
 } from '../actions/actions.js';
 
-export const isFetchingData = (state=true, action) => {
+export const isFetchingData = (state=false, action) => {
   switch (action.type) {
   case FETCH_CHANGES:
   case FETCH_SAMPLE_DETAIL:
@@ -19,5 +20,18 @@ export const isFetchingData = (state=true, action) => {
     return false;
   default:
     return state;
+  }
+};
+
+export const isFetchingMetadata = (state=false, action) => {
+  switch (action.type) {
+    case FETCH_METADATA:
+      return true;
+    case FETCH_METADATA_FAILURE:
+    case RECEIVE_METADATA: {
+      return false;
+    }
+    default:
+      return state;
   }
 };

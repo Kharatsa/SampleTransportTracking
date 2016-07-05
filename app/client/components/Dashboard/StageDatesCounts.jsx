@@ -1,13 +1,14 @@
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {List} from 'immutable';
-import WaitOnFetch from '../../containers/wrappers/WaitOnFetch.jsx';
+import WaitOnFetch from '../WaitOnFetch.jsx';
 import StageDatesChart from './StageDatesChart';
 
 const StageDatesChartWrapped = WaitOnFetch(StageDatesChart);
 
 export const StageDatesCounts = React.createClass({
   propTypes: {
+    isLoading: PropTypes.bool.isRequired,
     summaryFilter: PropTypes.object,
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     stageDates: PropTypes.instanceOf(List).isRequired,
@@ -35,10 +36,11 @@ export const StageDatesCounts = React.createClass({
   },
 
   render() {
-    const {stageDates, stageCountsChartData} = this.props;
+    const {isLoading, stageDates, stageCountsChartData} = this.props;
 
     return (
       <StageDatesChartWrapped
+        isLoading={isLoading}
         stageDates={stageDates}
         stageCountsChartData={stageCountsChartData}
       />

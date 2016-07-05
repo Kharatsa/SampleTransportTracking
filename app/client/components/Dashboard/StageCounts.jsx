@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Map as ImmutableMap, List} from 'immutable';
 import {SummaryFilter} from '../../api/records.js';
-import WaitOnFetch from '../../containers/wrappers/WaitOnFetch.jsx';
+import WaitOnFetch from '../WaitOnFetch.jsx';
 import StageSampleIdCounts from './StageSampleIdCounts';
 import StageArtifactCounts from './StageArtifactCounts';
 import StageLabCounts from './StageLabCounts';
@@ -15,6 +15,7 @@ export const StageCounts = React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
+    isLoading: PropTypes.bool.isRequired,
     summaryFilter: PropTypes.instanceOf(SummaryFilter).isRequired,
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     sampleIdsStageCounts: PropTypes.instanceOf(List).isRequired,
@@ -43,6 +44,7 @@ export const StageCounts = React.createClass({
 
   render() {
     const {
+      isLoading,
       metaStages, sampleIdsStageCounts,
       metaArtifacts, artifactStageCounts,
       metaStatuses, metaLabTests, labTestCounts
@@ -52,6 +54,7 @@ export const StageCounts = React.createClass({
       <div className='pure-g'>
         <div className='pure-u-1 pure-u-lg-1-2'>
           <WrappedArtifactCounts
+            isLoading={isLoading}
             metaStages={metaStages}
             metaArtifacts={metaArtifacts}
             artifactStageCounts={artifactStageCounts}
@@ -59,12 +62,14 @@ export const StageCounts = React.createClass({
         </div>
         <div className='pure-u-1 pure-u-lg-1-2'>
           <WrappedSampleIdCounts
+            isLoading={isLoading}
             metaStages={metaStages}
             sampleIdsStageCounts={sampleIdsStageCounts}
           />
         </div>
         <div className='pure-u-1'>
           <WrappedLabCounts
+            isLoading={isLoading}
             metaStatuses={metaStatuses}
             metaLabTests={metaLabTests}
             labTestCounts={labTestCounts}

@@ -59,8 +59,6 @@ export const TurnAroundsChart = ({stagesTATs, metaStages, metaStatuses}) => {
     const msTAT = tat.get('averageTATms');
     const durationVal = Moment.duration(msTAT).as('days');
 
-    if (process.env.NODE_ENV !== 'production')
-      console.debug(`${fromDescElem} to ${toDescElem}`);
     return {
       data: [durationVal],
       name: `${fromDescElem} to ${toDescElem}`

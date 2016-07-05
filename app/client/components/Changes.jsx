@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
-import WaitOnFetch from '../containers/wrappers/WaitOnFetch.jsx';
+import WaitOnFetch from './WaitOnFetch.jsx';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import WindowSizeListener from '../containers/wrappers/WindowSizeListener.jsx';
+import WindowSizeListener from '../containers/WindowSizeListener.jsx';
 import ChangesTable from './ChangesTable';
 
 const FlexAllWaysTable = WindowSizeListener(ChangesTable, {avoidSideMenu: true});
@@ -22,9 +22,12 @@ export const ChangesListingWrapped = WaitOnFetch(_ChangesListing);
 
 export const Changes = React.createClass({
   propTypes: {
+    isLoading: PropTypes.bool.isRequired,
     page: PropTypes.any,
     summaryFilter: PropTypes.object
   },
+
+  mixins: [PureRenderMixin],
 
   componentWillReceiveProps(nextProps) {
     const {page} = this.props.params;

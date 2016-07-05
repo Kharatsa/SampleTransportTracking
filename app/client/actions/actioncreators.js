@@ -18,7 +18,12 @@ const fetchMetadataFailure = err =>
 const receiveMetadata = metadata => ({type: RECEIVE_METADATA, metadata});
 
 export const fetchMetadata = () => {
-  return dispatch => {
+  return (dispatch, getState) => {
+    const {isFetchingMetadata} = getState();
+    if (isFetchingMetadata) {
+      return; // short circuit to avoid redundant requests
+    }
+
     dispatch(requestMetadata());
     return api.getMetadata((err, data) => {
       if (err) {

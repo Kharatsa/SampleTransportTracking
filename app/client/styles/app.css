@@ -487,10 +487,6 @@ textarea {
   background: #32373A;
 }
 
-.a {
-  color: #406A9E;
-}
-
 .content {
   padding: 0 1rem 0 1rem;
 }
@@ -850,7 +846,7 @@ ul.ct-legend {
   color: #DDD;
 }
 
-.blue-bg, .green-bg, .black-bg
+.blue-bg, .green-bg, .black-bg,
 .pure-menu-link:hover,
 .pure-menu-link:focus {
   background: #3D4347;
@@ -861,7 +857,7 @@ ul.ct-legend {
   padding: .5em .8em;
 }
 
-#menu
+#menu, #detail-menu
 .pure-menu
 .blue-bg, .green-bg, .black-bg
 .pure-menu-item, .pure-menu-heading {
@@ -877,11 +873,6 @@ ul.ct-legend {
 .pure-menu-link:focus {
   color: inherit;
   background-color: inherit;
-}
-
-.black-bg
-.pure-menu-heading {
-  background: #1C9352;
 }
 
 #menu
@@ -1018,6 +1009,7 @@ appears on the left side of the page.
         margin-top: 0;
         margin-left: 0;
         margin-right: 0;
+        text-align: center;
     }
 
 /* -- Dynamic Button For Responsive Menu -------------------------------------*/

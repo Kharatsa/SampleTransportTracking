@@ -37,7 +37,7 @@ export const SampleSearch = React.createClass({
       <form onSubmit={this.handleSubmit} className='pure-form'>
         <label htmlFor='search'>Lookup Sample ID</label>
         <input
-            id='search'
+            id='sample-search'
             type='text'
             value={this.state.value}
             placeholder='Sample ID...'

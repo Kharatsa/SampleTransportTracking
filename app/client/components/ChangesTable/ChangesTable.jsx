@@ -51,11 +51,6 @@ export const ChangesTable = (props) => {
       samplesById
     })
   ).toArray();
-  if (process.env.NODE_ENV !== 'production') {
-    console.debug('ChangesTable props', props);
-    console.debug('Loading ChangesTable data', data);
-    console.debug('Loading ChangesTable changeIds', changeIds);
-  }
 
   return (
     <div className='panel'>

@@ -103,7 +103,7 @@ export const TurnAroundsTable = React.createClass({
             {turnaroundTimes}
           </tbody>
         </table>
-        <table className='widget-table' id='tat-table'>
+        <table className='widget-table' id='e2e-tat-table'>
           <thead>
             <tr>
               <th className='col-from'>From Stage</th>

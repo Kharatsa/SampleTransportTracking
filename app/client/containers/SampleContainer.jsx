@@ -1,11 +1,12 @@
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import {getIsLoading} from '../selectors/uiselectors';
 import {fetchSampleDetail} from '../actions/actioncreators.js';
 import {Sample} from '../components';
 
 export default connect(
   state => ({
-    isFetchingData: state.isFetchingData,
+    isLoading: getIsLoading(state),
     selectedSampleId: state.selectedSampleId,
     samplesById: state.samplesById,
     changeIds: state.changeIds,

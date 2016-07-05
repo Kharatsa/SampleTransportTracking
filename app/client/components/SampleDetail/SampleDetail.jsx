@@ -4,13 +4,15 @@ import SampleStage from './SampleStage';
 import SampleArtifacts from './SampleArtifacts';
 import SampleTests from './SampleTests';
 import ChangesTable from '../ChangesTable';
-import WindowSizeListener from '../../containers/wrappers/WindowSizeListener';
+import WaitOnFetch from '../WaitOnFetch.jsx';
+import WindowSizeListener from '../../containers/WindowSizeListener';
 import MissingSample from './MissingSampleDetail';
 import {SCAN_STAGES} from '../../../common/sttworkflow';
 
 const FlexChangesTable = WindowSizeListener(ChangesTable, {changeHeight: false});
 
-export const SampleDetail = (props) => {
+
+const _SampleDetail = (props) => {
   const {
     routeParams,
     selectedSampleId, samplesById,
@@ -28,9 +30,6 @@ export const SampleDetail = (props) => {
   const sample = samplesById.get(selectedSampleId);
 
   if (sample) {
-    // const people = metadata.get('people');
-    // const facilities = metadata.get('facilities');
-
     const stId = sample.get('stId');
     const labId = sample.get('labId');
     const created = sample.get('createdAt');
@@ -95,5 +94,7 @@ export const SampleDetail = (props) => {
 
   return <MissingSample sampleId={routeParams.sampleId} />;
 };
+
+export const SampleDetail = WaitOnFetch(_SampleDetail);
 
 export default SampleDetail;
