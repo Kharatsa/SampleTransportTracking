@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * STTSubmission is responsible for reconciling incoming data submissions with
+ * the existing database. The incoming data is compared with existing data to
+ * derive the collection of updates and inserts necessary for all models/tables.
+ */
+
 const BPromise = require('bluebird');
 const log = require('server/util/logapp.js');
 const datamerge = require('server/util/datamerge.js');
@@ -49,7 +55,7 @@ const sampleIds = incoming => {
   );
 
   const fetchLocal = combinedIds.then(ids => client.sampleIds.eitherIds({
-    data: ids, omitDateDBCols: true, includes: false
+    data: ids, omitDateDBCols: true, includes: false, limit: null
   }))
   .tap(local => log.debug('sampleIds local', local));
 
@@ -78,7 +84,7 @@ const metaHandler = (model, modelName, uniques) => {
   uniques = uniques || ['key'];
 
   return data => {
-    const merge = model.byKey({data, omitDateDBCols: true})
+    const merge = model.byKey({data, omitDateDBCols: true, limit: false})
     .tap(local => log.debug(`${modelName} local`, local))
     .then(local => datamerge.pairByProps(data, local, uniques))
     .tap(merged => log.debug(`${modelName} merged`, merged));
@@ -87,7 +93,6 @@ const metaHandler = (model, modelName, uniques) => {
   };
 };
 
-// const metaRegions = metaHandler(client.metaRegions, 'MetaRegions');
 const metaDistricts = metaHandler(client.metaDistricts, 'MetaDistricts');
 const metaLabs = metaHandler(client.metaLabs, 'MetaLabs');
 const metaFacilities = metaHandler(client.metaFacilities, 'MetaFacilities');
@@ -105,7 +110,7 @@ const metaStages = metaHandler(client.metaStages, 'MetaStages');
  */
 const artifacts = incoming => {
   const merge = client.artifacts.byTypesAndSampleIds({
-    data: incoming, omitDateDBCols: true
+    data: incoming, omitDateDBCols: true, limit: null
   })
   .tap(local => log.debug('artifacts local', local))
   .then(local => datamerge.pairByProps(
@@ -123,7 +128,7 @@ const artifacts = incoming => {
  */
 const labTests = incoming => {
   const merge = client.labTests.byTypesAndSampleIds({
-    data: incoming, omitDateDBCols: true
+    data: incoming, omitDateDBCols: true, limit: null
   })
   .then(local => datamerge.pairByProps(
     incoming, local, ['sampleId', 'testType']
@@ -140,7 +145,7 @@ const labTests = incoming => {
  */
 const scanChanges = incoming => {
   const merge = client.changes.byArtifactsAndDates({
-    data: incoming, omitDateDBCols: true
+    data: incoming, omitDateDBCols: true, limit: null
   })
   .tap(local => log.debug('scanChanges local', local))
   .then(local => datamerge.pairByProps(incoming, local, ['artifact', 'status']))
@@ -156,7 +161,7 @@ const scanChanges = incoming => {
  */
 const labChanges = incoming => {
   const merge = client.changes.byLabTestsAndDates({
-    data: incoming, omitDateDBCols: true
+    data: incoming, omitDateDBCols: true, limit: null
   })
   .tap(local => log.debug('labChanges local', local))
   .then(local => datamerge.pairByProps(incoming, local, ['labTest', 'status']))
@@ -168,7 +173,6 @@ const labChanges = incoming => {
 module.exports = {
   syncedCombine,
   sampleIds,
-  // metaRegions,
   metaFacilities,
   metaDistricts,
   metaLabs,
