@@ -129,8 +129,8 @@ ChangesClient.prototype.allChangesAndCount = function(options) {
  * @param {QueryOptions} options [description]
  * @return {Promise.<Array.<Object>>}          [description]
  */
-ChangesClient.prototype.byLabTestsAndDates = function(options) {
-  return changesquery.labTestsAndDates(options.data)
+ChangesClient.prototype.byLabTests = function(options) {
+  return changesquery.labTests(options.data)
   .then(where => this.Model.findAll({where}));
 };
 

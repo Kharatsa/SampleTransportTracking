@@ -6,6 +6,7 @@
  * derive the collection of updates and inserts necessary for all models/tables.
  */
 
+const _ = require('lodash');
 const BPromise = require('bluebird');
 const log = require('server/util/logapp.js');
 const datamerge = require('server/util/datamerge.js');
@@ -23,22 +24,28 @@ const syncedCombine = synced => (
   [].concat(synced.inserted, synced.updated, synced.skipped)
 );
 
-const doInsert = (merged, modelName) => {
+const findAndMakeInserts = (merged, modelName) => {
   return datamerge.inserts(merged)
   .then(data => client.modelInserts({modelName, data}));
 };
 
-const doUpdate = (merged, modelName, PKs) => {
-  return datamerge.updates(merged)
+const findAndMakeUpdates = (merged, modelName, PKs, compareProps) => {
+  return datamerge.updates(merged, compareProps)
   .then(data => client.modelUpdates({modelName, data, PKs}));
 };
 
-const updateAndInsert = (merged, modelName, updatePKs) => {
+const updateAndInsert = (merged, options) => {
+  const modelName = options.modelName;
+  // properties that uniquely identify an object
+  const uniqueProps = options.uniqueProps;
+  // properties to compare when determining whether an update is necessary
+  const compareProps = options.compareProps;
+
   return BPromise.props({
-    inserted: doInsert(merged, modelName),
-    updated: doUpdate(merged, modelName, updatePKs),
+    inserted: findAndMakeInserts(merged, modelName),
+    updated: findAndMakeUpdates(merged, modelName, uniqueProps, compareProps),
     skipped: datamerge.skips(merged),
-    deleted: []
+    deleted: [] // placeholder (not presently used)
   });
 };
 
@@ -77,19 +84,25 @@ const sampleIds = incoming => {
 
   merge.tap(merged => log.debug('sampleIds merged', merged));
 
-  return merge.then(merged => updateAndInsert(merged, 'SampleIds', ['uuid']));
+  return merge.then(merged =>
+    updateAndInsert(merged, {modelName: 'SampleIds', uniqueProps: ['uuid']})
+  );
 };
 
 const metaHandler = (model, modelName, uniques) => {
   uniques = uniques || ['key'];
 
   return data => {
+    log.info(`${modelName} incoming`, data);
     const merge = model.byKey({data, omitDateDBCols: true, limit: false})
     .tap(local => log.debug(`${modelName} local`, local))
     .then(local => datamerge.pairByProps(data, local, uniques))
     .tap(merged => log.debug(`${modelName} merged`, merged));
 
-    return merge.then(merged => updateAndInsert(merged, modelName, uniques));
+    return merge.then(merged =>
+      updateAndInsert(
+        merged,
+        {modelName, uniqueProps: uniques, compareProps: ['key', 'value']}));
   };
 };
 
@@ -118,7 +131,9 @@ const artifacts = incoming => {
   ))
   .tap(merged => log.debug('artifacts merged', merged));
 
-  return merge.then(merged => updateAndInsert(merged, 'Artifacts', ['uuid']));
+  return merge.then(merged =>
+    updateAndInsert(merged, {modelName: 'Artifacts', uniqueProps: ['uuid']})
+  );
 };
 
 /**
@@ -135,7 +150,9 @@ const labTests = incoming => {
   ))
   .tap(merged => log.debug('labTests merged', merged));
 
-  return merge.then(merged => updateAndInsert(merged, 'LabTests', ['uuid']));
+  return merge.then(merged =>
+    updateAndInsert(merged, {modelName:'LabTests', uniqueProps: ['uuid']})
+  );
 };
 
 /**
@@ -151,7 +168,9 @@ const scanChanges = incoming => {
   .then(local => datamerge.pairByProps(incoming, local, ['artifact', 'status']))
   .tap(merged => log.debug('scanChanges merged', merged));
 
-  return merge.then(merged => updateAndInsert(merged, 'Changes', ['uuid']));
+  return merge.then(merged =>
+    updateAndInsert(merged, {modelName: 'Changes', uniqueProps: ['uuid']})
+  );
 };
 
 /**
@@ -160,14 +179,22 @@ const scanChanges = incoming => {
  * @return {Promise.<Object>}      [description]
  */
 const labChanges = incoming => {
-  const merge = client.changes.byLabTestsAndDates({
+  const merge = client.changes.byLabTests({
     data: incoming, omitDateDBCols: true, limit: null
   })
   .tap(local => log.debug('labChanges local', local))
   .then(local => datamerge.pairByProps(incoming, local, ['labTest', 'status']))
   .tap(merged => log.debug('labChanges merged', merged));
 
-  return merge.then(merged => updateAndInsert(merged, 'Changes', ['uuid']));
+  return merge.then(merged =>
+    updateAndInsert(
+      merged,
+      {
+        modelName: 'Changes',
+        uniqueProps: ['uuid'],
+        compareProps: ['stage', 'status', 'labRejection', 'facility']
+      }
+  ));
 };
 
 module.exports = {

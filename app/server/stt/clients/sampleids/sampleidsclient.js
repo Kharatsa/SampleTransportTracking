@@ -28,8 +28,8 @@ const DEFAULT_SORT = [['createdAt', 'DESC']];
  */
 SampleIdsClient.prototype.latest = function(options) {
   return this.Model.findAndCountAll({
-    offset: options.offset,
-    limit: options.limit || this.limit,
+    offset: options.offset === undefined ? null : options.offset,
+    limit: options.limit === undefined ? this.limit : options.limit,
     order: DEFAULT_SORT
   });
 };
@@ -56,11 +56,12 @@ SampleIdsClient.prototype.eitherIds = function(options) {
     include = allReferences(this);
   }
 
+  let self = this;
   return sampleidsquery.eitherIds(options.data)
   .then(where => this.Model.findAll({
     where,
-    offset: options.offset,
-    limit: options.limit || this.limit,
+    offset: options.offset === undefined ? null : options.offset,
+    limit: options.limit === undefined ? this.limit : options.limit,
     include
   }));
 };

@@ -12,10 +12,8 @@ const rawqueryutils = require('server/stt/clients/rawqueryutils.js');
  * @param  {Array.<Object>} changes [description]
  * @return {Promise.<Object>}         [description]
  */
-const labTestsAndDates = queryutils.requireProps(['labTest', 'statusDate'],
-  changes => BPromise.map(changes, change =>
-    ({$and: [{labTest: change.labTest}, {statusDate: change.statusDate}]})
-  )
+const labTests = queryutils.requireProps(['labTest'],
+  changes => BPromise.map(changes, change => ({labTest: change.labTest}))
   .then(queryutils.wrapOr)
 );
 
@@ -128,6 +126,6 @@ const changesRawCount = params => {
 };
 
 module.exports = {
-  labTestsAndDates, artifactsAndDates,
+  labTests, artifactsAndDates,
   changesRaw, changesRawDateCols, changesRawCount
 };

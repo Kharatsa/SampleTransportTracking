@@ -41,6 +41,28 @@ const requireBody = (req, res, next) => {
 
 const SUBMISSION_SUCCESS = 'Submission successful';
 
+// Reports whether or not synced indicates the local DB was altered
+const databaseUpdated = BPromise.method(synced =>
+  Object.keys(synced).some(key => {
+    const entity = synced[key];
+    if (entity && entity.inserted.length || entity.updated.length) {
+      return true
+    }
+    return false;
+  }));
+
+const backupToODK = (entities, requestDate, xml) => (
+  transform.buildLabXForm(
+    entities.sampleIds,
+    entities.statusDate,
+    entities.changes,
+    entities.metaFacility,
+    requestDate,
+    xml
+  ))
+  .tap(xform => log.info('Built Lab Status XForm', xform))
+  .then(aggregatesubmission.submit);
+
 router.post('/status',
   authenticate,
   requireXML,
@@ -70,23 +92,26 @@ router.post('/status',
     const saveSubmission = parseEntities.then(disasubmission.handleSubmission)
     .tap(log.debug);
 
-    const backup = parseEntities.then(entities =>
-      transform.buildLabXForm(
-        entities.sampleIds,
-        entities.statusDate,
-        entities.changes,
-        entities.metaFacility,
-        requestDate,
-        xml
-      )
-    )
-    .tap(xform => log.info('Built Lab Status XForm', xform))
-    .then(aggregatesubmission.submit);
+    // Only communicate with ODK when the local database changed
+    const maybeBackup = BPromise.join(
+      parseEntities, saveSubmission, (parsed, synced) => {
+        return databaseUpdated(synced)
+        .then(updated => {
+          if (updated) {
+            return backupToODK(parsed, requestDate, xml);
+          }
+          return null;
+        });
+      });
 
-    return BPromise.join(saveSubmission, backup, (results, odkBody) => {
+    return BPromise.join(saveSubmission, maybeBackup, (results, odkBody) => {
       log.info('Finished saving lab submission & ODK backup');
-      log.debug(`ODK Aggregate submission response: ${odkBody}`);
-      // TODO: maybe send a meaningful message
+      if (odkBody) {
+        log.info(`ODK Aggregate submission response: ${odkBody}`);
+      } else {
+        log.info('Skipped ODK Aggregate backup');
+      }
+      // TODO: maybe send a meaningful message body
       res.status(201).send(SUBMISSION_SUCCESS);
     })
     .catch(err => {

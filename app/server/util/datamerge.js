@@ -177,7 +177,7 @@ const pairReduced = (sources, localReduced, propNames) => {
  */
 const pairByProps = (sources, targets, propNames) => {
   if (targets === null) {
-    BPromise.resolve({incoming: sources, targets: []});
+    return BPromise.resolve({incoming: sources, targets: []});
   } else if (!(Array.isArray(sources) && Array.isArray(targets))) {
     return BPromise.reject(new Error('Cannot merge Array with non-Array'));
   }
@@ -198,12 +198,25 @@ const pairByProps = (sources, targets, propNames) => {
  * the merged object, but the values props do not match the value props in the
  * merged incoming object.
  *
- * @param  {Array.<MergedData>} merged [description]
- * @return {Promise.<Array.<MergedData>>}        [description]
+ * @param  {Array.<MergedData>} merged
+ * @param  {Array.<string>} [compareProps]
+ * @return {Promise.<Array.<MergedData>>}
  */
-const updates = merged => {
+const updates = (merged, compareProps) => {
+  // A local object that requires update must be present
   return BPromise.filter(merged, item => !!item.local)
-  .filter(item => !dbresult.commonPropsEqual(item.incoming, item.local));
+  .filter(item => {
+    try {
+      if (typeof compareProps === 'undefined') {
+      return !dbresult.commonPropsEqual(item.incoming, item.local)
+      }
+      return !dbresult.enumeratedPropsEqual(
+        item.incoming, item.local, compareProps
+      );
+    } catch (e) {
+      return BPromise.reject(e);
+    }
+  });
 };
 
 /**

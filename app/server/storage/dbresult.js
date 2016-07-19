@@ -49,25 +49,47 @@ const omitDBCols = result =>  {
 };
 
 /**
+ * @param  {Object} source
+ * @param  {Object} target
+ * @param  {string} prop
+ * @return {boolean}
+ */
+const propIsEqual = (source, target, prop) => {
+  if (typeof target[prop] === 'undefined') {
+    return false;
+  }
+  // For Date objects, compare the valueOf to ensure identical values
+  // evaluate to true for the equals check.
+  return (
+    (_.isDate(target[prop]) ? target[prop].getTime() : target[prop]) ===
+    (_.isDate(source[prop]) ? source[prop].getTime() : source[prop])
+  );
+}
+
+/**
  * Checks 2 objects for equality. Objects are equal if the target shares all
  * the same properties with the source, and the values for all those properties
  * are also equal.
  *
- * @param  {Sequelize.Model} source
- * @param  {Object} target A plain Object
+ * @param  {Object} source
+ * @param  {Object} target
  * @return {boolean}
  */
 const commonPropsEqual = (source, target) => {
-  return Object.keys(source).every(prop => {
-    if (typeof target[prop] === 'undefined') {
-      return false;
-    }
-    // For Date objects, compare the valueOf to ensure identical values
-    // evaluate to true for the equals check.
-    return (
-      (_.isDate(target[prop]) ? target[prop].getTime() : target[prop]) ===
-      (_.isDate(source[prop]) ? source[prop].getTime() : source[prop])
-    );
+  return Object.keys(source).every(prop => propIsEqual(source, target, prop));
+};
+
+/**
+ * Checks 2 objects for equality by all enumerated properties.
+ *
+ * @param  {Object} source [description]
+ * @param  {Object} target [description]
+ * @param  {Array.<string>} props
+ * @return {boolean}
+ */
+const enumeratedPropsEqual = (source, target, props) => {
+  return props.every(prop => {
+    return propIsEqual(source, target, prop)
   });
 };
 
@@ -94,5 +116,6 @@ module.exports = {
   omitDateDBCols,
   omitDBCols,
   commonPropsEqual,
+  enumeratedPropsEqual,
   convertToISODate
 };

@@ -31,4 +31,17 @@ function ModelClient(options) {
   this.limit = DEFAULT_RESULTS_LIMIT;
 }
 
+/**
+ * Let an explicitly set limit override the default
+ *
+ * @param  {Object} options [description]
+ * @return {any|number}         [description]
+ */
+ModelClient.prototype.getLimit = function(options) {
+  if (options && typeof options.limit !== 'undefined') {
+    return options.limit;
+  }
+  return this.limit;
+}
+
 module.exports = ModelClient;
