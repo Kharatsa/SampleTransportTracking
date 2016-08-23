@@ -1,14 +1,16 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import shallowCompare from 'react-addons-shallow-compare';
 import classnames from 'classnames';
 
 export const PushButtons = React.createClass({
-  mixins: [PureRenderMixin],
-
   propTypes: {
     labels: PropTypes.arrayOf(PropTypes.string),
     handleClick: PropTypes.func.isRequired,
     className: PropTypes.any
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   },
 
   getInitialState() {

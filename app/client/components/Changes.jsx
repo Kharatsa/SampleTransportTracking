@@ -1,13 +1,15 @@
 import React, {PropTypes} from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import WaitOnFetch from './WaitOnFetch.jsx';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import WindowSizeListener from '../containers/WindowSizeListener.jsx';
 import ChangesTable from './ChangesTable';
 
 const FlexAllWaysTable = WindowSizeListener(ChangesTable, {avoidSideMenu: true});
 
-const _ChangesListing = React.createClass({
-  mixins: [PureRenderMixin],
+const ChangesListing = React.createClass({
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  },
 
   render() {
     return (
@@ -18,7 +20,7 @@ const _ChangesListing = React.createClass({
   }
 });
 
-export const ChangesListingWrapped = WaitOnFetch(_ChangesListing);
+export const ChangesListingWrapped = WaitOnFetch(ChangesListing);
 
 export const Changes = React.createClass({
   propTypes: {
@@ -27,7 +29,9 @@ export const Changes = React.createClass({
     summaryFilter: PropTypes.object
   },
 
-  mixins: [PureRenderMixin],
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  },
 
   componentWillReceiveProps(nextProps) {
     const {page} = this.props.params;

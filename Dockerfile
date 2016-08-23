@@ -23,9 +23,12 @@ RUN mkdir -p ${STT_DATA_PATH} \
     && mkdir -p ${STT_APP_PATH} \
     && mkdir -p ${STT_LOG_PATH}
 
-COPY . ${STT_APP_PATH}
-
 WORKDIR ${STT_APP_PATH}
+
+# Copy in the dependencies
+COPY ./package.json .
+COPY ./npm-shrinkwrap.json .
+COPY ./bower.json .
 
 # Install node packages
 RUN npm install -q \
@@ -38,11 +41,13 @@ RUN bower install --allow-root \
 ENV NODE_ENV='production'
 
 # Run the build & database sync scripts
+COPY . .
 RUN gulp build
 RUN node app/maintenance/data.js sync
 RUN node app/maintenance/metadata.js reloadcsv
 RUN node app/maintenance/users.js add admin unsafepassword
 RUN npm prune -q
+
 
 VOLUME ${STT_DATA_PATH}
 VOLUME ${STT_PUBLIC_PATH}

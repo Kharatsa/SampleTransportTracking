@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import shallowCompare from 'react-addons-shallow-compare';
 import DatePicker from 'react-datepicker';
 import Moment from 'moment';
 
@@ -14,12 +14,14 @@ const calcBeforeDate = (afterDateInput, beforeDate) => {
 };
 
 export const DateFilters = React.createClass({
-  mixins: [PureRenderMixin],
-
   propTypes: {
     afterDateFilter: PropTypes.instanceOf(Moment).isRequired,
     beforeDateFilter: PropTypes.instanceOf(Moment).isRequired,
     actions: PropTypes.object.isRequired
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   },
 
   selectAfterDate(afterDateInput) {

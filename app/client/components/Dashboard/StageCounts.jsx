@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import shallowCompare from 'react-addons-shallow-compare';
 import {Map as ImmutableMap, List} from 'immutable';
 import {SummaryFilter} from '../../api/records.js';
 import WaitOnFetch from '../WaitOnFetch.jsx';
@@ -12,8 +12,6 @@ const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts);
 const WrappedLabCounts = WaitOnFetch(StageLabCounts);
 
 export const StageCounts = React.createClass({
-  mixins: [PureRenderMixin],
-
   propTypes: {
     isLoading: PropTypes.bool.isRequired,
     summaryFilter: PropTypes.instanceOf(SummaryFilter).isRequired,
@@ -25,6 +23,10 @@ export const StageCounts = React.createClass({
     metaStages: PropTypes.instanceOf(ImmutableMap),
     metaStatuses: PropTypes.instanceOf(ImmutableMap),
     metaLabTests: PropTypes.instanceOf(ImmutableMap)
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   },
 
   componentWillMount() {

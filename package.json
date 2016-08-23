@@ -8,7 +8,7 @@
   "main": "app/server/server.js",
   "scripts": {
     "build": "gulp build",
-    "start": "node app/server/server.js",
+    "start": "node app/server",
     "test": "NODE_ENV=test npm run test-unit && NODE_ENV=test npm run test-integration",
     "test-unit": "NODE_ENV=test npm run test-unit-server",
     "test-unit-server": "NODE_ENV=test mocha 'test/unit/server/**/*.js'",
@@ -47,7 +47,7 @@
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",
     "react": "^15.3.1",
-    "react-addons-pure-render-mixin": "^15.3.1",
+    "react-addons-shallow-compare": "^15.3.1",
     "react-datepicker": "^0.29.0",
     "react-redux": "^4.4.5",
     "react-router": "^2.7.0",

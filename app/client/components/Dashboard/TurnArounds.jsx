@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import shallowCompare from 'react-addons-shallow-compare';
 import {Map as ImmutableMap, List, Record} from 'immutable';
 import WaitOnFetch from '../WaitOnFetch.jsx';
 import TurnAroundsTable from './TurnAroundsTable';
@@ -9,8 +9,6 @@ const TurnAroundsTableWrapped = WaitOnFetch(TurnAroundsTable);
 const TurnAroundsChartWrapped = WaitOnFetch(TurnAroundsChart);
 
 export const TurnArounds = React.createClass({
-  mixins: [PureRenderMixin],
-
   propTypes: {
     isLoading: PropTypes.bool.isRequired,
     summaryFilter: PropTypes.object,
@@ -21,6 +19,10 @@ export const TurnArounds = React.createClass({
     metaStatuses: PropTypes.instanceOf(ImmutableMap)
   },
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  },
+   
   componentWillMount() {
     this._update(this.props.summaryFilter);
   },

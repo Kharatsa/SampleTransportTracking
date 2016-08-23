@@ -127,7 +127,11 @@ var logger = new (winston.Logger)({
     stttransport,
     new (winston.transports.File)({
       name: 'debug-file',
-      filename: `${LOG_PATH}/debug-${Date.now()}.log`,
+      filename: `${LOG_PATH}/debug.log`,
+      maxsize: 5 * 1000000 * 1024,  // 5MB
+      maxFiles: 100,
+      tailable: true,
+      zippedArchive: true,
       level: 'debug'
     })
   ]

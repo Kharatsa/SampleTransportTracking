@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import shallowCompare from 'react-addons-shallow-compare';
 
 const DEBOUNCE_MILLIS = 16;
 const NARROW_WIDTH_BUFFER = 0;
@@ -36,8 +36,6 @@ export const WindowSizeListen = (Component, options) => {
   // const {width: originalWidth, height: originalHeight} = Component.props;
 
   return React.createClass({
-    mixins: [PureRenderMixin],
-
     propTypes: {
       width: PropTypes.number,
       height: PropTypes.number
@@ -45,6 +43,10 @@ export const WindowSizeListen = (Component, options) => {
 
     getInitialState: function() {
       return calculateSize(widthBuffer);
+    },
+
+    shouldComponentUpdate(nextProps, nextState) {
+      return shallowCompare(this, nextProps, nextState);
     },
 
     componentDidMount() {

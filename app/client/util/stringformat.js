@@ -39,20 +39,29 @@ let longFormat;
 let shortFormat;
 let shortDateFormat;
 
-const language = window.navigator.language;
+// TODO(sean): This apparently does not work well for distinguishing 
+// different english dialoags (e.g., en-US, en-GB, en-ZA), and so 
+// might be utterly futile here. 
+try {
+  const language = window.navigator.userLanguage || window.navigator.language;
+} catch (err) {
+  const language = 'en-US';
+}
 
+let supportsIntl = true;
 try {
   longFormat = new Intl.DateTimeFormat(language, longFormatOptions);
   shortFormat = new Intl.DateTimeFormat(language, shortFormatOptions);
   shortDateFormat = new Intl.DateTimeFormat(language, shortDateFormatOptions);
 } catch (err) {
+    supportsIntl = false;
   // noop
 }
 
 const supportsLocales = toLocaleStringSupportsLocales();
 
 const formatDate = (dateStr, formatter) => {
-  if (supportsLocales) {
+  if (supportsLocales && supportsIntl) {
     return formatter.format(new Date(dateStr));
   }
   return (new Date(dateStr)).toLocaleString();

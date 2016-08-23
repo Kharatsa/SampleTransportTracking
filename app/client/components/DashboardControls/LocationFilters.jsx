@@ -1,10 +1,8 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import shallowCompare from 'react-addons-shallow-compare';
 import Select from 'react-select';
 
 export const LocationFilters = React.createClass({
-  mixins: [PureRenderMixin],
-
   propTypes: {
     isLoading: PropTypes.bool.isRequired,
     metaRegions: PropTypes.object.isRequired,
@@ -12,6 +10,10 @@ export const LocationFilters = React.createClass({
     filterRegionKey: PropTypes.string,
     filterFacilityKey: PropTypes.string,
     actions: PropTypes.object.isRequired
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   },
 
   _selectLocationFilter(selected, type) {

@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import shallowCompare from 'react-addons-shallow-compare';
 import {Map as ImmutableMap, List, Record} from 'immutable';
 import Moment from 'moment';
 import DashboardPanel from '../DashboardPanel';
@@ -62,7 +62,9 @@ export const TurnAroundsTable = React.createClass({
     timeUnit: PropTypes.string
   },
 
-  mixins: [PureRenderMixin],
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  },
 
   getInitialState() {
     return {timeUnit: TimeUnits[0]};

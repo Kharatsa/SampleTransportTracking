@@ -38,6 +38,9 @@ Vagrantfile
 *.sublime-project
 *.sublime-workspace
 
+# vim
+*.swp
+
 # Project
 secret*
 junkyard/

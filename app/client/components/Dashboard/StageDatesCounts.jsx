@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import shallowCompare from 'react-addons-shallow-compare';
 import {List} from 'immutable';
 import WaitOnFetch from '../WaitOnFetch.jsx';
 import StageDatesChart from './StageDatesChart';
@@ -18,7 +18,9 @@ export const StageDatesCounts = React.createClass({
     })).isRequired
   },
 
-  mixins: [PureRenderMixin],
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  },
 
   componentWillMount() {
     this._update(this.props.summaryFilter);
