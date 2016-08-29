@@ -19,7 +19,7 @@ const client = authclient({db: storage.db, models: storage.models});
 passport.use(new BasicStrategy(
   (username, password, callback) => {
     log.info(`Authenticating username=${username}`);
-    return client.getUser({username})
+    return client.getUser({username, includeCredentials: true})
     .then(user => {
       if (!user) {
         log.info(`Username "${username}" does not exist`);

@@ -1,9 +1,9 @@
 import {arrayOf, normalize} from 'normalizr';
 import {fromJS, Map as ImmutableMap, List} from 'immutable';
-import {changeInclude, metadata, dateStage} from './schemas.js';
+import {changeInclude, metadata, dateStage, user} from './schemas.js';
 import {
   ChangeRecord, SampleRecord, ArtifactRecord, LabTestRecord,
-  KeyValueMetaRecord, FacilityMetaRecord, TurnAround
+  KeyValueMetaRecord, FacilityMetaRecord, TurnAround, User,
 } from './records.js';
 
 /**
@@ -150,9 +150,16 @@ export const normalizeTurnArounds = data => {
 
 export const normalizeStageDates = data => {
   const {entities, result} = normalize(data, arrayOf(dateStage));
-
   return {
     dates: List(result),
     summary: fromJS(entities.dateStage || {})
+  };
+};
+
+export const normalizeUsers = data => {
+  const {entities, result} = normalize(data, arrayOf(user));
+  return {
+    userIds: List(result),
+    users: makeImmutable(entities.users, User),
   };
 };

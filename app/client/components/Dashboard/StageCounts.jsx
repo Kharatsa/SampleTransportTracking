@@ -13,16 +13,16 @@ const WrappedLabCounts = WaitOnFetch(StageLabCounts);
 
 export const StageCounts = React.createClass({
   propTypes: {
-    isLoading: PropTypes.bool.isRequired,
-    summaryFilter: PropTypes.instanceOf(SummaryFilter).isRequired,
-    actions: PropTypes.objectOf(PropTypes.func).isRequired,
-    sampleIdsStageCounts: PropTypes.instanceOf(List).isRequired,
     artifactStageCounts: PropTypes.instanceOf(List).isRequired,
+    fetchSummary: PropTypes.func.isRequired,
+    isLoading: PropTypes.bool.isRequired,
     labTestCounts: PropTypes.instanceOf(List).isRequired,
     metaArtifacts: PropTypes.instanceOf(ImmutableMap),
     metaStages: PropTypes.instanceOf(ImmutableMap),
     metaStatuses: PropTypes.instanceOf(ImmutableMap),
-    metaLabTests: PropTypes.instanceOf(ImmutableMap)
+    metaLabTests: PropTypes.instanceOf(ImmutableMap),
+    summaryFilter: PropTypes.instanceOf(SummaryFilter).isRequired,
+    sampleIdsStageCounts: PropTypes.instanceOf(List).isRequired,
   },
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -40,7 +40,7 @@ export const StageCounts = React.createClass({
   },
 
   _update(filter) {
-    const {fetchSummary} = this.props.actions;
+    const {fetchSummary} = this.props;
     fetchSummary(filter);
   },
 

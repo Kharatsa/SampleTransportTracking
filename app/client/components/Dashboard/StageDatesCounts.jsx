@@ -8,9 +8,9 @@ const StageDatesChartWrapped = WaitOnFetch(StageDatesChart);
 
 export const StageDatesCounts = React.createClass({
   propTypes: {
+    fetchDateSummary: PropTypes.func.isRequired,
     isLoading: PropTypes.bool.isRequired,
     summaryFilter: PropTypes.object,
-    actions: PropTypes.objectOf(PropTypes.func).isRequired,
     stageDates: PropTypes.instanceOf(List).isRequired,
     stageCountsChartData: PropTypes.arrayOf(PropTypes.shape({
       stage: PropTypes.string,
@@ -33,7 +33,7 @@ export const StageDatesCounts = React.createClass({
   },
 
   _update(filter) {
-    const {fetchDateSummary} = this.props.actions;
+    const {fetchDateSummary} = this.props;
     fetchDateSummary(filter);
   },
 

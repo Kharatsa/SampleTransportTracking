@@ -25,5 +25,5 @@ export default connect(
     metaFacilities: state.metaFacilitiesByKey,
     metaLabTests: state.metaLabTestsByKey
   }),
-  dispatch => ({actions: bindActionCreators({fetchSampleDetail}, dispatch)})
+  {fetchSampleDetail},
 )(Sample);

@@ -50,21 +50,32 @@ AuthClient.prototype.all = function() {
  * [getUser description]
  *
  * @method
- * @param  {!Object} options [description]
- * @param {!string} username [description]
- * @param {?bool} [simple=true] [description]
+ * @param  {!Object} options
+ * @param {!string} username
+ * @param {?bool} [includeCredentials=false]
+ * @param {?bool} [simple=true]
  * @return {Promise.<Sequelize.Instance|Object>}
  * @throws {Error} If [options.username is undefined]
  */
 AuthClient.prototype.getUser = BPromise.method(function(options) {
+  options = options || {};
+
   const username = options.username;
   if (typeof username === 'undefined') {
     throw new Error('Missing required parameter username');
   }
   log.debug(`Retrieving User where username=${username}`);
 
+  const params = {where: {username}};
+
+  let UserModel = this.models.Users;
+
+  if (options && options.includeCredentials) {
+    UserModel = UserModel.scope('unsafe');
+  }
+
   return sanitizeUsername(username)
-  .then(username => this.models.Users.findOne({where: {username}}));
+  .then(username => UserModel.findOne({where: {username}}));
 });
 
 /**
@@ -73,6 +84,8 @@ AuthClient.prototype.getUser = BPromise.method(function(options) {
  * @return {Promise.<Object>}
  */
 AuthClient.prototype.changePassword = BPromise.method(function(options) {
+  options = options || {};
+
   if (!(options.username && options.salt && options.digest)) {
     throw new Error('Missing required parameter username, salt, or digest');
   }
@@ -102,12 +115,12 @@ AuthClient.prototype.changePassword = BPromise.method(function(options) {
  * @param {string} options.username [description]
  * @param {string} options.salt [description]
  * @param {string} options.digest [description]
- * @param {boolean} [options.admin=false] [description]
+ * @param {boolean} [options.isAdmin=false] [description]
  * @return {Promise.<Object>}
  */
 AuthClient.prototype.createUser = BPromise.method(function(options) {
   options = _.defaultsDeep(options || {}, {
-    admin: false
+    isAdmin: false
   });
 
   if (!(options.username && options.salt && options.digest)) {
@@ -127,7 +140,7 @@ AuthClient.prototype.createUser = BPromise.method(function(options) {
       username,
       salt: options.salt,
       digest: options.digest,
-      isAdmin: options.admin
+      isAdmin: options.isAdmin
     });
   });
 });

@@ -19,7 +19,7 @@ export const StageCountsContainer = connect(
     metaLabTests: state.metaLabTestsByKey,
     labTestCounts: getLabTestStatusCounts(state)
   }),
-  dispatch => ({actions: bindActionCreators({fetchSummary}, dispatch)})
+  {fetchSummary},
 )(StageCounts);
 
 export default StageCountsContainer;

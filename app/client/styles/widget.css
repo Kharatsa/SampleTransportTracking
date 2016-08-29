@@ -1,0 +1,123 @@
+/* 
+ * Container with title & subtitle
+ *
+ */
+
+.widget {
+  margin: 0.5em;
+  line-height: 1.5em;
+  border: 1px;
+  border-style: solid;
+  background-color: #FFF;
+  border-color: #DDD;
+}
+
+.widget-buttons button {
+  margin: 10px 0px;
+  border-radius: 0;
+}
+
+.widget-buttons div:first-child {
+  margin-left: 5px;
+}
+
+.widget-buttons div:last-child: {
+  margin-right: 5px;
+}
+
+.widget-buttons-pressed {
+  color: #DDD;
+  background: #406A9E;
+}
+
+.widget .widget-header {
+  padding: 10px 10px 0px 10px;
+  height: 30px;
+  background-color: #FFF;
+}
+
+.widget .widget-content {
+  padding: 10px 10px;
+}
+
+.widget .widget-header h3 {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 1em;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1em;
+  float: left;
+}
+
+.widget .widget-header em {
+  float: left;
+  font-size: 0.9em;
+  color: #a4a4a4;
+  line-height: 1em;
+  margin-left: 4px;
+}
+
+.widget
+.widget-table {
+  table-layout: fixed;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.widget
+.widget-table > thead > tr {
+  font-size: 0.9em;
+  background-color: #f2f2f2
+}
+
+.widget
+.widget-table >thead:first-child>tr:first-child>th {
+  border-top: 0;
+}
+
+.widget
+.widget-table>thead>tr>th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #ddd;
+}
+
+.widget
+.widget-table>tbody>tr>td,
+.widget
+.widget-table>tbody>tr>th,
+.widget
+.widget-table>tfoot>tr>td,
+.widget
+.widget-table>tfoot>tr>th,
+.widget
+.widget-table>thead>tr>td,
+.widget
+.widget-table>thead>tr>th {
+  text-align: left;
+  padding: 0.5em;
+  line-height: 1.2em;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+
+.widget-table .col-1-of-2 {
+  width: 30%;
+}
+
+.widget-table .col-2-of-2 {
+  width: 70%;
+}
+
+.widget-table .col-1-of-3 {
+  width: 40%;
+}
+
+.widget-table .col-2-of-3 {
+  width: 30%;
+}
+
+.widget-table .col-3-of-3 {
+  width: 30%;
+}

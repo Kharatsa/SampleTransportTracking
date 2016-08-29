@@ -1,0 +1,21 @@
+#tat-chart .ct-bar {
+  stroke-width: 120px;
+}
+
+#tat-chart {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+#tat-chart svg.ct-chart-bar {
+  order: -1;
+  flex: 1 1 auto;
+}
+
+#tat-chart ul.ct-legend {
+  order: 1;
+  flex: 1 1 auto;
+}

@@ -10,13 +10,13 @@ const TurnAroundsChartWrapped = WaitOnFetch(TurnAroundsChart);
 
 export const TurnArounds = React.createClass({
   propTypes: {
-    isLoading: PropTypes.bool.isRequired,
-    summaryFilter: PropTypes.object,
-    actions: PropTypes.objectOf(PropTypes.func).isRequired,
-    stagesTATs: PropTypes.instanceOf(List).isRequired,
     endToEndTAT: PropTypes.instanceOf(Record).isRequired,
+    fetchTurnArounds: PropTypes.func.isRequired,
+    isLoading: PropTypes.bool.isRequired,
     metaStages: PropTypes.instanceOf(ImmutableMap),
-    metaStatuses: PropTypes.instanceOf(ImmutableMap)
+    metaStatuses: PropTypes.instanceOf(ImmutableMap),
+    summaryFilter: PropTypes.object,
+    stagesTATs: PropTypes.instanceOf(List).isRequired,
   },
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -34,7 +34,7 @@ export const TurnArounds = React.createClass({
   },
 
   _update(filter) {
-    const {fetchTurnArounds} = this.props.actions;
+    const {fetchTurnArounds} = this.props;
     fetchTurnArounds(filter);
   },
 

@@ -1,0 +1,37 @@
+.FlexTable {
+  width: 100%;
+  margin-top: 15px;
+  justify-content: space-round;
+}
+
+.FlexTable__rowColumn, .FlexTable__headerColumn {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headerColumn {
+  text-transform: uppercase;
+  box-sizing: border-box;
+}
+
+.FlexTable__row, .FlexTable__headerRow {
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+
+.noRows {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  color: #bdbdbd;
+}

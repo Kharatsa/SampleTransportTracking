@@ -1,21 +1,13 @@
-import {
-  FETCH_SAMPLE_DETAIL, FETCH_SAMPLE_DETAIL_FAILURE, RECEIVE_SAMPLE_DETAIL,
-  FETCH_METADATA, FETCH_METADATA_FAILURE, RECEIVE_METADATA,
-  FETCH_CHANGES, FETCH_CHANGES_FAILURE, RECEIVE_CHANGES,
-  FETCH_SUMMARY, FETCH_SUMMARY_FAILURE, RECEIVE_SUMMARY,
-  FETCH_TURN_AROUNDS, FETCH_TURN_AROUNDS_FAILURE, RECEIVE_TURN_AROUNDS,
-  FETCH_DATE_SUMMARY, FETCH_DATE_SUMMARY_FAILURE, RECEIVE_DATE_SUMMARY,
-  CHANGE_SUMMARY_FILTER
-} from './actions.js';
+import * as action from './actions.js';
 import * as api from '../api';
 import {SummaryFilter} from '../api/records.js';
 
-const requestMetadata = () => ({type: FETCH_METADATA});
+const requestMetadata = () => ({type: action.FETCH_METADATA});
 
 const fetchMetadataFailure = err =>
-  ({type: FETCH_METADATA_FAILURE, error: err});
+  ({type: action.FETCH_METADATA_FAILURE, error: err});
 
-const receiveMetadata = metadata => ({type: RECEIVE_METADATA, metadata});
+const receiveMetadata = metadata => ({type: action.RECEIVE_METADATA, metadata});
 
 export const fetchMetadata = () => {
   return (dispatch, getState) => {
@@ -28,18 +20,18 @@ export const fetchMetadata = () => {
     return api.getMetadata((err, data) => {
       if (err) {
         dispatch(fetchMetadataFailure(err));
-      } else {
-        dispatch(receiveMetadata(data));
-      }
+        return;
+      } 
+      dispatch(receiveMetadata(data));
     });
   };
 };
 
 const requestSample = sampleId =>
-  ({type: FETCH_SAMPLE_DETAIL, detailSampleId: sampleId});
+  ({type: action.FETCH_SAMPLE_DETAIL, detailSampleId: sampleId});
 
 const fetchSampleDetailFailure = error =>
-  ({type: FETCH_SAMPLE_DETAIL_FAILURE, error});
+  ({type: action.FETCH_SAMPLE_DETAIL_FAILURE, error});
 
 export const fetchSampleDetail = sampleId => {
   return dispatch => {
@@ -47,6 +39,7 @@ export const fetchSampleDetail = sampleId => {
     return api.getSampleDetail(sampleId, (err, data) => {
       if (err) {
         dispatch(fetchSampleDetailFailure(err));
+        return;
       }
       dispatch(receiveSampleDetail(data));
     });
@@ -64,16 +57,16 @@ const receiveSampleDetail = ({
   samples, sampleId, changes, artifacts, labTests,
   changesByArtifactId, changesByLabTestId, changesByStage
 }) => ({
-  type: RECEIVE_SAMPLE_DETAIL,
+  type: action.RECEIVE_SAMPLE_DETAIL,
   samples, sampleId, changes, artifacts, labTests,
   changesByArtifactId, changesByLabTestId, changesByStage
 });
 
 const requestChanges = (summaryFilter, page) =>
-  ({type: FETCH_CHANGES, summaryFilter, page});
+  ({type: action.FETCH_CHANGES, summaryFilter, page});
 
 const fetchChangesFailure = (error, page) =>
-  ({type: FETCH_CHANGES_FAILURE, error, prevPageNumber: page});
+  ({type: action.FETCH_CHANGES_FAILURE, error, prevPageNumber: page});
 
 export const fetchChanges = (summaryFilter, page) => {
   return dispatch => {
@@ -81,6 +74,7 @@ export const fetchChanges = (summaryFilter, page) => {
     return api.getChanges(getFilterValues(summaryFilter), page, (err, data) => {
       if (err) {
         dispatch(fetchChangesFailure(err, page));
+        return;
       }
       dispatch(receiveChanges(data));
     });
@@ -90,18 +84,18 @@ export const fetchChanges = (summaryFilter, page) => {
 const receiveChanges = ({
   changes, changeIds, artifacts, labTests, samples, count
 }) => ({
-  type: RECEIVE_CHANGES,
+  type: action.RECEIVE_CHANGES,
   changes, artifacts, labTests, samples, count, changeIds
 });
 
 const requestSummary = (summaryFilter) =>
-  ({type: FETCH_SUMMARY, summaryFilter});
+  ({type: action.FETCH_SUMMARY, summaryFilter});
 
 const fetchSummaryFailure = (error) =>
-  ({type: FETCH_SUMMARY_FAILURE, error});
+  ({type: action.FETCH_SUMMARY_FAILURE, error});
 
 const receiveSummary = ({sampleIds, artifacts, labTests, totals}) =>
-  ({type: RECEIVE_SUMMARY, sampleIds, artifacts, labTests, totals});
+  ({type: action.RECEIVE_SUMMARY, sampleIds, artifacts, labTests, totals});
 
 export const fetchSummary = (summaryFilter) => {
   return dispatch => {
@@ -109,6 +103,7 @@ export const fetchSummary = (summaryFilter) => {
     return api.getSummary(getFilterValues(summaryFilter), (err, data) => {
       if (err) {
         dispatch(fetchSummaryFailure(err));
+        return;
       }
       dispatch(receiveSummary(data));
     });
@@ -116,13 +111,13 @@ export const fetchSummary = (summaryFilter) => {
 };
 
 const requestTurnArounds = (summaryFilter) =>
-  ({type: FETCH_TURN_AROUNDS, summaryFilter});
+  ({type: action.FETCH_TURN_AROUNDS, summaryFilter});
 
 const fetchTurnAroundsFailure = (error) =>
-  ({type: FETCH_TURN_AROUNDS_FAILURE, error});
+  ({type: action.FETCH_TURN_AROUNDS_FAILURE, error});
 
 const receiveTurnArounds = (turnArounds) =>
-  ({type: RECEIVE_TURN_AROUNDS, turnArounds});
+  ({type: action.RECEIVE_TURN_AROUNDS, turnArounds});
 
 export const fetchTurnArounds = (summaryFilter) => {
   return dispatch => {
@@ -130,6 +125,7 @@ export const fetchTurnArounds = (summaryFilter) => {
     return api.getTurnArounds(getFilterValues(summaryFilter), (err, data) => {
       if (err) {
         dispatch(fetchTurnAroundsFailure(err));
+        return;
       }
       dispatch(receiveTurnArounds(data));
     });
@@ -139,20 +135,20 @@ export const fetchTurnArounds = (summaryFilter) => {
 export const changeSummaryFilter = ({
   afterDate, beforeDate, regionKey, facilityKey
 }) => ({
-  type: CHANGE_SUMMARY_FILTER,
+  type: action.CHANGE_SUMMARY_FILTER,
   summaryFilter: new SummaryFilter({
     afterDate, beforeDate, regionKey, facilityKey
   })
 });
 
 const requestDateSummary = (summaryFilter) =>
-  ({type: FETCH_DATE_SUMMARY, summaryFilter});
+  ({type: action.FETCH_DATE_SUMMARY, summaryFilter});
 
 const fetchDateSummaryFailure = (error) =>
-  ({type: FETCH_DATE_SUMMARY_FAILURE, error});
+  ({type: action.FETCH_DATE_SUMMARY_FAILURE, error});
 
 const receiveDateSummary = data =>
-  ({type: RECEIVE_DATE_SUMMARY, ...data});
+  ({type: action.RECEIVE_DATE_SUMMARY, ...data});
 
 export const fetchDateSummary = (summaryFilter) => {
   return dispatch => {
@@ -160,8 +156,28 @@ export const fetchDateSummary = (summaryFilter) => {
     return api.getStageDates(getFilterValues(summaryFilter), (err, data) => {
       if (err) {
         dispatch(fetchDateSummaryFailure(err));
+        return;
       }
       dispatch(receiveDateSummary(data));
+    });
+  };
+};
+
+const requestUsers = () => ({type: action.FETCH_USERS});
+
+const fetchUsersFailure = (error) => ({type: action.FETCH_USERS_FAILURE, error});
+
+const receiveUsers = (data) => ({type: action.RECEIVE_USERS, ...data});
+
+export const fetchUsers = () => {
+  return dispatch => {
+    dispatch(requestUsers());
+    return api.getUsers((err, data) => {
+      if (err) {
+        dispatch(fetchUsersFailure(err));
+        return;
+      }
+      dispatch(receiveUsers(data));
     });
   };
 };

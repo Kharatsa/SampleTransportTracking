@@ -21,6 +21,7 @@ storage.loadModels(sttmodels);
 storage.loadModels(authmodels);
 const errors = require('server/middleware/errors.js');
 const shutdownhandler = require('server/util/shutdownhandler.js');
+const AuthRoutes = require('server/auth/authroutes.js');
 const AggregateRoutes = require('server/odk/aggregateroutes.js');
 const STTRoutes = require('server/stt/sttroutes.js');
 const DisaRoutes = require('server/disa/disaroutes.js');
@@ -57,6 +58,7 @@ app.use(helmet());
 app.use(requestLog.requestLogger);
 
 // App routes
+app.use('/', AuthRoutes);
 app.use('/odk', AggregateRoutes);
 app.use('/stt', STTRoutes);
 app.use('/disa', DisaRoutes);

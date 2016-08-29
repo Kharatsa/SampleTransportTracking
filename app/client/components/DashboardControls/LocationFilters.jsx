@@ -9,7 +9,7 @@ export const LocationFilters = React.createClass({
     filteredMetaFacilities: PropTypes.object.isRequired,
     filterRegionKey: PropTypes.string,
     filterFacilityKey: PropTypes.string,
-    actions: PropTypes.object.isRequired
+    changeSummaryFilter: PropTypes.func.isRequired,
   },
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -18,7 +18,7 @@ export const LocationFilters = React.createClass({
 
   _selectLocationFilter(selected, type) {
     const {filterRegionKey, filterFacilityKey} = this.props;
-    const {changeSummaryFilter} = this.props.actions;
+    const {changeSummaryFilter} = this.props;
 
     if (!selected) {
       if (type === 'region') {

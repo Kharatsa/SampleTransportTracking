@@ -18,12 +18,12 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 // add custom browserify options here
 const browserifyOptions = {
-  entries: ['app/client/index.js'],
+  entries: ['app/client'],
   extensions: ['.jsx'],
   debug: !IS_PRODUCTION
 };
 const opts = Object.assign({}, watchify.args, browserifyOptions);
-var bundler = browserify(opts);
+let bundler = browserify(opts);
 bundler.transform(babelify.configure({
   babelrc: true,
 }));
@@ -32,7 +32,7 @@ bundler.transform(envify({
   NODE_ENV: process.env.NODE_ENV
 }));
 
-var uglify = function() {
+let uglify = function() {
   return $.uglify().on('error', (err) => {
     $.util.log(err);
     if (IS_PRODUCTION) { throw err; }
@@ -58,19 +58,19 @@ function bundle() {
 bundler.on('log', $.util.log); // output build logs to terminal
 gulp.task('bundle', ['lint'], bundle); // so you can run `gulp js` to build the file
 
-gulp.task('development', function() {
+gulp.task('development', () => {
   bundler = watchify(bundler);
   bundler.on('update', bundle); // on any dep update, runs the bundler
   return;
 });
 
-gulp.task('lint', function() {
+gulp.task('lint', () => {
   return gulp.src([
     'app/**/*.js', '!app/public/**'
   ])
   .pipe($.eslint())
   .pipe($.eslint.format())
-  .pipe($.eslint.results(function(results) {
+  .pipe($.eslint.results((results) => {
     // Called once for all ESLint results.
     $.util.log('Total Results: ' + results.length);
     $.util.log('Total Warnings: ' + results.warningCount);
@@ -78,8 +78,8 @@ gulp.task('lint', function() {
   }));
 });
 
-gulp.task('nodemon', ['lint'], function(cb) {
-  var started = false;
+gulp.task('nodemon', ['lint'], (cb) => {
+  let started = false;
   return nodemon({
     script: 'app/server',
     verbose: true,
@@ -123,7 +123,8 @@ const vendors = [
   'bower_components/pure/grids-responsive-min.css',
   'node_modules/fixed-data-table/dist/fixed-data-table.min.css',
   'node_modules/chartist/dist/chartist.min.css',
-  'node_modules/react-datepicker/dist/react-datepicker.min.css'
+  'node_modules/react-datepicker/dist/react-datepicker.min.css',
+  'node_modules/react-virtualized/styles.css'
 ];
 
 const vendorsDev = [
@@ -131,6 +132,7 @@ const vendorsDev = [
   'bower_components/pure/grids-responsive.css',
   'node_modules/fixed-data-table/dist/fixed-data-table.css',
   'node_modules/chartist/dist/chartist.css',
+  'node_modules/react-virtualized/styles.css',
   'node_modules/react-datepicker/dist/react-datepicker.css'
 ];
 

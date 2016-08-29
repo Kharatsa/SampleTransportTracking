@@ -26,3 +26,4 @@ artifactSample.define({
 
 export const dateStage = new Schema('dateStage', {idAttribute: 'date'});
 
+export const user = new Schema('users');

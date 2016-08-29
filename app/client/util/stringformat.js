@@ -39,9 +39,9 @@ let longFormat;
 let shortFormat;
 let shortDateFormat;
 
-// TODO(sean): This apparently does not work well for distinguishing 
-// different english dialoags (e.g., en-US, en-GB, en-ZA), and so 
-// might be utterly futile here. 
+// TODO(sean): This apparently does not work well for distinguishing
+// different english dialoags (e.g., en-US, en-GB, en-ZA), and so
+// might be utterly futile here.
 try {
   const language = window.navigator.userLanguage || window.navigator.language;
 } catch (err) {

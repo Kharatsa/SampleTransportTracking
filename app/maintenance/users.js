@@ -66,6 +66,7 @@ cli.command('list')
 const handleUserResult = (client, user, username, password, isAdmin) => {
   if (!validUser(user)) {
     log.info('Inserting new user in database');
+    log.debug(`isAdmin? ${isAdmin}`);
 
     return credentials.protect(password)
     .then(result => client.createUser({

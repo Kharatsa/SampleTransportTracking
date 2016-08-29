@@ -17,7 +17,7 @@ export const LocationFilterContainer = connect(
     metaRegions: getMetaRegions(state),
     filteredMetaFacilities: getFilteredMetaFacilities(state)
   }),
-  dispatch => ({actions: bindActionCreators({changeSummaryFilter}, dispatch)})
+  {changeSummaryFilter},
 )(LocationFilters);
 
 export default LocationFilterContainer;

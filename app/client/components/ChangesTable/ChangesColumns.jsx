@@ -45,7 +45,7 @@ export const statusesCol = metadataColumnComponent('Status', 'status');
 export const artifactsCol = metadataColumnComponent('Sample', 'artifactType');
 export const labTestsCol = metadataColumnComponent('Test', 'testType');
 export const rejectionsCol = metadataColumnComponent('Rejection', 'labRejection');
-export const facilitiesCol = metadataColumnComponent('Facility' ,'facility');
+export const facilitiesCol = metadataColumnComponent('Facility', 'facility');
 export const peopleCol = metadataColumnComponent('Rider', 'person');
 
 export const statusDatesCol = ({data, width=DEFAULT_WIDTH}) =>

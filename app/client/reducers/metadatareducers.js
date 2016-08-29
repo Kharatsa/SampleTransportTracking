@@ -1,4 +1,4 @@
-import {RECEIVE_METADATA} from '../actions/actions';
+import {RECEIVE_METADATA, RECEIVE_USERS} from '../actions/actions';
 
 const metaTypeKeysReducer = type => {
   return (state=null, action) => {
@@ -47,3 +47,23 @@ export const metaLabTestsByKey = metaTypeReducer('labTests');
 
 export const metaRejectionsKeys = metaTypeKeysReducer('rejections');
 export const metaRejectionsByKey = metaTypeReducer('rejections');
+
+export const userIds = (state=null, {type, userIds=null}) => {
+  switch (type) {
+  case RECEIVE_USERS: {
+    return userIds;
+  }
+  default:
+    return state;
+  }
+};
+
+export const usersById = (state=null, {type, users=null}) => {
+  switch (type) {
+  case RECEIVE_USERS: {
+    return users;
+  }
+  default:
+    return state;
+  }
+};

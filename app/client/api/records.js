@@ -65,3 +65,11 @@ export const TurnAround = Record({
   to: null,
   averageTATms: 0
 });
+
+export const User = Record({
+  id: null,
+  username: null,
+  createdAt: null,
+  updatedAt: null
+});
+  

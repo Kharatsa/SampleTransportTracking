@@ -1,15 +1,19 @@
 import React, {PropTypes} from 'react';
-// import {withRouter} from 'react-router';
+import shallowCompare from 'react-addons-shallow-compare';
+import {withRouter} from 'react-router';
 
 const stripTrim = str => {
   return str ? str.trim().split(' ').join('') : '';
 };
 
-export const SampleSearch = React.createClass({
-// const SampleSearchBase = React.createClass({
+export const SampleSearch = withRouter(React.createClass({
   propTypes: {
     pushHistory: PropTypes.func.isRequired,
-    // router: PropTypes.object
+    router: PropTypes.object
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   },
 
   getInitialState() {
@@ -19,17 +23,16 @@ export const SampleSearch = React.createClass({
   handleSubmit(event) {
     event.preventDefault();
 
-    // const {router} = this.props;
-    const {pushHistory} = this.props;
+    const {router} = this.props;
     const sampleId = stripTrim(this.state.value);
     if (sampleId.length) {
-      // router.push(`/samples/${sampleId}`);
-      pushHistory(`/samples/${sampleId}`);
+      router.push(`/samples/${sampleId}`);
     }
   },
 
   handleChange(event) {
-    this.setState({value: event.target.value});
+    const sampleId = stripTrim(event.target.value);
+    this.setState({value: sampleId});
   },
 
   render() {
@@ -46,8 +49,6 @@ export const SampleSearch = React.createClass({
       </form>
     );
   }
-});
-
-// export const SampleSearch = withRouter(SampleSearchBase);
+}));
 
 export default SampleSearch;

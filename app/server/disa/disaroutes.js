@@ -9,6 +9,7 @@ const transform = require('server/disa/disatransform.js');
 const disasubmission = require('server/disa/disasubmission.js');
 const aggregatesubmission = require('server/odk/aggregatesubmission.js');
 
+// Disable HTTP authentication during development
 let passport = null;
 let authenticate = null;
 if (process.env.NODE_ENV === 'production') {

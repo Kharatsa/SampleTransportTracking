@@ -10,6 +10,10 @@ const modelwrapper = require('server/storage/modelwrapper.js');
  */
 
 /**
+ * User model. The default scope for Users will exclude sensitive
+ * credentials from queries. Use the `unsafe` scope to retrieve
+ * credential fields.
+ *
  * @typedef {UsersModel}
  * @extends {Sequelize.Model}
  * @property {User}
@@ -45,7 +49,15 @@ const users = modelwrapper({
           }
         },
         {
-          tableName: 'sys_Users'
+          tableName: 'sys_Users',
+          defaultScope: {
+            attributes: {exclude: ['salt', 'digest']}
+          },
+          scopes: {
+            unsafe: {
+              attributes: {}
+            },
+          }
         });
     };
   }

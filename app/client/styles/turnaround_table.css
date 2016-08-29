@@ -1,0 +1,27 @@
+#tat-table {
+  table-layout: fixed;
+  width: 100%;
+  white-space: nowrap;
+}
+
+#tat-table th, td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#tat-table .col-from {
+  width: 30%;
+}
+
+#tat-table .col-to {
+  width: 30%;
+}
+
+#tat-table .col-tat {
+  width: 20%;
+}
+
+#tat-table .col-total {
+  width: 20%;
+}

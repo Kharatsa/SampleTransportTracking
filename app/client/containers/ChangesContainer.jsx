@@ -20,7 +20,7 @@ export const ChangesContainer = connect(
     metaPeople: state.metaPeopleByKey,
     summaryFilter: state.summaryFilter
   }),
-  dispatch => ({actions: bindActionCreators({fetchChanges}, dispatch)})
+  {fetchChanges},
 )(Changes);
 
 export default ChangesContainer;

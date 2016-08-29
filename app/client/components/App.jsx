@@ -4,12 +4,12 @@ const APP_NAME = 'Sample Tracking';
 
 export const AppComponent = React.createClass({
   propTypes: {
-    actions: PropTypes.object,
-    children: PropTypes.node
+    fetchMetadata: PropTypes.func.isRequired,
+    children: PropTypes.node,
   },
 
   componentWillMount() {
-    const {fetchMetadata} = this.props.actions;
+    const {fetchMetadata} = this.props;
     fetchMetadata();
   },
 

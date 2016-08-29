@@ -9,7 +9,7 @@ export const Sample = React.createClass({
   propTypes: {
     isLoading: PropTypes.bool.isRequired,
     params: PropTypes.shape({sampleId: PropTypes.string}),
-    actions: PropTypes.shape({fetchSampleDetail: PropTypes.func.isRequired})
+    fetchSampleDetail: PropTypes.func.isRequired,
   },
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -18,7 +18,7 @@ export const Sample = React.createClass({
 
   componentWillMount() {
     const {sampleId} = this.props.params;
-    const {fetchSampleDetail} = this.props.actions;
+    const {fetchSampleDetail} = this.props;
     fetchSampleDetail(sampleId);
   },
 

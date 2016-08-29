@@ -1,6 +1,5 @@
 {
     "preset": "google",
-    "esnext": true,
     "plugins": [
         "jscs-jsdoc"
     ],

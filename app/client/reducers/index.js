@@ -10,6 +10,7 @@ import * as filterReducers from './filterreducers';
 import * as UIReducers from './uireducers';
 import * as paginationReducers from './paginationreducers';
 
+// Consolidated state tree
 const reducers = Object.assign({},
   changesReducers,
   artifactsReducers,

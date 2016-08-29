@@ -13,7 +13,7 @@ export const StageDatesCountsContainer = connect(
     stageDates: state.summaryStageCountsDates,
     stageCountsChartData: getStageCountsChartData(state)
   }),
-  dispatch => ({actions: bindActionCreators({fetchDateSummary}, dispatch)})
+  {fetchDateSummary}
 )(StageDatesCounts);
 
 export default StageDatesCountsContainer;

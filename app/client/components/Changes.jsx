@@ -24,6 +24,7 @@ export const ChangesListingWrapped = WaitOnFetch(ChangesListing);
 
 export const Changes = React.createClass({
   propTypes: {
+    fetchChanges: PropTypes.func.isRequired,
     isLoading: PropTypes.bool.isRequired,
     page: PropTypes.any,
     summaryFilter: PropTypes.object
@@ -47,7 +48,7 @@ export const Changes = React.createClass({
   },
 
   _update(filter, page) {
-    const {fetchChanges} = this.props.actions;
+    const {fetchChanges} = this.props;
     fetchChanges(filter, page);
   },
 

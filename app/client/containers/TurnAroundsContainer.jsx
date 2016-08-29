@@ -15,7 +15,7 @@ export const TurnAroundsContainer = connect(
     stagesTATs: getStagesTATs(state),
     endToEndTAT: getEndToEndTAT(state)
   }),
-  dispatch => ({actions: bindActionCreators({fetchTurnArounds}, dispatch)})
+  {fetchTurnArounds},
 )(TurnArounds);
 
 export default TurnAroundsContainer;

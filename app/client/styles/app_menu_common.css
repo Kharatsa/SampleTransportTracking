@@ -1,0 +1,21 @@
+.widget-table-icon {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.black-bg
+.pure-menu-link:active {
+  color: #DDD;
+  background-color: #406A9E;
+}
+
+.black-bg
+.pure-menu-children {
+  color: #DDD;
+}
+
+.blue-bg, .green-bg, .black-bg,
+.pure-menu-link:hover,
+.pure-menu-link:focus {
+  background: #3D4347;
+}

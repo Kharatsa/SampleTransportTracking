@@ -21,5 +21,5 @@ export {
   Changes,
   Sample,
   ChangesExportLink,
-  TurnArounds
+  TurnArounds,
 };

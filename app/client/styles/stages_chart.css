@@ -1,0 +1,17 @@
+#stages-chart {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+
+#stages-chart ul.ct-legend {
+  flex: 1 1 15%;
+}
+
+#stages-chart svg.ct-chart-bar {
+  flex: 1 1 85%;
+}
+

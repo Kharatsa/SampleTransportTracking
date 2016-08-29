@@ -17,7 +17,7 @@ export const DateFilters = React.createClass({
   propTypes: {
     afterDateFilter: PropTypes.instanceOf(Moment).isRequired,
     beforeDateFilter: PropTypes.instanceOf(Moment).isRequired,
-    actions: PropTypes.object.isRequired
+    changeSummaryFilter: PropTypes.func.isRequired,
   },
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -25,7 +25,7 @@ export const DateFilters = React.createClass({
   },
 
   selectAfterDate(afterDateInput) {
-    const {changeSummaryFilter} = this.props.actions;
+    const {changeSummaryFilter} = this.props;
     const {afterDateFilter, beforeDateFilter} = this.props;
 
     if (afterDateInput !== afterDateFilter) {
@@ -36,7 +36,7 @@ export const DateFilters = React.createClass({
   },
 
   selectBeforeDate(beforeDateInput) {
-    const {changeSummaryFilter} = this.props.actions;
+    const {changeSummaryFilter} = this.props;
     const {afterDateFilter, beforeDateFilter} = this.props;
 
     if (beforeDateInput !== beforeDateFilter) {

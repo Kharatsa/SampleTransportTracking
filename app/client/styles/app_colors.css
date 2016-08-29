@@ -1,0 +1,29 @@
+/*
+  #FFF - white
+  #1C9352 - green
+  rgba(28, 147, 82, 1) - green
+  #406A9E - blue
+  #32373A - black
+  #3D4347 - black light
+  #F9F9F9 - grey
+  #DDD    - light grey
+  #EAEAEA - light on dark text
+*/
+
+.green-bg {
+ background: #1C9352;
+}
+
+.blue-bg {
+  background: #406A9E;
+  color: #FFF;
+}
+
+.grey-bg {
+ background: #DDD;
+}
+
+.black-bg {
+  background: #32373A;
+  color: #FFF;
+}

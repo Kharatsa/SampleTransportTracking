@@ -1,0 +1,13 @@
+.dashboard-top-bar {
+  text-align: center;
+  margin: 0.5rem 0 0.5rem 0;
+}
+
+h3.dashboard-title {
+  font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: center;
+  font-weight: 200;
+  line-height: 1.5;
+  margin: 1em 0 0.2em 0;
+  color: #3D4347;
+}

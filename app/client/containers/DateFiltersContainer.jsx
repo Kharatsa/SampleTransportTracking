@@ -8,7 +8,7 @@ export const DateFiltersContainer = connect(
     afterDateFilter: state.summaryFilter.get('afterDate', null),
     beforeDateFilter: state.summaryFilter.get('beforeDate', null)
   }),
-  dispatch => ({actions: bindActionCreators({changeSummaryFilter}, dispatch)})
+  {changeSummaryFilter},
 )(DateFilters);
 
 export default DateFiltersContainer;
