@@ -15,7 +15,7 @@ describe('Authentication Components', () => {
   describe('credentials utilities', () => {
     var password = 'password';
 
-    it('should produce unique digests for identical passwords', done => {
+    it('should produce unique digests for identical passwords', () => {
       return credentials.protect(password)
       .then(first => {
         var firstSalt = first.salt;
@@ -25,11 +25,10 @@ describe('Authentication Components', () => {
           expect(second.salt).to.not.equal(firstSalt);
           expect(second.digest).to.not.equal(firstDigest);
         });
-      })
-      .then(() => done());
+      });
     });
 
-    it('should verify a password given a salt and digest', done => {
+    it('should verify a password given a salt and digest', () => {
       return credentials.protect(password)
       .then(result => {
         // These would be saved in a db for a given user
@@ -45,8 +44,7 @@ describe('Authentication Components', () => {
         .then(valid =>
           expect(valid).to.be.true
         );
-      })
-      .then(() => done());
+      });
     });
   });
 
@@ -55,7 +53,7 @@ describe('Authentication Components', () => {
     var username = 'testuser';
     var password = 'password';
 
-    before(done => {
+    before(() => {
       storage.init({config: config.db});
       storage.loadModel(users);
 
@@ -64,20 +62,20 @@ describe('Authentication Components', () => {
         models: storage.models
       });
 
-      return storage.db.sync().then(() => done());
+      return storage.db.sync();
     });
 
-    it('should create new users', done => {
+    it('should create new users', () => {
       return credentials.protect(password)
       .then(result => client.createUser({
         username, salt: result.salt, digest: result.digest
       }))
       .then(user => {
         expect(user.username).to.equal(username.toUpperCase());
-      }).then(() => done());
+      });
     });
 
-    it('should not allow long usernames', done => {
+    it('should not allow long usernames', () => {
       var invalid = [];
       var charCount = authclient.USERNAME_MAX_LENGTH + 1;
       for (var i = 0; i < charCount; i++) {
@@ -91,8 +89,7 @@ describe('Authentication Components', () => {
         digest: result.digest
       }))
       .then(user => expect(user).to.be.undefined)
-      .catch(err => expect(err).to.be.instanceof(Error))
-      .then(() => done());
+      .catch(err => expect(err).to.be.instanceof(Error));
     });
 
     it('should not allow empty usernames', () =>
@@ -104,13 +101,13 @@ describe('Authentication Components', () => {
       ).to.eventually.be.rejectedWith(Error)
     );
 
-    it('should get existing users', done => {
-      client.getUser({username})
+    it('should get existing users', () => {
+      return client.getUser({username})
       .then(user => {
         expect(user.username).to.equal(username.toUpperCase());
         return credentials.isValid(password, user.salt, user.digest);
       })
-      .then(valid => expect(valid).to.be.true).then(() => done());
+      .then(valid => expect(valid).to.be.true);
     });
 
   });

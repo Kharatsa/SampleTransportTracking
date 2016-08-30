@@ -35,7 +35,7 @@ describe('Sample Transport Tracking Sample IDs client', () => {
 
   let client = null;
   let models = null;
-  before(done => {
+  before(() => {
     storage.init({config: config.db});
     storage.loadModels(metamodels);
     storage.loadModels(sttmodels);
@@ -48,7 +48,6 @@ describe('Sample Transport Tracking Sample IDs client', () => {
     .then(() => prepareserver())
     .then(() => testmeta.load())
     .then(() => models.SampleIds.bulkCreate(sampleIds))
-    .then(() => done())
     .catch(err => console.error(err, err.message, err.stack));
   });
 

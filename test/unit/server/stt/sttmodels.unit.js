@@ -14,7 +14,7 @@ const dbresult = require('server/storage/dbresult.js');
 describe('Sample Transport Tracking Database Models', () => {
   var models;
   var Sequelize;
-  before(done => {
+  before(() => {
     storage.init({config: config.db});
     storage.loadModels(metamodels);
     storage.loadModels(sttmodels);
@@ -25,8 +25,7 @@ describe('Sample Transport Tracking Database Models', () => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
     .then(() => prepareserver())
-    .then(() => testmeta.load())
-    .then(() => done());
+    .then(() => testmeta.load());
   });
 
   describe('persist data', () => {
