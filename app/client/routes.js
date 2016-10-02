@@ -2,7 +2,7 @@ import React from 'react';
 import Route from 'react-router/lib/Route';
 import IndexRoute from 'react-router/lib/IndexRoute';
 import {App, Dashboard, Changes, Sample, Admin, MissingRoute} from './pages';
-import {UsersPage} from './pages/Admin';
+import {UserListPage, MetaListPage} from './pages/Admin';
 
 export default (
   <Route path='/' component={App}>
@@ -11,11 +11,10 @@ export default (
     <Route path='changes(/:page)' component={Changes} />
     <Route path='samples(/:sampleId)' component={Sample} />
     <Route path='admin' component={Admin}>
-      <IndexRoute component={UsersPage} />
-      <Route path='users' component={UsersPage}>
-        <Route path=':userId' component={Admin} />
-      </Route>
-      <Route path='meta' component={Admin}>
+      <IndexRoute component={UserListPage} />
+      <Route path='users/:userId' component={Admin}/>
+      <Route path='users' component={UserListPage}/>
+      <Route path='meta' component={MetaListPage}>
           <Route path=':type/:key' component={Admin} />
           <Route path=':type' component={Admin}>
         </Route>

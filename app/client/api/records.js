@@ -69,7 +69,7 @@ export const TurnAround = Record({
 export const User = Record({
   id: null,
   username: null,
+  isAdmin: false,
   createdAt: null,
   updatedAt: null
 });
-  

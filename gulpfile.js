@@ -3,6 +3,7 @@
 const path = require('path');
 require('app-module-path').addPath(path.join(__dirname, 'app'));
 
+const _ = require('lodash');
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const nodemon = require('gulp-nodemon');
@@ -28,9 +29,11 @@ bundler.transform(babelify.configure({
   babelrc: true,
 }));
 
-bundler.transform(envify({
-  NODE_ENV: process.env.NODE_ENV
-}));
+const environment = _.assign(
+  {NODE_ENV: process.env.NODE_ENV},
+  config.common);
+
+bundler.transform(envify(environment));
 
 let uglify = function() {
   return $.uglify().on('error', (err) => {
