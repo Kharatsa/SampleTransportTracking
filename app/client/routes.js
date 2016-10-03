@@ -14,10 +14,9 @@ export default (
       <IndexRoute component={UserListPage} />
       <Route path='users/:userId' component={Admin}/>
       <Route path='users' component={UserListPage}/>
-      <Route path='meta' component={MetaListPage}>
-          <Route path=':type/:key' component={Admin} />
-          <Route path=':type' component={Admin}>
-        </Route>
+      <Route path='meta' component={MetaListPage}/>
+      <Route path='meta/:type' component={MetaListPage}>
+          <Route path=':key' component={Admin}/>
       </Route>
     </Route>
     <Route path='*' component={MissingRoute} />

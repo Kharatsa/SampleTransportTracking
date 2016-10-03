@@ -1,14 +1,10 @@
 import React, {PropTypes} from 'react';
 import {List, Map as ImmutableMap} from 'immutable';
+import {Column} from 'react-virtualized';
 import {
-  Table, Column, AutoSizer, WindowScroller
-} from 'react-virtualized';
-import {CheckBoxColumn, LinkColumn, DateColumn} from '../Tables';
-
-const defaultProps = {
-  width: 150,
-  flexGrow: 1
-};
+  DefaultTable, CheckBoxColumn, LinkColumn, DateColumn
+} from '../Tables';
+import {columnDefaults, immutablePairRowGetter} from './admin_utils.js';
 
 const getUserDetailURL = ({dataKey, rowData}) => {
   return {
@@ -17,66 +13,49 @@ const getUserDetailURL = ({dataKey, rowData}) => {
   };
 };
 
-const userByIdRowGetter = ({userIds, usersById}) => {
-  return ({index}) => {
-    const userId = userIds.get(index, null);
-    return usersById.get(`${userId}`, null);
-  };
-};
-
 export const UsersTable = ({userIds, usersById}) => {
   const numRows = userIds ? userIds.size : 0;
-  return (
-    <div>
-      <WindowScroller>
-        {({height, scrollTop}) => (
-          <AutoSizer disableHeight>
-            {({width}) => (
-              <Table
-                autoHeight
-                headerClassName='headerColumn'
-                headerHeight={40}
-                height={height}
-                rowCount={numRows}
-                rowHeight={30}
-                rowGetter={userByIdRowGetter({userIds, usersById})}
-                scrollTop={scrollTop}
-                width={width}
-              >
-                <Column
-                  {...defaultProps} label='Username' dataKey='username'/>
-                <Column
-                  {...defaultProps} label='Name' dataKey='name'/>
-                {DateColumn({
-                  ...defaultProps,
-                  width: 80,
-                  label: 'Created',
-                  dataKey: 'createdAt',
-                })}
-                {DateColumn({
-                  ...defaultProps,
-                  width: 80,
-                  label: 'Updated',
-                  dataKey: 'updatedAt',
-                })}
-                {CheckBoxColumn({
-                  ...defaultProps,
-                  label: 'Admin',
-                  dataKey: 'isAdmin',
-                  width: 60,
-                })}
-                {LinkColumn({
-                  ...defaultProps,
-                  cellDataGetter: getUserDetailURL,
-                  label: '',
-                  dataKey: 'id'
-                })}
-              </Table>
-            )}
-          </AutoSizer>
-        )}
-      </WindowScroller>
-    </div>);
+
+  const columns = [
+    <Column {...columnDefaults} key={1} label='Username' dataKey='username'/>,
+    <Column {...columnDefaults} key={2} label='Name' dataKey='name'/>,
+    DateColumn({
+      ...columnDefaults,
+      key: 3,
+      width: 80,
+      label: 'Created',
+      dataKey: 'createdAt',
+    }),
+    DateColumn({
+      ...columnDefaults,
+      key: 4,
+      width: 80,
+      label: 'Updated',
+      dataKey: 'updatedAt',
+    }),
+    CheckBoxColumn({
+      ...columnDefaults,
+      key: 5,
+      label: 'Admin',
+      dataKey: 'isAdmin',
+      width: 60,
+    }),
+    LinkColumn({
+      ...columnDefaults,
+      key: 6,
+      cellDataGetter: getUserDetailURL,
+      label: '',
+      dataKey: 'id'
+    }),
+  ];
+
+  return DefaultTable({
+    numRows,
+    rowGetter: immutablePairRowGetter({
+      keys: userIds, valuesByKey: usersById
+    }),
+    children: columns,
+  });
 };
 
 UsersTable.propTypes = {

@@ -38,3 +38,8 @@ export const cellRendererPropTypes = {
   key: PropTypes.any.isRequired,
   style: PropTypes.object.isRequired,
 };
+
+/**
+ * via https://facebook.github.io/react/tips/children-props-type.html
+ **/
+export const childrenPropType = PropTypes.node;

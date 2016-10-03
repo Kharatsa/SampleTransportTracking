@@ -106,6 +106,23 @@ const isLabStatus = status => !isScanStatus(status);
 
 const isRejectedTest = status => status === LAB_STATUSES.REJECTED;
 
+const META_TYPES = {
+  ARTIFACTS: 'artifacts',
+  FACILITIES: 'facilities',
+  PEOPLE: 'people',
+  LABS: 'labs',
+  TESTS: 'labtests',
+  REJECTIONS: 'labrejections',
+  STATUSES: 'statuses',
+  STAGES: 'stages',
+};
+
+const META_TYPES_ORDER = [
+  META_TYPES.ARTIFACTS, META_TYPES.FACILITIES, META_TYPES.PEOPLE,
+  META_TYPES.LABS, META_TYPES.TESTS, META_TYPES.REJECTIONS,
+  META_TYPES.REJECTIONS, META_TYPES.STATUSES, META_TYPES.STAGES,
+];
+
 module.exports = {
   SCAN_STAGES,
   SCAN_STAGES_ORDER,
@@ -125,5 +142,7 @@ module.exports = {
   isLabStage,
   isProblemScan,
   isLabStatus,
-  isRejectedTest
+  isRejectedTest,
+  META_TYPES,
+  META_TYPES_ORDER,
 };
