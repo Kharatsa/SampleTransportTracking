@@ -15,7 +15,7 @@ export const immutablePairRowGetter = ({keys, valuesByKey}) => {
     if (rowKey !== null) {
       return valuesByKey.get(`${rowKey}`, null);
     } else {
-      return {};
+      return null;
     }
   };
 };

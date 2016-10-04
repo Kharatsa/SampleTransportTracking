@@ -6,21 +6,9 @@
   margin-bottom: 0.5em;
 }
 
-.black-bg
-.pure-menu-active >
-.pure-menu-link,
-.pure-menu-link:hover,
-.pure-menu-link:focus {
-  color: inherit;
-  background-color: inherit;
-}
-
-.pure-menu-item {
-  background: #32373A;
-}
-
-.pure-menu-heading {
-  font-weight: bold;
+#menu .pure-menu-heading,
+#detail-menu .pure-menu-heading {
+  background: #1C9352;
 }
 
 #menu

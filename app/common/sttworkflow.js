@@ -111,8 +111,8 @@ const META_TYPES = {
   FACILITIES: 'facilities',
   PEOPLE: 'people',
   LABS: 'labs',
-  TESTS: 'labtests',
-  REJECTIONS: 'labrejections',
+  TESTS: 'labTests',
+  REJECTIONS: 'rejections',
   STATUSES: 'statuses',
   STAGES: 'stages',
 };
@@ -120,7 +120,7 @@ const META_TYPES = {
 const META_TYPES_ORDER = [
   META_TYPES.ARTIFACTS, META_TYPES.FACILITIES, META_TYPES.PEOPLE,
   META_TYPES.LABS, META_TYPES.TESTS, META_TYPES.REJECTIONS,
-  META_TYPES.REJECTIONS, META_TYPES.STATUSES, META_TYPES.STAGES,
+  META_TYPES.STATUSES, META_TYPES.STAGES,
 ];
 
 module.exports = {

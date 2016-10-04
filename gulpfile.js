@@ -48,7 +48,6 @@ function bundle() {
       $.util.log(err);
       if (IS_PRODUCTION) { throw err; }
     })
-    // .on('error', $.util.log.bind($.util, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(IS_PRODUCTION ? $.util.noop() : $.sourcemaps.init({loadMaps: true}))

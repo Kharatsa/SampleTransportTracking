@@ -50,8 +50,6 @@ const descTATElem = (metaStatuses, metaStages, step) => {
 
 export const TurnAroundsChart = ({stagesTATs, metaStages, metaStatuses}) => {
   // Horizontal 1-dimensional bar chart with 1 "y" value per stage
-  if (process.env.NODE_ENV !== 'production')
-    console.debug('metaStages', metaStages.toJS());
   const data = stagesTATs.map((tat) => {
     const fromDescElem = descTATElem(metaStatuses, metaStages, tat.get('from'));
     const toDescElem = descTATElem(metaStatuses, metaStages, tat.get('to'));
