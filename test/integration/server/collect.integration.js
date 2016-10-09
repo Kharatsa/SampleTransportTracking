@@ -26,19 +26,18 @@ describe('ODK Collect Submission API', function() {
 
   const dataPath = path.join(__dirname, '..', '..', 'data');
 
-  before(done => {
+  before(() => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
     .then(() => prepareserver())
     .then(() => testmeta.load())
-    .catch(console.error)
-    .then(() => done());
+    .catch(console.error);
   });
 
   const expectedResponse = 'Submission successful';
 
-  it('should accept new odk collect sdepart submissions', done => {
-    request(app)
+  it('should accept new odk collect sdepart submissions', () => {
+    return request(app)
     .post('/odk/submission')
     .type('form')
     .attach(
@@ -48,13 +47,11 @@ describe('ODK Collect Submission API', function() {
     )
     .toPromise()
     .tap(res => expect(res.text).to.equal(expectedResponse))
-    .tap(res => expect(res.statusCode).to.equal(201))
-    .then(() => done())
-    .catch(err => done(err));
+    .tap(res => expect(res.statusCode).to.equal(201));
   });
 
-  it('should accept new odk collect sdepart submissions (2)', done => {
-    request(app)
+  it('should accept new odk collect sdepart submissions (2)', () => {
+    return request(app)
     .post('/odk/submission')
     .type('form')
     .attach(
@@ -64,13 +61,11 @@ describe('ODK Collect Submission API', function() {
     )
     .toPromise()
     .tap(res => expect(res.text).to.equal(expectedResponse))
-    .tap(res => expect(res.statusCode).to.equal(201))
-    .then(() => done())
-    .catch(err => done(err));
+    .tap(res => expect(res.statusCode).to.equal(201));
   });
 
-  it('should accept new odk collect sarrive submissions', done => {
-    request(app)
+  it('should accept new odk collect sarrive submissions', () => {
+    return request(app)
     .post('/odk/submission')
     .type('form')
     .attach(
@@ -80,13 +75,11 @@ describe('ODK Collect Submission API', function() {
     )
     .toPromise()
     .tap(res => expect(res.text).to.equal(expectedResponse))
-    .tap(res => expect(res.statusCode).to.equal(201))
-    .then(() => done())
-    .catch(err => done(err));
+    .tap(res => expect(res.statusCode).to.equal(201));
   });
 
-  it('should accept new odk collect rdepart submissions', done => {
-    request(app)
+  it('should accept new odk collect rdepart submissions', () => {
+    return request(app)
     .post('/odk/submission')
     .type('form')
     .attach(
@@ -96,13 +89,11 @@ describe('ODK Collect Submission API', function() {
     )
     .toPromise()
     .tap(res => expect(res.text).to.equal(expectedResponse))
-    .tap(res => expect(res.statusCode).to.equal(201))
-    .then(() => done())
-    .catch(err => done(err));
+    .tap(res => expect(res.statusCode).to.equal(201));
   });
 
-  it('should accept new odk collect rarrive submissions', done => {
-    request(app)
+  it('should accept new odk collect rarrive submissions', () => {
+    return request(app)
     .post('/odk/submission')
     .type('form')
     .attach(
@@ -112,9 +103,7 @@ describe('ODK Collect Submission API', function() {
     )
     .toPromise()
     .tap(res => expect(res.text).to.equal(expectedResponse))
-    .tap(res => expect(res.statusCode).to.equal(201))
-    .then(() => done())
-    .catch(err => done(err));
+    .tap(res => expect(res.statusCode).to.equal(201));
   });
 
 });

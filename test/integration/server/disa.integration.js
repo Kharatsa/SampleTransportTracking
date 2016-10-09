@@ -23,7 +23,6 @@ app.use('/disa', DisaRoutes);
 
 describe('Disa Labs Lab Status Update API', function() {
   this.timeout(5000);
-  // const sampleIds = require('../../data/sampleids.test.json');
 
   const manyUpdates = fs.readFileSync(
     `${path.join(__dirname, '..', '..', 'data', 'disa-many.xml')}`
@@ -37,63 +36,53 @@ describe('Disa Labs Lab Status Update API', function() {
     `${path.join(__dirname, '..', '..', 'data', 'disa-single.xml')}`
   );
 
-  before(done => {
+  before(() => {
     return storage.db.dropAllSchemas()
     .then(() => storage.db.sync())
     .then(() => prepareserver())
-    // .then(() => storage.models.SampleIds.bulkCreate(sampleIds))
-    .then(() => done());
+    .catch(console.error);
   });
 
   const expectedResponse = 'Submission successful';
 
-  it('should accept new lab status submissions', done => {
-    request(app)
-    .post('/disa/status')
-    .type('application/xml')
-
-    .send(manyUpdates)
-    // .expect(201)
-    .toPromise()
-    .then(res => expect(res.text).to.equal(expectedResponse))
-    .then(() => done())
-    .catch(err => done(err));
-  });
-
-  it('should handle duplicate lab status submissions', done => {
-    request(app)
+  it('should accept new lab status submissions', () => {
+    return request(app)
     .post('/disa/status')
     .type('application/xml')
     .send(manyUpdates)
     .toPromise()
     .tap(res => expect(res.text).to.equal(expectedResponse))
-    .tap(res => expect(res.statusCode).to.equal(201))
-    .then(() => done())
-    .catch(err => done(err));
+    .tap(res => expect(res.statusCode).to.equal(201));
   });
 
-  it('should handle updated lab status submissions', done => {
-    request(app)
+  it('should handle duplicate lab status submissions', () => {
+    return request(app)
+    .post('/disa/status')
+    .type('application/xml')
+    .send(manyUpdates)
+    .toPromise()
+    .tap(res => expect(res.text).to.equal(expectedResponse))
+    .tap(res => expect(res.statusCode).to.equal(201));
+  });
+
+  it('should handle updated lab status submissions', () => {
+    return request(app)
     .post('/disa/status')
     .type('application/xml')
     .send(manyUpdatesAmended)
     .toPromise()
     .tap(res => expect(res.text).to.equal(expectedResponse))
-    .tap(res => expect(res.statusCode).to.equal(201))
-    .then(() => done())
-    .catch(err => done(err));
+    .tap(res => expect(res.statusCode).to.equal(201));
   });
 
-  it('should handle a lab status submission with one update', done => {
-    request(app)
+  it('should handle a lab status submission with one update', () => {
+    return request(app)
     .post('/disa/status')
     .type('application/xml')
     .send(singleUpdate)
     .toPromise()
     .tap(res => expect(res.text).to.equal(expectedResponse))
-    .tap(res => expect(res.statusCode).to.equal(201))
-    .then(() => done())
-    .catch(err => done(err));
+    .tap(res => expect(res.statusCode).to.equal(201));
   });
 
 });

@@ -101,13 +101,22 @@ describe('Authentication Components', () => {
       ).to.eventually.be.rejectedWith(Error)
     );
 
-    it('should get existing users', () => {
-      return client.getUser({username})
+    it('should get existing users with sensitive data', () => {
+      return client.getUser({username, includeCredentials: true})
       .then(user => {
         expect(user.username).to.equal(username.toUpperCase());
         return credentials.isValid(password, user.salt, user.digest);
       })
       .then(valid => expect(valid).to.be.true);
+    });
+
+    it('should get existing users excluding sensitive data', () => {
+      return client.getUser({username})
+      .then(user => {
+        expect(user.username).to.equal(username.toUpperCase());
+        expect(user.salt).to.be.undefined;
+        expect(user.digest).to.be.undefined;
+      });
     });
 
   });
