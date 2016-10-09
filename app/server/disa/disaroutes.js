@@ -47,7 +47,7 @@ const databaseUpdated = BPromise.method(synced =>
   Object.keys(synced).some(key => {
     const entity = synced[key];
     if (entity && entity.inserted.length || entity.updated.length) {
-      return true
+      return true;
     }
     return false;
   }));

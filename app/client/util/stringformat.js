@@ -1,3 +1,5 @@
+/* global require */
+
 import moment from 'moment';
 
 const config = require('../../config/commonconfig.js');

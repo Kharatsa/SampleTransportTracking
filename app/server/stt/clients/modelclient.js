@@ -42,6 +42,6 @@ ModelClient.prototype.getLimit = function(options) {
     return options.limit;
   }
   return this.limit;
-}
+};
 
 module.exports = ModelClient;

@@ -208,7 +208,7 @@ const updates = (merged, compareProps) => {
   .filter(item => {
     try {
       if (typeof compareProps === 'undefined') {
-      return !dbresult.commonPropsEqual(item.incoming, item.local)
+        return !dbresult.commonPropsEqual(item.incoming, item.local);
       }
       return !dbresult.enumeratedPropsEqual(
         item.incoming, item.local, compareProps

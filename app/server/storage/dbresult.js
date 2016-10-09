@@ -49,6 +49,10 @@ const omitDBCols = result =>  {
 };
 
 /**
+ * Checks equality for a given property name across 2 different objects.
+ * For date objects, each is compared with getTime() (i.e., a numberic
+ * equivalent).
+ *
  * @param  {Object} source
  * @param  {Object} target
  * @param  {string} prop
@@ -64,7 +68,7 @@ const propIsEqual = (source, target, prop) => {
     (_.isDate(target[prop]) ? target[prop].getTime() : target[prop]) ===
     (_.isDate(source[prop]) ? source[prop].getTime() : source[prop])
   );
-}
+};
 
 /**
  * Checks 2 objects for equality. Objects are equal if the target shares all
@@ -88,9 +92,7 @@ const commonPropsEqual = (source, target) => {
  * @return {boolean}
  */
 const enumeratedPropsEqual = (source, target, props) => {
-  return props.every(prop => {
-    return propIsEqual(source, target, prop)
-  });
+  return props.every(prop => propIsEqual(source, target, prop));
 };
 
 /**

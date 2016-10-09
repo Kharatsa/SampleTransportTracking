@@ -6,7 +6,6 @@
  * derive the collection of updates and inserts necessary for all models/tables.
  */
 
-const _ = require('lodash');
 const BPromise = require('bluebird');
 const log = require('server/util/logapp.js');
 const datamerge = require('server/util/datamerge.js');
@@ -16,7 +15,6 @@ const sttclient = require('server/stt/clients/sttclient.js');
 const client = sttclient({db: storage.db, models: storage.models});
 
 /**
- * [description]
  * @param  {Object} synced [description]
  * @return {Array.<Object>}        [description]
  */
@@ -50,7 +48,6 @@ const updateAndInsert = (merged, options) => {
 };
 
 /**
- * [description]
  * @param  {Array.<Object>} ids [description]
  * @return {Promise.<Object>}     [description]
  */
@@ -117,7 +114,6 @@ const metaRejections = metaHandler(client.metaRejections, 'MetaRejections');
 const metaStages = metaHandler(client.metaStages, 'MetaStages');
 
 /**
- * [description]
  * @param  {Array.<Object>} incoming [description]
  * @return {Promise.<Object>}      [description]
  */
@@ -137,7 +133,6 @@ const artifacts = incoming => {
 };
 
 /**
- * [description]
  * @param  {Array.<Object>} incoming [description]
  * @return {Promise.<Object>}      [description]
  */
@@ -151,12 +146,11 @@ const labTests = incoming => {
   .tap(merged => log.debug('labTests merged', merged));
 
   return merge.then(merged =>
-    updateAndInsert(merged, {modelName:'LabTests', uniqueProps: ['uuid']})
+    updateAndInsert(merged, {modelName: 'LabTests', uniqueProps: ['uuid']})
   );
 };
 
 /**
- * [description]
  * @param  {Array.<Object>} incoming [description]
  * @return {Promise.<Object>}      [description]
  */
@@ -174,7 +168,6 @@ const scanChanges = incoming => {
 };
 
 /**
- * [description]
  * @param  {Array.<Object>} incoming [description]
  * @return {Promise.<Object>}      [description]
  */

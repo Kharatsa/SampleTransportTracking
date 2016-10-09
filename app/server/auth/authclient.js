@@ -66,8 +66,6 @@ AuthClient.prototype.getUser = BPromise.method(function(options) {
   }
   log.debug(`Retrieving User where username=${username}`);
 
-  const params = {where: {username}};
-
   let UserModel = this.models.Users;
 
   if (options && options.includeCredentials) {

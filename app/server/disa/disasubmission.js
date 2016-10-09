@@ -10,16 +10,15 @@ const handleSubmission = incoming => {
   const metaFacility = sttsubmission.metaFacilities([incoming.metaFacility])
   .catch((err) => {
     log.error(err.message, err);
-    throw new Error('Facility key "' + incoming.metaFacility.key +
-                    '" conflicts with existing facility key');
+    throw new Error(`Facility key ${incoming.metaFacility.key} ` +
+                    'conflicts with existing key.');
   });
-  log.info('Handling Disa Submission')
   const metaStatuses = sttsubmission.metaStatuses(incoming.metaStatuses);
   const metaLabTests = sttsubmission.metaLabTests(incoming.metaLabTests);
   const metaRejections = sttsubmission.metaRejections(incoming.metaRejections);
-  const meta = BPromise.join(metaFacility, metaStatuses, metaLabTests,
-                             metaRejections)
-                .tap(result => log.info('Finished handling meta', result))
+  const meta = (BPromise.join(metaFacility, metaStatuses,
+                              metaLabTests, metaRejections)
+                .tap(result => log.info('Finished handling meta', result)));
 
   const sampleIds = meta.then(() =>
     sttsubmission.sampleIds([incoming.sampleIds]));

@@ -16,9 +16,13 @@ router.get('/users', permissions.requireAdmin, (req, res, next) =>
 );
 
 // TODO(sean): get user
-router.get('/users/:userId', (req, res, next) => {});
+router.get('/users/:userId', (req, res) => {
+  res.send('TODO');
+});
 
 // TODO(sean): create new users
-router.post('/users', permissions.requireAdmin, (req, res, next) => {});
+router.post('/users', permissions.requireAdmin, (req, res) => {
+  res.send('TODO');
+});
 
 module.exports = router;

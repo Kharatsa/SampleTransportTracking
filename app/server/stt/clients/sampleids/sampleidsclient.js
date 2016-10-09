@@ -1,5 +1,6 @@
 'use strict';
 
+const BPromise = require('bluebird');
 const util = require('util');
 const ModelClient = require('server/stt/clients/modelclient.js');
 const sampleidsquery = require('./sampleidsquery.js');
@@ -53,10 +54,13 @@ SampleIdsClient.prototype.eitherIds = function(options) {
 
   // TODO: maybe make this "includes" option common to all stt clients sttOptions
   if (typeof options.includes === 'undefined' || options.includes === true) {
-    include = allReferences(this);
+    try {
+      include = allReferences(this);
+    } catch (e) {
+      return BPromise.reject(e);
+    }
   }
 
-  let self = this;
   return sampleidsquery.eitherIds(options.data)
   .then(where => this.Model.findAll({
     where,

@@ -2,14 +2,10 @@ const config = require('config');
 
 const noop = (req, res, next) => next();
 
-/** 
- * Requires that the requester be an admin user
- **/
 const requireAdmin = (req, res, next) => {
-  console.log(`process.end.NODE_ENV=${process.env.NODE_ENV}`);
   if (req.user) {
     if (req.user.isAdmin) {
-      next()
+      next();
       return;
     } else {
       const accessErr = new Error('Administrator access required');
@@ -28,4 +24,4 @@ const requireAdmin = (req, res, next) => {
 
 module.exports = {
   'requireAdmin': config.server.AUTH_ENABLED ? requireAdmin : noop,
-}
+};
