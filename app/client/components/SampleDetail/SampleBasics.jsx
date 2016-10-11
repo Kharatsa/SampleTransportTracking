@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import {longFormatDateTime} from '../../util/stringformat.js';
 
 export const SampleBasics = ({stId, labId, created}) => {
@@ -18,6 +18,12 @@ export const SampleBasics = ({stId, labId, created}) => {
       </div>
     </div>
   );
+};
+
+SampleBasics.propTypes = {
+  stId: PropTypes.string.isRequired,
+  labId: PropTypes.string.isRequired,
+  created: PropTypes.string.isRequired,
 };
 
 export default SampleBasics;
