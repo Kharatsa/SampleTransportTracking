@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {filteredURL} from '../api';
+import {filteredURL} from '../../api';
 
 export const ChangesExportLink = ({summaryFilter, children}) => {
   const url = filteredURL('changes.csv', summaryFilter);

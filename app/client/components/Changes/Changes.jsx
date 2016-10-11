@@ -1,10 +1,7 @@
 import React, {PropTypes} from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
-import WaitOnFetch from './WaitOnFetch.jsx';
-import WindowSizeListener from '../containers/WindowSizeListener.jsx';
+import WaitOnFetch from '../WaitOnFetch.jsx';
 import ChangesTable from './ChangesTable';
-
-const FlexAllWaysTable = WindowSizeListener(ChangesTable, {avoidSideMenu: true});
 
 const ChangesListing = React.createClass({
   shouldComponentUpdate(nextProps, nextState) {
@@ -14,7 +11,7 @@ const ChangesListing = React.createClass({
   render() {
     return (
       <div className='content'>
-        <FlexAllWaysTable {...this.props} />
+        <ChangesTable {...this.props} />
       </div>
     );
   }

@@ -1,6 +1,10 @@
-import DefaultTable from './DefaultTable.jsx';
-import CheckBoxColumn from './CheckBoxColumn.jsx';
-import LinkColumn from './LinkColumn.jsx';
-import DateColumn from './DateColumn.jsx';
+import DefaultTable from './DefaultTable';
+import CheckBoxColumn from './CheckBoxColumn';
+import LinkColumn from './LinkColumn';
+import {DateColumn, DateTimeColumn} from './DateColumn';
+import MetadataColumn from './MetadataColumn';
 
-export {DefaultTable, CheckBoxColumn, LinkColumn, DateColumn};
+export {
+  DefaultTable, CheckBoxColumn, LinkColumn, DateColumn, DateTimeColumn,
+  MetadataColumn,
+};

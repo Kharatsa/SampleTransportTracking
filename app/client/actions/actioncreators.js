@@ -21,7 +21,7 @@ export const fetchMetadata = () => {
       if (err) {
         dispatch(fetchMetadataFailure(err));
         return;
-      } 
+      }
       dispatch(receiveMetadata(data));
     });
   };
@@ -53,13 +53,9 @@ const getFilterValues = filter => ({
   facilityKey: filter.get('facilityKey', null)
 });
 
-const receiveSampleDetail = ({
-  samples, sampleId, changes, artifacts, labTests,
-  changesByArtifactId, changesByLabTestId, changesByStage
-}) => ({
+const receiveSampleDetail = (data) => ({
   type: action.RECEIVE_SAMPLE_DETAIL,
-  samples, sampleId, changes, artifacts, labTests,
-  changesByArtifactId, changesByLabTestId, changesByStage
+  ...data
 });
 
 const requestChanges = (summaryFilter, page) =>

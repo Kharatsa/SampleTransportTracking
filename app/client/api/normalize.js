@@ -97,6 +97,7 @@ export const normalizeSample = data => {
   const normalized = normalizeChanges(data);
   const {changes, changeIds, artifacts, labTests, samples, count} = normalized;
 
+  // TODO(sean): these would be better as selectors
   const changesByArtifactId = sampleDetailsRefMap(changes,
     {refName: 'artifact', many: true});
   const changesByLabTestId = sampleDetailsRefMap(changes,

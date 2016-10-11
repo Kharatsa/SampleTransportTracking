@@ -3,29 +3,25 @@ import SampleBasics from './SampleBasics';
 import SampleStage from './SampleStage';
 import SampleArtifacts from './SampleArtifacts';
 import SampleTests from './SampleTests';
-import ChangesTable from '../ChangesTable';
+import {ChangesTable} from '../Changes';
 import WaitOnFetch from '../WaitOnFetch.jsx';
-import WindowSizeListener from '../../containers/WindowSizeListener';
 import MissingSample from './MissingSampleDetail';
 import {SCAN_STAGES} from '../../../common/sttworkflow';
 
-const FlexChangesTable = WindowSizeListener(ChangesTable, {changeHeight: false});
-
+import {dereferenceChanges} from '../Changes/prepare.js';
 
 const _SampleDetail = (props) => {
   const {
-    routeParams,
-    selectedSampleId, samplesById,
-    changeIds, changesById,
-    artifactsById, labTestsById,
-    changesByArtifactId, changesByLabTestId, changesByStage,
-    metaPeople,
-    metaFacilities,
-    metaArtifacts,
-    metaStatuses,
-    metaStages,
+    routeParams, changeIds, changesById,
+    artifactsById, labTestsById, samplesById,
+    selectedSampleId, changesByArtifactId,
+    changesByLabTestId, changesByStage, metaPeople, metaFacilities,
+    metaArtifacts, metaStatuses, metaStages,
     metaLabTests,
   } = props;
+
+  const changes = dereferenceChanges(
+    changeIds, changesById, labTestsById, artifactsById, samplesById);
 
   const sample = samplesById.get(selectedSampleId);
 
@@ -85,9 +81,7 @@ const _SampleDetail = (props) => {
             />
           </div>
         </div>
-        <FlexChangesTable
-          height={400}
-          {...props} />
+        <ChangesTable {...props} changes={changes}/>
       </div>
     );
   }

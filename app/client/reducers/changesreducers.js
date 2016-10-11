@@ -4,9 +4,8 @@ import {List, Map as ImmutableMap} from 'immutable';
 export const changeIds = (state=List(), action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
-    return action.changeIds;
   case RECEIVE_SAMPLE_DETAIL:
-    return action.changes.keySeq().toList();
+    return action.changeIds;
   default:
     return state;
   }
