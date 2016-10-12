@@ -52,3 +52,4 @@ EXPOSE ${STT_LISTEN_PORT}
 
 # One time bootstrap
 ENTRYPOINT ["/run.sh"]
+CMD npm start
