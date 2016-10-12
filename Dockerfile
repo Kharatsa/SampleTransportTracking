@@ -1,8 +1,8 @@
-FROM node:argon-slim
+FROM node:6-slim
 MAINTAINER Sean Herman <sjh293@cornell.edu>
 
 ENV BUILD_DEPS='sqlite3 git' \
-    NODE_DEPS='gulp bower mocha jsdoc'
+    NODE_DEPS='gulp bower mocha jsdoc sqlite3'
 
 RUN apt-get -q update && apt-get -q -y install \
     ${BUILD_DEPS} --no-install-recommends \
@@ -29,6 +29,7 @@ WORKDIR ${STT_APP_PATH}
 COPY ./package.json .
 COPY ./npm-shrinkwrap.json .
 COPY ./bower.json .
+COPY ./docker/run.sh /
 
 # Install node packages
 RUN npm install -q \
@@ -38,19 +39,16 @@ RUN npm install -q \
 RUN bower install --allow-root \
     && bower cache clean --allow-root
 
-ENV NODE_ENV='production'
+# Set this to production here, because devDependencies won't be installed
+# otherwise, and they are required to complete the build.
+ENV NODE_ENV=${NODE_ENV:-production}
 
 # Run the build & database sync scripts
 COPY . .
-RUN gulp build
-RUN node app/maintenance/data.js sync
-RUN node app/maintenance/metadata.js reloadcsv
-RUN node app/maintenance/users.js add admin unsafepassword
-RUN npm prune -q
-
 
 VOLUME ${STT_DATA_PATH}
 VOLUME ${STT_PUBLIC_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
-CMD npm start
+# One time bootstrap
+ENTRYPOINT ["/run.sh"]
