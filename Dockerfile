@@ -51,5 +51,5 @@ VOLUME ${STT_PUBLIC_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
 # One time bootstrap
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ./docker/run.sh
 CMD npm start
