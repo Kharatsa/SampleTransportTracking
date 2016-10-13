@@ -46,5 +46,6 @@ ENV NODE_ENV=${NODE_ENV:-production}
 VOLUME ${STT_DATA_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
-USER stt
-ENTRYPOINT docker/run.sh
+# One time bootstrap
+ENTRYPOINT ./docker/run.sh
+CMD npm start
