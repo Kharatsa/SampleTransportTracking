@@ -5,7 +5,7 @@ const BPromise = require('bluebird');
 const statAsync = BPromise.promisify(require('fs').stat);
 const log = require('server/util/logapp.js');
 
-const databasePath = '/var/lib/strack';
+const databasePath = process.env.STT_DATA_PATH || '/var/lib/stt';
 statAsync(databasePath)
 .catch(function(err) {
   if (err.code === 'ENOENT') {
@@ -15,7 +15,7 @@ statAsync(databasePath)
   }
 });
 
-const sqlitePath = path.join(databasePath, 'stracker.sqlite');
+const sqlitePath = path.join(databasePath, 'stt.sqlite');
 
 
 /*
@@ -36,7 +36,7 @@ const databaseConfigs = {
   production: defaultConfig,
   development: {
     dialect: 'sqlite',
-    storage: path.join(databasePath, 'dev-stracker.sqlite'),
+    storage: path.join(databasePath, 'dev-stt.sqlite'),
     logging: log.debug
   },
   test: {

@@ -17,7 +17,7 @@ export const AppComponent = React.createClass({
     const children = React.Children.map(this.props.children, child =>
       React.cloneElement(child, {appName: APP_NAME})
     );
-    return <div id='app'>{children}</div>;
+    return <div id='app2'>{children}</div>;
   }
 });
 

@@ -5,6 +5,10 @@ const winston = require('winston');
 const winstonConfig = require('winston/lib/winston/config');
 const transports = require('winston/lib/winston/transports');
 const common = require('winston/lib/winston/common');
+// Require just server config here to avoid circular dbconfig dependencies
+const serverConfig = require('config/serverconfig');
+
+const LOG_PATH = serverConfig.LOG_PATH;
 
 const logLevel = () => {
   if (process.env.NODE_ENV === 'production') {
@@ -119,8 +123,6 @@ var stttransport = new STTConsoleTransport({
     logMetaPart(options.meta)
   )
 });
-
-const LOG_PATH = '/var/log/strack';
 
 var logger = new (winston.Logger)({
   transports: [

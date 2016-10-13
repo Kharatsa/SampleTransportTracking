@@ -19,12 +19,12 @@ const authmodels = require('server/auth/models');
 storage.loadModels(metamodels);
 storage.loadModels(sttmodels);
 storage.loadModels(authmodels);
+const AggregateRoutes = require('server/odk/aggregateroutes.js');
+const AuthRoutes = require('server/auth/authroutes.js');
+const DisaRoutes = require('server/disa/disaroutes.js');
 const errors = require('server/middleware/errors.js');
 const shutdownhandler = require('server/util/shutdownhandler.js');
-const AuthRoutes = require('server/auth/authroutes.js');
-const AggregateRoutes = require('server/odk/aggregateroutes.js');
 const STTRoutes = require('server/stt/sttroutes.js');
-const DisaRoutes = require('server/disa/disaroutes.js');
 const prepareserver = require('server/prepareserver.js');
 
 shutdownhandler.init();
