@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import Link from 'react-router/lib/Link';
 import {Column} from 'react-virtualized';
 import {
-  rowRendererPropTypes, routerLocationPropTypes,
+  cellRendererPropTypes, routerLocationPropTypes,
 } from '../../util/proptypes.js';
 
 export const LinkCell = ({cellData, key, style}) => {
@@ -16,7 +16,7 @@ export const LinkCell = ({cellData, key, style}) => {
 };
 
 LinkCell.propTypes = {
-  ...rowRendererPropTypes,
+  ...cellRendererPropTypes,
   cellData: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({

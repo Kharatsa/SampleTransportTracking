@@ -1,8 +1,0 @@
-FROM kharatsa/strack:latest
-
-# Reinstall dev dependencies
-ENV NODE_ENV=development
-RUN npm install -q
-RUN rm -rf node_modules/sqlite3
-
-CMD gulp

@@ -23,7 +23,14 @@ const browserifyOptions = {
   extensions: ['.jsx'],
   debug: !IS_PRODUCTION
 };
-const opts = Object.assign({}, watchify.args, browserifyOptions);
+
+const watchifyOptions = {
+  poll: true,
+  ignoreWatch: ['**/node_modules/**'],
+};
+
+const opts = Object.assign({}, watchify.args, watchifyOptions,
+                           browserifyOptions);
 let bundler = browserify(opts);
 bundler.transform(babelify.configure({
   babelrc: true,
@@ -98,7 +105,7 @@ gulp.task('nodemon', ['lint'], (cb) => {
     ],
     execMap: {
       js: 'BLUEBIRD_WARNINGS=0 node --harmony'
-    }
+    },
   }).on('start', function() {
     // to avoid nodemon being started multiple times
     // thanks @matthisk
@@ -197,15 +204,6 @@ gulp.task('static:iconic', () => {
   .pipe(gulp.dest(config.server.PUBLIC_PATH + '/icons'));
 });
 
-const stats = 'bower_components/memory-stats/memory-stats.js';
-
-gulp.task('static:debugstats', () => {
-  return gulp.src([stats])
-  .pipe($.concat('debug.js'))
-  .pipe(uglify())
-  .pipe(gulp.dest(config.server.PUBLIC_PATH + '/lib'));
-});
-
 const html = 'app/client/**/*.html';
 const favicon = 'app/assets/favicon.ico';
 const robots = 'app/assets/robots.txt';
@@ -216,7 +214,6 @@ const preStatic = [
   'static:schemas',
   'static:xforms',
   'static:metadata',
-  'static:debugstats',
   'static:iconic'
 ];
 

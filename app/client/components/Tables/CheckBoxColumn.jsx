@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {Column} from 'react-virtualized';
-import {rowRendererPropTypes} from '../../util/proptypes.js';
+import {cellRendererPropTypes} from '../../util/proptypes.js';
 
 const CheckBoxCell = ({cellData, style, key}) => {
   const checked = cellData ? 'checked' : '';
@@ -12,7 +12,7 @@ const CheckBoxCell = ({cellData, style, key}) => {
 };
 
 CheckBoxCell.propTypes = {
-  ...rowRendererPropTypes,
+  ...cellRendererPropTypes,
   cellData: PropTypes.any,
 };
 

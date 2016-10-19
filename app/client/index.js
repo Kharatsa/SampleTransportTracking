@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Root from './containers/Root';
-import store from './store';
-
-import './util/memorystats';
+import Root from './containers/Root.jsx';
+import store from './store.js';
 
 ReactDOM.render(
   <Root store={store} />,
