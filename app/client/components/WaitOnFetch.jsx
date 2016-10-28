@@ -1,5 +1,4 @@
 import React, {PropTypes} from 'react';
-import {getIsLoading} from '../selectors/uiselectors';
 import LoadingIndicator from './LoadingIndicator.jsx';
 
 /**

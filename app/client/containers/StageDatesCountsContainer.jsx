@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {fetchDateSummary} from '../actions/actioncreators';
 import {getIsLoading} from '../selectors/uiselectors';
 import {getStageCountsChartData} from '../selectors/dashboardselectors';

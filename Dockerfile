@@ -31,20 +31,18 @@ RUN npm install -q && npm cache clean -q \
     && bower install --allow-root \
     && bower cache clean --allow-root
 
-# Run the build & database sync scripts
 COPY . ${STT_APP_PATH}
+ENV NODE_ENV=${NODE_ENV:-production}
+RUN gulp build && npm prune -q
 
 RUN chown -R stt:stt $(npm config get prefix)/lib/node_modules \
     && chown -R stt:stt ${STT_APP_PATH} \
     && chown -R stt:stt ${STT_DATA_PATH} \
     && chown -R stt:stt ${STT_LOG_PATH}
 
-# Set this to production here, because devDependencies won't be installed
-# otherwise, and they are required to complete the build.
-ENV NODE_ENV=${NODE_ENV:-production}
-
 VOLUME ${STT_DATA_PATH}
+VOLUME ${STT_LOG_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
 USER stt
-ENTRYPOINT docker/run.sh
+CMD npm start

@@ -1,0 +1,16 @@
+FROM node:6-slim
+
+ENV NODE_ENV=${NODE_ENV:-development} \
+    STT_APP_PATH='/var/www/stt/'
+
+WORKDIR ${STT_APP_PATH}
+
+COPY package.json ${STT_APP_PATH}
+RUN npm install -g gulp \
+  && npm link gulp \
+  && npm install -q --only=dev \
+  && npm cache clean -q
+
+COPY . ${STT_APP_PATH}
+
+CMD gulp

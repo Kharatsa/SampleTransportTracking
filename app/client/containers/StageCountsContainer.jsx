@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {fetchSummary} from '../actions/actioncreators';
 import {getIsLoading} from '../selectors/uiselectors';
 import {

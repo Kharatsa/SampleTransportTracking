@@ -1,0 +1,7 @@
+FROM kharatsa/strack:latest
+
+USER root
+
+RUN npm install -g nodemon && npm link nodemon
+
+CMD nodemon app/server

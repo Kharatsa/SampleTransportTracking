@@ -3,19 +3,13 @@ import shallowCompare from 'react-addons-shallow-compare';
 import WaitOnFetch from '../WaitOnFetch.jsx';
 import ChangesTable from './ChangesTable';
 
-const ChangesListing = React.createClass({
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  },
-
-  render() {
-    return (
-      <div className='content'>
-        <ChangesTable {...this.props} />
-      </div>
-    );
-  }
-});
+const ChangesListing = (props) => {
+  return (
+    <div className='content'>
+      <ChangesTable {...props} />
+    </div>
+  );
+};
 
 export const ChangesListingWrapped = WaitOnFetch(ChangesListing);
 
@@ -23,7 +17,9 @@ export const Changes = React.createClass({
   propTypes: {
     fetchChanges: PropTypes.func.isRequired,
     isLoading: PropTypes.bool.isRequired,
-    page: PropTypes.any,
+    params: PropTypes.shape({
+      page: PropTypes.number,
+    }),
     summaryFilter: PropTypes.object
   },
 

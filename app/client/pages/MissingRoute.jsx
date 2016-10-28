@@ -1,7 +1,9 @@
 import React from 'react';
 
-export default () => {
+export const MissingRoute = () => {
   return (
     <div>Unrecognized route: {window.location.pathname}</div>
   );
 };
+
+export default MissingRoute;

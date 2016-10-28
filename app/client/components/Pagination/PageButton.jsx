@@ -2,49 +2,36 @@ import React, {PropTypes} from 'react';
 import Link from 'react-router/lib/Link';
 import classNames from 'classnames';
 
-export default React.createClass({
-  propTypes: {
-    text: PropTypes.string.isRequired,
-    disabled: PropTypes.bool
-  },
+export const PageButton = ({disabled=false, linkTo, text}) => {
+  const pureButton = classNames({
+    'pure-button': true,
+    'pure-button-disabled': disabled
+  });
 
-  getDefaultProps() {
-    return {
-      disabled: false
-    };
-  },
+  // TODO(sean): do this in CSS
+  const buttonStyle = {display: 'inline-block'};
 
-  shouldComponentUpdate(nextProps) {
-    const {active, text} = this.props;
-    return nextProps.active === active && nextProps.text === text;
-  },
+  const buttonElem = (
+    <button
+        className={pureButton}
+        style={buttonStyle}>
+      {text}
+    </button>
+  );
 
-  render() {
-    const {disabled, text, linkTo} = this.props;
+  const linkedButtonElem = (
+    disabled ?
+    <span>{buttonElem}</span> :
+    <Link to={linkTo}>{buttonElem}</Link>
+  );
 
-    const pureButton = classNames({
-      'pure-button': true,
-      'pure-button-disabled': disabled
-    });
+  return linkedButtonElem;
+};
 
-    const buttonStyle = {
-      display: 'inline-block'
-    };
+PageButton.propTypes = {
+  disabled: PropTypes.bool,
+  linkTo: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
-    const buttonElem = (
-      <button
-          className={pureButton}
-          style={buttonStyle}>
-        {text}
-      </button>
-    );
-
-    const linkedButtonElem = (
-      disabled ?
-      <span>{buttonElem}</span> :
-      <Link to={linkTo}>{buttonElem}</Link>
-    );
-
-    return linkedButtonElem;
-  }
-});
+export default PageButton;

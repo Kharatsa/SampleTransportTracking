@@ -1,4 +1,3 @@
-import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {changeSummaryFilter} from '../actions/actioncreators';
 import {DateFilters} from '../components/DashboardControls';

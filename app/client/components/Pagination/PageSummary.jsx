@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import {toLocaleStringSupportsLocales} from '../../util/stringformat.js';
 
-export default ({total, itemCount, currentPage, desc='items'}) => {
+export const PageSummary = ({total, itemCount, currentPage, desc='items'}) => {
   const first = (itemCount * (currentPage - 1)) + 1;
   const maybeLast = itemCount * currentPage;
   const last = maybeLast < total ? maybeLast : total;
@@ -23,3 +23,12 @@ export default ({total, itemCount, currentPage, desc='items'}) => {
     </div>)
   ;
 };
+
+PageSummary.propTypes = {
+  total: PropTypes.number.isRequired,
+  itemCount: PropTypes.number.isRequired,
+  currentPage: PropTypes.number.isRequired,
+  desc: PropTypes.string.isRequired,
+};
+
+export default PageSummary;

@@ -1,4 +1,3 @@
-import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {fetchMetadata} from '../actions/actioncreators.js';
 import {App} from '../components';

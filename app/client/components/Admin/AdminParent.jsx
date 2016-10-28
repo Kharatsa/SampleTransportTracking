@@ -5,6 +5,7 @@ export const Admin = React.createClass({
   propTypes: {
     actions: PropTypes.object,
     children: PropTypes.node,
+    fetchUsers: PropTypes.func.isRequired,
   },
 
   shouldComponentUpdate(nextProps, nextState) {

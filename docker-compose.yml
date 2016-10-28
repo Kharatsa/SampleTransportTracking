@@ -1,18 +1,27 @@
 version: '2'
 services:
-  web:
+  bundler:
+    container_name: bundler_stt
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-sttdev
+      dockerfile: ./docker/Dockerfile-bundler-dev
+    volumes:
+      - stt_data:/var/lib/stt/
+      - .:/var/www/stt/
+      - ./log:/var/log/stt/
+    environment:
+      - NODE_ENV=development
+  server:
+    container_name: app_stt
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-server-dev
     ports:
       - "8081:8081"
-    image: stt_dev
-    container_name: app_stt
-    command: gulp
     volumes:
-      - stt_app:/var/lib/strack/
-      - .:/var/www/strack/
-      - ./log:/var/log/strack/
+      - stt_data:/var/lib/stt/
+      - .:/var/www/stt/
+      - ./log:/var/log/stt/
     depends_on:
       - db
       - odk
@@ -50,11 +59,11 @@ services:
     image: mysql:5.7
     container_name: db_stt
     volumes:
-      - stt_db:/var/lib/mysql/
+      - odk_db:/var/lib/mysql/
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
     env_file:
       - ./docker/mysql_dev.env
 volumes:
-  stt_db:
-  stt_app:
+  odk_db:
+  stt_data:

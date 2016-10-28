@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {fetchTurnArounds} from '../actions/actioncreators';
 import {getIsLoading} from '../selectors/uiselectors';
 import {getStagesTATs, getEndToEndTAT} from '../selectors/dashboardselectors';

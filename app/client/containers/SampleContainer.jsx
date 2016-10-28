@@ -1,4 +1,3 @@
-import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {getIsLoading} from '../selectors/uiselectors';
 import {fetchSampleDetail} from '../actions/actioncreators.js';

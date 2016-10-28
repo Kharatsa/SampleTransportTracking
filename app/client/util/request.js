@@ -78,7 +78,7 @@ const reqOnError = (finished, callback) => {
  * @param  {Function}       callback
 
  */
-const request = (options, callback) => {
+export const request = (options, callback) => {
   let method = options.method || 'GET';
   let url = typeof options === 'string' ? options : options.url;
 
@@ -96,4 +96,4 @@ const request = (options, callback) => {
   req.send();
 };
 
-module.exports = request;
+export default request;

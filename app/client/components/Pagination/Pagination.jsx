@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import PageButton from './PageButton.jsx';
 import PageSummary from './PageSummary.jsx';
 
@@ -32,6 +32,12 @@ export const Paging = ({total, perPage, page}) => {
       </div>
     </div>
   );
+};
+
+Paging.propTypes = {
+  total: PropTypes.number.isRequired,
+  perPage: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired,
 };
 
 export default Paging;

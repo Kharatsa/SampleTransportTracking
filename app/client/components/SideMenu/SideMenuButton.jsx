@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 
-export const SideMenuButton = (props) => {
+export const SideMenuButton = ({children}) => {
   // Center the button within the SideMenu
   const wrapperStyle = {'textAlign': 'center'};
   const innerStyle = {'display': 'inline-block'};
@@ -9,11 +9,15 @@ export const SideMenuButton = (props) => {
     <div style={wrapperStyle}>
       <div style={innerStyle}>
         <button className='pure-button'>
-          {props.children}
+          {children}
         </button>
       </div>
     </div>
   );
+};
+
+SideMenuButton.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default SideMenuButton;
