@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import history from 'react-router/lib/browserHistory';
 import {
   SummaryCounts, StageDatesCounts, StageCounts, TurnArounds,
   DateFilters, LocationFilters
@@ -6,7 +7,7 @@ import {
 import {SideMenuLayout} from '../components';
 import {SampleSearch, ViewChangesButton} from '../components/DashboardControls';
 
-export const DashboardPage = ({appName, history}) => {
+export const DashboardPage = ({appName}) => {
   const controls = [
     <LocationFilters />,
     <DateFilters />,
@@ -35,7 +36,6 @@ export const DashboardPage = ({appName, history}) => {
 
 DashboardPage.propTypes = {
   appName: PropTypes.string,
-  history: PropTypes.object.isRequired
 };
 
 export default DashboardPage;
