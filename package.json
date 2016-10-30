@@ -42,6 +42,7 @@
     "immutable": "^3.8.0",
     "lodash": "^4.16.4",
     "moment": "^2.15.2",
+    "mysql": "^2.11.1",
     "normalizr": "^2.2.1",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",

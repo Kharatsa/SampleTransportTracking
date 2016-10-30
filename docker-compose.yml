@@ -6,9 +6,8 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile-bundler-dev
     volumes:
-      - stt_data:/var/lib/stt/
-      - .:/var/www/stt/
-      - ./log:/var/log/stt/
+      - ./:/var/www/stt/
+      - /var/www/stt/node_modules
     environment:
       - NODE_ENV=development
   server:
@@ -20,8 +19,11 @@ services:
       - "8081:8081"
     volumes:
       - stt_data:/var/lib/stt/
-      - .:/var/www/stt/
-      - ./log:/var/log/stt/
+      - ./:/var/www/stt/
+      - ./log/:/var/log/stt/
+      - /var/www/stt/node_modules
+    environment:
+      - NODE_ENV=development
     depends_on:
       - db
       - odk

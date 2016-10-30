@@ -1,4 +1,4 @@
 {
   "verbose": true,
-  "watch": ["./app/server", "./app/common"]
+  "watch": ["./app/server", "./app/common", "./app/config"]
 }

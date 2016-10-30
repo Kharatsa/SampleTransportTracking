@@ -2,6 +2,8 @@ FROM kharatsa/strack:latest
 
 USER root
 
-RUN npm install -g nodemon && npm link nodemon
+RUN npm install -g -q nodemon >/dev/null \
+    && npm install -q >/dev/null \
+    && npm link nodemon >/dev/null
 
 CMD nodemon app/server

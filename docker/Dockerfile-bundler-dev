@@ -1,16 +1,8 @@
-FROM node:6-slim
+FROM kharatsa/strack:latest
 
-ENV NODE_ENV=${NODE_ENV:-development} \
-    STT_APP_PATH='/var/www/stt/'
+ENV NODE_ENV=development
 
-WORKDIR ${STT_APP_PATH}
-
-COPY package.json ${STT_APP_PATH}
-RUN npm install -g gulp \
-  && npm link gulp \
-  && npm install -q --only=dev \
-  && npm cache clean -q
-
-COPY . ${STT_APP_PATH}
+RUN npm install --no-shrinkwrap --only=dev -q >/dev/null \
+  && npm cache clean -q >/dev/null
 
 CMD gulp

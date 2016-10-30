@@ -20,15 +20,15 @@ function Database(options) {
     throw new Error('Missing required paramater options.config');
   }
   // Initialize the database instance given the config params
-  var config = options.config;
+  const config = options.config;
+
   this.connection = new Sequelize(
-    config.name, config.username, config.password, config
-  );
+    config.name, config.username, config.password, config.options);
   this.queryInterface = this.connection.getQueryInterface();
 
   // Load any models provided up front
   this.models = {};
-  var modelSpecs = options.models || [];
+  const modelSpecs = options.models || [];
   log.debug(`Connecting to database with ${modelSpecs.length} models`);
   modelSpecs.forEach(spec => this.loadModel(spec));
 }

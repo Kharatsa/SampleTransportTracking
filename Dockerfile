@@ -12,12 +12,12 @@ ENV BUILD_DEPS='sqlite3 git' \
     STT_LISTEN_HOST='0.0.0.0' \
     STT_LOG_PATH='/var/log/stt/'
 
-RUN apt-get -q update \
-    && apt-get -q -y install ${BUILD_DEPS} --no-install-recommends \
+RUN apt-get -q update >/dev/null \
+    && apt-get -q -y install ${BUILD_DEPS} --no-install-recommends >/dev/null \
     && apt-get -q clean \
     && rm -rf /var/lib/apt/lists/* \
-    && npm install -q -g ${NODE_DEPS} \
-    && npm link ${NODE_DEPS} \
+    && npm install -q -g ${NODE_DEPS} >/dev/null \
+    && npm link ${NODE_DEPS} >/dev/null \
     && mkdir -p ${STT_APP_PATH} \
     && mkdir -p ${STT_DATA_PATH} \
     && mkdir -p ${STT_LOG_PATH}
@@ -27,13 +27,13 @@ WORKDIR ${STT_APP_PATH}
 
 # Install dependencies
 COPY bower.json package.json npm-shrinkwrap.json ${STT_APP_PATH}
-RUN npm install -q && npm cache clean -q \
-    && bower install --allow-root \
-    && bower cache clean --allow-root
+RUN npm install -q >/dev/null && npm cache clean -q >/dev/null \
+    && bower install --allow-root >/dev/null \
+    && bower cache clean --allow-root >/dev/null
 
 COPY . ${STT_APP_PATH}
 ENV NODE_ENV=${NODE_ENV:-production}
-RUN gulp build && npm prune -q
+RUN gulp build && npm prune -q >/dev/null
 
 RUN chown -R stt:stt $(npm config get prefix)/lib/node_modules \
     && chown -R stt:stt ${STT_APP_PATH} \
