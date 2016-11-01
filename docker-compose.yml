@@ -24,6 +24,8 @@ services:
       - /var/www/stt/node_modules
     environment:
       - NODE_ENV=development
+    env_file:
+      - ./docker/mysql_dev.env
     depends_on:
       - db
       - odk
@@ -58,14 +60,16 @@ services:
     env_file:
       - ./docker/mysql_dev.env
   db:
-    image: mysql:5.7
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-mysql-dev
     container_name: db_stt
     volumes:
-      - odk_db:/var/lib/mysql/
+      - db_data:/var/lib/mysql/
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
     env_file:
       - ./docker/mysql_dev.env
 volumes:
-  odk_db:
+  db_data:
   stt_data:

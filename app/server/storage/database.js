@@ -29,7 +29,8 @@ function Database(options) {
   // Load any models provided up front
   this.models = {};
   const modelSpecs = options.models || [];
-  log.debug(`Connecting to database with ${modelSpecs.length} models`);
+  log.debug(`Connecting to '${config.options.dialect}' database with ` +
+            `${modelSpecs.length} models`);
   modelSpecs.forEach(spec => this.loadModel(spec));
 }
 
