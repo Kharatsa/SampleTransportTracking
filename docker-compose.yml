@@ -8,6 +8,7 @@ services:
     volumes:
       - ./:/var/www/stt/
       - /var/www/stt/node_modules
+      - /var/www/stt/bower_components
     environment:
       - NODE_ENV=development
   server:
