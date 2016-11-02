@@ -1,0 +1,78 @@
+version: '2'
+services:
+  nginx:
+    image: jwilder/nginx-proxy
+    ports: 
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  bundler:
+    container_name: bundler_stt
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-bundler-dev
+    volumes:
+      - ./:/var/www/stt/
+      - /var/www/stt/node_modules
+      - /var/www/stt/bower_components
+    environment:
+      - NODE_ENV=development
+  server:
+    container_name: app_stt
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-server-dev
+    ports:
+      - "8081:8081"
+    volumes:
+      - stt_data:/var/lib/stt/
+      - ./:/var/www/stt/
+      - ./log/:/var/log/stt/
+      - /var/www/stt/node_modules
+    depends_on:
+      - db
+      - odk
+    links:
+      - db
+      - odk
+    environment:
+      - NODE_ENV=development
+      - STT_LISTEN_PORT=8081
+      - STT_LISTEN_HOST=0.0.0.0
+      - STT_PUBLIC_URL="http://localhost:8081"
+      - ODK_PROTOCOL=http
+      - ODK_HOSTNAME=odk
+      - ODK_USERNAME=stt
+      - ODK_PASSWORD=password
+      - VIRTUAL_HOST=app.bar.com
+    env_file:
+      - ./docker/mysql_dev.env
+  odk:
+    image: kharatsa/odkaggregate:latest
+    container_name: odk_stt
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - ODK_HOSTNAME=localhost
+      - ODK_PORT=8080
+      - ODK_ADMIN_USERNAME=admin
+      - DB_CONTAINER_NAME=db
+      - VIRTUAL_HOST=odk.bar.com
+    env_file:
+      - ./docker/mysql_dev.env
+  db:
+    image: mysql:5.7
+    container_name: db_stt
+    volumes:
+      - odk_db:/var/lib/mysql/
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    env_file:
+      - ./docker/mysql_dev.env
+volumes:
+  odk_db:
+  stt_data:
