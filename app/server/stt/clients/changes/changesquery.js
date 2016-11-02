@@ -119,10 +119,10 @@ const changesRaw = params => {
 const changesRawCount = params => {
   const countParams = _.omit(params, ['limit', 'offset']);
   return `SELECT
-    COUNT("Change.uuid") AS "ChangesCount"
+    COUNT(agg.uuid) AS "ChangesCount"
     FROM (
       ${changesRaw(countParams)}
-    )`;
+    ) AS agg`;
 };
 
 module.exports = {

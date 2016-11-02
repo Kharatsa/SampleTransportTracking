@@ -16,15 +16,15 @@ statAsync(databasePath)
 });
 
 const connection = {
-  username: process.env.MYSQL_USER || null,
-  password: process.env.MYSQL_PASSWORD || null,
-  name: process.env.MYSQL_DATABASE || null,
+  username: process.env.STT_DB_USER || null,
+  password: process.env.STT_DB_PASSWORD || null,
+  database: process.env.STT_DB_NAME || null,
 };
 
 const MySQLConfig = {
   dialect: 'mysql',
-  host: process.env.MYSQL_HOST || 'localhost',
-  port: process.env.MYSQL_PORT || 3306,
+  host: process.env.STT_DB_HOST || 'localhost',
+  port: process.env.STT_DB_PORT || 3306,
   logging: log.debug
 };
 
@@ -34,25 +34,25 @@ const SQLiteConfig = {
   logging: log.debug
 };
 
-const isMySQLAvailable = (
-  connection.username === null ||
+const isMySQLInaccessible = (
+  connection.username == null ||
   connection.password === null ||
-  connection.name === null
+  connection.database === null
 );
 
-const defaultConfig = isMySQLAvailable ? MySQLConfig : SQLiteConfig;
+const defaultConfig = isMySQLInaccessible ? SQLiteConfig : MySQLConfig;
 
 const configs = {
   production: {
     username: connection.username,
     password: connection.password,
-    database: connection.name,
+    database: connection.database,
     options: defaultConfig,
   },
   development: {
     username: connection.username,
     password: connection.password,
-    database: connection.name,
+    database: connection.database,
     options: defaultConfig,
   },
   test: {
@@ -63,11 +63,11 @@ const configs = {
 };
 
 const getEnv = () => process.env.NODE_ENV || 'development';
-
-log.debug(`Exporting ${getEnv()} configuration`);
-log.debug(`MySQL ${isMySQLAvailable ? 'IS' : 'IS NOT'} available`);
-
 const config = configs[getEnv()];
+
+log.info(`MySQL ${isMySQLInaccessible ? 'IS NOT' : 'IS'} available. ` +
+  `Exporting ${getEnv()} configuration`,
+  JSON.stringify(config.options));
 
 module.exports = {
   username: config.username,

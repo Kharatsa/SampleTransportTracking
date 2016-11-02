@@ -11,12 +11,10 @@ const serverConfig = require('config/serverconfig');
 const LOG_PATH = serverConfig.LOG_PATH;
 
 const logLevel = () => {
-  if (process.env.NODE_ENV === 'production') {
-    return 'info';
-  } else if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'test') {
     return 'warn';
   }
-  return 'debug';
+  return 'info';
 };
 
 winston.level = logLevel();

@@ -23,7 +23,7 @@ function Database(options) {
   const config = options.config;
 
   this.connection = new Sequelize(
-    config.name, config.username, config.password, config.options);
+    config.database, config.username, config.password, config.options);
   this.queryInterface = this.connection.getQueryInterface();
 
   // Load any models provided up front
@@ -44,7 +44,7 @@ Database.prototype.loadModel = function(modelSpec) {
     throw new Error('Missing required parameter options.modelSpec');
   }
 
-  log.info(`Importing Sequelize model: "${modelSpec.name}"`);
+  log.debug(`Importing Sequelize model: "${modelSpec.name}"`);
   var model = this.connection.import(modelSpec.name, modelSpec.import);
   if (model.hasOwnProperty('associate')) {
     model.associate(this.models);
@@ -81,7 +81,7 @@ module.exports = {
       log.warn('Storage database was previously initialized.');
       return;
     }
-    log.info('Initializing database with config', options.config);
+    log.info('Initializing database');
     sequelize = new Database(options);
   }
 };
