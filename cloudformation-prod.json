@@ -29,6 +29,18 @@
   },
 
   "Resources" : {
+    "DBSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription": "Open database for access",
+        "SecurityGroupIngress" : [{
+          "IpProtocol" : "tcp",
+          "FromPort" : "3306", 
+          "ToPort" : "3306",
+          "SourceSecurityGroupName" : { "Ref" : "InstanceSecurityGroup" }
+        }]
+      }
+    },
     "MainDB" : {
       "Type" : "AWS::RDS::DBInstance",
       "Properties" : {
@@ -39,7 +51,7 @@
         "EngineVersion" : "5.7",
         "MasterUsername" : { "Ref" : "DBUser" },
         "MasterUserPassword" : { "Ref" : "DBPassword" },
-        "BackupRetentionPeriod" : "7"
+				"VPCSecurityGroups" : [{ "Fn::GetAtt": [ "DBSecurityGroup", "GroupId" ] }]
       }
     },
 		"Ec2Instance" : {
@@ -49,13 +61,23 @@
         "KeyName" : { "Ref" : "KeyName" },
 				"InstanceType" : "t2.micro",
 				"SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+        "Tags": [{
+          "Key" : "Name",
+          "Value" : "STT server"
+        }],
 				"UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
 					"#!/bin/bash \n",
-					"echo \"db_user=", { "Ref" : "DBUser"}, "\" > /etc/db_creds \n",
-					"echo \"db_name=", "odk_stt", "\" >> /etc/db_creds\n",
-					"echo \"db_password=", { "Ref" : "DBPassword"}, "\" >> /etc/db_creds\n",
-					"echo \"db_hostname=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, ":",
-          { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] }, "\" >> /etc/db_creds\n"
+          "echo \"",
+          "MYSQL_USER=", { "Ref" : "DBUser"}, "\n",
+          "MYSQL_DATABASE=", "odk_stt", "\n",
+          "MYSQL_PASSWORD=", { "Ref" : "DBPassword"}, "\n",
+          "DB_CONTAINER_NAME=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
+          "STT_DB_USER=", { "Ref" : "DBUser"}, "\n",
+          "STT_DB_PASSWORD=", { "Ref" : "DBPassword" }, "\n",
+          "STT_DB_NAME=stt\n",
+          "STT_DB_HOST=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
+          "STT_DB_PORT=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] }, "\n",
+          "\" > /etc/db_creds\n"
 				]]}}
       }
     },
