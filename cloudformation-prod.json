@@ -1,21 +1,15 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation Sample Template RDS_with_DBParameterGroup: Sample template showing how to create an Amazon RDS Database Instance with a DBParameterGroup.**WARNING** This template creates an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "Production deploy of Sample Transport Tracking",
 
   "Parameters": {
-    "DBName": {
-      "Default": "MyDatabase",
-      "Description" : "The database name",
-      "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "64",
-      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
-      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
-    },
-
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance.  If you don't have one, create one first.",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "Must be the name of an existing EC2 KeyPair."
+    },    
     "DBUser": {
-      "NoEcho": "true",
       "Description" : "The database admin account username",
       "Type": "String",
       "MinLength": "1",
@@ -23,7 +17,6 @@
       "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
       "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
-
     "DBPassword": {
       "NoEcho": "true",
       "Description" : "The database admin account password",
@@ -31,32 +24,39 @@
       "MinLength": "8",
       "MaxLength": "41",
       "AllowedPattern" : "[a-zA-Z0-9]*",
-      "ConstraintDescription" : "must contain only alphanumeric characters."
+      "ConstraintDescription" : "must contain only alphanumeric characters and be between 8 and 41 characters long."
     }
   },
 
   "Resources" : {
-    "MyDB" : {
+    "MainDB" : {
       "Type" : "AWS::RDS::DBInstance",
       "Properties" : {
-        "DBName" : { "Ref" : "DBName" },
+        "DBName" : "odk_stt",
         "AllocatedStorage" : "5",
-        "DBInstanceClass" : "db.t2.small",
+        "DBInstanceClass" : "db.t2.micro",
         "Engine" : "MySQL",
         "EngineVersion" : "5.7",
         "MasterUsername" : { "Ref" : "DBUser" },
         "MasterUserPassword" : { "Ref" : "DBPassword" },
-        "DBParameterGroupName" : { "Ref" : "MyRDSParamGroup" }
+        "BackupRetentionPeriod" : "7"
       }
     },
 		"Ec2Instance" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
-        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "ImageId" : "ami-0d77397e",
         "KeyName" : { "Ref" : "KeyName" },
-				"InstanceType" : "t1.micro",
-				"SecurityGroups" : { "Ref" : "InstanceSecurityGroup" }
-
+				"InstanceType" : "t2.micro",
+				"SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+				"UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
+					"#!/bin/bash \n",
+					"echo \"db_user=", { "Ref" : "DBUser"}, "\" > /etc/db_creds \n",
+					"echo \"db_name=", "odk_stt", "\" >> /etc/db_creds\n",
+					"echo \"db_password=", { "Ref" : "DBPassword"}, "\" >> /etc/db_creds\n",
+					"echo \"db_hostname=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, ":",
+          { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] }, "\" >> /etc/db_creds\n"
+				]]}}
       }
     },
     "InstanceSecurityGroup" : {
@@ -68,13 +68,17 @@
                 "FromPort" : "80",
                 "ToPort" : "80",
                 "CidrIp" : "0.0.0.0/0"
-             }],
-          "SecurityGroupEgress" : [{
-             "IpProtocol" : "tcp",
-             "FromPort" : "80",
-             "ToPort" : "80",
-             "CidrIp" : "0.0.0.0/0"
-          }]
+             },{
+                "IpProtocol" : "tcp",
+                "FromPort" : "443",
+                "ToPort" : "443",
+                "CidrIp" : "0.0.0.0/0"
+             },{
+                "IpProtocol" : "tcp",
+                "FromPort" : "22",
+                "ToPort" : "22",
+                "CidrIp" : "0.0.0.0/0"
+             }]
        }
     },
     "MyEIP" : {
@@ -89,11 +93,11 @@
     "JDBCConnectionString": {
       "Description" : "JDBC connection string for the database",
       "Value" : { "Fn::Join": [ "", [ "jdbc:mysql://",
-                                      { "Fn::GetAtt": [ "MyDB", "Endpoint.Address" ] },
+                                      { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] },
                                       ":",
-                                      { "Fn::GetAtt": [ "MyDB", "Endpoint.Port" ] },
+                                      { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] },
                                       "/",
-                                      { "Ref": "DBName" }]]}
+                                      "odk_stt"]]}
     }
   }
 }

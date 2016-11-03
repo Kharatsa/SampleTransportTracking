@@ -4,19 +4,9 @@ services:
     image: jwilder/nginx-proxy
     ports: 
       - "80:80"
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-  bundler:
-    container_name: bundler_stt
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile-bundler-dev
-    volumes:
-      - ./:/var/www/stt/
-      - /var/www/stt/node_modules
-      - /var/www/stt/bower_components
-    environment:
-      - NODE_ENV=development
   server:
     container_name: app_stt
     build:
@@ -64,15 +54,5 @@ services:
       - VIRTUAL_HOST=odk.bar.com
     env_file:
       - ./docker/mysql_dev.env
-  db:
-    image: mysql:5.7
-    container_name: db_stt
-    volumes:
-      - odk_db:/var/lib/mysql/
-    environment:
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
-    env_file:
-      - ./docker/mysql_dev.env
 volumes:
-  odk_db:
   stt_data:
