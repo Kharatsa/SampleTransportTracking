@@ -80,7 +80,7 @@ const STT_OPTIONS = [
 
 const plainResult = (data, options) => {
   let result;
-  if (options.plain && typeof data.rows !== 'undefined') {
+  if (options.plain && data && typeof data.rows !== 'undefined') {
     result = BPromise.props({
       count: data.count,
       data: BPromise.map(data.rows, dbresult.plain)

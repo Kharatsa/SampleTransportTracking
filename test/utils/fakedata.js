@@ -314,6 +314,7 @@ const removeFakeData = storage => {
 };
 
 const load = (changesNum) => {
+  const winston = require('winston');
   const config = require('config');
   const log = require('server/util/logapp.js');
   const storage = require('server/storage');
@@ -326,15 +327,21 @@ const load = (changesNum) => {
   storage.loadModels(authmodels);
 
   const noLog = {logging: false};
+  let originalLogLevel = log.transports.stt.level;
 
   return storage.db.sync()
-  .then(() => testmeta.load())
   .then(() => {
-    log.info('Wiping fake data from development database');
+    log.info('Loading fake data...');
+    log.transports.stt.level = 'error';
+  })
+  .then(() => log.debug('Loading test metadata...'))
+  .then(() => testmeta.load())
+  .then(() => log.debug('Finished loading test metadata'))
+  .then(() => {
+    log.debug('Wiping previous fake data from development database');
     return removeFakeData(storage);
   })
   .then(() => {
-    log.info('Loading fake data');
     const fakeChangesTarget = changesNum || FAKE_CHANGES_NUM;
 
     const meta = {
@@ -370,7 +377,10 @@ const load = (changesNum) => {
     .then(() => storage.models.LabTests.bulkCreate(fake.labTests, noLog))
     .then(() => storage.models.Changes.bulkCreate(fake.changes, noLog));
   })
-  .then(() => log.info('Finihsed loading fake data'))
+  .then(() => {
+    log.transports.stt.level = originalLogLevel;
+    log.info('Finished loading fake data');
+  })
   .catch(err => log.error('Error creating fake data',
                           err, err.message, err.stack));
 };

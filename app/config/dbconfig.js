@@ -15,38 +15,63 @@ statAsync(databasePath)
   }
 });
 
-const sqlitePath = path.join(databasePath, 'stt.sqlite');
+const connection = {
+  username: process.env.STT_DB_USER || null,
+  password: process.env.STT_DB_PASSWORD || null,
+  database: process.env.STT_DB_NAME || null,
+};
 
-
-/*
- * Sequelize database configuration objects.
- * http://docs.sequelizejs.com/en/latest/api/sequelize/
- */
-
-// Default SQLite database
-const defaultConfig = {
-  dialect: 'sqlite',
-  storage: sqlitePath,
+const MySQLConfig = {
+  dialect: 'mysql',
+  host: process.env.STT_DB_HOST || 'localhost',
+  port: process.env.STT_DB_PORT || 3306,
   logging: log.debug
 };
 
-// Define additional configuration objects here, and add to databaseConfigs
+const SQLiteConfig = {
+  dialect: 'sqlite',
+  storage: path.join(databasePath, 'stt.sqlite'),
+  logging: log.debug
+};
 
-const databaseConfigs = {
-  production: defaultConfig,
+const isMySQLInaccessible = (
+  connection.username == null ||
+  connection.password === null ||
+  connection.database === null
+);
+
+const defaultConfig = isMySQLInaccessible ? SQLiteConfig : MySQLConfig;
+
+const configs = {
+  production: {
+    username: connection.username,
+    password: connection.password,
+    database: connection.database,
+    options: defaultConfig,
+  },
   development: {
-    dialect: 'sqlite',
-    storage: path.join(databasePath, 'dev-stt.sqlite'),
-    logging: log.debug
+    username: connection.username,
+    password: connection.password,
+    database: connection.database,
+    options: defaultConfig,
   },
   test: {
     dialect: 'sqlite',
     storage: ':memory:',
-    logging: function() {}
+    logging: function() {},
   }
 };
 
 const getEnv = () => process.env.NODE_ENV || 'development';
+const config = configs[getEnv()];
 
-log.debug(`Exporting ${getEnv()} configuration`);
-module.exports = databaseConfigs[getEnv()];
+log.info(`MySQL ${isMySQLInaccessible ? 'IS NOT' : 'IS'} available. ` +
+  `Exporting ${getEnv()} configuration`,
+  JSON.stringify(config.options));
+
+module.exports = {
+  username: config.username,
+  password: config.password,
+  database: config.database,
+  options: config.options,
+};

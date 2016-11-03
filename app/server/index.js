@@ -25,7 +25,6 @@ const DisaRoutes = require('server/disa/disaroutes.js');
 const errors = require('server/middleware/errors.js');
 const shutdownhandler = require('server/util/shutdownhandler.js');
 const STTRoutes = require('server/stt/sttroutes.js');
-const prepareserver = require('server/prepareserver.js');
 
 shutdownhandler.init();
 
@@ -69,10 +68,8 @@ app.get('/*', (req, res) => {
 
 if (process.env.NODE_ENV === 'development') {
   const fakedata = require('utils/fakedata.js');
-  prepareserver()
-  .then(() => fakedata.load())
-  .catch(err => log.error(err, err.message))
-  .then(() => log.info('Finished server preload'));
+  fakedata.load()
+  .catch(err => log.error(err, err.message));
 }
 
 app.use(errors.handleErrors);

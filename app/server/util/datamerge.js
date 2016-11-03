@@ -18,8 +18,8 @@ const wrapObjOwnProps = (source, propNames) => {
   let result = source;
   const lastPropIndex = propNames.length - 1;
   for (let i = lastPropIndex; i > -1; i--) {
-    let wrapper = {};
-    let value = source[propNames[i]];
+    const wrapper = {};
+    const value = source[propNames[i]];
     if (value) {
       // don't wrap in falsy values (e.g., null, undefined)
       wrapper[value] = result;

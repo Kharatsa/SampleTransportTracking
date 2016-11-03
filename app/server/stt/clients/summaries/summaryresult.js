@@ -7,7 +7,7 @@ const sttworkflow = require('common/sttworkflow');
 const datecalc = require('common/datecalc');
 // const log = require('server/util/logapp.js');
 
-const recomposeRawSummary = (data, options) => {
+const recomposeRawSummary = BPromise.method((data, options) => {
   const nested = options.children || [];
   const template = nested.reduce((reduced, key) => {
     reduced[key] = {};
@@ -27,7 +27,7 @@ const recomposeRawSummary = (data, options) => {
     }
     return reduced;
   }, template);
-};
+});
 
 // Target shape:
 // artifactCounts
@@ -72,13 +72,13 @@ const sampleIdCountTemplate = (
     return reduced;
   }, {}));
 
-const composeSampleIdsCount = data => {
+const composeSampleIdsCount = BPromise.method(data => {
   const result = _.cloneDeep(sampleIdCountTemplate);
 
   return BPromise.filter(data, isSampleIdCount)
   .each(row => result[row.stage] += row.sampleIdsCount)
   .then(() => result);
-};
+});
 
 const composeArtifactsCount = data => {
   const result = _.cloneDeep(stageArtifactCountTemplate);
@@ -119,7 +119,7 @@ const stageTestCountTemplate = (
     return reduced;
   }, {}));
 
-const composeLabTestGroup = data => {
+const composeLabTestGroup = BPromise.method(data => {
   const result = _.cloneDeep(stageTestCountTemplate);
 
   return BPromise.each(data, row => {
@@ -132,7 +132,7 @@ const composeLabTestGroup = data => {
     }
   }).
   then(() => ({labTestsCount: result}));
-};
+});
 
 const composeDateSampleIdCount = (date, data) => {
   return BPromise.reduce(sttworkflow.SCAN_STAGES_ORDER, (reduced, stage) => {
@@ -161,22 +161,23 @@ const composeDateSampleIdCount = (date, data) => {
  * @param {string} options.beforeDate ISO8601 Date string
  * @return {Array.<Object>}
  */
-const composeDateSeriesCounts = (data, options) => {
+const composeDateSeriesCounts = BPromise.method((data, options) => {
   options = options || {};
-  const afterDate = (new Date(options.afterDate));
-  const beforeDate = options.beforeDate || moment.utc().toISOString();
+
   if (!options.afterDate) {
     throw new Error('Missing required parameter afterDate');
   }
 
+  const afterDate = moment(options.afterDate);
+  const beforeDate = options.beforeDate || moment.utc().toISOString();
   const datesRange = datecalc.allDatesBetween({afterDate, beforeDate});
 
   return BPromise.map(datesRange, momentDate => {
-    const dateStr = momentDate.format('YYYY-MM-DD');
+    const dateStr = momentDate.toISOString();
     const dateData = data[dateStr] || {};
-    return composeDateSampleIdCount(momentDate.toISOString(), dateData);
+    return composeDateSampleIdCount(dateStr, dateData);
   });
-};
+});
 
 module.exports = {
   recomposeRawSummary,

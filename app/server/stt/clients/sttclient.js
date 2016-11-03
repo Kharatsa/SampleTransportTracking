@@ -90,12 +90,17 @@ function STTClient(options) {
  * @property {Date} [beforeDate] [description]
  * @property {string} [regionKey] [description]
  * @property {string} [facilityKey] [description]
+ * @return {Promise.<Array>}
  */
 
 const maybeConvertDates = (results, dateCols) => {
-  if (dateCols && dateCols.length) {
-    return BPromise.map(results, row =>
-      dbresult.convertToISODate(row, dateCols));
+  try {
+    if (dateCols && dateCols.length) {
+      return BPromise.map(results, row =>
+        dbresult.convertToISODate(row, dateCols));
+    }
+  } catch (err) {
+    return BPromise.reject(err);
   }
   return results;
 };
@@ -105,7 +110,7 @@ const maybeConvertDates = (results, dateCols) => {
  * @extends {QueryOptions}
  * @extends {SummaryQueryParams}
  */
-const summaryQuery = (self, queryFunc, params, dateCols) => {
+const summaryQuery = BPromise.method((self, queryFunc, params, dateCols) => {
   summaryqueries.checkRequired(params);
   log.debug('summary query params', params);
 
@@ -115,7 +120,7 @@ const summaryQuery = (self, queryFunc, params, dateCols) => {
   })
   .then(results => maybeConvertDates(results, dateCols))
   .map(row => summaryresult.recomposeRawSummary(row, {parent: 'Summary'}));
-};
+});
 
 /**
  * @method [artifactCounts]
@@ -175,12 +180,17 @@ STTClient.prototype.stageTATs = BPromise.method(function(options) {
 STTClient.prototype.stageDateCounts = BPromise.method(function(options) {
   const afterDate = options.data.afterDate;
   const beforeDate = options.data.beforeDate;
+  log.debug(`Stage counts between ${afterDate} and ${beforeDate}`);
 
-  return summaryQuery(this, summaryqueries.totalsDateSeries, options.data)
+  return summaryQuery(
+    this,
+    summaryqueries.totalsDateSeries,
+    options.data,
+    summaryqueries.totalsDateSeriesCols)
   .then(results => datamerge.propKeyReduce(
     {items: results, propNames: ['statusDate', 'stage']}))
   .then(results =>
-    summaryresult.composeDateSeriesCounts(results, {afterDate, beforeDate}));
+    summaryresult.composeDateSeriesCounts(results, {afterDate, beforeDate}))
 });
 
 /**

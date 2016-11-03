@@ -26,6 +26,8 @@ const totalsRaw = params => {
   ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}`;
 };
 
+const totalsDateSeriesCols = ['Summary.statusDate'];
+
 const totalsDateSeries = params => {
   return `
     SELECT
@@ -40,8 +42,8 @@ const totalsDateSeries = params => {
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-    GROUP BY "Summary.stage", "Summary.statusDate"
-    ORDER BY "Summary.statusDate"`;
+    GROUP BY c.stage, DATE(c.statusDate)
+    ORDER BY DATE(c.statusDate)`;
 };
 
 const artifactStagesRaw = params => {
@@ -60,7 +62,7 @@ const artifactStagesRaw = params => {
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-    GROUP BY "Summary.stage"
+    GROUP BY c.stage
     UNION ALL
     SELECT
       c.stage AS "Summary.stage",
@@ -76,7 +78,7 @@ const artifactStagesRaw = params => {
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-    GROUP BY "Summary.stage", "Summary.status", "Summary.artifactType"`;
+    GROUP BY c.stage, c.status, a.artifactType`;
 };
 
 const testStatusRaw = params => {
@@ -96,8 +98,7 @@ const testStatusRaw = params => {
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
     ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}
-    GROUP BY "Summary.stage", "Summary.status", "Summary.testType",
-      "Summary.testRejection"`;
+    GROUP BY c.stage, t.testType, c.status, c.labRejection`;
 };
 
 const tatDateCols = [
@@ -111,7 +112,7 @@ const stageTATsRaw = params => {
       s.uuid AS "Summary.sampleId",
       s.createdAt "Summary.sampleIdCreatedAt",
       c.stage AS "Summary.changeStage",
-      null AS "Summary.changeStatus",
+      NULL AS "Summary.changeStatus",
       MIN(c.statusDate) AS "Summary.changeFirstDate"
     FROM SampleIds s
     ${rawqueryutils.regionQueryInnerJoin(params)}
@@ -122,10 +123,9 @@ const stageTATsRaw = params => {
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
     GROUP BY
-      "Summary.sampleIdsUUID",
-      "Summary.sampleIdCreatedAt",
-      "Summary.changeStage",
-      "Summary.changeStatus"
+      s.uuid,
+      s.createdAt,
+      c.stage
     UNION ALL
     SELECT
       s.uuid AS "Summary.sampleId",
@@ -143,14 +143,14 @@ const stageTATsRaw = params => {
       rawqueryutils.originRegionCondition(params)}
     ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}
     GROUP BY
-      "Summary.sampleIdsUUID",
-      "Summary.sampleIdCreatedAt",
-      "Summary.changeStage",
-      "Summary.changeStatus"`;
+      s.uuid,
+      s.createdAt,
+      c.stage,
+      c.status`;
 };
 
 module.exports = {
   checkRequired,
   totalsRaw, totalsDateSeries, artifactStagesRaw, testStatusRaw,
-  tatDateCols, stageTATsRaw
+  tatDateCols, totalsDateSeriesCols, stageTATsRaw
 };
