@@ -26,6 +26,8 @@ const totalsRaw = params => {
   ${rawqueryutils.exceptDeletedTestsExpression(params, {labTestsAlias: 't'})}`;
 };
 
+const totalsDateSeriesCols = ['Summary.statusDate'];
+
 const totalsDateSeries = params => {
   return `
     SELECT
@@ -40,8 +42,8 @@ const totalsDateSeries = params => {
     ${rawqueryutils.sampleBeforeCondition(params)}
     ${rawqueryutils.originFacilityCondition(params) ||
       rawqueryutils.originRegionCondition(params)}
-    GROUP BY c.stage, c.statusDate
-    ORDER BY "Summary.statusDate"`;
+    GROUP BY c.stage, DATE(c.statusDate)
+    ORDER BY DATE(c.statusDate)`;
 };
 
 const artifactStagesRaw = params => {
@@ -150,5 +152,5 @@ const stageTATsRaw = params => {
 module.exports = {
   checkRequired,
   totalsRaw, totalsDateSeries, artifactStagesRaw, testStatusRaw,
-  tatDateCols, stageTATsRaw
+  tatDateCols, totalsDateSeriesCols, stageTATsRaw
 };
