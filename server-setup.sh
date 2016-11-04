@@ -31,7 +31,6 @@ ln -s docker-compose-prod.yml docker-compose.yml
 apt-get install -y mysql-client-core-5.7
 
 # add docker group
-groupadd docker
 usermod -aG docker ubuntu
 
 # change permissions for creds file
@@ -40,3 +39,13 @@ chown ubuntu:docker /etc/stt_creds
 
 # create logging directory
 mkdir /var/log/stt
+
+# setup log rotate for stt
+echo "/var/log/stt/*.log {
+	weekly
+	rotate 10
+	compress
+	delaycompress
+	missingok
+	notifempty
+}" > /etc/logrotate.d/stt
