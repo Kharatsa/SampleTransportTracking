@@ -10,8 +10,12 @@ mysql -h $STT_DB_HOST -u $STT_DB_USER --password=$MYSQL_PASSWORD < ./create_db.s
 
 sudo docker-compose up -d
 
+password=$(openssl rand -base64 16)
+
 sudo docker exec -it app_stt ./app/maintenance/data.js sync
 sudo docker exec -it app_stt ./app/maintenance/metadata.js reloadcsv
-sudo docker exec -it app_stt ./app/maintenance/users.js add -a test test
+sudo docker exec -it app_stt ./app/maintenance/users.js add -a admin $password
 
+echo "ODK_PASSWORD=$password
+ODK_USERNAME=admin" >> docker/env-prod.env
 

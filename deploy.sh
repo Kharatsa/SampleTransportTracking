@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -ex
 
 docker pull kharatsa/strack:latest
 git pull
@@ -7,11 +7,6 @@ if [ $(docker images -q --filter "dangling=true") ]; then
   docker rmi $(docker images -q --filter "dangling=true")
 fi
 
-docker-compose build stt1
-docker-compose up --no-deps -d stt1
-
-sleep 10
-
-docker-compose build stt2
-docker-compose up --no-deps -d stt2
+docker-compose build
+docker-compose up --no-deps --force-recreate -d
 

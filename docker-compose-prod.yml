@@ -12,7 +12,7 @@ services:
       driver: "json-file"
       options: 
         max-size: "2m"
-        max-file: 10
+        max-file: "10"
   stt:
     container_name: app_stt
     restart: always
@@ -23,10 +23,6 @@ services:
       - "8081:8081"
     volumes:
       - /var/log/stt/:/var/log/stt/
-    depends_on:
-      - odk
-    links:
-      - odk
     environment:
       - NODE_ENV=development
       - STT_LISTEN_PORT=8081
@@ -43,15 +39,7 @@ services:
       driver: "json-file"
       options: 
         max-size: "2m"
-        max-file: 10
-  stt1:
-    extends:
-      service: stt
-    links:
-      - odk
-  stt2:
-    extends:
-      service: stt
+        max-file: "10"
     links:
       - odk
   odk:
@@ -71,4 +59,4 @@ services:
       driver: "json-file"
       options: 
         max-size: "2m"
-        max-file: 10
+        max-file: "10"
