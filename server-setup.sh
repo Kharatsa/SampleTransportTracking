@@ -35,5 +35,8 @@ groupadd docker
 usermod -aG docker ubuntu
 
 # change permissions for creds file
-chmod 600 /etc/stt_creds
+chmod 640 /etc/stt_creds
 chown ubuntu:docker /etc/stt_creds
+
+# create logging directory
+mkdir /var/log/stt

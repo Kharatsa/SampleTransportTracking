@@ -6,7 +6,7 @@ rm docker-compose.yml
 ln -s docker-compose-prod.yml docker-compose.yml
 
 # export our db credentials
-export $(cat ./docker/env-prod.env | xargs)
+export $(cat /etc/stt_creds | xargs)
 
 # create the sst db
 mysql -h $STT_DB_HOST -u $STT_DB_USER --password=$MYSQL_PASSWORD < ./create_db.sql
