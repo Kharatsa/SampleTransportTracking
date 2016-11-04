@@ -2,6 +2,9 @@
 
 git submodule update --init
 
+rm docker-compose.yml
+ln -s docker-compose-prod.yml docker-compose.yml
+
 # export our db credentials
 export $(cat ./docker/env-prod.env | xargs)
 
