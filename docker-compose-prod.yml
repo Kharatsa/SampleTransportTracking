@@ -2,23 +2,27 @@ version: '2'
 services:
   nginx:
     image: jwilder/nginx-proxy
+    restart: always
     ports: 
       - "80:80"
       - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-  server:
+    logging:
+      driver: "json-file"
+      options: 
+        max-size: "2m"
+        max-file: 10
+  stt:
     container_name: app_stt
+    restart: always
     build:
       context: .
       dockerfile: ./docker/Dockerfile-server-dev
     ports:
       - "8081:8081"
     volumes:
-      - stt_data:/var/lib/stt/
-      - ./:/var/www/stt/
-      - ./log/:/var/log/stt/
-      - /var/www/stt/node_modules
+      - /var/log/stt/:/var/log/stt/
     depends_on:
       - odk
     links:
@@ -35,9 +39,25 @@ services:
       - VIRTUAL_HOST=app.bar.com
     env_file:
       - ./docker/env-prod.env
+    logging:
+      driver: "json-file"
+      options: 
+        max-size: "2m"
+        max-file: 10
+  stt1:
+    extends:
+      service: stt
+    links:
+      - odk
+  stt2:
+    extends:
+      service: stt
+    links:
+      - odk
   odk:
     image: kharatsa/odkaggregate:latest
     container_name: odk_stt
+    restart: always
     ports:
       - "8080:8080"
     environment:
@@ -47,5 +67,8 @@ services:
       - VIRTUAL_HOST=odk.bar.com
     env_file:
       - ./docker/env-prod.env
-volumes:
-  stt_data:
+    logging:
+      driver: "json-file"
+      options: 
+        max-size: "2m"
+        max-file: 10
