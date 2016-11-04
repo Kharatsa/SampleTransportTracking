@@ -34,7 +34,7 @@ services:
       - ODK_PASSWORD=password
       - VIRTUAL_HOST=app.bar.com
     env_file:
-      - ./docker/env-prod.env
+      - /etc/stt_creds
     logging:
       driver: "json-file"
       options: 
@@ -54,7 +54,7 @@ services:
       - ODK_ADMIN_USERNAME=admin
       - VIRTUAL_HOST=odk.bar.com
     env_file:
-      - ./docker/env-prod.env
+      - /etc/stt_creds
     logging:
       driver: "json-file"
       options: 

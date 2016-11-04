@@ -20,5 +20,5 @@ sudo docker exec -it app_stt ./app/maintenance/metadata.js reloadcsv
 sudo docker exec -it app_stt ./app/maintenance/users.js add -a admin $password
 
 echo "ODK_PASSWORD=$password
-ODK_USERNAME=admin" >> docker/env-prod.env
+ODK_USERNAME=admin" >> /etc/stt_creds
 

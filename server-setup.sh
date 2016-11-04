@@ -23,12 +23,17 @@ service docker start
 curl -L https://github.com/docker/compose/releases/download/1.9.0-rc2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
-# copy db_creds
-cp /etc/db_creds ./docker/env-prod.env
-
 # create link for docker-compose.yml
 rm docker-compose.yml
 ln -s docker-compose-prod.yml docker-compose.yml
 
 # install mysql client
 apt-get install -y mysql-client-core-5.7
+
+# add docker group
+groupadd docker
+usermod -aG docker ubuntu
+
+# change permissions for creds file
+chmod 600 /etc/stt_creds
+chown ubuntu:docker /etc/stt_creds

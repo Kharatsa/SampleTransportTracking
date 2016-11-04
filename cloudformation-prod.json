@@ -77,7 +77,7 @@
           "STT_DB_NAME=stt\n",
           "STT_DB_HOST=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
           "STT_DB_PORT=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] }, "\n",
-          "\" > /etc/db_creds\n"
+          "\" > /etc/stt_creds\n"
 				]]}}
       }
     },
