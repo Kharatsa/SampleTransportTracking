@@ -5,33 +5,10 @@ const BPromise = require('bluebird');
 const statAsync = BPromise.promisify(require('fs').stat);
 const log = require('server/util/logapp.js');
 
-const databasePath = process.env.STT_DATA_PATH || '/var/lib/stt';
-statAsync(databasePath)
-.catch(function(err) {
-  if (err.code === 'ENOENT') {
-    throw new Error('Data directory does not exist', databasePath);
-  } else {
-    throw err;
-  }
-});
-
 const connection = {
   username: process.env.STT_DB_USER || null,
   password: process.env.STT_DB_PASSWORD || null,
   database: process.env.STT_DB_NAME || null,
-};
-
-const MySQLConfig = {
-  dialect: 'mysql',
-  host: process.env.STT_DB_HOST || 'localhost',
-  port: process.env.STT_DB_PORT || 3306,
-  logging: log.debug
-};
-
-const SQLiteConfig = {
-  dialect: 'sqlite',
-  storage: path.join(databasePath, 'stt.sqlite'),
-  logging: log.debug
 };
 
 const isMySQLInaccessible = (
@@ -40,7 +17,34 @@ const isMySQLInaccessible = (
   connection.database === null
 );
 
+const MySQLConfig = {
+  dialect: 'mysql',
+  host: process.env.STT_DB_HOST || 'localhost',
+  port: process.env.STT_DB_PORT || 3306,
+  logging: log.debug
+};
+
+// SQLite database storage directory
+const databasePath = process.env.STT_DATA_PATH || '/var/lib/stt';
+
+const SQLiteConfig = {
+  dialect: 'sqlite',
+  storage: path.join(databasePath, 'stt.sqlite'),
+  logging: log.debug
+};
+
 const defaultConfig = isMySQLInaccessible ? SQLiteConfig : MySQLConfig;
+
+if (isMySQLInaccessible) {
+  statAsync(databasePath)
+  .catch(function(err) {
+    if (err.code === 'ENOENT') {
+      throw new Error('Data directory does not exist', databasePath);
+    } else {
+      throw err;
+    }
+  });
+}
 
 const configs = {
   production: {
@@ -56,10 +60,12 @@ const configs = {
     options: defaultConfig,
   },
   test: {
-    dialect: 'sqlite',
-    storage: ':memory:',
-    logging: function() {},
-  }
+    options: {
+      dialect: 'sqlite',
+      storage: ':memory:',
+      logging: function() {},
+    },
+  },
 };
 
 const getEnv = () => process.env.NODE_ENV || 'development';

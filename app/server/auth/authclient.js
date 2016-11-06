@@ -36,13 +36,15 @@ util.inherits(AuthClient, ModelClient);
  * @return {Promise.<string>}
  */
 var sanitizeUsername = BPromise.method(function(username) {
+  if (username.legth > 255) {
+    throw new Error('Username cannot be >255 characters');
+  }
   return username.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 });
 
-const USERNAME_MAX_LENGTH = 50;
+const USERNAME_MAX_LENGTH = 255;
 
 AuthClient.prototype.all = function() {
-  log.debug('Retrieving all Users');
   return this.models.Users.findAll();
 };
 
@@ -67,7 +69,6 @@ AuthClient.prototype.getUser = BPromise.method(function(options) {
   log.debug(`Retrieving User where username=${username}`);
 
   let UserModel = this.models.Users;
-
   if (options && options.includeCredentials) {
     UserModel = UserModel.scope('unsafe');
   }
@@ -84,20 +85,17 @@ AuthClient.prototype.getUser = BPromise.method(function(options) {
 AuthClient.prototype.changePassword = BPromise.method(function(options) {
   options = options || {};
 
-  if (!(options.username && options.salt && options.digest)) {
-    throw new Error('Missing required parameter username, salt, or digest');
+  if (!(options.username && options.digest)) {
+    throw new Error('Missing required parameter username or digest');
   }
 
-  log.debug('Username:', options.username);
-  log.debug('New salt:', options.salt);
-  log.debug('New digest:', options.digest);
+  log.debug(`Changed password for username '${options.username}'`);
 
   const getUsername = sanitizeUsername(options.username);
-
   const update = getUsername.then(username =>
     this.models.Users.update(
-      {salt: options.salt, digest: options.digest},
-      {where: {username}, fields: ['salt', 'digest']}
+      {digest: options.digest},
+      {where: {username}, fields: ['digest']}
   ))
   .then(affectedCount => log.debug(`changePassword affected=${affectedCount}`));
 
@@ -111,7 +109,6 @@ AuthClient.prototype.changePassword = BPromise.method(function(options) {
  * @method
  * @param  {QueryOptions} options
  * @param {string} options.username [description]
- * @param {string} options.salt [description]
  * @param {string} options.digest [description]
  * @param {boolean} [options.isAdmin=false] [description]
  * @return {Promise.<Object>}
@@ -121,8 +118,8 @@ AuthClient.prototype.createUser = BPromise.method(function(options) {
     isAdmin: false
   });
 
-  if (!(options.username && options.salt && options.digest)) {
-    throw new Error('Username, salt, and digest are all required parameters');
+  if (!(options.username && options.digest)) {
+    throw new Error('Username and digest are all required parameters');
   }
   if (options.username.length > USERNAME_MAX_LENGTH) {
     throw new Error('Username must be no longer than ' + USERNAME_MAX_LENGTH +
@@ -136,7 +133,6 @@ AuthClient.prototype.createUser = BPromise.method(function(options) {
   .then(username => {
     return this.models.Users.create({
       username,
-      salt: options.salt,
       digest: options.digest,
       isAdmin: options.isAdmin
     });

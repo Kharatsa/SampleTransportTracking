@@ -26,7 +26,7 @@ passport.use(new BasicStrategy(
         return false;
       }
 
-      return credentials.isValid(password, user.salt, user.digest)
+      return credentials.isValid(password, user.digest)
       .then(valid => {
         if (valid) {
           log.info(`Successful authentication for username="${username}"`);

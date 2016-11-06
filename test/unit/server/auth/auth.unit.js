@@ -13,39 +13,31 @@ const authclient = require('server/auth/authclient.js');
 describe('Authentication Components', () => {
 
   describe('credentials utilities', () => {
-    var password = 'password';
+    const password = 'test';
 
     it('should produce unique digests for identical passwords', () => {
       return credentials.protect(password)
       .then(first => {
-        var firstSalt = first.salt;
-        var firstDigest = first.digest;
         return credentials.protect(password)
         .then(second => {
-          expect(second.salt).to.not.equal(firstSalt);
-          expect(second.digest).to.not.equal(firstDigest);
+          expect(second).to.not.equal(first);
         });
       });
     });
 
-    it('should verify a password given a salt and digest', () => {
+    it('should verify a password given a digest', () => {
       return credentials.protect(password)
-      .then(result => {
-        // These would be saved in a db for a given user
-        var salt = result.salt;
-        var initialDigest = result.digest;
-
-        // Re-hash the password with the salt
-        return credentials.hash(password, salt)
-        .then(newDigest =>
-          expect(newDigest).to.equal(initialDigest)
-        )
-        .then(() => credentials.isValid(password, salt, initialDigest))
-        .then(valid =>
-          expect(valid).to.be.true
-        );
+      .then(digest => {
+        console.log('digest= ', digest);
+        console.log('password= ', password);
+        return credentials.isValid(password, digest);
+      })
+      .then(valid => {
+        console.log('valid=', valid);
+        expect(valid).to.be.true;
       });
     });
+
   });
 
   describe('authentication client', () => {
@@ -58,8 +50,7 @@ describe('Authentication Components', () => {
       storage.loadModel(users);
 
       client = authclient({
-        db: storage.db,
-        models: storage.models
+        db: storage.db, models: storage.models
       });
 
       return storage.db.sync();
@@ -67,9 +58,7 @@ describe('Authentication Components', () => {
 
     it('should create new users', () => {
       return credentials.protect(password)
-      .then(result => client.createUser({
-        username, salt: result.salt, digest: result.digest
-      }))
+      .then(digest => client.createUser({username, digest}))
       .then(user => {
         expect(user.username).to.equal(username.toUpperCase());
       });
@@ -85,7 +74,6 @@ describe('Authentication Components', () => {
       return credentials.protect(password)
       .then(result => client.createUser({
         username: invalid.join(''),
-        salt: result.salt,
         digest: result.digest
       }))
       .then(user => expect(user).to.be.undefined)
@@ -96,7 +84,7 @@ describe('Authentication Components', () => {
       expect(
         credentials.protect('password')
         .then(result => client.createUser({
-          username: '', salt: result.salt, digest: result.digest
+          username: '', digest: result.digest
         }))
       ).to.eventually.be.rejectedWith(Error)
     );
@@ -105,7 +93,7 @@ describe('Authentication Components', () => {
       return client.getUser({username, includeCredentials: true})
       .then(user => {
         expect(user.username).to.equal(username.toUpperCase());
-        return credentials.isValid(password, user.salt, user.digest);
+        return credentials.isValid(password, user.digest);
       })
       .then(valid => expect(valid).to.be.true);
     });
@@ -114,7 +102,6 @@ describe('Authentication Components', () => {
       return client.getUser({username})
       .then(user => {
         expect(user.username).to.equal(username.toUpperCase());
-        expect(user.salt).to.be.undefined;
         expect(user.digest).to.be.undefined;
       });
     });

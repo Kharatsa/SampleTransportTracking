@@ -1,12 +1,12 @@
 'use strict';
 
 const modelwrapper = require('server/storage/modelwrapper.js');
+const credentials = require('server/auth/credentials.js');
 
 /**
  * @typedef {User}
  * @property {string} username [description]
  * @property {string} digest [description]
- * @property {string} salt [description]
  */
 
 /**
@@ -30,16 +30,12 @@ const users = modelwrapper({
       return sequelize.define(modelName,
         {
           username: {
-            type: DataTypes.STRING,
+            type: DataTypes.CHAR,
             field: 'username',
             unique: true
           },
-          salt: {
-            type: DataTypes.STRING,
-            field: 'salt'
-          },
           digest: {
-            type: DataTypes.STRING,
+            type: DataTypes.CHAR(credentials.HASH_LENGTH),
             field: 'digest'
           },
           isAdmin: {
@@ -49,9 +45,9 @@ const users = modelwrapper({
           }
         },
         {
-          tableName: 'sys_Users',
+          tableName: 'auth_users',
           defaultScope: {
-            attributes: {exclude: ['salt', 'digest']}
+            attributes: {exclude: ['digest']}
           },
           scopes: {
             unsafe: {

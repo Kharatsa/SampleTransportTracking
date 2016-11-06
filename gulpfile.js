@@ -23,7 +23,9 @@ const browserifyOptions = {
   extensions: ['.jsx'],
   debug: IS_DEVELOPMENT,
 };
-const watchifyOptions = {ignoreWatch: ['./node_modules/**']};
+const watchifyOptions = {
+    ignoreWatch: ['./node_modules/**'],
+};
 const bundlerOptions = _.assign(
   {}, watchify.args, watchifyOptions, browserifyOptions);
 const globals = _.assign({NODE_ENV: process.env.NODE_ENV}, config.common);
