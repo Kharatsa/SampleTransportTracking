@@ -69,9 +69,7 @@ const handleUserResult = (client, user, username, password, isAdmin) => {
     log.debug(`isAdmin? ${isAdmin}`);
 
     return credentials.protect(password)
-    .then(result => client.createUser({
-      username, salt: result.salt, digest: result.digest, isAdmin
-    }))
+    .then(digest => client.createUser({username, digest, isAdmin}))
     .then(user => {
       log.info('Successfully created new user');
       displayUsersTable([user]);
@@ -134,12 +132,10 @@ cli.command('remove <username>')
 
 const handlePasswordChange = (client, user, username, password) => {
   if (validUser(user)) {
-    log.info('Changing user\'s password');
+    log.info(`Changing password for '${username}'`);
 
     return credentials.protect(password)
-    .then(result => client.changePassword({
-      username, salt: result.salt, digest: result.digest
-    }))
+    .then(digest => client.changePassword({username, digest}))
     .then(user => {
       log.info('Successfully updated password for user');
       displayUsersTable([user]);
