@@ -29,19 +29,14 @@
     "STTUser": {
       "Description" : "The STT admin account username",
       "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "16",
-      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
-      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+      "MinLength": "1"
     },
     "STTPassword": {
       "NoEcho": "true",
       "Description" : "The STT admin account password",
       "Type": "String",
       "MinLength": "8",
-      "MaxLength": "41",
-      "AllowedPattern" : "[a-zA-Z0-9]*",
-      "ConstraintDescription" : "must contain only alphanumeric characters and be between 8 and 41 characters long."
+      "MaxLength": "41"
     },
     "TL_HOSTNAME": {
       "Description" : "The top level domain name for all local services",
@@ -51,19 +46,22 @@
     "ODKUser": {
       "Description" : "The ODK admin account username",
       "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "16",
-      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
-      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+      "MinLength": "1"
     },
     "ODKPassword": {
       "NoEcho": "true",
       "Description" : "The ODK admin account password",
       "Type": "String",
-      "MinLength": "8",
-      "MaxLength": "41",
-      "AllowedPattern" : "[a-zA-Z0-9]*",
-      "ConstraintDescription" : "must contain only alphanumeric characters and be between 8 and 41 characters long."
+      "MinLength": "8"
+    }
+  },
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1"      : "ami-40d28157",
+      "us-west-1"      : "ami-6e165d0e",
+      "eu-west-1"      : "ami-0d77397e",
+      "ap-southeast-1" : "ami-a1288ec2",
+      "ap-northeast-1" : "ami-0567c164"
     }
   },
 
@@ -96,7 +94,7 @@
 		"Ec2Instance" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
-        "ImageId" : "ami-0d77397e",
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }]},
         "KeyName" : { "Ref" : "KeyName" },
 				"InstanceType" : "t2.micro",
 				"SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
