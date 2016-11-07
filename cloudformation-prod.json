@@ -25,6 +25,45 @@
       "MaxLength": "41",
       "AllowedPattern" : "[a-zA-Z0-9]*",
       "ConstraintDescription" : "must contain only alphanumeric characters and be between 8 and 41 characters long."
+    },
+    "STTUser": {
+      "Description" : "The STT admin account username",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "STTPassword": {
+      "NoEcho": "true",
+      "Description" : "The STT admin account password",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters and be between 8 and 41 characters long."
+    },
+    "TL_HOSTNAME": {
+      "Description" : "The top level domain name for all local services",
+      "Type": "String",
+      "ConstraintDescription" : "Eg. kharasta.com"
+    },
+    "ODKUser": {
+      "Description" : "The ODK admin account username",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "ODKPassword": {
+      "NoEcho": "true",
+      "Description" : "The ODK admin account password",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters and be between 8 and 41 characters long."
     }
   },
 
@@ -77,6 +116,11 @@
           "STT_DB_NAME=stt\n",
           "STT_DB_HOST=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
           "STT_DB_PORT=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] }, "\n",
+          "STT_USER=", { "Ref" : "STTUser" }, "\n",
+          "STT_PASSWORD=", { "Ref" : "STTPassword" }, "\n",
+          "ODK_USERNAME=", { "Ref" : "ODKUser" }, "\n",
+          "ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
+          "TL_HOSTNAME", { "Ref" : "TL_HOSTNAME" }, "\n",
           "\" > /etc/stt_creds\n"
 				]]}}
       }

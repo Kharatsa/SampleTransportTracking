@@ -16,9 +16,7 @@ services:
   stt:
     container_name: app_stt
     restart: always
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile-server-dev
+    image: kharatsa/strack:latest
     ports:
       - "8081:8081"
     volumes:
@@ -27,12 +25,10 @@ services:
       - NODE_ENV=development
       - STT_LISTEN_PORT=8081
       - STT_LISTEN_HOST=0.0.0.0
-      - STT_PUBLIC_URL="http://localhost:8081"
+      - STT_PUBLIC_URL=https://$TL_HOSTNAME
       - ODK_PROTOCOL=http
       - ODK_HOSTNAME=odk
-      - ODK_USERNAME=stt
-      - ODK_PASSWORD=password
-      - VIRTUAL_HOST=app.bar.com
+      - VIRTUAL_HOST=$TL_HOSTNAME
     env_file:
       - /etc/stt_creds
     logging:
@@ -49,10 +45,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - ODK_HOSTNAME=localhost
+      - ODK_HOSTNAME=odk.$TL_HOSTNAME
       - ODK_PORT=8080
       - ODK_ADMIN_USERNAME=admin
-      - VIRTUAL_HOST=odk.bar.com
+      - VIRTUAL_HOST=odk.$TL_HOSTNAME
     env_file:
       - /etc/stt_creds
     logging:
