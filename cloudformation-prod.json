@@ -38,7 +38,7 @@
       "MinLength": "8",
       "MaxLength": "41"
     },
-    "TL_HOSTNAME": {
+    "TLDomain": {
       "Description" : "The top level domain name for all local services",
       "Type": "String",
       "ConstraintDescription" : "Eg. kharasta.com"
@@ -57,11 +57,11 @@
   },
   "Mappings" : {
     "RegionMap" : {
-      "us-east-1"      : "ami-40d28157",
-      "us-west-1"      : "ami-6e165d0e",
-      "eu-west-1"      : "ami-0d77397e",
-      "ap-southeast-1" : "ami-a1288ec2",
-      "ap-northeast-1" : "ami-0567c164"
+      "us-east-1"      : { "64" : "ami-40d28157" },
+      "us-west-1"      : { "64" : "ami-6e165d0e" },
+      "eu-west-1"      : { "64" : "ami-0d77397e" },
+      "ap-southeast-1" : { "64" : "ami-a1288ec2" },
+      "ap-northeast-1" : { "64" : "ami-0567c164" }
     }
   },
 
@@ -94,7 +94,7 @@
 		"Ec2Instance" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
-        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }]},
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "64"]},
         "KeyName" : { "Ref" : "KeyName" },
 				"InstanceType" : "t2.micro",
 				"SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
@@ -118,7 +118,7 @@
           "STT_PASSWORD=", { "Ref" : "STTPassword" }, "\n",
           "ODK_USERNAME=", { "Ref" : "ODKUser" }, "\n",
           "ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
-          "TL_HOSTNAME", { "Ref" : "TL_HOSTNAME" }, "\n",
+          "TL_HOSTNAME", { "Ref" : "TLDomain" }, "\n",
           "\" > /etc/stt_creds\n"
 				]]}}
       }
