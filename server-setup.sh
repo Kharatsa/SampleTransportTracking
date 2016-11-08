@@ -39,6 +39,7 @@ chown ubuntu:docker /etc/stt_creds
 
 # create logging directory
 mkdir /var/log/stt
+chgrp -R docker /var/log/stt
 
 # create directory to hold nginx ssl certs
 mkdir /etc/nginx-certs

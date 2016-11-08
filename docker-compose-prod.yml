@@ -80,7 +80,6 @@ services:
   #   volumes:
   #     - /var/log/stt/:/var/log/stt/
   #   environment:
-  #     - NODE_ENV=development
   #     - STT_LISTEN_PORT=8081
   #     - STT_LISTEN_HOST=0.0.0.0
   #     - STT_PUBLIC_URL=https://$TL_HOSTNAME
