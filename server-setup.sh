@@ -40,6 +40,11 @@ chown ubuntu:docker /etc/stt_creds
 # create logging directory
 mkdir /var/log/stt
 
+# create directory to hold nginx ssl certs
+mkdir /etc/nginx-certs
+chmod 750 /etc/nginx-certs
+chown ubuntu:docker /etc/nginx-certs
+
 # setup log rotate for stt
 echo "/var/log/stt/*.log {
 	weekly
