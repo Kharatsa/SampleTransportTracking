@@ -2,6 +2,43 @@ version: '2'
 services:
 
 
+
+  # simple-site:
+  #   image: nginx
+  #   container_name: simple-site
+  #   volumes:
+  #     - "../../../volumes/examples/simple-site/conf.d/:/etc/nginx/conf.d"
+  #   environment:
+  #     - VIRTUAL_HOST=test.kharatsa.com
+  #     - VIRTUAL_NETWORK=nginx-proxy
+  #     - VIRTUAL_PORT=80
+  #     - LETSENCRYPT_HOST=test.kharatsa.com
+  #     - LETSENCRYPT_EMAIL=sts59@cornell.edu
+  #     - LETSENCRYPT_TEST=true
+  #   networks:
+  #     - proxy-tier
+
+
+
+
+
+
+  # nginx:
+  #   image: jwilder/nginx-proxy
+  #   restart: always
+  #   ports: 
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - /var/run/docker.sock:/tmp/docker.sock:ro
+  #     - /etc/nginx/vhost.d
+  #     - /usr/share/nginx/html
+  #     - /path/to/certs:/etc/nginx/certs:ro
+  #   logging:
+  #     driver: "json-file"
+  #     options: 
+  #       max-size: "2m"
+  #       max-file: "10"
   nginx:
     image: nginx
     container_name: nginx
@@ -34,85 +71,58 @@ services:
       - "/etc/nginx-certs:/etc/nginx/certs:rw"
     environment:
       - NGINX_DOCKER_GEN_CONTAINER=nginx-gen
-
-  simple-site:
-    image: nginx
-    container_name: simple-site
+  stt:
+    container_name: app_stt
+    restart: always
+    image: kharatsa/strack:latest
+    ports:
+      - "8081:8081"
     volumes:
-      - "../../../volumes/examples/simple-site/conf.d/:/etc/nginx/conf.d"
+      - /var/log/stt/:/var/log/stt/
     environment:
+      - STT_LISTEN_PORT=8081
+      - STT_LISTEN_HOST=0.0.0.0
+      - STT_PUBLIC_URL=https://test.kharatsa.com
+      - ODK_PROTOCOL=http
+      - ODK_HOSTNAME=odk
       - VIRTUAL_HOST=test.kharatsa.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=80
       - LETSENCRYPT_HOST=test.kharatsa.com
       - LETSENCRYPT_EMAIL=sts59@cornell.edu
       - LETSENCRYPT_TEST=true
     networks:
       - proxy-tier
-
-
-
-
-
-
-  # nginx:
-  #   image: jwilder/nginx-proxy
-  #   restart: always
-  #   ports: 
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - /var/run/docker.sock:/tmp/docker.sock:ro
-  #     - /etc/nginx/vhost.d
-  #     - /usr/share/nginx/html
-  #     - /path/to/certs:/etc/nginx/certs:ro
-  #   logging:
-  #     driver: "json-file"
-  #     options: 
-  #       max-size: "2m"
-  #       max-file: "10"
-  # stt:
-  #   container_name: app_stt
-  #   restart: always
-  #   image: kharatsa/strack:latest
-  #   ports:
-  #     - "8081:8081"
-  #   volumes:
-  #     - /var/log/stt/:/var/log/stt/
-  #   environment:
-  #     - STT_LISTEN_PORT=8081
-  #     - STT_LISTEN_HOST=0.0.0.0
-  #     - STT_PUBLIC_URL=https://$TL_HOSTNAME
-  #     - ODK_PROTOCOL=http
-  #     - ODK_HOSTNAME=odk
-  #     - VIRTUAL_HOST=$TL_HOSTNAME
-  #   env_file:
-  #     - /etc/stt_creds
-  #   logging:
-  #     driver: "json-file"
-  #     options: 
-  #       max-size: "2m"
-  #       max-file: "10"
-  #   links:
-  #     - odk
-  # odk:
-  #   image: kharatsa/odkaggregate:latest
-  #   container_name: odk_stt
-  #   restart: always
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     - ODK_HOSTNAME=odk.$TL_HOSTNAME
-  #     - ODK_PORT=8080
-  #     - ODK_ADMIN_USERNAME=admin
-  #     - VIRTUAL_HOST=odk.$TL_HOSTNAME
-  #   env_file:
-  #     - /etc/stt_creds
-  #   logging:
-  #     driver: "json-file"
-  #     options: 
-  #       max-size: "2m"
-  #       max-file: "10"
+    env_file:
+      - /etc/stt_creds
+    logging:
+      driver: "json-file"
+      options: 
+        max-size: "2m"
+        max-file: "10"
+    links:
+      - odk
+  odk:
+    image: kharatsa/odkaggregate:latest
+    container_name: odk_stt
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - ODK_HOSTNAME=odk.test.kharatsa.com
+      - ODK_PORT=8080
+      - ODK_ADMIN_USERNAME=admin
+      - VIRTUAL_HOST=odk.test.kharatsa.com
+      - LETSENCRYPT_HOST=odk.test.kharatsa.com
+      - LETSENCRYPT_EMAIL=sts59@cornell.edu
+      - LETSENCRYPT_TEST=true
+    networks:
+      - proxy-tier
+    env_file:
+      - /etc/stt_creds
+    logging:
+      driver: "json-file"
+      options: 
+        max-size: "2m"
+        max-file: "10"
 
 
 networks:
