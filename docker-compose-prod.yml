@@ -88,6 +88,9 @@ services:
       - ODK_PROTOCOL=http
       - ODK_HOSTNAME=odk
       - VIRTUAL_HOST=$TL_HOSTNAME
+      - LETSENCRYPT_HOST=$TL_HOSTNAME
+      - LETSENCRYPT_EMAIL=sts59@cornell.edu
+      - LETSENCRYPT_TEST=true
     env_file:
       - /etc/stt_creds
     logging:
@@ -110,6 +113,9 @@ services:
       - ODK_PORT=8080
       - ODK_ADMIN_USERNAME=admin
       - VIRTUAL_HOST=odk.$TL_HOSTNAME
+      - LETSENCRYPT_HOST=odk.$TL_HOSTNAME
+      - LETSENCRYPT_EMAIL=sts59@cornell.edu
+      - LETSENCRYPT_TEST=true
     env_file:
       - /etc/stt_creds
     logging:
