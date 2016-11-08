@@ -118,7 +118,7 @@
           "STT_PASSWORD=", { "Ref" : "STTPassword" }, "\n",
           "ODK_USERNAME=", { "Ref" : "ODKUser" }, "\n",
           "ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
-          "TL_HOSTNAME", { "Ref" : "TLDomain" }, "\n",
+          "TL_HOSTNAME=", { "Ref" : "TLDomain" }, "\n",
           "\" > /etc/stt_creds\n"
 				]]}}
       }
