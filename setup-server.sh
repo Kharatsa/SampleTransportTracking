@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -ex
+#!/bin/bash -ex
 
 # this script should be run as root
 
