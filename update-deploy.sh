@@ -4,7 +4,7 @@ git pull
 docker pull --all-tags
 
 rm docker-compose.yml
-ln -s docker-compose-prod.yml docker-compose.yml
+ln -s deploy/docker-compose-prod.yml docker-compose.yml
 
 if [ $(docker images -q --filter "dangling=true") ]; then
   docker rmi $(docker images -q --filter "dangling=true")

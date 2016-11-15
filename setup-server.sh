@@ -25,7 +25,7 @@ chmod +x /usr/local/bin/docker-compose
 
 # create link for docker-compose.yml
 rm docker-compose.yml
-ln -s docker-compose-prod.yml docker-compose.yml
+ln -s deploy/docker-compose-prod.yml docker-compose.yml
 
 # install mysql client
 apt-get install -y mysql-client-core-5.7
