@@ -31,20 +31,15 @@ ln -s deploy/docker-compose-prod.yml docker-compose.yml
 apt-get install -y mysql-client-core-5.7
 
 # add docker group
-usermod -aG docker ubuntu
+usermod -aG docker $USER
 
 # change permissions for creds file
 chmod 640 /etc/stt_creds
-chown ubuntu:docker /etc/stt_creds
+chown $USER:docker /etc/stt_creds
 
 # create logging directory
 mkdir /var/log/stt
-chgrp -R docker /var/log/stt
-
-# create directory to hold nginx ssl certs
-mkdir /etc/nginx-certs
-chmod 750 /etc/nginx-certs
-chown ubuntu:docker /etc/nginx-certs
+chown -R $USER:docker /var/log/stt
 
 # setup log rotate for stt
 echo "/var/log/stt/*.log {

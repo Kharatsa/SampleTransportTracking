@@ -9,6 +9,14 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription" : "Must be the name of an existing EC2 KeyPair."
     },    
+    "AdminEmail": {
+      "Description" : "Administrator email address",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "100",
+      "AllowedPattern" : "^\S+@\S+$",
+      "ConstraintDescription" : "Must be a valid email address (e.g., 'example@example.com')"
+    },
     "DBUser": {
       "Description" : "The database admin account username",
       "Type": "String",
@@ -119,6 +127,7 @@
           "ODK_USERNAME=", { "Ref" : "ODKUser" }, "\n",
           "ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
           "TL_HOSTNAME=", { "Ref" : "TLDomain" }, "\n",
+          "EMAIL_ADDRESS=", { "Ref" : "AdminEmail" },
           "\" > /etc/stt_creds\n"
 				]]}}
       }
