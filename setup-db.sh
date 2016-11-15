@@ -1,9 +1,9 @@
-#!/bin/bash -ex
+#!/usr/bin/env bash -ex
 
 git submodule update --init
 
 rm docker-compose.yml
-ln -s docker-compose-prod.yml docker-compose.yml
+ln -s deploy/docker-compose-prod.yml docker-compose.yml
 
 # export our db credentials
 export $(cat /etc/stt_creds | xargs)
