@@ -1,27 +1,51 @@
 # Sample Transport Tracking (STT)
 
-## Setup
-A docker image for the STT application is hosted on Docker Hub at [kharatsa/strack](https://hub.docker.com/r/kharatsa/strack/).
+## Production Deploy
 
-The STT Docker container requires that certain environment variables be set on the host server prior to deployment. Usernames and password used to protect the Disa Labs submission API and ODK Collect submission API will also need to be created prior to usage (these should persist in the database across new deployments).
+### CloudFormation stack deployment
+This repo provides an [AWS CloudFormation](https://aws.amazon.com/cloudformation/) 
+template in the `deploy/` directory. The template defines the resources
+necessary for the full STT application stack. Once the stack resources are
+deployed, some additional setup scripts are required to complete the
+bootstrap process.
 
-To create these STT app credentials, log in to a running STT docker container with an interactive shell.
+The resources covered by the stack template are:
+* EC2 instance, *Ubuntu 16.04.1 LTS (Xenial Xerus)*
+* RDS instance, *MySQL 5.7*
+* Elastic IP address
 
-    docker exec -it strack /bin/bash
+#### Setup parameters
 
-Within this container, use the provided user maintenance command-line utility to add new users to the STT database.
+* Database
+    * **DBUser**: The MySQL username the STT application and ODK should use
+      when connecting to the database server. This user will be granted all
+      access on the `stt` and `odk_stt` databases.
+    * **DBPassword**: The password for the **DBUser**.
+* Application
+    * **STTUser**: The initial account username to create when deploying the
+      STT application. This user will be flagged as an administrator.
+    * **STTPassword**: The password for the **STTUser**.
+* ODK
+    * **ODKUser**: The username in ODK Aggregate the STT application should use
+      for all submissions. This ODK Aggregate user will need at least *Data
+        Collector* permissions.
+    * **ODKPassword**: The password for the **ODKUser**.
+* **TLDomain**: The top-level hostname shared between the STT application and
+  ODK components. The application will be accessible at either `TLDomain` or
+  `www.TLDomain`, while ODK will be accessible at `odk.TLDomain`.
 
-    node app/maintenance/users.js NEW_USERNAME NEW_PASSWORD
+### DNS Configuration
 
-## Change Deployment
-To deploy the STT Docker container, run the `deploy.sh` script on the host server.
+While the CloudFormation stack does include a static Elastic IP address, but 
+does not automatically manage DNS configuration. Separately configure your
+domain name to point at the EC2 server's IP address.
 
-    ssh -i PRIVATE_KEY_PATH USERNAME@HOSTNAME 'bash -s' < deploy.sh
+| Record Type | Name          | Value         | 
+| ----------- | ------------- | ------------- |
+| A           |               | *Elastic IP*  |
+| CNAME       | www           | *TL_HOSTNAME* |
+| CNAME       | odk           | *TL_HOSTNAME* |
 
-## Setting up a new environment
-
-### Cloudformation
-There is a cloudformation-prod.json file in the repo root.  This is a cloudformation template.  All you need to do is login to AWS and go to the cloudformation service.  You will then create a new stack and give it this file.  When you create the stack it will ask you for all the credentials for this new deployment.  So beforehand you must create username and password for the db, STT, and ODK.  After this template is run and the stack is created there will be an ec2 instance, RDS mysql db, and security groups to go along.
 
 ### Login and setup
 Now we must ssh into the ec2 instance.  You'll find it under the ec2 list of instances, it will be called STT server.  Once you've logged in run these commands.
@@ -39,9 +63,9 @@ That's it!  You will have to point your dns domain to the new server EIP and the
 
 ## DB
 We are using RDS for our db, so they manage backups.  Currently we just have automated backups which will back up the db everyday and keep the last 7 days.  So if there is ever an issue you can always restore to a point in time.  If you would ever like to move the db to another region or for any other reason you'll need to create a snapshot and restore from that snap shot.  You can find out how to do that here.[http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateSnapshot.html]
-### backups
+### Backups
 Here is some documentation.  [http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html]
-### restore
+### Restore
 Here is how to restore to a point in time.
 [http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIT.html]
 

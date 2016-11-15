@@ -9,7 +9,7 @@ ln -s docker-compose-prod.yml docker-compose.yml
 export $(cat /etc/stt_creds | xargs)
 
 # create the sst db
-mysql -h $STT_DB_HOST -u $STT_DB_USER --password=$MYSQL_PASSWORD < ./create_db.sql
+mysql -h $STT_DB_HOST -u $STT_DB_USER --password=$MYSQL_PASSWORD < ./deploy/create_db.sql
 
 sudo docker-compose up -d
 

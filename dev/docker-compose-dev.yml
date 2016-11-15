@@ -4,7 +4,7 @@ services:
     container_name: bundler_stt
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-bundler-dev
+      dockerfile: ./dev/Dockerfile-bundler-dev
     volumes:
       - ./:/var/www/stt/
       - /var/www/stt/node_modules
@@ -15,7 +15,7 @@ services:
     container_name: app_stt
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-server-dev
+      dockerfile: ./dev/Dockerfile-server-dev
     ports:
       - "8081:8081"
     volumes:
@@ -56,20 +56,20 @@ services:
       - ODK_HOSTNAME=localhost
       - ODK_PORT=8080
       - ODK_ADMIN_USERNAME=admin
-      - DB_CONTAINER_NAME=db
+      - MYSQL_HOSTNAME=db
     env_file:
-      - ./docker/mysql_dev.env
+      - ./dev/mysql_dev.env
   db:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-mysql-dev
+      dockerfile: ./dev/Dockerfile-mysql-dev
     container_name: db_stt
     volumes:
       - db_data:/var/lib/mysql/
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
     env_file:
-      - ./docker/mysql_dev.env
+      - ./dev/mysql_dev.env
 volumes:
   db_data:
   stt_data:

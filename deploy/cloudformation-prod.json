@@ -108,7 +108,7 @@
           "MYSQL_USER=", { "Ref" : "DBUser"}, "\n",
           "MYSQL_DATABASE=", "odk_stt", "\n",
           "MYSQL_PASSWORD=", { "Ref" : "DBPassword"}, "\n",
-          "DB_CONTAINER_NAME=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
+          "MYSQL_HOSTNAME=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
           "STT_DB_USER=", { "Ref" : "DBUser"}, "\n",
           "STT_DB_PASSWORD=", { "Ref" : "DBPassword" }, "\n",
           "STT_DB_NAME=stt\n",

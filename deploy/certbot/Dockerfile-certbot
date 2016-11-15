@@ -1,0 +1,20 @@
+FROM quay.io/letsencrypt/letsencrypt:latest
+MAINTAINER Sean Herman <sjh293@cornell.edu>
+
+RUN apt-get update \
+  && apt-get install gettext -yq --no-install-recommends \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY ./deploy/certbot/start_cron.sh \
+  ./deploy/certbot/certbot_cron \
+  ./deploy/certbot/certbot_conf.template \
+  /root/
+
+RUN cp /root/certbot_cron /etc/cron.d/certbot_cron \
+  && chmod 0644 /etc/cron.d/certbot_cron \
+  && chmod +x /root/start_cron.sh \
+  && touch /var/log/cron.log
+
+ENTRYPOINT []
+CMD /root/start_cron.sh && cron && tail -F /var/log/cron.log

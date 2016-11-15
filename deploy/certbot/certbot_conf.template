@@ -1,0 +1,18 @@
+# Use a 4096 bit RSA key instead of 2048
+rsa-key-size = 4096
+
+email = ${EMAIL_ADDRESS}
+domains = ${TL_HOSTNAME} www.${TL_HOSTNAME} odk.${TL_HOSTNAME}
+
+# path to the public_html / webroot folder being served by your web server.
+authenticator = webroot
+webroot-path = /usr/share/nginx/html
+
+# automated renewal settings
+keep-until-expiring = True
+non-interactive = True
+agree-tos = True
+
+# testing
+test-cert = True
+debug = True
