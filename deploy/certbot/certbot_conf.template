@@ -2,7 +2,7 @@
 rsa-key-size = 4096
 
 email = ${EMAIL_ADDRESS}
-domains = ${TL_HOSTNAME} www.${TL_HOSTNAME} odk.${TL_HOSTNAME}
+domains = ${TL_HOSTNAME},www.${TL_HOSTNAME},odk.${TL_HOSTNAME}
 
 # path to the public_html / webroot folder being served by your web server.
 authenticator = webroot

@@ -2,46 +2,42 @@
 
 # this script should be run as root
 
-# install docker
-# these instructions come from this document: https://docs.docker.com/engine/installation/linux/ubuntulinux/
-
 apt-get update
-apt-get install -y apt-transport-https ca-certificates
+apt-get upgrade -y
 
+# Install Docker (via https://docs.docker.com/engine/installation/linux/ubuntulinux/)
+apt-get install -y apt-transport-https ca-certificates
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
 # for ubuntu 16.04
 echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | tee /etc/apt/sources.list.d/docker.list
-
-sudo apt-get update
+apt-get update
 apt-get install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
-
 apt-get install -y docker-engine
+
+# Add user to `docker` group
+usermod -aG docker $USER
+
 service docker start
 
-# install docker-compose
+# Install Docker Compose
 curl -L https://github.com/docker/compose/releases/download/1.9.0-rc2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
-# create link for docker-compose.yml
+# Point Docker Compose at the production configuration
 rm docker-compose.yml
 ln -s deploy/docker-compose-prod.yml docker-compose.yml
 
-# install mysql client
+# Install MySQL client
 apt-get install -y mysql-client-core-5.7
 
-# add docker group
-usermod -aG docker $USER
-
-# change permissions for creds file
-chmod 640 /etc/stt_creds
-chown $USER:docker /etc/stt_creds
-
-# create logging directory
+# Setup logging directory, and grant ownership of logs and credentials
 mkdir /var/log/stt
+chmod 640 /etc/stt_creds
+chown -R $USER:docker /etc/stt_creds
 chown -R $USER:docker /var/log/stt
 
-# setup log rotate for stt
+# Configure logrotate for the STT application
 echo "/var/log/stt/*.log {
 	weekly
 	rotate 10
@@ -50,3 +46,6 @@ echo "/var/log/stt/*.log {
 	missingok
 	notifempty
 }" > /etc/logrotate.d/stt
+
+echo "REBOOTING"
+reboot

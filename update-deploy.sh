@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 git pull
-docker pull --all-tags
+docker pull kharatsa/strack
 
 rm docker-compose.yml
 ln -s deploy/docker-compose-prod.yml docker-compose.yml
