@@ -47,5 +47,10 @@ echo "/var/log/stt/*.log {
 	notifempty
 }" > /etc/logrotate.d/stt
 
+# Load the environment variables
+cat /etc/stt_creds >> $HOME/.profile
+source $HOME/.profile
+docker-compose up -d
+
 echo "REBOOTING"
 reboot

@@ -14,7 +14,7 @@
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "100",
-      "AllowedPattern" : "^\S+@\S+$",
+      "AllowedPattern": "^\\S+@\\S+$",
       "ConstraintDescription" : "Must be a valid email address (e.g., 'example@example.com')"
     },
     "DBUser": {
@@ -113,22 +113,23 @@
 				"UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
 					"#!/bin/bash \n",
           "echo \"",
-          "MYSQL_USER=", { "Ref" : "DBUser"}, "\n",
-          "MYSQL_DATABASE=", "odk_stt", "\n",
-          "MYSQL_PASSWORD=", { "Ref" : "DBPassword"}, "\n",
-          "MYSQL_HOSTNAME=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
-          "STT_DB_USER=", { "Ref" : "DBUser"}, "\n",
-          "STT_DB_PASSWORD=", { "Ref" : "DBPassword" }, "\n",
-          "STT_DB_NAME=stt\n",
-          "STT_DB_HOST=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
-          "STT_DB_PORT=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] }, "\n",
-          "STT_USER=", { "Ref" : "STTUser" }, "\n",
-          "STT_PASSWORD=", { "Ref" : "STTPassword" }, "\n",
-          "ODK_USERNAME=", { "Ref" : "ODKUser" }, "\n",
-          "ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
-          "TL_HOSTNAME=", { "Ref" : "TLDomain" }, "\n",
-          "EMAIL_ADDRESS=", { "Ref" : "AdminEmail" },
-          "\" > /etc/stt_creds\n"
+          "export MYSQL_USER=", { "Ref" : "DBUser"}, "\n",
+          "export MYSQL_DATABASE=", "odk_stt", "\n",
+          "export MYSQL_PASSWORD=", { "Ref" : "DBPassword"}, "\n",
+          "export MYSQL_HOSTNAME=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
+          "export STT_DB_USER=", { "Ref" : "DBUser"}, "\n",
+          "export STT_DB_PASSWORD=", { "Ref" : "DBPassword" }, "\n",
+          "export STT_DB_NAME=stt\n",
+          "export STT_DB_HOST=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
+          "export STT_DB_PORT=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] }, "\n",
+          "export STT_USER=", { "Ref" : "STTUser" }, "\n",
+          "export STT_PASSWORD=", { "Ref" : "STTPassword" }, "\n",
+          "export ODK_USERNAME=", { "Ref" : "ODKUser" }, "\n",
+          "export ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
+          "export TL_HOSTNAME=", { "Ref" : "TLDomain" }, "\n",
+          "export EMAIL_ADDRESS=", { "Ref" : "AdminEmail" },
+          "\" > /etc/stt_creds\n",
+          "cat /etc/stt_creds >> /home/ubuntu/.profile"
 				]]}}
       }
     },
