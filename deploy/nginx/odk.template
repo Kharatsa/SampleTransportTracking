@@ -1,0 +1,25 @@
+server {
+  listen 443 ssl;
+  server_name odk.${TL_HOSTNAME}
+
+  include /etc/nginx/letsencrypt.conf;
+
+  location / {
+    include /etc/nginx/conf.d/proxy.conf;
+    proxy_pass http://odk:8080/;
+  }
+
+  location ~ /.well-known {
+    allow all;
+  }
+}
+
+server {
+  listen 80;
+  server_name odk.${TL_HOSTNAME};
+
+  location / {
+    include /etc/nginx/conf.d/proxy.conf;
+    proxy_pass http://odk:8080/;
+  }
+}

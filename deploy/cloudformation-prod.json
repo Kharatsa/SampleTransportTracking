@@ -1,0 +1,177 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Production deploy of Sample Transport Tracking",
+
+  "Parameters": {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance.  If you don't have one, create one first.",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "Must be the name of an existing EC2 KeyPair."
+    },    
+    "AdminEmail": {
+      "Description" : "Administrator email address",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "100",
+      "AllowedPattern" : "^\S+@\S+$",
+      "ConstraintDescription" : "Must be a valid email address (e.g., 'example@example.com')"
+    },
+    "DBUser": {
+      "Description" : "The database admin account username",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "DBPassword": {
+      "NoEcho": "true",
+      "Description" : "The database admin account password",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters and be between 8 and 41 characters long."
+    },
+    "STTUser": {
+      "Description" : "The STT admin account username",
+      "Type": "String",
+      "MinLength": "1"
+    },
+    "STTPassword": {
+      "NoEcho": "true",
+      "Description" : "The STT admin account password",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "41"
+    },
+    "TLDomain": {
+      "Description" : "The top level domain name for all local services",
+      "Type": "String",
+      "ConstraintDescription" : "Eg. kharasta.com"
+    },
+    "ODKUser": {
+      "Description" : "The ODK admin account username",
+      "Type": "String",
+      "MinLength": "1"
+    },
+    "ODKPassword": {
+      "NoEcho": "true",
+      "Description" : "The ODK admin account password",
+      "Type": "String",
+      "MinLength": "8"
+    }
+  },
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1"      : { "64" : "ami-40d28157" },
+      "us-west-1"      : { "64" : "ami-6e165d0e" },
+      "eu-west-1"      : { "64" : "ami-0d77397e" },
+      "ap-southeast-1" : { "64" : "ami-a1288ec2" },
+      "ap-northeast-1" : { "64" : "ami-0567c164" }
+    }
+  },
+
+  "Resources" : {
+    "DBSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription": "Open database for access",
+        "SecurityGroupIngress" : [{
+          "IpProtocol" : "tcp",
+          "FromPort" : "3306", 
+          "ToPort" : "3306",
+          "SourceSecurityGroupName" : { "Ref" : "InstanceSecurityGroup" }
+        }]
+      }
+    },
+    "MainDB" : {
+      "Type" : "AWS::RDS::DBInstance",
+      "Properties" : {
+        "DBName" : "odk_stt",
+        "AllocatedStorage" : "5",
+        "DBInstanceClass" : "db.t2.micro",
+        "Engine" : "MySQL",
+        "EngineVersion" : "5.7",
+        "MasterUsername" : { "Ref" : "DBUser" },
+        "MasterUserPassword" : { "Ref" : "DBPassword" },
+				"VPCSecurityGroups" : [{ "Fn::GetAtt": [ "DBSecurityGroup", "GroupId" ] }]
+      }
+    },
+		"Ec2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "64"]},
+        "KeyName" : { "Ref" : "KeyName" },
+				"InstanceType" : "t2.micro",
+				"SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+        "Tags": [{
+          "Key" : "Name",
+          "Value" : "STT server"
+        }],
+				"UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
+					"#!/bin/bash \n",
+          "echo \"",
+          "MYSQL_USER=", { "Ref" : "DBUser"}, "\n",
+          "MYSQL_DATABASE=", "odk_stt", "\n",
+          "MYSQL_PASSWORD=", { "Ref" : "DBPassword"}, "\n",
+          "MYSQL_HOSTNAME=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
+          "STT_DB_USER=", { "Ref" : "DBUser"}, "\n",
+          "STT_DB_PASSWORD=", { "Ref" : "DBPassword" }, "\n",
+          "STT_DB_NAME=stt\n",
+          "STT_DB_HOST=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] }, "\n",
+          "STT_DB_PORT=", { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] }, "\n",
+          "STT_USER=", { "Ref" : "STTUser" }, "\n",
+          "STT_PASSWORD=", { "Ref" : "STTPassword" }, "\n",
+          "ODK_USERNAME=", { "Ref" : "ODKUser" }, "\n",
+          "ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
+          "TL_HOSTNAME=", { "Ref" : "TLDomain" }, "\n",
+          "EMAIL_ADDRESS=", { "Ref" : "AdminEmail" },
+          "\" > /etc/stt_creds\n"
+				]]}}
+      }
+    },
+    "InstanceSecurityGroup" : {
+       "Type" : "AWS::EC2::SecurityGroup",
+       "Properties" : {
+          "GroupDescription" : "Allow http to client host",
+          "SecurityGroupIngress" : [{
+                "IpProtocol" : "tcp",
+                "FromPort" : "80",
+                "ToPort" : "80",
+                "CidrIp" : "0.0.0.0/0"
+             },{
+                "IpProtocol" : "tcp",
+                "FromPort" : "443",
+                "ToPort" : "443",
+                "CidrIp" : "0.0.0.0/0"
+             },{
+                "IpProtocol" : "tcp",
+                "FromPort" : "22",
+                "ToPort" : "22",
+                "CidrIp" : "0.0.0.0/0"
+             }]
+       }
+    },
+    "MyEIP" : {
+     "Type" : "AWS::EC2::EIP",
+     "Properties" : {
+         "InstanceId" : { "Ref" : "Ec2Instance" }
+     }
+    }
+  },
+
+  "Outputs" : {
+    "JDBCConnectionString": {
+      "Description" : "JDBC connection string for the database",
+      "Value" : { "Fn::Join": [ "", [ "jdbc:mysql://",
+                                      { "Fn::GetAtt": [ "MainDB", "Endpoint.Address" ] },
+                                      ":",
+                                      { "Fn::GetAtt": [ "MainDB", "Endpoint.Port" ] },
+                                      "/",
+                                      "odk_stt"]]}
+    }
+  }
+}
+

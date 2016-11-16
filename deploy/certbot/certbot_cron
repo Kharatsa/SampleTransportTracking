@@ -1,0 +1,3 @@
+# 09:00 AM the 1st of every month
+00 09 1 * * * root bash -c "certbot certonly --config /root/certbot_conf.ini" >> /var/log/cron.log 2>&1
+# 
