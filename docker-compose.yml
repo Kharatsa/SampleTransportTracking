@@ -1,1 +1,1 @@
-deploy/docker-compose-prod.yml
+dev/docker-compose-dev.yml
