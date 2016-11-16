@@ -2,9 +2,6 @@
 
 # this script should be run as root
 
-apt-get update
-apt-get upgrade -y
-
 # Install Docker (via https://docs.docker.com/engine/installation/linux/ubuntulinux/)
 apt-get install -y apt-transport-https ca-certificates
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -16,7 +13,7 @@ apt-get install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
 apt-get install -y docker-engine
 
 # Add user to `docker` group
-usermod -aG docker $USER
+usermod -aG docker ubuntu
 
 service docker start
 
@@ -34,8 +31,8 @@ apt-get install -y mysql-client-core-5.7
 # Setup logging directory, and grant ownership of logs and credentials
 mkdir /var/log/stt
 chmod 640 /etc/stt_creds
-chown -R $USER:docker /etc/stt_creds
-chown -R $USER:docker /var/log/stt
+chown -R ubuntu:docker /etc/stt_creds
+chown -R ubuntu:docker /var/log/stt
 
 # Configure logrotate for the STT application
 echo "/var/log/stt/*.log {
@@ -47,10 +44,7 @@ echo "/var/log/stt/*.log {
 	notifempty
 }" > /etc/logrotate.d/stt
 
-# Load the environment variables
-cat /etc/stt_creds >> $HOME/.profile
-source $HOME/.profile
-docker-compose up -d
+apt-get upgrade -y
 
 echo "REBOOTING"
 reboot
