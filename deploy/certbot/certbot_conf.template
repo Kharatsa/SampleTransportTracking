@@ -10,9 +10,11 @@ webroot-path = /usr/share/nginx/html
 
 # automated renewal settings
 keep-until-expiring = True
+expand = True
+allow-subset-of-names = True
 non-interactive = True
 agree-tos = True
 
 # testing
-test-cert = True
-debug = True
+test-cert = ${TEST}
+debug = ${TEST}
