@@ -1,11 +1,11 @@
 FROM nginx:stable
 
-COPY ./deploy/nginx/letsencrypt.template \
-  ./deploy/nginx/stt.template \
-  ./deploy/nginx/odk.template \
-  ./deploy/nginx/proxy.conf \
+COPY ./letsencrypt.template \
+  ./stt.template \
+  ./odk.template \
+  ./proxy.conf \
   /etc/nginx/conf.d/
-COPY ./deploy/nginx/start_nginx.sh /root/
+COPY ./start_nginx.sh /root/
 
 RUN chmod +x /root/start_nginx.sh
 
