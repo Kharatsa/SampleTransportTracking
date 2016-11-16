@@ -63,19 +63,17 @@
       "MinLength": "8"
     },
     "Test": {
-      "NoEcho": "true",
-      "Type" : "String",
-      "Default" : "false",
-      "AllowedValues" : ["true", "false"],
-      "Description" : "Enable test mode"
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": ["true", "false"],
+      "Description": "Enable test mode"
     },
     "NodeEnv": {
-      "NoEcho": "true",
-      "Type" : "String",
+      "Type": "String",
       "Default" : "production",
-      "AllowedValues" : ["production", "development"],
-      "Description" : "Set the Node environment"
-    },
+      "AllowedValues": ["production", "development"],
+      "Description": "Set the Node environment"
+    }
   },
   "Mappings" : {
     "RegionMap" : {
@@ -141,9 +139,9 @@
           "ODK_USERNAME=", { "Ref" : "ODKUser" }, "\n",
           "ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
           "TL_HOSTNAME=", { "Ref" : "TLDomain" }, "\n",
-          "EMAIL_ADDRESS=", { "Ref" : "AdminEmail" },
-          "TEST=", { "Ref" : "Test" },
-          "NODE_ENV=", { "Ref" : "NodeEnv" },
+          "EMAIL_ADDRESS=", { "Ref" : "AdminEmail" }, "\n",
+          "TEST=", { "Ref" : "Test" }, "\n",
+          "NODE_ENV=", { "Ref" : "NodeEnv" }, "\n",
           "\" > /etc/stt_creds\n",
           "cat /etc/stt_creds >> /home/ubuntu/.bashrc"
 				]]}}
