@@ -17,18 +17,14 @@ server {
 
   root /usr/share/nginx/html;
 
-  location ~ \.(jpg|png|gif|ico|html|xsd|xml|txt|csv|js|css)$ {
-    try_files $uri $uri/ =404;
-  }
-  
-  location /.well-known/acme-challenge {
-    root ${LETS_ENCRYPT_PATH};
-  }
-
   location / {
     include /etc/nginx/conf.d/proxy.conf;
     proxy_http_version 1.1;
     proxy_set_header Connection "";
     proxy_pass http://backend/;
+  }
+  
+  location /.well-known/acme-challenge {
+    root ${LETS_ENCRYPT_PATH};
   }
 }
