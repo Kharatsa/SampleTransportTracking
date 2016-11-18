@@ -9,9 +9,6 @@ LETS_ENCRYPT_PATH=/var/www/letsencrypt
 
 cat /etc/stt_creds >> $HOME/.bashrc
 
-# Pull the application source
-git clone https://github.com/Kharatsa/SampleTransportTracking.git $SOURCE_PATH
-
 # Create the required log directories and set permissions
 sudo mkdir -p $APP_LOG_PATH
 sudo chmod 640 $ENV_VARS_FILE

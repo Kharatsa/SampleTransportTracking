@@ -55,7 +55,9 @@ the `setup.sh` shell script to complete the NGINX and LetsEncrypt
 configuration, and to retrieve, deploy, and launch the STT application
 database, server, and ODK Aggregate service.
 
-    cd && ./setup.sh
+    git clone https://github.com/Kharatsa/SampleTransportTracking.git ~/stt
+    cd ~/stt
+    ./setup.sh
 
 When these scripts have finished running, the STT dashboard application should
 be accessible at *https://TL_HOSTNAME*. The ODK Aggregate server should be
