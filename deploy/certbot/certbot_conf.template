@@ -6,14 +6,14 @@ domains = ${TL_HOSTNAME},www.${TL_HOSTNAME},odk.${TL_HOSTNAME}
 
 # path to the public_html / webroot folder being served by your web server.
 authenticator = webroot
-webroot-path = /usr/share/nginx/html
+webroot-path = ${LETS_ENCRYPT_PATH}
 
 # automated renewal settings
-keep-until-expiring = True
-expand = True
-allow-subset-of-names = True
+text = True
 non-interactive = True
 agree-tos = True
+
+keep-until-expiring = True
 
 # testing
 test-cert = ${TEST}

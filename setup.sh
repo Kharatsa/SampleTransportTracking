@@ -7,7 +7,11 @@ NGINX_CONF_PATH=/etc/nginx/conf.d
 NGINX_WEBROOT_PATH=/usr/share/nginx/html
 LETS_ENCRYPT_PATH=/var/www/letsencrypt
 
-cat /etc/stt_creds >> $HOME/.bashrc
+# Load environment variables in bashrc
+cat /etc/stt_creds | \
+  while read line; do
+    echo "export $line"
+  done >> /home/ubuntu/.bashrc
 
 # Create the required log directories and set permissions
 mkdir -p $APP_LOG_PATH
@@ -47,18 +51,20 @@ chown -R www-data /etc/nginx
 nginx -t && nginx -s reload
 
 # Setup LetsEncrypt
-mkdir -p $LETS_ENCRPYT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
+mkdir -p $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
 envsubst < ./deploy/certbot/certbot_conf.template > /etc/letsencrypt/configs/$TL_HOSTNAME.conf
-chown -R ubuntu:www-data $LETS_ENCRPYT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
+chown -R ubuntu:www-data $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
 
 # Retrieve LetsEncrypt certificates
 letsencrypt certonly --config /etc/letsencrypt/configs/$TL_HOSTNAME.conf
 
 # Setup LetsEncrypt certificate renewal
+# TODO(sean) cron job
 
 # Load final NGINX config
 rm $NGINX_CONF_PATH/temp.conf
 envsubst '$TL_HOSTNAME' < ./deploy/nginx/letsencrypt.template > $NGINX_CONF_PATH/letsencrypt.conf
 envsubst '$TL_HOSTNAME $LETS_ENCRYPT_PATH' < ./deploy/nginx/stt.template > $NGINX_CONF_PATH/stt.conf
 envsubst '$TL_HOSTNAME $LETS_ENCRYPT_PATH' < ./deploy/nginx/odk.template > $NGINX_CONF_PATH/odk.conf
+chown -R www-data /etc/nginx
 nginx -t && nginx -s reload
