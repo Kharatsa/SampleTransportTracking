@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# Delete old directorires?
-
 letsencrypt certonly --config /etc/letsencrypt/configs/$TL_HOSTNAME.conf
 
 if [ $? -ne 0 ]

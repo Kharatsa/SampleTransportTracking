@@ -56,10 +56,12 @@ envsubst < ./deploy/certbot/certbot_conf.template > /etc/letsencrypt/configs/$TL
 chown -R ubuntu:www-data $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
 
 # Retrieve LetsEncrypt certificates
+chmod +x renew_certs.sh
+./renew_certs.sh
 letsencrypt certonly --config /etc/letsencrypt/configs/$TL_HOSTNAME.conf
 
 # Setup LetsEncrypt certificate renewal
-# TODO(sean) cron job
+# TODO(sean)
 
 # Load final NGINX config
 rm $NGINX_CONF_PATH/temp.conf
