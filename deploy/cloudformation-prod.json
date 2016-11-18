@@ -67,12 +67,6 @@
       "Default": "false",
       "AllowedValues": ["true", "false"],
       "Description": "Enable test mode"
-    },
-    "NodeEnv": {
-      "Type": "String",
-      "Default" : "production",
-      "AllowedValues": ["production", "development"],
-      "Description": "Set the Node environment"
     }
   },
   "Mappings" : {
@@ -123,7 +117,7 @@
           "Value" : "STT server"
         }],
 				"UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
-					"#!/bin/bash \n",
+					"#!/bin/bash -ex\n",
           "echo \"",
           "MYSQL_USER=", { "Ref" : "DBUser"}, "\n",
           "MYSQL_DATABASE=", "odk_stt", "\n",
@@ -140,10 +134,19 @@
           "ODK_PASSWORD=", { "Ref" : "ODKPassword" }, "\n",
           "TL_HOSTNAME=", { "Ref" : "TLDomain" }, "\n",
           "EMAIL_ADDRESS=", { "Ref" : "AdminEmail" }, "\n",
-          "TEST=", { "Ref" : "Test" }, "\n",
-          "NODE_ENV=", { "Ref" : "NodeEnv" }, "\n",
+          "TEST=", { "Ref" : "Test" },
           "\" > /etc/stt_creds\n",
-          "cat /etc/stt_creds >> /home/ubuntu/.bashrc"
+          "if [ ", { "Ref" : "Test" }, " = \"true\" ]; then echo \"NODE_ENV=development\"; else echo \"NODE_ENV=production\"; fi >> /etc/stt_creds\n",
+          "cat \"/etc/stt_creds\" | while read line; do echo \"export $line\"; done; >> /home/ubuntu/.bashrc\n",
+          "apt-get -yq install apt-transport-https ca-certificates\n",
+          "apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D\n",
+          "echo \"deb https://apt.dockerproject.org/repo ubuntu-xenial main\" | tee /etc/apt/sources.list.d/docker.list\n",
+          "apt-get update\n",
+          "apt-get -yq install linux-image-extra-$(uname -r) linux-image-extra-virtual docker-engine mysql-client-core-5.7 nginx letsencrypt gettext\n",
+          "usermod -aG docker ubuntu\n",
+          "service docker start\n",
+          "curl -L https://github.com/docker/compose/releases/download/1.9.0-rc2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose\n",
+          "chmod +x /usr/local/bin/docker-compose"
 				]]}}
       }
     },

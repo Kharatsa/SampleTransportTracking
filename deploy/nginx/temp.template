@@ -1,0 +1,8 @@
+server {
+    listen 80 default_server;
+    server_name ${TL_HOSTNAME};
+
+    location /.well-known/acme-challenge {
+        root ${LETS_ENCRYPT_PATH};
+    }
+}

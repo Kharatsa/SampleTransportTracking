@@ -47,25 +47,62 @@ domain name to point at the EC2 server's IP address.
 | CNAME       | odk           | *TL_HOSTNAME* |
 
 
-### Login and setup
-Now we must ssh into the ec2 instance.  You'll find it under the ec2 list of instances, it will be called STT server.  Once you've logged in run these commands.
+### Complete server setup
+#### Application
+
+SSH into the new stack's EC2 instance (look for the name "STT Server"). Execute
+the `setup.sh` shell script to complete the NGINX and LetsEncrypt
+configuration, and to retrieve, deploy, and launch the STT application
+database, server, and ODK Aggregate service.
+
+    cd && ./setup.sh
+
+When these scripts have finished running, the STT dashboard application should
+be accessible at *https://TL_HOSTNAME*. The ODK Aggregate server should be
+accessible at *http://odk.TL_HOSTNAME*.
+
+#### ODK Aggregate
+Once ODK Aggregate is accessible, you will to manually log in and create
+*ODKUser* specified during the stack deployment.
+
+From the ODK Aggregate dashboard page, find the *Log In* link in the upper
+right. Login with the default administrator credentials through the *Sign in
+with Aggregate Password* option.
+
+| Username  | Password  |
+| --------- | --------- |
+| admin     | aggregate |
+
+At the top of the page, you should see a message in red text indicating that
+the "server and its data are not secure." 
+
 ```
-git clone https://github.com/Kharatsa/SampleTransportTracking.git
-cd SampleTransportTracking/
-sudo ./server-setup.sh
-./db-setup.sh
+This server and its data are not secure! Please change the super-user's password!
 ```
 
-### Create ODK username and password
+This is becaues your ODK Aggregate server is still using its default admin
+credentials. Once logged in, you should change these defaults. To do so,
+select the *Site Admin* tab. Find the *Username* **admin**, and click
+*Change Password*. Click *Save*.
 
-### All done!
-That's it!  You will have to point your dns domain to the new server EIP and the site should be running. 
+Once you've changed the default admin password, you should create the
+*ODKUser*. Enter the *ODKUser* specified during setup in the *Add Users* text
+area input and click *Add*. The *ODKUser* should now appear listed as a new
+row with the other default ODK Aggregate users.
+
+Check the *Data Collector*, *Data Viewer*, and *Form Manager* checkboxes
+on/checked for the *ODKUser* row. Finally, click *Change Password* on your new
+users's row, and input the *ODKPassword* provided during setup, and click *Save
+Changes*
+
+The warning banner should now be absent from the top of the ODK Aggregate page.
 
 ## DB
 We are using RDS for our db, so they manage backups.  Currently we just have automated backups which will back up the db everyday and keep the last 7 days.  So if there is ever an issue you can always restore to a point in time.  If you would ever like to move the db to another region or for any other reason you'll need to create a snapshot and restore from that snap shot.  You can find out how to do that here.[http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateSnapshot.html]
+
 ### Backups
 Here is some documentation.  [http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html]
+
 ### Restore
 Here is how to restore to a point in time.
 [http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIT.html]
-

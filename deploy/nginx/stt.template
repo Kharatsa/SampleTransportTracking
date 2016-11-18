@@ -21,8 +21,8 @@ server {
     try_files $uri $uri/ =404;
   }
   
-  location ~ /\.well-known/acme-challenge {
-    allow all;
+  location /.well-known/acme-challenge {
+    root ${LETS_ENCRYPT_PATH};
   }
 
   location / {
