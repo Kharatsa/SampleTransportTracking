@@ -7,11 +7,12 @@ ENV SYSTEM_DEPS='openssl' \
     BUILD_DEPS='git python make openssl build-essential' \
     HOME=/home/stt \
     NODE_DEPS='gulp bower' \
-    STT_APP_PATH='/var/www/stt/' \
-    STT_DATA_PATH='/var/lib/stt/' \
-    STT_LISTEN_PORT='8081' \
-    STT_LISTEN_HOST='0.0.0.0' \
-    STT_LOG_PATH='/var/log/stt/'
+    STT_APP_PATH=/var/www/stt/ \
+    STT_DATA_PATH=/var/lib/stt/ \
+    STT_LISTEN_PORT=8081 \
+    STT_LISTEN_HOST=0.0.0.0 \
+    STT_LOG_PATH=/var/log/stt/ \
+    STT_HOME=/home/stt/
 
 RUN apt-get -q update >/dev/null \
     && apt-get -q -y install ${SYSTEM_DEPS} ${BUILD_DEPS} --no-install-recommends >/dev/null \
@@ -31,20 +32,22 @@ COPY bower.json package.json npm-shrinkwrap.json ${STT_APP_PATH}
 RUN npm install -q >/dev/null && npm cache clean -q >/dev/null \
     && bower install --allow-root >/dev/null \
     && bower cache clean --allow-root >/dev/null
+COPY deploy/start_stt.sh ${STT_HOME}
 
 COPY . ${STT_APP_PATH}
 ENV NODE_ENV=${NODE_ENV:-production}
 
-RUN gulp build && npm prune -q >/dev/null \
-    && apt-get purge --auto-remove -y ${BUILD_DEPS} \
+RUN apt-get purge --auto-remove -y ${BUILD_DEPS} >/dev/null \
     && chown -R stt:stt $(npm config get prefix)/lib/node_modules \
     && chown -R stt:stt ${STT_APP_PATH} \
     && chown -R stt:stt ${STT_DATA_PATH} \
-    && chown -R stt:stt ${STT_LOG_PATH}
+    && chown -R stt:stt ${STT_LOG_PATH} \
+    && chown -R stt:stt ${STT_HOME} \
+    && chmod +x /home/stt/start_stt.sh
 
 VOLUME ${STT_DATA_PATH}
 VOLUME ${STT_LOG_PATH}
 EXPOSE ${STT_LISTEN_PORT}
 
 USER stt
-CMD npm start
+CMD ${STT_HOME}start_stt.sh
