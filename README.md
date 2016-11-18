@@ -57,7 +57,7 @@ database, server, and ODK Aggregate service.
 
     git clone https://github.com/Kharatsa/SampleTransportTracking.git ~/stt
     cd ~/stt
-    ./setup.sh
+    sudo ./setup.sh
 
 When these scripts have finished running, the STT dashboard application should
 be accessible at *https://TL_HOSTNAME*. The ODK Aggregate server should be
