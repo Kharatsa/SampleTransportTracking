@@ -13,6 +13,7 @@ cat /etc/stt_creds | \
     echo "export $line"
   done >> /home/ubuntu/.bashrc
 
+
 # Create the required log directories and set permissions
 mkdir -p $APP_LOG_PATH
 chmod 640 $ENV_VARS_FILE
@@ -25,6 +26,10 @@ echo "$APP_LOG_PATH/*.log {
 	missingok
 	notifempty
 }" > /etc/logrotate.d/stt
+
+# The STT container shares the NGINX static directory, so our user
+# must have ownership
+chown -R ubuntu:www-data /usr/share/nginx/html/
 
 # Point Docker Compose at the production configuration
 rm docker-compose.yml
