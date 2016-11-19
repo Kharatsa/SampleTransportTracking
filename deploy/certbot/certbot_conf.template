@@ -16,5 +16,5 @@ agree-tos = True
 keep-until-expiring = True
 
 # testing
-test-cert = ${TEST}
-debug = ${TEST}
+test-cert = True
+debug = True

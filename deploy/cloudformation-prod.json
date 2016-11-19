@@ -143,7 +143,9 @@
           "echo \"deb https://apt.dockerproject.org/repo ubuntu-xenial main\" | tee /etc/apt/sources.list.d/docker.list\n",
           "apt-get update\n",
           "apt-get -yq install linux-image-extra-$(uname -r) linux-image-extra-virtual docker-engine mysql-client-core-5.7 nginx letsencrypt gettext\n",
-          "usermod -aG docker ubuntu\n",
+          "adduser --system --no-create-home --group letsencrypt\n",
+          "chgrp letsencrypt $(which letsencrypt)\n",
+          "usermod -aG letsencrypt docker ubuntu\n",
           "service docker start\n",
           "curl -L https://github.com/docker/compose/releases/download/1.9.0-rc2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose\n",
           "chmod +x /usr/local/bin/docker-compose"

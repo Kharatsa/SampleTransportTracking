@@ -1,11 +1,11 @@
 #!/bin/bash -ex
 
-SOURCE_PATH=/home/ubuntu/stt
-APP_LOG_PATH=/var/log/stt
-ENV_VARS_FILE=/etc/stt_creds
-NGINX_CONF_PATH=/etc/nginx/conf.d
-NGINX_WEBROOT_PATH=/usr/share/nginx/html
-LETS_ENCRYPT_PATH=/var/www/letsencrypt
+export SOURCE_PATH=/home/ubuntu/stt
+export APP_LOG_PATH=/var/log/stt
+export ENV_VARS_FILE=/etc/stt_creds
+export NGINX_CONF_PATH=/etc/nginx/conf.d
+export NGINX_WEBROOT_PATH=/usr/share/nginx/html
+export LETS_ENCRYPT_PATH=/var/www/letsencrypt
 
 # Load environment variables in bashrc
 cat /etc/stt_creds | \
@@ -13,10 +13,9 @@ cat /etc/stt_creds | \
     echo "export $line"
   done >> /home/ubuntu/.bashrc
 
-
 # Create the required log directories and set permissions
 mkdir -p $APP_LOG_PATH
-chmod 640 $ENV_VARS_FILE
+chmod 6640 $ENV_VARS_FILE $APP_LOG_PATH
 chown -R ubuntu:docker $ENV_VARS_FILE $APP_LOG_PATH
 echo "$APP_LOG_PATH/*.log {
 	weekly
@@ -29,7 +28,8 @@ echo "$APP_LOG_PATH/*.log {
 
 # The STT container shares the NGINX static directory, so our user
 # must have ownership
-chown -R ubuntu:www-data /usr/share/nginx/html/
+chgrp -R docker /usr/share/nginx/html/
+chmod -R 6774 /usr/share/nginx/html/
 
 # Point Docker Compose at the production configuration
 rm docker-compose.yml
@@ -52,13 +52,13 @@ docker exec -it app_stt ./app/maintenance/users.js add -a $STT_USER $STT_PASSWOR
 
 # Setup NGINX
 envsubst < ./deploy/nginx/temp.template > $NGINX_CONF_PATH/temp.conf
-chown -R www-data /etc/nginx
 nginx -t && nginx -s reload
 
 # Setup LetsEncrypt
 mkdir -p $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
+chgrp -R letsencrypt $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
+chmod 6770 $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
 envsubst < ./deploy/certbot/certbot_conf.template > /etc/letsencrypt/configs/$TL_HOSTNAME.conf
-chown -R ubuntu:www-data $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
 
 # Retrieve LetsEncrypt certificates
 chmod +x renew_certs.sh
@@ -73,5 +73,4 @@ rm $NGINX_CONF_PATH/temp.conf
 envsubst '$TL_HOSTNAME' < ./deploy/nginx/letsencrypt.template > $NGINX_CONF_PATH/letsencrypt.conf
 envsubst '$TL_HOSTNAME $LETS_ENCRYPT_PATH' < ./deploy/nginx/stt.template > $NGINX_CONF_PATH/stt.conf
 envsubst '$TL_HOSTNAME $LETS_ENCRYPT_PATH' < ./deploy/nginx/odk.template > $NGINX_CONF_PATH/odk.conf
-chown -R www-data /etc/nginx
 nginx -t && nginx -s reload
