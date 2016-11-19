@@ -1,6 +1,6 @@
 #!/bin/sh
 
-letsencrypt certonly --config /etc/letsencrypt/configs/$TL_HOSTNAME.conf
+letsencrypt certonly -vvvv --config /etc/letsencrypt/configs/$TL_HOSTNAME.conf
 
 if [ $? -ne 0 ]
  then

@@ -1,5 +1,5 @@
 upstream backend {
-  server stt:8081 max_fails=3 fail_timeout=60s;
+  server localhost:8081 max_fails=3 fail_timeout=60s;
   keepalive 64;
 }
 

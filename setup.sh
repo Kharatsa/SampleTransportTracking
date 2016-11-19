@@ -40,25 +40,25 @@ nginx -t && nginx -s reload
 
 # Setup LetsEncrypt
 mkdir -p $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
-chgrp -R letsencrypt $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
-chmod -R g+rw $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
+chgrp -R letsencrypt $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
+chmod -R g+rwx,g+s $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
 envsubst < ./deploy/certbot/certbot_conf.template > /etc/letsencrypt/configs/$TL_HOSTNAME.conf
 
 # Retrieve LetsEncrypt certificates
 chmod +x renew_certs.sh
 ./renew_certs.sh
-letsencrypt certonly --config /etc/letsencrypt/configs/$TL_HOSTNAME.conf
-
-# Setup LetsEncrypt certificate renewal
-# TODO(sean)
 
 # Load final NGINX config
 rm $NGINX_CONF_PATH/temp.conf
 envsubst '$TL_HOSTNAME' < ./deploy/nginx/letsencrypt.template > $NGINX_CONF_PATH/letsencrypt.conf
 envsubst '$TL_HOSTNAME $LETS_ENCRYPT_PATH' < ./deploy/nginx/stt.template > $NGINX_CONF_PATH/stt.conf
 envsubst '$TL_HOSTNAME $LETS_ENCRYPT_PATH' < ./deploy/nginx/odk.template > $NGINX_CONF_PATH/odk.conf
+cp ./deploy/nginx/proxy.conf $NGINX_CONF_PATH
 nginx -t && nginx -s reload
 
+
+# Create the STT database
+mysql -h $STT_DB_HOST -u $STT_DB_USER --password=$MYSQL_PASSWORD < ./deploy/create_db.sql
 
 # Pull the metadata repository
 git submodule update --init
@@ -66,10 +66,10 @@ git submodule update --init
 # Start the Docker services
 rm docker-compose.yml
 ln -s deploy/docker-compose-prod.yml docker-compose.yml
+chown -R ubuntu:ubuntu ./
 docker-compose up -d
 
-# Bootstrap the application database
-mysql -h $STT_DB_HOST -u $STT_DB_USER --password=$MYSQL_PASSWORD < ./deploy/create_db.sql
+# Bootstrap the application data
 docker exec -it app_stt ./app/maintenance/data.js sync
 docker exec -it app_stt ./app/maintenance/metadata.js reloadcsv
 docker exec -it app_stt ./app/maintenance/users.js add -a $STT_USER $STT_PASSWORD
