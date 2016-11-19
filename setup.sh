@@ -4,8 +4,8 @@ export SOURCE_PATH=/home/ubuntu/stt
 export APP_LOG_PATH=/var/log/stt
 export ENV_VARS_FILE=/etc/stt_creds
 export NGINX_CONF_PATH=/etc/nginx/conf.d
-export NGINX_WEBROOT_PATH=/usr/share/nginx/html
 export LETS_ENCRYPT_PATH=/var/www/letsencrypt
+export STT_GROUP_ID=8888
 
 # Load environment variables in bashrc
 cat /etc/stt_creds | \
@@ -15,8 +15,8 @@ cat /etc/stt_creds | \
 
 # Create the required log directories and set permissions
 mkdir -p $APP_LOG_PATH
-chmod 6640 $ENV_VARS_FILE $APP_LOG_PATH
-chown -R ubuntu:docker $ENV_VARS_FILE $APP_LOG_PATH
+chgrp -R stt $ENV_VARS_FILE $APP_LOG_PATH
+chmod g+rw $ENV_VARS_FILE $APP_LOG_PATH
 echo "$APP_LOG_PATH/*.log {
 	weekly
 	rotate 10
@@ -26,10 +26,11 @@ echo "$APP_LOG_PATH/*.log {
 	notifempty
 }" > /etc/logrotate.d/stt
 
-# The STT container shares the NGINX static directory, so our user
-# must have ownership
-chgrp -R docker /usr/share/nginx/html/
-chmod -R 6774 /usr/share/nginx/html/
+# Setup the static files path
+mkdir -p /var/www
+rm -rf /var/www/*
+chgrp -R stt /var/www
+chmod -R g+rw /var/www
 
 # Point Docker Compose at the production configuration
 rm docker-compose.yml
@@ -57,7 +58,7 @@ nginx -t && nginx -s reload
 # Setup LetsEncrypt
 mkdir -p $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
 chgrp -R letsencrypt $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
-chmod 6770 $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
+chmod -R g+rw $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
 envsubst < ./deploy/certbot/certbot_conf.template > /etc/letsencrypt/configs/$TL_HOSTNAME.conf
 
 # Retrieve LetsEncrypt certificates

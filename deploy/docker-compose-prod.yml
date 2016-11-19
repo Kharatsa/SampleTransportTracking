@@ -2,13 +2,15 @@ version: '2'
 services:
   stt:
     image: kharatsa/strack:latest
+    group_add:
+      - 8888 # Must be created on the host
     container_name: app_stt
     restart: always
     ports:
       - "8081:8081"
     volumes:
       - /var/log/stt/:/var/log/stt/
-      - /usr/share/nginx/html/:/var/www/stt/app/public/
+      - /var/www/:/var/www/stt/app/public/
     env_file:
       - /etc/stt_creds
     environment:
@@ -26,6 +28,8 @@ services:
       - odk
   odk:
     image: kharatsa/odkaggregate:latest
+    group_add:
+      - 8888 # Must be created on the host
     container_name: odk_stt
     restart: always
     ports:

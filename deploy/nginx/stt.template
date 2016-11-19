@@ -15,7 +15,7 @@ server {
 
   include /etc/nginx/conf.d/letsencrypt.conf;
 
-  root /usr/share/nginx/html;
+  root /var/www;
 
   location / {
     include /etc/nginx/conf.d/proxy.conf;
