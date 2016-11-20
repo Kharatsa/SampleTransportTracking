@@ -16,5 +16,4 @@ agree-tos = True
 keep-until-expiring = True
 
 # testing
-test-cert = True
-debug = True
+test-cert = ${LETSENCRYPT_TEST}

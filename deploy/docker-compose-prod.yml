@@ -10,7 +10,7 @@ services:
       - "8081:8081"
     volumes:
       - /var/log/stt/:/var/log/stt/
-      - /var/www/:/var/www/stt/app/public/
+      - /var/www/stt/:/var/www/stt/app/public/
     env_file:
       - /etc/stt_creds
     environment:

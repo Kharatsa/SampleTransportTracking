@@ -136,7 +136,7 @@
           "EMAIL_ADDRESS=", { "Ref" : "AdminEmail" }, "\n",
           "TEST=", { "Ref" : "Test" },
           "\" > /etc/stt_creds\n",
-          "if [ ", { "Ref" : "Test" }, " = \"true\" ]; then echo \"NODE_ENV=development\"; else echo \"NODE_ENV=production\"; fi >> /etc/stt_creds\n",
+          "if [ ", { "Ref" : "Test" }, " = \"true\" ]; then echo \"NODE_ENV=development\nLETSENCRYPT_TEST=True\"; else echo \"NODE_ENV=production\nLETSENCRYPT_TEST=False\"; fi >> /etc/stt_creds\n",
           "cat \"/etc/stt_creds\" | while read line; do echo \"export $line\"; done; >> /home/ubuntu/.bashrc\n",
           "apt-get -yq install apt-transport-https ca-certificates\n",
           "apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D\n",

@@ -59,9 +59,18 @@ database, server, and ODK Aggregate service.
     cd ~/stt
     sudo ./setup.sh
 
-When these scripts have finished running, the STT dashboard application should
-be accessible at *https://TL_HOSTNAME*. The ODK Aggregate server should be
-accessible at *http://odk.TL_HOSTNAME*.
+To ensure consistent availability over HTTPS, you must schedule a cron job to
+periodically renew the LetsEncrypt certificates. To add a new cron job, run
+`crontab -e` to launch the crontab editor (choose whichever editor is most
+convenient), and add the following line. Make certain the crontab file ends in
+a newline, or a comment line before saving.
+
+    0 0 1 1 * /home/ubuntu/stt/renew_certs.sh >> /var/log/letsencrypt/renew.log 2>&1
+    #
+
+When this setup is complete, the STT dashboard application should be
+accessible at *https://TL_HOSTNAME*. The ODK Aggregate server should
+be accessible at *http://odk.TL_HOSTNAME*.
 
 #### ODK Aggregate
 Once ODK Aggregate is accessible, you will to manually log in and create
