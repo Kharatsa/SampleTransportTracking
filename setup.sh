@@ -17,7 +17,7 @@ cat /etc/stt_creds | \
 # Create the required log directories and set permissions
 mkdir -p $APP_LOG_PATH
 chgrp -R stt $ENV_VARS_FILE $APP_LOG_PATH
-chmod -R 2660 $ENV_VARS_FILE $APP_LOG_PATH
+chmod -R 2770 $ENV_VARS_FILE $APP_LOG_PATH
 echo "$APP_LOG_PATH/*.log {
 	weekly
 	rotate 10
@@ -31,7 +31,7 @@ echo "$APP_LOG_PATH/*.log {
 rm -rf /var/www/*
 mkdir -p /var/www/stt
 chgrp -R stt /var/www
-chmod -R 2660 /var/www
+chmod -R 2775 /var/www
 
 # Export application and database credentials
 export $(cat /etc/stt_creds | xargs)
@@ -43,7 +43,7 @@ nginx -t && nginx -s reload
 # Setup LetsEncrypt
 mkdir -p $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
 chgrp -R letsencrypt $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
-chmod -R 2770 $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
+chmod -R 2770 /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
 envsubst < ./deploy/certbot/certbot_conf.template > /etc/letsencrypt/configs/$TL_HOSTNAME.conf
 
 # Retrieve LetsEncrypt certificates
