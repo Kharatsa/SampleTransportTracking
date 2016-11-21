@@ -38,7 +38,7 @@ services:
       - /etc/stt_creds
     environment:
       - ODK_HOSTNAME=odk.$TL_HOSTNAME
-      - ODK_PORT=8080
+      - ODK_PORT=80
       - ODK_ADMIN_USERNAME=admin
     logging:
       driver: "json-file"
