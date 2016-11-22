@@ -18,7 +18,7 @@ services:
       - STT_LISTEN_HOST=0.0.0.0
       - STT_PUBLIC_URL=https://$TL_HOSTNAME
       - ODK_PROTOCOL=http
-      - ODK_HOSTNAME=odk
+      - ODK_HOSTNAME=odk.$TL_HOSTNAME
     logging:
       driver: "json-file"
       options: 
