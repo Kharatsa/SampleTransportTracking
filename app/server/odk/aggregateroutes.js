@@ -50,7 +50,7 @@ router.all('*', aggregate.setOpenRosaHeaders);
 
 router.head('/formList', handleHeadRequest);
 
-router.get('/formList', lowerCaseQueryKeys, (req, res) => {
+router.get('/formList', lowerCaseQueryKeys, (req, res, next) => {
   let formId = req.query.formid;
   let verbose = req.query.verbose;
   let allVersions = req.query.listallversions;
@@ -66,7 +66,8 @@ router.get('/formList', lowerCaseQueryKeys, (req, res) => {
     log.debug('Got formList', body);
     prepareXMLResponse(res, odkRes.statusCode, body);
     res.send(body);
-  });
+  })
+  .catch(next);
 });
 
 const openRosaAcceptLength = (req, res, next) => {
@@ -101,7 +102,7 @@ router.get('/view/submissionList',
       })
       .catch(next);
     } else {
-      res.status(500).send('Error: Missing formid parameter');
+      res.status(400).send('Error: Missing formid parameter');
     }
   }
 );
