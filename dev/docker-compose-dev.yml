@@ -2,27 +2,25 @@ version: '2'
 services:
   bundler:
     container_name: bundler_stt
-    build:
-      context: .
-      dockerfile: ./dev/Dockerfile-bundler-dev
+    image: kharatsa/strack
+    command: gulp
     volumes:
       - ./:/var/www/stt/
-      - /var/www/stt/node_modules
-      - /var/www/stt/bower_components
+      - /var/www/stt/node_modules/
+      - /var/www/stt/bower_components/
     environment:
       - NODE_ENV=development
   server:
     container_name: app_stt
-    build:
-      context: .
-      dockerfile: ./dev/Dockerfile-server-dev
+    image: kharatsa/strack
+    command: node_modules/.bin/nodemon app/server
     ports:
       - "8081:8081"
     volumes:
       - ./:/var/www/stt/
       - ./log/:/var/log/stt/
       - stt_data:/var/lib/stt/
-      - /var/www/stt/node_modules
+      - /var/www/stt/node_modules/
     environment:
       - NODE_ENV=development
       - STT_LISTEN_PORT=8081

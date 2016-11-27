@@ -1,8 +1,0 @@
-FROM kharatsa/strack:latest
-
-ENV NODE_ENV=development
-
-RUN npm install --no-shrinkwrap --only=dev -q >/dev/null \
-  && npm cache clean -q >/dev/null
-
-CMD gulp
