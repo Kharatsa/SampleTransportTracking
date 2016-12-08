@@ -38,7 +38,8 @@ const changes = modelwrapper({
           defaultValue: DataTypes.NOW
         },
         stage: {
-          type: DataTypes.STRING,
+          // type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: false,
           references: modelutils.keyReference(MetaStages)
         },
@@ -53,22 +54,26 @@ const changes = modelwrapper({
           references: modelutils.uuidReference(LabTests)
         },
         facility: {
-          type: DataTypes.STRING,
+          // type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: true,
           references: modelutils.keyReference(MetaFacilities)
         },
         person: {
-          type: DataTypes.STRING,
+          // type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: true,
           references: modelutils.keyReference(MetaPeople)
         },
         status: {
-          type: DataTypes.STRING,
+          // type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: false,
           references: modelutils.keyReference(MetaStatuses)
         },
         labRejection: {
-          type: DataTypes.STRING,
+          // type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: true,
           references: modelutils.keyReference(MetaRejections)
         }

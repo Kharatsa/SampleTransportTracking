@@ -2,14 +2,14 @@
   {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx10",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx3",
-    "testType": "TESTA"
+    "testType": 1
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx11",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx3",
-    "testType": "TESTB"
+    "testType": 2
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx12",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx3",
-    "testType": "TESTC"
+    "testType": 3
   }
 ]

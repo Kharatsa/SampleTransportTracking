@@ -19,16 +19,17 @@ const labs = modelwrapper({
       template.key.unique = 'districtLab';
 
       template.district = {
-        type: DataTypes.STRING,
+        // type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true,
         unique: 'districtLab',
         references: {
           model: Districts,
-          key: 'key'
+          key: 'id',
         },
-        set: function(val) {
-          this.setDataValue('district', val ? val.toUpperCase().trim() : val);
-        }
+        // set: function(val) {
+        //   this.setDataValue('district', val ? val.toUpperCase().trim() : val);
+        // }
       };
 
       return sequelize.define(

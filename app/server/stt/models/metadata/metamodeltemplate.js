@@ -16,7 +16,6 @@ const metaModelTemplate = (DataTypes, options) => {
   return {
     key: {
       type: DataTypes.STRING,
-      primaryKey: true,
       set: function(val) {
         this.setDataValue('key', val ? val.toUpperCase().trim() : val);
       },

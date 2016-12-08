@@ -2,22 +2,22 @@
   {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx4",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
-    "artifactType": "REQUEST"
+    "artifactType": 1
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx5",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
-    "artifactType": "DBS"
+    "artifactType": 5
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx6",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1",
-    "artifactType": "BLOOD"
+    "artifactType": 2
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx8",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2",
-    "artifactType": "REQUEST"
+    "artifactType": 1
   }, {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx9",
     "sampleId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2",
-    "artifactType": "BLOOD"
+    "artifactType": 2
   }
 ]

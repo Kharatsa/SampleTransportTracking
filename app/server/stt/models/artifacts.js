@@ -26,7 +26,8 @@ const artifacts = modelwrapper({
           references: modelutils.uuidReference(SampleIds)
         },
         artifactType: {
-          type: DataTypes.STRING,
+          // type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: false,
           references: modelutils.keyReference(MetaArtifacts),
           set: function(val) {

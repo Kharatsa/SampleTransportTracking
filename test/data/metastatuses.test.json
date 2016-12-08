@@ -1,5 +1,6 @@
 [
   {
+    "id": 1,
     "key": "OK",
     "value": "A-OK"
   }, {
@@ -9,12 +10,14 @@
     "key": "REQ",
     "value": "Lab Test Requested"
   }, {
+    "id": 4,
     "key": "RVW",
     "value": "Lab Test Reviewed"
   }, {
     "key": "PRT",
     "value": "Lab Report Printed"
   }, {
+    "id": 6,
     "key": "REJ",
     "value": "Lab Test Rejected"
   }

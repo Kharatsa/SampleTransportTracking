@@ -1,13 +1,16 @@
 [
   {
+    "id": 1,
     "key": "PER1",
     "value": "Dudda Secundus"
   },
   {
+    "id": 2,
     "key": "PER2",
     "value": "Hallvarðr Ealdræd"
   },
   {
+    "id": 3,
     "key": "TEST",
     "value": "Antoninus Ælfstan"
   },

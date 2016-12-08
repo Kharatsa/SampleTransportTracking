@@ -24,6 +24,7 @@ const syncedCombine = synced => (
 
 const findAndMakeInserts = (merged, modelName) => {
   return datamerge.inserts(merged)
+  .tap(data => console.log('Inserting merged data', data))
   .then(data => client.modelInserts({modelName, data}));
 };
 
@@ -87,7 +88,7 @@ const sampleIds = incoming => {
 };
 
 const metaHandler = (model, modelName, uniques) => {
-  uniques = uniques || ['key'];
+  uniques = uniques || ['id'];
 
   return data => {
     log.info(`${modelName} incoming`, data);

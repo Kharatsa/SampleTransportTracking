@@ -1,11 +1,14 @@
 [
   {
+    "id": 1,
     "key": "SOBAD",
     "value": "This thing was really bad"
   }, {
+    "id": 2,
     "key": "OHNOE",
     "value": "Something melted"
   }, {
+    "id": 3,
     "key": "SMELL",
     "value": "Smells odd"
   }

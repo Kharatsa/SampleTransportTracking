@@ -64,7 +64,7 @@ const makeSample = (meta, createdAt) => ({
   uuid: makeUUID(),
   stId: makeStId(),
   labId: makeLabId(),
-  origin: meta.facility[randomInt(meta.facility.length)].key,
+  origin: meta.facility[randomInt(meta.facility.length)].id,
   createdAt
 });
 
@@ -124,7 +124,7 @@ const buildArtifacts = (sample, meta) => {
   const count = randomInt(4) + 1;
   for (let i = 0; i < count; i++) {
     const artifactMeta = metaArtifacts[randomInt(metaArtifacts.length)];
-    artifacts.push(makeArtifact(sample, artifactMeta.key));
+    artifacts.push(makeArtifact(sample, artifactMeta.id));
   }
   return artifacts;
 };
@@ -135,7 +135,7 @@ const buildLabTests = (sample, stageCount, meta) => {
     const count = randomInt(4) + 1;
     for (let i = 0; i < count; i++) {
       const testMeta = meta.labtest[randomInt(meta.labtest.length)];
-      tests.push(makeTest(sample, testMeta.key));
+      tests.push(makeTest(sample, testMeta.id));
     }
   }
   return tests;
@@ -152,7 +152,7 @@ const buildRequestChanges = (
       stage: stageKey,
       artifact: artifact.uuid,
       facility: facilityKey,
-      person: person.key,
+      person: person.id,
       status: statusKey
     });
   });
@@ -176,8 +176,8 @@ const buildLabStatusChanges = (startDate, test, facilityKey, meta) => {
       stage: 'LABSTATUS',
       labTest: test.uuid,
       facility: facilityKey,
-      status: status.key,
-      labRejection: rejection ? rejection.key : null
+      status: status.id,
+      labRejection: rejection ? rejection.id: null
     }));
 
     if (status.key === 'REJ') {
@@ -226,7 +226,7 @@ const buildResultChanges = (
         stage: 'RDEPART',
         artifact: artifact.uuid,
         facility: print.facilityKey,
-        person: person.key,
+        person: person.id,
         status: statusKey
       }));
     }
@@ -239,8 +239,8 @@ const buildResultChanges = (
         statusDate: incrementDate(pickupDate),
         stage: 'RARRIVE',
         artifact: artifact.uuid,
-        facility: facility.key,
-        person: person.key,
+        facility: facility.id,
+        person: person.id,
         status: statusKey
       }));
     }
@@ -265,13 +265,13 @@ const buildChanges = (startDate, stages, sample, artifacts, labTests, meta) => {
         statusDate, stage, facilityKey, artifacts, meta);
     } else if (stage === 'LABSTATUS') {
       const facility = meta.facility[randomInt(meta.facility.length)];
-      result = buildLabChanges(statusDate, facility.key, labTests, meta);
+      result = buildLabChanges(statusDate, facility.id, labTests, meta);
       prints = result.prints;
       result = result.changes;
     } else if (stage === 'RDEPART') {
       const facility = meta.facility[randomInt(meta.facility.length)];
       result = buildResultChanges(
-        sample, artifacts, prints, facility.key, meta);
+        sample, artifacts, prints, facility.id, meta);
     } else {
       // noop
     }
@@ -326,13 +326,15 @@ const load = (changesNum) => {
   storage.loadModels(sttmodels);
   storage.loadModels(authmodels);
 
-  const noLog = {logging: false};
-  let originalLogLevel = log.transports.stt.level;
+  // TODO(sean): revert
+  // const noLog = {logging: false};
+  const noLog = {logging: true};
+  // let originalLogLevel = log.transports.stt.level;
 
   return storage.db.sync()
   .then(() => {
     log.info('Loading fake data...');
-    log.transports.stt.level = 'error';
+    log.transports.stt.level = 'debug';
   })
   .then(() => log.debug('Loading test metadata...'))
   .then(() => testmeta.load())

@@ -26,12 +26,13 @@ const labtests = modelwrapper({
           references: modelutils.uuidReference(SampleIds)
         },
         testType: {
-          type: DataTypes.STRING,
+          // type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: false,
           references: modelutils.keyReference(MetaLabTests),
-          set: function(val) {
-            this.setDataValue('testType', val ? val.toUpperCase() : val);
-          }
+          // set: function(val) {
+          //   this.setDataValue('testType', val ? val.toUpperCase() : val);
+          // }
         }
       }, {
 

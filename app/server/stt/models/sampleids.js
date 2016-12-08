@@ -17,16 +17,14 @@ const dateRange = options => {
   return {createdAt: Object.assign({}, afterQuery, beforeQuery)};
 };
 
-// TODO: re-enable when real lab Ids are being scanned
+const LAB_ID_REGEXP = new RegExp(/([a-zA-Z]{3})([0-9]{7})/);
 
-// const LAB_ID_REGEXP = new RegExp(/([a-zA-Z]{3})([0-9]{7})/);
-
-// const labIdPatternMatch = function(value) {
-//   if (!LAB_ID_REGEXP.test(value)) {
-//     throw new Error(`"${value}" does not match required lab ID
-//                     pattern: ${LAB_ID_REGEXP}`);
-//   }
-// };
+const labIdPatternMatch = function(value) {
+  if (!LAB_ID_REGEXP.test(value)) {
+    throw new Error(`"${value}" does not match required lab ID
+                    pattern: ${LAB_ID_REGEXP}`);
+  }
+};
 
 const sampleids = modelwrapper({
   name: modelName,
@@ -43,23 +41,23 @@ const sampleids = modelwrapper({
         },
         stId: {
           type: DataTypes.STRING,
-          allowNull: true,
-          unique: true
+          // allowNull: true,
+          unique: true,
         },
         labId: {
           type: DataTypes.STRING,
           allowNull: true,
-          unique: true
-          // TODO: re-enable when real lab Ids are being scanned
-          // validate: {labIdPatternMatch}
+          unique: true,
+          validate: {labIdPatternMatch},
         },
         origin: {
-          type: DataTypes.STRING,
+          // type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: true,
           references: modelutils.keyReference(MetaFacilities),
-          set: function(val) {
-            this.setDataValue('origin', val ? val.toUpperCase() : val);
-          }
+          // set: function(val) {
+          //   this.setDataValue('origin', val ? val.toUpperCase() : val);
+          // }
         },
         outstanding: {
           type: DataTypes.BOOLEAN,
