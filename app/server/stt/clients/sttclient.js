@@ -190,7 +190,7 @@ STTClient.prototype.stageDateCounts = BPromise.method(function(options) {
   .then(results => datamerge.propKeyReduce(
     {items: results, propNames: ['statusDate', 'stage']}))
   .then(results =>
-    summaryresult.composeDateSeriesCounts(results, {afterDate, beforeDate}))
+    summaryresult.composeDateSeriesCounts(results, {afterDate, beforeDate}));
 });
 
 /**

@@ -8,12 +8,11 @@ import {SideMenuLayout} from '../components';
 import {SampleSearch, ViewChangesButton, ViewSubPage} from '../components/DashboardControls';
 
 
-export const DashboardPage = ({appName}) => {
+export const SamplesNewPage = ({appName}) => {
   const controls = [
     <LocationFilters />,
     <DateFilters />,
-    <SampleSearch pushHistory={history.push} />,
-    <ViewChangesButton />
+    <SampleSearch pushHistory={history.push} />
   ];
 
   return (
@@ -21,27 +20,17 @@ export const DashboardPage = ({appName}) => {
       menuHeader={appName}
       menuItems={controls} 
       >
-      <div>
-        <SummaryTabs />
-      </div>
-
-      <div>
-        <SummaryCounts />
-        <h3 className='dashboard-title'>Turn Around Time (TAT) </h3>
-        <TurnArounds />
-        <h3 className='dashboard-title'>Sample ID Stages by Date</h3>
+ 
+	      <div>
+	        <h3 className='dashboard-title'>Sample ID Stages by Date</h3>
         <StageDatesCounts />
-        <br style={{'clear': 'left'}} />
-        <h3 className='dashboard-title'>Sample & Lab Stage Updates</h3>
-        <StageCounts />
-      </div>
-
+	      </div>
     </SideMenuLayout>
   );
 };
 
-DashboardPage.propTypes = {
+SamplesNewPage.propTypes = {
   appName: PropTypes.string,
 };
 
-export default DashboardPage;
+export default SamplesNewPage;
