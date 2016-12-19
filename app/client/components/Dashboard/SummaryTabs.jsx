@@ -28,6 +28,7 @@ export const SummaryTabs = ({
       </div>
       
       <div className='pure-u-1 pure-u-md-1-3'>
+      <Link to='/samplesNewPage'>
         <HeroDataPanel header='Total Samples & Forms'>
         
           <span>
@@ -36,6 +37,7 @@ export const SummaryTabs = ({
           </span>
 
         </HeroDataPanel>
+      </Link>
       </div>
 
       <div className='pure-u-1 pure-u-md-1-3'>

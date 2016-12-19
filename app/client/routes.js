@@ -1,7 +1,7 @@
 import React from 'react';
 import Route from 'react-router/lib/Route';
 import IndexRoute from 'react-router/lib/IndexRoute';
-import {App, Dashboard, Changes, Sample, Admin, MissingRoute, TATPage} from './pages';
+import {App, Dashboard, Changes, Sample, Admin, MissingRoute, TATPage, SamplesNewPage} from './pages';
 import {UserListPage, MetaListPage} from './pages/Admin';
 
 export default (
@@ -9,6 +9,7 @@ export default (
     <IndexRoute component={Dashboard} />
     <Route path='dashboard' component={Dashboard} />
     <Route path='changes(/:page)' component={Changes} />
+    <Route path='samplesNewPage' component={SamplesNewPage} />
     <Route path='tatsPage' component={TATPage} />
     <Route path='samples(/:sampleId)' component={Sample} />
     <Route path='admin' component={Admin}>
