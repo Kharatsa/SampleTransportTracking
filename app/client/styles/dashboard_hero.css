@@ -29,3 +29,20 @@
   font-weight: 100;
 }
 
+.hero-data-header2 {
+  font-size: 1.1rem;
+  font-weight: 100;
+  padding: 0.5rem;
+  margin: 0 0.5rem 0 0.5rem;
+  border-bottom: 2px solid #DDD;
+  text-decoration: none;
+}
+
+a.hero-data-header2 {
+  text-decoration: none;
+}
+
+ .hero-data-header2:hover { 
+    color: blue;
+  }
+

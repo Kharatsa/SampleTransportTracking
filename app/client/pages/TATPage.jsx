@@ -23,7 +23,7 @@ export const TATPage = ({appName}) => {
       >
  
 	      <div>
-	        <h1 className='dashboard-title'>Turn Around Times</h1>
+	        <h2 className='dashboard-title'>Turn Around Times</h2>
 	        <TurnArounds />
 	      </div>
     </SideMenuLayout>

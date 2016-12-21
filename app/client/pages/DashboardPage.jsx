@@ -21,8 +21,8 @@ export const DashboardPage = ({appName}) => {
       menuItems={controls}
     >
       <div>
-        <SummaryCounts />
         <SummaryTabs/>
+        <SummaryCounts />
         <h3 className='dashboard-title'>Sample ID Stages by Date</h3>
         <StageDatesCounts />
         <br style={{'clear': 'left'}} />
