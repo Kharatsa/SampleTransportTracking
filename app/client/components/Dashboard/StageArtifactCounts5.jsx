@@ -64,8 +64,6 @@ export const StageArtifactCounts5 = ({
 
   return (
     <DashboardPanel
-      heading='Samples & Forms'
-      subheading='individual sample and form scans'
     >
       {artifactCounts}
     </DashboardPanel>

@@ -62,10 +62,11 @@ export const StageArtifactCounts4 = ({
     stageElements(metaStages, metaArtifacts, stage, i));
 
   return (
-    <DashboardPanel
+    <DashboardPanel 
       heading='Samples & Forms'
       subheading='individual sample and form scans'
     >
+
       {artifactCounts}
     </DashboardPanel>
   );

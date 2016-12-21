@@ -9,8 +9,8 @@ import StageArtifactCounts3 from './StageArtifactCounts3';
 import StageLabCounts from './StageLabCounts';
 
 const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
-const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts3);
-const WrappedArtifactCounts2 = WaitOnFetch(StageArtifactCounts2);
+const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts2);
+const WrappedArtifactCounts2 = WaitOnFetch(StageArtifactCounts3);
 const WrappedLabCounts = WaitOnFetch(StageLabCounts);
 
 export const StageCounts2 = React.createClass({
