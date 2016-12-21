@@ -28,6 +28,7 @@ export const DashboardPage = ({appName}) => {
         <br style={{'clear': 'left'}} />
         <h3 className='dashboard-title'>Sample & Lab Stage Updates</h3>
         <StageCounts2/>
+        <StageCounts3/>
       </div>
     </SideMenuLayout>
   );
