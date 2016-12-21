@@ -16,6 +16,6 @@ export const LabTestsContainer = connect(
     labTestCounts: getLabTestStatusCounts(state)
   }),
   {fetchSummary},
-)(LabTestsContainer);
+)(LabTestCounts);
 
 export default LabTestsContainer;

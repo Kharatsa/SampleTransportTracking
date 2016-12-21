@@ -12,7 +12,6 @@ export const LabTestsPage = ({appName}) => {
   const controls = [
     <LocationFilters />,
     <DateFilters />,
-    <SampleSearch pushHistory={history.push} />,
     <ReturnToDashboard/>
   ];
 
@@ -24,7 +23,7 @@ export const LabTestsPage = ({appName}) => {
  
 	      <div>
 	        <h2 className='dashboard-title'>Lab Tests</h2>
-        <StageCounts2/>
+        <LabTestCounts/>
 	      </div>
     </SideMenuLayout>
   );

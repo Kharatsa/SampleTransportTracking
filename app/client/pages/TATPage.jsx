@@ -12,7 +12,6 @@ export const TATPage = ({appName}) => {
   const controls = [
     <LocationFilters />,
     <DateFilters />,
-    <SampleSearch pushHistory={history.push} />,
     <ReturnToDashboard/>
 
   ];

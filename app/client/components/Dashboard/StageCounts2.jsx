@@ -54,12 +54,19 @@ export const StageCounts2 = React.createClass({
 
     return (
       <div className='pure-g'>
-        <div className='pure-u-1'>
-          <WrappedLabCounts
+        <div className='pure-u-1 pure-u-lg-1-2'>
+          <WrappedArtifactCounts
             isLoading={isLoading}
-            metaStatuses={metaStatuses}
-            metaLabTests={metaLabTests}
-            labTestCounts={labTestCounts}
+            metaStages={metaStages}
+            metaArtifacts={metaArtifacts}
+            artifactStageCounts={artifactStageCounts}
+          />
+        </div>
+        <div className='pure-u-1 pure-u-lg-1-2'>
+          <WrappedSampleIdCounts
+            isLoading={isLoading}
+            metaStages={metaStages}
+            sampleIdsStageCounts={sampleIdsStageCounts}
           />
         </div>
       </div>
