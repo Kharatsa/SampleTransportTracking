@@ -33,26 +33,30 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
     stageArtifactElements(metaArtifacts, artifact, i));
 
   const stageKey = item.get('stage');
-  p
-  return (
-    <table className='widget-table' key={index}>
-      <thead>
-        <tr>
-          <th className='col-1-of-3'>
-            <MetaText metadata={metaStages} metaKey={stageKey} /> Scan Type
-          </th>
-          <th className='col-2-of-3'>Scans</th>
-          <th className='col-3-of-3'>Exceptions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {counts}
-      </tbody>
-    </table>
-  );
+  console.log("stageKey " + stageKey);
+  if (stageKey === "SDEPART"){
+    console.log("stagekey is SDepart");
+    return (
+      <table className='widget-table' key={index}>
+        <thead>
+          <tr>
+            <th className='col-1-of-3'>
+              <MetaText metadata={metaStages} metaKey={stageKey} /> Scan Type
+            </th>
+            <th className='col-2-of-3'>Scans</th>
+            <th className='col-3-of-3'>Exceptions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {counts}
+        </tbody>
+      </table>
+    ); 
+  }
+    
 };
 
-export const StageArtifactCounts = ({
+export const StageArtifactCounts2 = ({
   metaStages, metaArtifacts, artifactStageCounts
 }) => {
   const artifactCounts = artifactStageCounts.map((stage, i) =>
@@ -68,10 +72,10 @@ export const StageArtifactCounts = ({
   );
 };
 
-StageArtifactCounts.propTypes = {
+StageArtifactCounts2.propTypes = {
   metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
   metaArtifacts: PropTypes.instanceOf(ImmutableMap).isRequired,
   artifactStageCounts: PropTypes.instanceOf(List).isRequired
 };
 
-export default StageArtifactCounts;
+export default StageArtifactCounts2;

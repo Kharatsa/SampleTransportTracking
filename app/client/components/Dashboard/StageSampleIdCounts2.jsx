@@ -4,7 +4,7 @@ import DashboardPanel from '../DashboardPanel';
 import MetaText from '../MetaText';
 
 export const StageSampleIdCounts2 = ({metaStages, sampleIdsStageCounts}) => {
-  const stageCounts = sampleIdsStageCounts.map((item, i) =>
+  const stageCounts2 = sampleIdsStageCounts2.map((item, i) =>
     <tr key={i}>
       <td>
         <MetaText

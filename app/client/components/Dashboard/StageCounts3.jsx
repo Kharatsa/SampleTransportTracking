@@ -4,14 +4,14 @@ import {Map as ImmutableMap, List} from 'immutable';
 import {SummaryFilter} from '../../api/records.js';
 import WaitOnFetch from '../WaitOnFetch.jsx';
 import StageSampleIdCounts from './StageSampleIdCounts';
-import StageArtifactCounts from './StageArtifactCounts';
+import StageArtifactCounts2 from './StageArtifactCounts2';
 import StageLabCounts from './StageLabCounts';
 
 const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
-const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts);
+const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts2);
 const WrappedLabCounts = WaitOnFetch(StageLabCounts);
 
-export const StageCounts2 = React.createClass({
+export const StageCounts3 = React.createClass({
   propTypes: {
     artifactStageCounts: PropTypes.instanceOf(List).isRequired,
     fetchSummary: PropTypes.func.isRequired,
@@ -69,17 +69,9 @@ export const StageCounts2 = React.createClass({
             sampleIdsStageCounts={sampleIdsStageCounts}
           />
         </div>
-        <div className='pure-u-1'>
-          <WrappedLabCounts
-            isLoading={isLoading}
-            metaStatuses={metaStatuses}
-            metaLabTests={metaLabTests}
-            labTestCounts={labTestCounts}
-          />
-        </div>
       </div>
     );
   }
 });
 
-export default StageCounts2;
+export default StageCounts3;

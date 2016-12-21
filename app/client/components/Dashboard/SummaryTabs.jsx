@@ -9,8 +9,7 @@ const displayValue = (isFetchingData, val) => {
   }
   return val && val.toLocaleString ? val.toLocaleString() : val;
 };
-
-export const SummaryTabs = ({
+export const SummaryTabs =({
   isFetchingData, numSampleIds, numArtifacts, numLabTests
 }) => {
   return (

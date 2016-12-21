@@ -21,10 +21,9 @@ export const TATPage = ({appName}) => {
       menuHeader={appName}
       menuItems={controls} 
       >
- 
 	      <div>
 	        <h2 className='dashboard-title'>Turn Around Times</h2>
-	        <TurnArounds />
+	        <TurnArounds/>
 	      </div>
     </SideMenuLayout>
   );

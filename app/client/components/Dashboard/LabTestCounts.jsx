@@ -22,7 +22,6 @@ export const LabTestCounts= React.createClass({
     metaStatuses: PropTypes.instanceOf(ImmutableMap),
     metaLabTests: PropTypes.instanceOf(ImmutableMap),
     summaryFilter: PropTypes.instanceOf(SummaryFilter).isRequired,
-    sampleIdsStageCounts: PropTypes.instanceOf(List).isRequired,
   },
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -47,7 +46,7 @@ export const LabTestCounts= React.createClass({
   render() {
     const {
       isLoading,
-      metaStages, sampleIdsStageCounts,
+      metaStages,
       metaArtifacts, artifactStageCounts,
       metaStatuses, metaLabTests, labTestCounts
     } = this.props;
