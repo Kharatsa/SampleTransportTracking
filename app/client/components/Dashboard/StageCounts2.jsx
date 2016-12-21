@@ -4,11 +4,13 @@ import {Map as ImmutableMap, List} from 'immutable';
 import {SummaryFilter} from '../../api/records.js';
 import WaitOnFetch from '../WaitOnFetch.jsx';
 import StageSampleIdCounts from './StageSampleIdCounts';
-import StageArtifactCounts from './StageArtifactCounts';
+import StageArtifactCounts2 from './StageArtifactCounts2';
+import StageArtifactCounts3 from './StageArtifactCounts3';
 import StageLabCounts from './StageLabCounts';
 
 const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
-const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts);
+const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts3);
+const WrappedArtifactCounts2 = WaitOnFetch(StageArtifactCounts2);
 const WrappedLabCounts = WaitOnFetch(StageLabCounts);
 
 export const StageCounts2 = React.createClass({
@@ -54,7 +56,7 @@ export const StageCounts2 = React.createClass({
 
     return (
       <div className='pure-g'>
-        <div className='pure-u-1 pure-u-lg-1-2'>
+        <div className='pure-u-1 pure-u-md-1-2'>
           <WrappedArtifactCounts
             isLoading={isLoading}
             metaStages={metaStages}
@@ -62,19 +64,12 @@ export const StageCounts2 = React.createClass({
             artifactStageCounts={artifactStageCounts}
           />
         </div>
-        <div className='pure-u-1 pure-u-lg-1-2'>
-          <WrappedSampleIdCounts
+      <div className='pure-u-1 pure-u-md-1-2'>
+          <WrappedArtifactCounts2
             isLoading={isLoading}
             metaStages={metaStages}
-            sampleIdsStageCounts={sampleIdsStageCounts}
-          />
-        </div>
-        <div className='pure-u-1'>
-          <WrappedLabCounts
-            isLoading={isLoading}
-            metaStatuses={metaStatuses}
-            metaLabTests={metaLabTests}
-            labTestCounts={labTestCounts}
+            metaArtifacts={metaArtifacts}
+            artifactStageCounts={artifactStageCounts}
           />
         </div>
       </div>

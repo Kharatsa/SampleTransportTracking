@@ -34,8 +34,9 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
 
   const stageKey = item.get('stage');
   console.log("stageKey " + stageKey);
-  if (stageKey === "SDEPART"){
-    console.log("stagekey is SDepart");
+  
+    if (stageKey === "SDEPART"){
+    console.log("stagekey is SDEPART");
     return (
       <table className='widget-table' key={index}>
         <thead>
@@ -52,8 +53,7 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
         </tbody>
       </table>
     ); 
-  }
-    
+  } 
 };
 
 export const StageArtifactCounts2 = ({

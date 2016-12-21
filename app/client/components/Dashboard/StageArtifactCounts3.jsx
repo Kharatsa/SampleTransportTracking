@@ -34,8 +34,8 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
 
   const stageKey = item.get('stage');
   console.log("stageKey " + stageKey);
-  if (stageKey === "SDEPART"){
-    console.log("stagekey is SDepart");
+  if (stageKey === "SARRIVE"){
+    console.log("stagekey is SARRIVE");
     return (
       <table className='widget-table' key={index}>
         <thead>
@@ -56,7 +56,7 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
     
 };
 
-export const StageArtifactCounts2 = ({
+export const StageArtifactCounts3 = ({
   metaStages, metaArtifacts, artifactStageCounts
 }) => {
   const artifactCounts = artifactStageCounts.map((stage, i) =>
@@ -72,10 +72,10 @@ export const StageArtifactCounts2 = ({
   );
 };
 
-StageArtifactCounts2.propTypes = {
+StageArtifactCounts3.propTypes = {
   metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
   metaArtifacts: PropTypes.instanceOf(ImmutableMap).isRequired,
   artifactStageCounts: PropTypes.instanceOf(List).isRequired
 };
 
-export default StageArtifactCounts2;
+export default StageArtifactCounts3;

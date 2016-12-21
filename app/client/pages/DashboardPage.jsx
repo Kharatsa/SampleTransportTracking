@@ -27,7 +27,7 @@ export const DashboardPage = ({appName}) => {
         <StageDatesCounts />
         <br style={{'clear': 'left'}} />
         <h3 className='dashboard-title'>Sample & Lab Stage Updates</h3>
-        <StageCounts3/>
+        <StageCounts2/>
       </div>
     </SideMenuLayout>
   );

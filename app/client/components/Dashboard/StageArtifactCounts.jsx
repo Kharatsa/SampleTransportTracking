@@ -33,7 +33,6 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
     stageArtifactElements(metaArtifacts, artifact, i));
 
   const stageKey = item.get('stage');
-  p
   return (
     <table className='widget-table' key={index}>
       <thead>
