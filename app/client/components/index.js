@@ -7,6 +7,7 @@ import StageDatesCounts from './Dashboard/StageDatesCounts';
 import SummaryCounts from './Dashboard/SummaryCounts';
 import StageCounts from './Dashboard/StageCounts';
 import SummaryTabs from './Dashboard/SummaryTabs';
+import StageCounts2 from './Dashboard/StageCounts2';
 
 export {
   App,
@@ -17,5 +18,6 @@ export {
   StageDatesCounts,
   SummaryCounts,
   StageCounts,
-  SummaryTabs
+  SummaryTabs,
+  StageCounts2,
 };

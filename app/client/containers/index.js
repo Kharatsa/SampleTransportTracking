@@ -10,7 +10,8 @@ import Sample from './SampleContainer';
 import ChangesExportLink from './ChangesExportLinkContainer';
 import TurnArounds from './TurnAroundsContainer';
 import SummaryTabs from './SummaryTabContainer';
-import TabPages from './TurnAroundsPage';
+import StageCounts2 from './StageCountsContainer2';
+
 
 export {
   App,
@@ -25,5 +26,5 @@ export {
   ChangesExportLink,
   TurnArounds,
   SummaryTabs,
-  TabPages, 
+  StageCounts2,
 };

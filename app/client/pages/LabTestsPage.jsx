@@ -2,19 +2,18 @@ import React, {PropTypes} from 'react';
 import history from 'react-router/lib/browserHistory';
 import {
   SummaryCounts, SummaryTabs, StageDatesCounts, StageCounts, TurnArounds,
-  DateFilters, LocationFilters
+  DateFilters, LocationFilters, StageCounts2, LabTestCounts,
 } from '../containers';
 import {SideMenuLayout} from '../components';
 import {SampleSearch, ViewChangesButton, ReturnToDashboard} from '../components/DashboardControls';
 
 
-export const TATPage = ({appName}) => {
+export const LabTestsPage = ({appName}) => {
   const controls = [
     <LocationFilters />,
     <DateFilters />,
     <SampleSearch pushHistory={history.push} />,
     <ReturnToDashboard/>
-
   ];
 
   return (
@@ -24,15 +23,15 @@ export const TATPage = ({appName}) => {
       >
  
 	      <div>
-	        <h1 className='dashboard-title'>Turn Around Times</h1>
-	        <TurnArounds />
+	        <h2 className='dashboard-title'>Lab Tests</h2>
+        <StageCounts2/>
 	      </div>
     </SideMenuLayout>
   );
 };
 
-TATPage.propTypes = {
+LabTestsPage .propTypes = {
   appName: PropTypes.string,
 };
 
-export default TATPage;
+export default LabTestsPage;

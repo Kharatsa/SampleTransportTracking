@@ -1,12 +1,11 @@
 import React, {PropTypes} from 'react';
 import history from 'react-router/lib/browserHistory';
 import {
-  SummaryCounts, SummaryTabs, StageDatesCounts, StageCounts, TurnArounds,
-  DateFilters, LocationFilters
+  SummaryCounts, StageDatesCounts, StageCounts, TurnArounds,
+  DateFilters, LocationFilters, SummaryTabs,
 } from '../containers';
 import {SideMenuLayout} from '../components';
-import {SampleSearch, ViewChangesButton, ViewSubPage} from '../components/DashboardControls';
-
+import {SampleSearch, ViewChangesButton} from '../components/DashboardControls';
 
 export const DashboardPage = ({appName}) => {
   const controls = [
@@ -19,23 +18,17 @@ export const DashboardPage = ({appName}) => {
   return (
     <SideMenuLayout
       menuHeader={appName}
-      menuItems={controls} 
-      >
-      <div>
-        <SummaryTabs />
-      </div>
-
+      menuItems={controls}
+    >
       <div>
         <SummaryCounts />
-        <h3 className='dashboard-title'>Turn Around Time (TAT) </h3>
-        <TurnArounds />
+        <SummaryTabs/>
         <h3 className='dashboard-title'>Sample ID Stages by Date</h3>
         <StageDatesCounts />
         <br style={{'clear': 'left'}} />
         <h3 className='dashboard-title'>Sample & Lab Stage Updates</h3>
         <StageCounts />
       </div>
-
     </SideMenuLayout>
   );
 };
