@@ -23,6 +23,7 @@ export const DashboardPage = ({appName}) => {
       <div>
         <SummaryTabs/>
         <SummaryCounts />
+        <TurnArounds/>
         <h3 className='dashboard-title'>Sample ID Stages by Date</h3>
         <StageDatesCounts />
         <br style={{'clear': 'left'}} />

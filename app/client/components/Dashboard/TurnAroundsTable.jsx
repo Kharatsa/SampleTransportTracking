@@ -39,7 +39,8 @@ const makeTATRow = (
   const toDescElem = descTATElem(metaStatuses, metaStages, tat.get('to'));
   const msTAT = tat.get('averageTATms');
   const durationVal = Moment.duration(msTAT).as(timeUnit.value);
-  const durationDesc = durationVal.toFixed(1);
+  // const durationDesc = durationVal.toFixed(1);
+  const durationDesc = Math.round(durationVal);
   const pctTotal = totalTAT > 0 ? (msTAT / totalTAT * 100).toFixed(1) : null;
   const pctTotalDesc = pctTotal ? `${pctTotal}%` : 'N/A';
 
