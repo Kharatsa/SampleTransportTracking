@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import history from 'react-router/lib/browserHistory';
 import {
-  SummaryCounts, SummaryTabs, StageDatesCounts, StageCounts, TurnArounds,
+  SummaryCounts, StageDatesCounts, StageCounts, TurnArounds,
   DateFilters, LocationFilters
 } from '../containers';
 import {SideMenuLayout} from '../components';
