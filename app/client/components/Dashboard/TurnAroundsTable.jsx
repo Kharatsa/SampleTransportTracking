@@ -14,6 +14,7 @@ const TimeUnits = [
 ];
 
 const descTATElem = (metaStatuses, metaStages, step) => {
+  // console.log("step.stage" + step.stage);
   const stageKey = step.stage;
   const statusKey = step.status;
 
@@ -35,6 +36,7 @@ const descTATElem = (metaStatuses, metaStages, step) => {
 const makeTATRow = (
   tat, index, metaStatuses, metaStages, timeUnit, totalTAT
 ) => {
+  // console.log("metaStages " + metaStages);
   const fromDescElem = descTATElem(metaStatuses, metaStages, tat.get('from'));
   const toDescElem = descTATElem(metaStatuses, metaStages, tat.get('to'));
   const msTAT = tat.get('averageTATms');
