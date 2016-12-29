@@ -1,7 +1,7 @@
 import App from './AppContainer';
 import SummaryCounts from './SummaryCountsContainer';
 import StageDatesCounts from './StageDatesCountsContainer';
-import StageCounts from './StageCountsContainer';
+import StageArtifactCounts from './StageArtifactCountsContainer';
 import DateFilters from './DateFiltersContainer';
 import LocationFilters from './LocationFiltersContainer';
 import Pagination from './PaginationContainer';
@@ -10,10 +10,7 @@ import Sample from './SampleContainer';
 import ChangesExportLink from './ChangesExportLinkContainer';
 import TurnArounds from './TurnAroundsContainer';
 import SummaryTabs from './SummaryTabContainer';
-import StageCounts2 from './StageCountsContainer2';
-import StageCounts3 from './StageCountsContainer3';
 import LabTestCounts from './LabTestsContainer';
-
 
 export {
   App,
@@ -22,13 +19,11 @@ export {
   LocationFilters,
   SummaryCounts,
   StageDatesCounts,
-  StageCounts,
+  StageArtifactCounts,
   Changes,
   Sample,
   ChangesExportLink,
   TurnArounds,
   SummaryTabs,
-  StageCounts2,
   LabTestCounts,
-  StageCounts3,
 };

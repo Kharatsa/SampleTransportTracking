@@ -3,15 +3,11 @@ import shallowCompare from 'react-addons-shallow-compare';
 import {Map as ImmutableMap, List} from 'immutable';
 import {SummaryFilter} from '../../api/records.js';
 import WaitOnFetch from '../WaitOnFetch.jsx';
-import StageSampleIdCounts from './StageSampleIdCounts';
-import StageArtifactCounts from './StageArtifactCounts';
 import StageLabCounts from './StageLabCounts';
 
-const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
-const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts);
 const WrappedLabCounts = WaitOnFetch(StageLabCounts);
 
-export const LabTestCounts= React.createClass({
+export const LabTestCounts = React.createClass({
   propTypes: {
     artifactStageCounts: PropTypes.instanceOf(List).isRequired,
     fetchSummary: PropTypes.func.isRequired,
@@ -45,10 +41,7 @@ export const LabTestCounts= React.createClass({
 
   render() {
     const {
-      isLoading,
-      metaStages,
-      metaArtifacts, artifactStageCounts,
-      metaStatuses, metaLabTests, labTestCounts
+      isLoading, metaStatuses, metaLabTests, labTestCounts
     } = this.props;
 
     return (

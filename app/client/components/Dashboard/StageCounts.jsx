@@ -4,7 +4,7 @@ import {Map as ImmutableMap, List} from 'immutable';
 import {SummaryFilter} from '../../api/records.js';
 import WaitOnFetch from '../WaitOnFetch.jsx';
 import StageSampleIdCounts from './StageSampleIdCounts';
-import StageArtifactCounts from './StageArtifactCounts';
+import StageArtifactCounts from './StageArtifacts/StageArtifactCounts';
 import StageLabCounts from './StageLabCounts';
 
 const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
