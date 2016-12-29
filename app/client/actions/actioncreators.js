@@ -96,7 +96,13 @@ const receiveSummary = ({sampleIds, artifacts, labTests, totals}) =>
 export const fetchSummary = (summaryFilter) => {
   return dispatch => {
     dispatch(requestSummary(summaryFilter));
-    return api.getSummary(getFilterValues(summaryFilter), (err, data) => {
+
+    let filter;
+    if (summaryFilter) {
+      filter = getFilterValues(summaryFilter);
+    }
+
+    return api.getSummary(filter, (err, data) => {
       if (err) {
         dispatch(fetchSummaryFailure(err));
         return;

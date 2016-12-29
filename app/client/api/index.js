@@ -69,8 +69,13 @@ export const getChanges = (filter={}, page=1, callback) => {
   });
 };
 
-export const getSummary = (filter={}, callback) => {
-  const url = filteredURL('summary', filter);
+export const getSummary = (filter, callback) => {
+  let url;
+  if (filter) {
+    url = filteredURL('summary', filter);
+  } else {
+    url = '/stt/summary';
+  }
   return request(url, (err, res) => {
     if (err) {
       return callback(err);

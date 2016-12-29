@@ -33,9 +33,7 @@ const stageElements = (metaStages, metaArtifacts, item, index) => {
     stageArtifactElements(metaArtifacts, artifact, i));
 
   const stageKey = item.get('stage');
-  console.log("stageKey " + stageKey);
   if (stageKey === "SARRIVE"){
-    console.log("stagekey is SARRIVE");
     return (
       <table className='widget-table' key={index}>
         <thead>

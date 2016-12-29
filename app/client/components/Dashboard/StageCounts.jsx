@@ -7,9 +7,9 @@ import StageSampleIdCounts from './StageSampleIdCounts';
 import StageArtifactCounts from './StageArtifactCounts';
 import StageLabCounts from './StageLabCounts';
 
-const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
-const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts);
-const WrappedLabCounts = WaitOnFetch(StageLabCounts);
+// const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
+// const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts);
+// const WrappedLabCounts = WaitOnFetch(StageLabCounts);
 
 export const StageCounts = React.createClass({
   propTypes: {
@@ -55,7 +55,7 @@ export const StageCounts = React.createClass({
     return (
       <div className='pure-g'>
         <div className='pure-u-1 pure-u-lg-1-2'>
-          <WrappedArtifactCounts
+          <ArtifactCounts
             isLoading={isLoading}
             metaStages={metaStages}
             metaArtifacts={metaArtifacts}
@@ -63,14 +63,14 @@ export const StageCounts = React.createClass({
           />
         </div>
         <div className='pure-u-1 pure-u-lg-1-2'>
-          <WrappedSampleIdCounts
+          <SampleIdCounts
             isLoading={isLoading}
             metaStages={metaStages}
             sampleIdsStageCounts={sampleIdsStageCounts}
           />
         </div>
         <div className='pure-u-1'>
-          <WrappedLabCounts
+          <LabCounts
             isLoading={isLoading}
             metaStatuses={metaStatuses}
             metaLabTests={metaLabTests}

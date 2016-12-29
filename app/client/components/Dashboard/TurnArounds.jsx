@@ -5,8 +5,8 @@ import WaitOnFetch from '../WaitOnFetch.jsx';
 import TurnAroundsTable from './TurnAroundsTable';
 import TurnAroundsChart from './TurnAroundsChart';
 
-const TurnAroundsTableWrapped = WaitOnFetch(TurnAroundsTable);
-const TurnAroundsChartWrapped = WaitOnFetch(TurnAroundsChart);
+// const TurnAroundsTableWrapped = WaitOnFetch(TurnAroundsTable);
+// const TurnAroundsChartWrapped = WaitOnFetch(TurnAroundsChart);
 
 export const TurnArounds = React.createClass({
   propTypes: {
@@ -46,7 +46,7 @@ export const TurnArounds = React.createClass({
     return (
       <div className='pure-g'>
         <div className='pure-u-1 pure-u-lg-1-2'>
-          <TurnAroundsChartWrapped
+          <TurnAroundsChart
             isLoading={isLoading}
             metaStages={metaStages}
             metaStatuses={metaStatuses}
@@ -54,7 +54,7 @@ export const TurnArounds = React.createClass({
           />
         </div>
         <div className='pure-u-1 pure-u-lg-1-2'>
-          <TurnAroundsTableWrapped
+          <TurnAroundsTable
             isLoading={isLoading}
             metaStages={metaStages}
             metaStatuses={metaStatuses}

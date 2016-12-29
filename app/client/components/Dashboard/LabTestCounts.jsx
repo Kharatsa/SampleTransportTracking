@@ -7,11 +7,11 @@ import StageSampleIdCounts from './StageSampleIdCounts';
 import StageArtifactCounts from './StageArtifactCounts';
 import StageLabCounts from './StageLabCounts';
 
-const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
-const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts);
-const WrappedLabCounts = WaitOnFetch(StageLabCounts);
+// const WrappedSampleIdCounts = WaitOnFetch(StageSampleIdCounts);
+// const WrappedArtifactCounts = WaitOnFetch(StageArtifactCounts);
+// const WrappedLabCounts = WaitOnFetch(StageLabCounts);
 
-export const LabTestCounts= React.createClass({
+export const LabTestCounts = React.createClass({
   propTypes: {
     artifactStageCounts: PropTypes.instanceOf(List).isRequired,
     fetchSummary: PropTypes.func.isRequired,
@@ -54,7 +54,7 @@ export const LabTestCounts= React.createClass({
     return (
       <div className='pure-g'>
         <div className='pure-u-1'>
-          <WrappedLabCounts
+          <LabCounts
             isLoading={isLoading}
             metaStatuses={metaStatuses}
             metaLabTests={metaLabTests}
