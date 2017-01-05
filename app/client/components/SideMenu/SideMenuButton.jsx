@@ -8,7 +8,7 @@ export const SideMenuButton = ({children}) => {
   return (
     <div style={wrapperStyle}>
       <div style={innerStyle}>
-        <button className='pure-button'>
+        <button className='pure-button menu-button'>
           {children}
         </button>
       </div>
