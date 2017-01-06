@@ -3,7 +3,7 @@ import React, {PropTypes} from 'react';
 const callMountFunc = (funcName, props) => {
   const func = props[funcName];
   if (func) {
-    func();
+    return func();
   } else if (process.env.NODE_ENV !== 'production') {
     // console.error(`Component missing ${funcName} prop`);
   }
@@ -14,21 +14,26 @@ const callMountFunc = (funcName, props) => {
  * Calls the prop function specified by the onMountFunc prop.
  */
 export const CallOnMount = Component => {
-  let wasMounted = false;
+  const Wrapped = React.createClass({
+    displayName: `CallOnMount(${Component.displayName || 'Stateless'})`,
 
-  const WrappedCallOnMount = ({onMountFunc=null, ...others}) => {
-    if (!wasMounted && onMountFunc) {
-      callMountFunc(onMountFunc, others);
-      wasMounted = true;
+    propTypes: {
+      onMountFunc: PropTypes.string.isRequired,
+    },
+
+    componentDidMount() {
+      const {onMountFunc} = this.props;
+      if (onMountFunc) {
+        return callMountFunc(onMountFunc, this.props);
+      }
+    },
+
+    render() {
+      return <Component {...this.props} />;
     }
-    return <Component {...others} />;
-  };
+  });
 
-  WrappedCallOnMount.propTypes = {
-    onMountFunc: PropTypes.string.isRequired,
-  };
-
-  return WrappedCallOnMount;
+  return Wrapped;
 };
 
 export default CallOnMount;

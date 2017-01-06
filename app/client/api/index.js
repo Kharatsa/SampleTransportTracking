@@ -20,12 +20,19 @@ const locationURLParams = ({facilityKey, regionKey}) => {
 };
 
 const dateURLParams = ({afterDate, beforeDate}) => {
-  if (!(afterDate && beforeDate)) {
-    throw new Error('Missing required parameter afterDate or beforeDate');
+  let afterDatePart;
+  if (afterDate) {
+    afterDatePart = `?afterDate=${afterDate.toISOString()}`;
+  } else {
+    afterDatePart = '';
   }
 
-  const afterDatePart = `?afterDate=${afterDate.toISOString()}`;
-  const beforeDatePart = `&beforeDate=${beforeDate.toISOString()}`;
+  let beforeDatePart;
+  if (beforeDate) {
+    beforeDatePart = `&beforeDate=${beforeDate.toISOString()}`;
+  } else {
+    beforeDatePart = '';
+  }
 
   return `${afterDatePart}${beforeDatePart}`;
 };

@@ -5,7 +5,7 @@ import {
   getSampleIdsStageCounts, getArtifactStageCounts, getLabTestStatusCounts
 } from '../selectors/dashboardselectors';
 import {StageCounts} from '../components';
-import WaitOnFetch from '../components/WaitOnFetch';
+import {CallOnMount, WaitOnReady} from '../components/Utils';
 
 export const StageCountsContainer = connect(
   state => ({
@@ -21,6 +21,6 @@ export const StageCountsContainer = connect(
     labTestCounts: getLabTestStatusCounts(state)
   }),
   {fetchSummary},
-)(WaitOnFetch(StageCounts));
+)(CallOnMount(WaitOnReady(StageCounts)));
 
 export default StageCountsContainer;

@@ -55,7 +55,6 @@ export const StageCounts2 = React.createClass({
         </div>
       <div className='pure-u-1 pure-u-md-1-2'>
           <StageArtifactCounts3
-            isLoading={isReady}
             metaStages={metaStages}
             metaArtifacts={metaArtifacts}
             artifactStageCounts={artifactStageCounts}

@@ -8,6 +8,7 @@ import {WaitOnReady, CallOnMount} from '../components/Utils';
 export const StageDatesCountsContainer = connect(
   state => ({
     isReady: getIsSummaryReady(state),
+    onMountFunc: 'fetchDateSummary',
     summaryFilter: state.summaryFilter,
     metaStages: state.metaStagesByKey,
     stageDates: state.summaryStageCountsDates,
