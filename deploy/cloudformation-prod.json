@@ -15,7 +15,7 @@
       "MinLength": "1",
       "MaxLength": "100",
       "AllowedPattern": "^\\S+@\\S+$",
-      "ConstraintDescription" : "Must be a valid email address (e.g., 'example@example.com')"
+      "ConstraintDescription" : "Must be a valid email address (e.g., example@example.com)"
     },
     "DBUser": {
       "Description" : "The database admin account username",
@@ -23,7 +23,7 @@
       "MinLength": "1",
       "MaxLength": "16",
       "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
-      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+      "ConstraintDescription" : "Must begin with a letter and contain only alphanumeric characters (min 1, max 16)."
     },
     "DBPassword": {
       "NoEcho": "true",
@@ -31,7 +31,7 @@
       "Type": "String",
       "MinLength": "8",
       "MaxLength": "41",
-      "ConstraintDescription" : "must contain only alphanumeric characters and be between 8 and 41 characters long."
+      "ConstraintDescription" : "Must contain only alphanumeric characters (min 8, max 41)."
     },
     "STTUser": {
       "Description" : "The STT dashboard admin account username",
@@ -49,7 +49,7 @@
     "TLDomain": {
       "Description" : "The top level domain name for all local services",
       "Type": "String",
-      "ConstraintDescription" : "Eg. kharasta.com"
+      "ConstraintDescription" : "e.g., kharasta.com"
     },
     "ODKUser": {
       "Description" : "ODK submissions from STT account username",
@@ -68,6 +68,12 @@
       "Default": "false",
       "AllowedValues": ["true", "false"],
       "Description": "Enable test mode"
+    },
+    "BuildVersion": {
+      "Type": "String",
+      "Default": "latest",
+      "AllowedValues": ["latest", "staging", "testing"],
+      "Description": "STT application build (hub.docker.com/r/kharatsa/strack)"
     },
     "DBInstanceType": {
       "Type" : "String",
@@ -102,7 +108,7 @@
         },
         {
           "Label" : { "default" : "Sample Transport Tracking (STT) Dashboard Configuration" },
-          "Parameters" : [ "STTUser", "STTPassword", "Test", "DBStorageGB" ]
+          "Parameters" : [ "STTUser", "STTPassword", "Test", "BuildVersion" ]
         },
         {
           "Label" : { "default" : "ODK Aggregate Configuration" },

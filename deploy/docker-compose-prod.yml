@@ -1,7 +1,7 @@
 version: '2'
 services:
   stt:
-    image: kharatsa/strack:latest
+    image: kharatsa/strack:${BUILD:-latest}
     group_add:
       - 8888 # Must be created on the host
     container_name: app_stt
