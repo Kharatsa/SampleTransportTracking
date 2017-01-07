@@ -3,6 +3,7 @@ import {createSelector} from 'reselect';
 const getIsMetadataAvailable = state => state.isMetadataAvailable;
 const getIsChangesAvailable = state => state.isChangesAvailable;
 const getIsSummaryAvailable = state => state.isSummaryAvailable;
+const getIsDateSummaryAvailable = state => state.isDateSummaryAvailable;
 const getIsTATAvailable = state => state.isTATAvailable;
 
 const allTrue = (...args) => args.every((arg) => !!arg);
@@ -19,5 +20,10 @@ export const getIsTATReady = createSelector(
 
 export const getIsSummaryReady = createSelector(
   [getIsMetadataAvailable, getIsSummaryAvailable],
+  allTrue,
+);
+
+export const getIsDateSummaryReady = createSelector(
+  [getIsMetadataAvailable, getIsDateSummaryAvailable],
   allTrue,
 );

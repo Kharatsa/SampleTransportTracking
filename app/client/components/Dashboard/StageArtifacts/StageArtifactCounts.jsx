@@ -27,9 +27,9 @@ export const StageArtifactCounts = ({
 };
 
 StageArtifactCounts.propTypes = {
+  artifactStageCounts: PropTypes.instanceOf(List).isRequired,
   metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
   metaArtifacts: PropTypes.instanceOf(ImmutableMap).isRequired,
-  artifactStageCounts: PropTypes.instanceOf(List).isRequired
 };
 
 export default StageArtifactCounts;
