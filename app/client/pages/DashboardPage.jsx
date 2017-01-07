@@ -1,8 +1,8 @@
 import React, {PropTypes} from 'react';
 import history from 'react-router/lib/browserHistory';
 import {
-  SummaryCounts, StageDatesCounts, StageCounts, TurnArounds,
-  DateFilters, LocationFilters, StageCounts2, StageCounts3
+  SummaryCounts, StageDatesCounts, StageArtifactCounts,
+  DateFilters, LocationFilters
 } from '../containers';
 import {SideMenuLayout, SummaryTabs} from '../components';
 import {SampleSearch, ViewChangesButton} from '../components/DashboardControls';
@@ -27,8 +27,7 @@ export const DashboardPage = ({appName}) => {
         <StageDatesCounts />
         <br style={{'clear': 'left'}} />
         <h3 className='dashboard-title'>Sample & Lab Stage Updates</h3>
-        <StageCounts2 />
-        <StageCounts3 />
+        <StageArtifactCounts />
       </div>
     </SideMenuLayout>
   );

@@ -3,7 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare';
 import {Map as ImmutableMap, List} from 'immutable';
 import {SummaryFilter} from '../../api/records.js';
 import StageSampleIdCounts from './StageSampleIdCounts';
-import StageArtifactCounts from './StageArtifactCounts';
+import StageArtifactCounts from './StageArtifacts/StageArtifactCounts';
 import StageLabCounts from './StageLabCounts';
 
 export const StageCounts = React.createClass({
