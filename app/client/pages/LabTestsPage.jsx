@@ -1,14 +1,10 @@
-import React, {PropTypes} from 'react';
-import history from 'react-router/lib/browserHistory';
-import {
-  SummaryCounts, SummaryTabs, StageDatesCounts, StageCounts, TurnArounds,
-  DateFilters, LocationFilters, StageCounts2, LabTestCounts,
-} from '../containers';
+import React from 'react';
+import {APP_NAME} from '../../common/sttworkflow';
+import {DateFilters, LabTestCounts, LocationFilters} from '../containers';
 import {SideMenuLayout} from '../components';
-import {SampleSearch, ViewChangesButton, ReturnToDashboard} from '../components/DashboardControls';
+import {ReturnToDashboard} from '../components/DashboardControls';
 
-
-export const LabTestsPage = ({appName}) => {
+export const LabTestsPage = () => {
   const controls = [
     <LocationFilters />,
     <DateFilters />,
@@ -17,20 +13,15 @@ export const LabTestsPage = ({appName}) => {
 
   return (
     <SideMenuLayout
-      menuHeader={appName}
-      menuItems={controls} 
-      >
- 
-	      <div>
-	        <h2 className='dashboard-title'>Lab Tests</h2>
+      menuHeader={APP_NAME}
+      menuItems={controls}
+    >
+      <div>
+        <h2 className='dashboard-title'>Lab Tests</h2>
         <LabTestCounts/>
-	      </div>
+      </div>
     </SideMenuLayout>
   );
-};
-
-LabTestsPage .propTypes = {
-  appName: PropTypes.string,
 };
 
 export default LabTestsPage;

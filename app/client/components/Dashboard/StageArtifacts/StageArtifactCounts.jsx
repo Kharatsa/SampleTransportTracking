@@ -10,7 +10,6 @@ export const StageArtifactCounts = ({
     const artifactCounts = stage.get('artifacts');
     return (
       <StageArtifactsPanel
-        className='pure-u-1 pure-u-lg-1-2'
         key={index}
         artifactCounts={artifactCounts}
         stageKey={stageKey}
@@ -20,8 +19,13 @@ export const StageArtifactCounts = ({
   });
 
   return (
-    <div className='pure-g'>
-      {stages}
+    <div>
+      <div className='pure-g'>
+        {stages.slice(0, 2)}
+      </div>
+      <div className='pure-g'>
+        {stages.slice(2, stages.length)}
+      </div>
     </div>
   );
 };

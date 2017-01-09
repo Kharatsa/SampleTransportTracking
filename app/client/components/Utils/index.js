@@ -1,4 +1,5 @@
-import WaitOnReady from './WaitOnReady';
-import CallOnMount from './CallOnMount';
+import waitOnReady from './WaitOnReady';
+import callOnMount from './CallOnMount';
+import callOnProps from './CallOnProps';
 
-export {WaitOnReady, CallOnMount};
+export {waitOnReady, callOnMount, callOnProps};

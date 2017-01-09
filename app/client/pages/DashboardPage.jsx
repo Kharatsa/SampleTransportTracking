@@ -1,13 +1,14 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import history from 'react-router/lib/browserHistory';
+import {APP_NAME} from '../../common/sttworkflow';
 import {
+  DashboardData, DateFilters, LocationFilters,
   SummaryCounts, StageDatesCounts, StageArtifactCounts,
-  DateFilters, LocationFilters
 } from '../containers';
 import {SideMenuLayout, SummaryTabs} from '../components';
 import {SampleSearch, ViewChangesButton} from '../components/DashboardControls';
 
-export const DashboardPage = ({appName}) => {
+export const DashboardPage = () => {
   const controls = [
     <LocationFilters />,
     <DateFilters />,
@@ -17,10 +18,11 @@ export const DashboardPage = ({appName}) => {
 
   return (
     <SideMenuLayout
-      menuHeader={appName}
+      menuHeader={APP_NAME}
       menuItems={controls}
     >
       <div>
+        <DashboardData />
         <SummaryTabs />
         <SummaryCounts />
         <h3 className='dashboard-title'>Sample ID Stages by Date</h3>
@@ -31,10 +33,6 @@ export const DashboardPage = ({appName}) => {
       </div>
     </SideMenuLayout>
   );
-};
-
-DashboardPage.propTypes = {
-  appName: PropTypes.string,
 };
 
 export default DashboardPage;

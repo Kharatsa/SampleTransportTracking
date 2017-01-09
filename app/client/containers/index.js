@@ -1,27 +1,29 @@
 import App from './AppContainer';
-import SummaryCounts from './SummaryCountsContainer';
-import StageDatesCounts from './StageDatesCountsContainer';
-import StageArtifactCounts from './StageArtifactCountsContainer';
+import Changes from './ChangesContainer';
+import ChangesExportLink from './ChangesExportLinkContainer';
+import DashboardData from './DashboardDataContainer';
 import DateFilters from './DateFiltersContainer';
+import LabTestCounts from './LabTestsContainer';
 import LocationFilters from './LocationFiltersContainer';
 import Pagination from './PaginationContainer';
-import Changes from './ChangesContainer';
 import Sample from './SampleContainer';
-import ChangesExportLink from './ChangesExportLinkContainer';
+import StageDatesCounts from './StageDatesCountsContainer';
+import StageArtifactCounts from './StageArtifactCountsContainer';
+import SummaryCounts from './SummaryCountsContainer';
 import TurnArounds from './TurnAroundsContainer';
-import LabTestCounts from './LabTestsContainer';
 
 export {
   App,
-  Pagination,
+  Changes,
+  ChangesExportLink,
+  DashboardData,
   DateFilters,
+  LabTestCounts,
   LocationFilters,
-  SummaryCounts,
+  Pagination,
+  Sample,
   StageDatesCounts,
   StageArtifactCounts,
-  Changes,
-  Sample,
-  ChangesExportLink,
+  SummaryCounts,
   TurnArounds,
-  LabTestCounts,
 };

@@ -5,17 +5,19 @@ import MetaText from '../../MetaText';
 import StageArtifactsTable from './StageArtifactsTable';
 
 export const StageArtifactsPanel = ({
-  artifactCounts, metaArtifacts, stageKey, metaStages
+  artifactCounts, metaArtifacts, stageKey, metaStages,
 }) => {
   const stageName = (<MetaText metadata={metaStages} metaKey={stageKey} />);
   return (
-    <DashboardPanel
-      heading={stageName}
-      subheading='TODO' >
-      <StageArtifactsTable
-        metaArtifacts={metaArtifacts}
-        artifactCounts={artifactCounts} />
-    </DashboardPanel>
+    <div className='pure-u-1 pure-u-md-1-2'>
+      <DashboardPanel
+        heading={stageName}
+        subheading='TODO' >
+        <StageArtifactsTable
+          metaArtifacts={metaArtifacts}
+          artifactCounts={artifactCounts} />
+      </DashboardPanel>
+    </div>
   );
 };
 

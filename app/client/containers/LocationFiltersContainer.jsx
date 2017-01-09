@@ -8,12 +8,12 @@ import {
 export const LocationFilterContainer = connect(
   state => ({
     isReady: state.isMetadataAvailable,
-    filterRegionKey: state.summaryFilter.get('regionKey', null),
     filterFacilityKey: state.summaryFilter.get('facilityKey', null),
     filteredMetaFacilities: getFilteredMetaFacilities(state),
-    metaRegionsByKey: state.metaRegionsByKey,
+    filterRegionKey: state.summaryFilter.get('regionKey', null),
     metaFacilitiesByKey: state.metaRegionsByKey,
     metaRegions: getMetaRegions(state),
+    metaRegionsByKey: state.metaRegionsByKey,
   }),
   {changeSummaryFilter},
 )(LocationFilters);

@@ -1,12 +1,10 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import {APP_NAME} from '../../common/sttworkflow';
 import {Changes, ChangesExportLink, Pagination} from '../containers';
 import SideMenuLayout from '../components/SideMenu/SideMenuLayout';
 import SideMenuButton from '../components/SideMenu/SideMenuButton';
 
-export const ChangesPage = (props) => {
-  const {appName} = props;
-  const changes = React.createElement(Changes, props);
-
+export const ChangesPage = () => {
   const exportButton = (
     <ChangesExportLink>
       <SideMenuButton>CSV Export</SideMenuButton>
@@ -15,15 +13,12 @@ export const ChangesPage = (props) => {
 
   return (
     <SideMenuLayout
-        menuHeader={appName}
-        menuItems={[exportButton]} >
-      {changes}
+        menuHeader={APP_NAME}
+        menuItems={[exportButton]}
+    >
+      <Changes />
       <Pagination />
     </SideMenuLayout>);
-};
-
-ChangesPage.propTypes = {
-  appName: PropTypes.string
 };
 
 export default ChangesPage;
