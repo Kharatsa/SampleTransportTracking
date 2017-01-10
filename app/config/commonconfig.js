@@ -11,7 +11,6 @@ const defaults = {
 };
 
 exports.LANGUAGE_CODE = envOrDefault('LANGUAGE_CODE');
-
 exports.TIME_ZONE = envOrDefault('TIME_ZONE');
 exports.DATE_FORMAT = envOrDefault('DATE_FORMAT');
 exports.DATETIME_FORMAT = envOrDefault('DATETIME_FORMAT');

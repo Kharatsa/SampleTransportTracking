@@ -24,7 +24,7 @@ const browserifyOptions = {
   debug: IS_DEVELOPMENT,
 };
 const watchifyOptions = {
-    ignoreWatch: ['./node_modules/**'],
+  ignoreWatch: ['./node_modules/**'],
 };
 const bundlerOptions = _.assign(
   {}, watchify.args, watchifyOptions, browserifyOptions);
@@ -137,7 +137,8 @@ gulp.task('static:metadata', copy('app/assets/**/*.csv', 'xforms/metadata'));
 
 const iconicStatic = [
   'bower_components/open-iconic/svg/*',
-  'bower_components/open-iconic/png/*'
+  'bower_components/open-iconic/png/*',
+  'bower_components/open-iconic/sprite/*',
 ];
 gulp.task('static:iconic', copy(iconicStatic, 'icons'));
 

@@ -4,6 +4,7 @@
  * referencing these constant values directly, so these may be maintained
  * more sensibly in the future.
  */
+const APP_NAME = 'Sample Tracking';
 
 const SCAN_STAGES = {
   SAMPLE_PICKUP: 'SDEPART',
@@ -124,6 +125,7 @@ const META_TYPES_ORDER = [
 ];
 
 module.exports = {
+  APP_NAME,
   SCAN_STAGES,
   SCAN_STAGES_ORDER,
   SCAN_ARTIFACTS,

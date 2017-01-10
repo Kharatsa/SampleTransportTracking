@@ -9,9 +9,9 @@
 }
 
 .hero-data-icon {
-  color: #3D4347 !important;
-  width: 23px !important;
-  height: 23px !important;
+  fill: #3D4347;
+  width: 23px;
+  height: 23px;
 }
 
 .hero-data-header {
@@ -42,7 +42,6 @@ a.hero-data-header2 {
   text-decoration: none;
 }
 
- .hero-data-header2:hover { 
-    color: blue;
-  }
-
+.hero-data-header2:hover { 
+  color: blue;
+}

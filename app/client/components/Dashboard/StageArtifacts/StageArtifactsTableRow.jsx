@@ -3,25 +3,28 @@ import {Map as ImmutableMap} from 'immutable';
 import Iconic from '../../Iconic';
 import MetaText from '../../MetaText';
 
+const exceptionIcon = exceptions => {
+  if (exceptions) {
+    return (
+      <Iconic
+        className='widget-table-icon stt-icon warning-icon'
+        name='warning'
+      />
+    );
+  }
+  return null;
+};
+
 export const StageArtifactsRow = ({
   artifactKey, goodCount, badCount, metaArtifacts
 }) => {
-  const exceptionIcon = (
-    badCount > 0 ?
-    <Iconic
-      className='widget-table-icon stt-icon'
-      color='orange'
-      name='warning'/> :
-    null
-  );
-
   return (
     <tr>
       <td>
         <MetaText metadata={metaArtifacts} metaKey={artifactKey} />
       </td>
       <td>{goodCount + badCount}</td>
-      <td>{badCount}{exceptionIcon}</td>
+      <td>{badCount}{exceptionIcon(badCount)}</td>
     </tr>
   );
 };
