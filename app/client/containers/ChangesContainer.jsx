@@ -1,10 +1,9 @@
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {fetchChanges} from '../actions/actioncreators';
 import {getIsChangesReady} from '../selectors/uiselectors';
 import {getChangesDetail} from '../selectors/changes_selectors';
 import Changes from '../components/Changes';
-import {waitOnReady, callOnMount} from '../components/Utils';
+import {waitOnReady} from '../components/Utils';
 
 export const ChangesContainer = compose(
   connect(
@@ -17,10 +16,7 @@ export const ChangesContainer = compose(
       metaLabTests: state.metaLabTestsByKey,
       metaFacilities: state.metaFacilitiesByKey,
       metaPeople: state.metaPeopleByKey,
-      summaryFilter: state.summaryFilter,
-    }),
-    {fetchChanges}),
-  callOnMount(function() { this.props.fetchChanges(); }),
+    })),
   waitOnReady,
 )(Changes);
 

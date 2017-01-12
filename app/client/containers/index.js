@@ -1,4 +1,5 @@
 import App from './AppContainer';
+import ChangesData from './ChangesDataContainer';
 import Changes from './ChangesContainer';
 import ChangesExportLink from './ChangesExportLinkContainer';
 import DashboardData from './DashboardDataContainer';
@@ -14,6 +15,7 @@ import TurnArounds from './TurnAroundsContainer';
 
 export {
   App,
+  ChangesData,
   Changes,
   ChangesExportLink,
   DashboardData,

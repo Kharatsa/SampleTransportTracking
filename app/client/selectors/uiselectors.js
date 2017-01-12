@@ -5,6 +5,7 @@ const getIsChangesAvailable = state => state.isChangesAvailable;
 const getIsSummaryAvailable = state => state.isSummaryAvailable;
 const getIsDateSummaryAvailable = state => state.isDateSummaryAvailable;
 const getIsTATAvailable = state => state.isTATAvailable;
+const getPaginationPage = state => state.paginationPage;
 
 const allTrue = (...args) => args.every((arg) => !!arg);
 
@@ -27,3 +28,9 @@ export const getIsDateSummaryReady = createSelector(
   [getIsMetadataAvailable, getIsDateSummaryAvailable],
   allTrue,
 );
+
+export const getCurrentPage = createSelector(
+  [getPaginationPage],
+  page => {
+    return page.get('current', null);
+  });

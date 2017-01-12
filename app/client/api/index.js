@@ -5,9 +5,11 @@ import {
   normalizeStageDates, normalizeUsers,
 } from './normalize.js';
 
-const pageURLParam = ({page, first=true}) => {
-  const prefix = first ? '?' : '&';
-  return page ? `${prefix}page=${page}` : '';
+const pageURLParam = (pageNum) => {
+  if (pageNum) {
+    return `page=${pageNum}`;
+  }
+  return '';
 };
 
 const locationURLParams = ({facilityKey, regionKey}) => {
@@ -19,22 +21,37 @@ const locationURLParams = ({facilityKey, regionKey}) => {
   return facilityPart || regionPart;
 };
 
+const toISODateString = date => {
+  if (typeof date.format === 'function') {
+    return date.format('YYYY-MM-DD');  // moment date
+  }
+  return `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDay()}`;
+};
+
 const dateURLParams = ({afterDate, beforeDate}) => {
   let afterDatePart;
   if (afterDate) {
-    afterDatePart = `?afterDate=${afterDate.toISOString()}`;
+    afterDatePart = `afterDate=${toISODateString(afterDate)}`;
   } else {
     afterDatePart = '';
   }
 
   let beforeDatePart;
   if (beforeDate) {
-    beforeDatePart = `&beforeDate=${beforeDate.toISOString()}`;
+    beforeDatePart = `beforeDate=${toISODateString(beforeDate)}`;
   } else {
     beforeDatePart = '';
   }
 
-  return `${afterDatePart}${beforeDatePart}`;
+  return [afterDatePart, beforeDatePart];
+};
+
+const makeQuerystring = (...args) => {
+  const result = args.filter((arg) => !!arg).join('&');
+  if (result) {
+    return `?${result}`;
+  }
+  return '';
 };
 
 /**
@@ -45,11 +62,12 @@ const dateURLParams = ({afterDate, beforeDate}) => {
  * @return {string}
  */
 export const filteredURL = (endpoint, filter, page=null) => {
-  const paramsPart = locationURLParams(filter);
-  const queryPart = dateURLParams(filter);
-  const pagePart = pageURLParam({page, first: false});
+  const params = locationURLParams(filter);
+  const [beforePart, afterPart] = dateURLParams(filter);
+  const pagePart = pageURLParam(page);
+  const queryString = makeQuerystring(beforePart, afterPart, pagePart);
 
-  return `/stt/${paramsPart}${endpoint}${queryPart}${pagePart}`;
+  return `/stt/${params}${endpoint}${queryString}`;
 };
 
 export const getSampleDetail = (sampleId, callback) => {
