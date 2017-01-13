@@ -170,7 +170,10 @@ export const fetchDateSummary = (summaryFilter) => {
 
 const requestUsers = () => ({type: action.FETCH_USERS});
 
-const fetchUsersFailure = (error) => ({type: action.FETCH_USERS_FAILURE, error});
+const fetchUsersFailure = (error) => ({
+  type: action.FETCH_USERS_FAILURE,
+  error,
+});
 
 const receiveUsers = (data) => ({type: action.RECEIVE_USERS, ...data});
 
@@ -189,4 +192,9 @@ export const fetchUsers = () => {
 
 export const changePage = (pageNum) => ({
   type: action.CHANGE_PAGE, pageNum,
+});
+
+export const changeSelectedSample = sampleId => ({
+  type: action.CHANGE_SELECTED_SAMPLE,
+  sampleId,
 });

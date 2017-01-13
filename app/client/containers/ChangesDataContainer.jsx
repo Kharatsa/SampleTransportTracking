@@ -1,8 +1,8 @@
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {fetchChanges} from '../actions/actioncreators';
+import {changePage, fetchChanges} from '../actions/actioncreators';
 import {getCurrentPage} from '../selectors/uiselectors';
-import {callOnMount, callOnProps} from '../components/Utils';
+import {callOnMount, callOnProps, watchRouter} from '../components/Utils';
 
 export const ChangesDataContainer = compose(
   connect(
@@ -10,7 +10,10 @@ export const ChangesDataContainer = compose(
       filter: state.summaryFilter,
       page: getCurrentPage(state),
     }),
-    {fetchChanges},
+    {changePage, fetchChanges}),
+  watchRouter(
+    ({location: {query}}) => query.page && Number(query.page) || 1,
+    (page, {changePage}) => changePage(page),
   ),
   callOnMount(
     ({fetchChanges, filter, page}) => fetchChanges(filter, page)),

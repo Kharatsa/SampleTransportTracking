@@ -1,21 +1,11 @@
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {changePage, fetchMetadata} from '../actions/actioncreators.js';
-import {getCurrentPage} from '../selectors/uiselectors';
+import {fetchMetadata} from '../actions/actioncreators.js';
 import {App} from '../components';
-import {callOnMount, watchQuery} from '../components/Utils';
+import {callOnMount} from '../components/Utils';
 
 export const AppContainer = compose(
-  connect(
-    state => ({
-      pageNum: getCurrentPage(state),
-    }),
-    {changePage, fetchMetadata}
-  ),
-  watchQuery(
-    params => params.page && Number(params.page) || 1,
-    (page, {changePage}) => changePage(page),
-  ),
+  connect(null, {fetchMetadata}),
   callOnMount(({fetchMetadata}) => fetchMetadata()),
 )(App);
 

@@ -1,4 +1,6 @@
-import {RECEIVE_SAMPLE_DETAIL, RECEIVE_CHANGES} from '../actions/actions.js';
+import {
+  RECEIVE_SAMPLE_DETAIL, RECEIVE_CHANGES, CHANGE_SELECTED_SAMPLE,
+} from '../actions/actions.js';
 import {Seq, Map as ImmutableMap} from 'immutable';
 
 export const sampleIds = (state=Seq(), action) => {
@@ -24,10 +26,9 @@ export const samplesById = (state=ImmutableMap(), action) => {
 
 export const selectedSampleId = (state=null, action) => {
   switch (action.type) {
-  case RECEIVE_SAMPLE_DETAIL:
+  case CHANGE_SELECTED_SAMPLE:
     return action.sampleId;
   default:
     return state;
   }
 };
-

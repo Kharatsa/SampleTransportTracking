@@ -22,22 +22,22 @@ import {routerPropTypes} from '../../util/proptypes.js';
  * @param {updateCallback} update
  * @returns {Function}
  */
-export const watchQuery = (getValue, update) => {
+export const watchRouter = (getValue, update) => {
   return Component => {
 
     let last;
 
-    const Wrapped = class WatchQuery extends React.Component {
+    const Wrapped = class WatchRouter extends React.Component {
       constructor(props) {
         super(props);
-        const {router: {location: {query}}} = props;
-        const value = getValue(query);
+        const {router} = props;
+        const value = getValue(router);
         last = value;
         update(value, this.props);
       }
 
       componentWillReceiveProps({router, ...others}) {
-        const value = getValue(router.location.query);
+        const value = getValue(router);
         if (last !== value) {
           update(value, {router, ...others});
           last = value;
@@ -54,10 +54,10 @@ export const watchQuery = (getValue, update) => {
       ...routerPropTypes,
     };
 
-    Wrapped.displayName = `WatchQuery(${getDisplayName(Component)})`;
+    Wrapped.displayName = `WatchRouter(${getDisplayName(Component)})`;
 
     return withRouter(Wrapped);
   };
 };
 
-export default watchQuery;
+export default watchRouter;
