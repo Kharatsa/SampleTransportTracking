@@ -35,3 +35,4 @@ export const RECEIVE_USERS = 'RECEIVE_USERS';
 // TODO(sean): create/update users actions
 
 export const CHANGE_SUMMARY_FILTER = 'CHANGE_SUMMARY_FILTER';
+export const CHANGE_PAGE = 'CHANGE_PAGE';

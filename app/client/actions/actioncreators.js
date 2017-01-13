@@ -186,3 +186,7 @@ export const fetchUsers = () => {
     });
   };
 };
+
+export const changePage = (pageNum) => ({
+  type: action.CHANGE_PAGE, pageNum,
+});

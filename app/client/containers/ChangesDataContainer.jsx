@@ -12,10 +12,9 @@ export const ChangesDataContainer = compose(
     }),
     {fetchChanges},
   ),
-  callOnMount(
-    function() {
-      this.props.fetchChanges(this.props.filter, this.props.page);
-    }),
+  callOnMount(function() {
+    this.props.fetchChanges(this.props.filter, this.props.page);
+  }),
   callOnProps(
     function(nextProps) {
       this.props.fetchChanges(nextProps.filter, nextProps.page);

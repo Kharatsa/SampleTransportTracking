@@ -7,8 +7,6 @@ export const Paging = ({total, perPage, page}) => {
   const currentPage = page.get('current');
   const pageCount = Math.ceil(total / perPage);
 
-  const prevPageLink = `/changes/${currentPage - 1}`;
-  const nextPageLink = `/changes/${currentPage + 1}`;
   const buttonsStyle = {textAlign: 'right'};
 
   return (
@@ -22,12 +20,14 @@ export const Paging = ({total, perPage, page}) => {
       </div>
       <div className='pure-u-1-2' style={buttonsStyle}>
         <PageButton
-          linkTo={prevPageLink}
+          to='/changes/'
+          pageNum={currentPage - 1}
           disabled={currentPage === 1}
           text='Previous' />
           {' '}
         <PageButton
-          linkTo={nextPageLink}
+          to='/changes/'
+          pageNum={currentPage + 1}
           disabled={currentPage === pageCount}
           text='Next' />
       </div>
