@@ -1,22 +1,31 @@
 import React from 'react';
 import {getDisplayName} from '../../util/hoc.js';
 
-/*
- * Calls the prop function specified by the onMountFunc prop.
+/**
+ * @callback onMountCallback
+ * @param {Object} props
  */
-export const callOnMount = (onMountFunc) => {
-  return Component => {
-    return React.createClass({
-      displayName: `CallOnMount(${getDisplayName(Component)})`,
 
+/*
+ * Calls the specified function with props on mount.
+ * @param {onMountCallback} onMount
+ * @returns {Function}
+ */
+export const callOnMount = (onMount) => {
+  return Component => {
+    class Wrapped extends React.Component {
       componentDidMount() {
-        onMountFunc.call(this);
-      },
+        onMount.call(this, this.props);
+      }
 
       render() {
         return <Component {...this.props} />;
       }
-    });
+    }
+
+    Wrapped.displayName = `CallOnMount(${getDisplayName(Component)})`;
+
+    return Wrapped;
   };
 };
 

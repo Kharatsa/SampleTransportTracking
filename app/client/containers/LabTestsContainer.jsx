@@ -22,14 +22,12 @@ export const LabTestsContainer = compose(
       labTestCounts: getLabTestStatusCounts(state)
     }),
     {fetchSummary}),
-  callOnMount(function() { this.props.fetchSummary(); }),
+  callOnMount(({fetchSummary}) => fetchSummary()),
   waitOnReady,
   callOnProps(
-    function(nextProps) {
-      nextProps.fetchSummary(nextProps.summaryFilter);
-    },
-    function(nextProps) {
-      this.props.summaryFilter !== nextProps.summaryFilter;
+    ({fetchSummary}, {summaryFilter}) => fetchSummary(summaryFilter),
+    ({summaryFilter}, {summaryFilter: nextSummaryFilter}) => {
+      return summaryFilter !== nextSummaryFilter;
     },
   ),
 )(LabTestCounts);

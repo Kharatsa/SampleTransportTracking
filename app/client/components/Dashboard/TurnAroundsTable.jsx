@@ -1,5 +1,4 @@
 import React, {PropTypes} from 'react';
-import shallowCompare from 'react-addons-shallow-compare';
 import {Map as ImmutableMap, List, Record} from 'immutable';
 import Moment from 'moment';
 import DashboardPanel from '../DashboardPanel';
@@ -14,7 +13,6 @@ const TimeUnits = [
 ];
 
 const descTATElem = (metaStatuses, metaStages, step) => {
-  // console.log("step.stage" + step.stage);
   const stageKey = step.stage;
   const statusKey = step.status;
 
@@ -36,12 +34,10 @@ const descTATElem = (metaStatuses, metaStages, step) => {
 const makeTATRow = (
   tat, index, metaStatuses, metaStages, timeUnit, totalTAT
 ) => {
-  // console.log("metaStages " + metaStages);
   const fromDescElem = descTATElem(metaStatuses, metaStages, tat.get('from'));
   const toDescElem = descTATElem(metaStatuses, metaStages, tat.get('to'));
   const msTAT = tat.get('averageTATms');
   const durationVal = Moment.duration(msTAT).as(timeUnit.value);
-  // const durationDesc = durationVal.toFixed(1);
   const durationDesc = Math.round(durationVal);
   const pctTotal = totalTAT > 0 ? (msTAT / totalTAT * 100).toFixed(1) : null;
   const pctTotalDesc = pctTotal ? `${pctTotal}%` : 'N/A';
@@ -56,28 +52,17 @@ const makeTATRow = (
   );
 };
 
-export const TurnAroundsTable = React.createClass({
-  propTypes: {
-    metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
-    metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
-    stagesTATs: PropTypes.instanceOf(List).isRequired,
-    endToEndTAT: PropTypes.instanceOf(Record).isRequired,
-    timeUnit: PropTypes.string
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  },
-
-  getInitialState() {
-    return {timeUnit: TimeUnits[0]};
-  },
+export class TurnAroundsTable extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {timeUnit: TimeUnits[0]};
+  }
 
   _changeTimeUnit(index) {
     if (index < TimeUnits.length) {
       this.setState({timeUnit: TimeUnits[index]});
     }
-  },
+  }
 
   render() {
     const {metaStages, metaStatuses, stagesTATs, endToEndTAT} = this.props;
@@ -123,11 +108,19 @@ export const TurnAroundsTable = React.createClass({
         </table>
         <PushButtons
           className='widget-buttons'
-          handleClick={this._changeTimeUnit}
+          handleClick={this._changeTimeUnit.bind(this)}
           labels={TimeUnits.map(unit => unit.label)}/>
       </DashboardPanel>
     );
   }
-});
+}
+
+TurnAroundsTable.propTypes = {
+  metaStages: PropTypes.instanceOf(ImmutableMap).isRequired,
+  metaStatuses: PropTypes.instanceOf(ImmutableMap).isRequired,
+  stagesTATs: PropTypes.instanceOf(List).isRequired,
+  endToEndTAT: PropTypes.instanceOf(Record).isRequired,
+  timeUnit: PropTypes.string
+};
 
 export default TurnAroundsTable;

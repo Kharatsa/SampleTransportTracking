@@ -18,7 +18,7 @@ export const TurnAroundsContainer = compose(
       endToEndTAT: getEndToEndTAT(state)
     }),
     {fetchTurnArounds}),
-  callOnMount(function() { this.props.fetchTurnArounds(); }),
+  callOnMount(({fetchTurnArounds}) => fetchTurnArounds()),
   waitOnReady,
 )(TurnArounds);
 

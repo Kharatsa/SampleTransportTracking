@@ -6,20 +6,22 @@ import {getDisplayName} from '../../util/hoc.js';
  * Renders a loading indicator in place of Component until loading completes
  */
 export const waitOnReady = Component => {
-  return React.createClass({
-    displayName: `WaitOnReady(${getDisplayName(Component)})`,
-
-    propTypes: {
-      isReady: PropTypes.bool.isRequired,
-    },
-
+  class Wrapped extends React.Component {
     render() {
       if (this.props.isReady) {
         return <Component {...this.props} />;
       }
       return <LoadingIndicator />;
     }
-  });
+  }
+
+  Wrapped.displayName = `WaitOnReady(${getDisplayName(Component)})`;
+
+  Wrapped.propTypes = {
+    isReady: PropTypes.bool.isRequired,
+  };
+
+  return Wrapped;
 };
 
 export default waitOnReady;

@@ -16,9 +16,7 @@ export const AppContainer = compose(
     params => params.page && Number(params.page) || 1,
     (page, {changePage}) => changePage(page),
   ),
-  callOnMount(function() {
-    this.props.fetchMetadata();
-  }),
+  callOnMount(({fetchMetadata}) => fetchMetadata()),
 )(App);
 
 export default AppContainer;

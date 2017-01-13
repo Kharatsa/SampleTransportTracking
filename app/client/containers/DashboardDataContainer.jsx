@@ -11,19 +11,16 @@ export const DashboardDataContainer = compose(
     {fetchDateSummary, fetchSummary},
   ),
   callOnMount(
-    function() {
-      this.props.fetchDateSummary();
-      this.props.fetchSummary();
-    }
-  ),
+    ({fetchDateSummary, fetchSummary}) => {
+      fetchDateSummary();
+      fetchSummary();
+    }),
   callOnProps(
-    function(nextProps) {
-      this.props.fetchDateSummary(nextProps.filter);
-      this.props.fetchSummary(nextProps.filter);
+    ({fetchDateSummary, fetchSummary}, {filter}) => {
+      fetchDateSummary(filter);
+      fetchSummary(filter);
     },
-    function(nextProps) {
-      return this.props.filter !== nextProps.filter;
-    },
+    ({filter}, {filter: nextFilter}) => filter !== nextFilter,
   )
 )(() => null);
 

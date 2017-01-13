@@ -2,7 +2,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getIsSampleReady} from '../selectors/uiselectors';
 import {fetchSampleDetail} from '../actions/actioncreators.js';
-import {Sample} from '../components';
+import {SampleDetail} from '../components';
 import {waitOnReady, callOnMount} from '../components/Utils';
 
 export const SampleDetailContainer = compose(
@@ -28,8 +28,8 @@ export const SampleDetailContainer = compose(
       metaLabTests: state.metaLabTestsByKey
     }),
     {fetchSampleDetail}),
-  callOnMount(function() { this.props.fetchSampleDetail(); }),
+  callOnMount(({fetchSampleDetail}) => fetchSampleDetail()),
   waitOnReady,
-)(Sample);
+)(SampleDetail);
 
 export default SampleDetailContainer;

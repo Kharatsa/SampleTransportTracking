@@ -12,18 +12,12 @@ export const ChangesDataContainer = compose(
     }),
     {fetchChanges},
   ),
-  callOnMount(function() {
-    this.props.fetchChanges(this.props.filter, this.props.page);
-  }),
+  callOnMount(
+    ({fetchChanges, filter, page}) => fetchChanges(filter, page)),
   callOnProps(
-    function(nextProps) {
-      this.props.fetchChanges(nextProps.filter, nextProps.page);
-    },
-    function(nextProps) {
-      return (
-        this.props.filter !== nextProps.filter ||
-        this.props.page !== nextProps.page
-      );
+    ({fetchChanges}, {filter, page}) => fetchChanges(filter, page),
+    ({filter, page}, {filter: nextFilter, page: nextPage}) => {
+      return filter !== nextFilter || page !== nextPage;
     }),
 )(() => null);
 

@@ -1,21 +1,11 @@
 import React, {PropTypes} from 'react';
-import shallowCompare from 'react-addons-shallow-compare';
 import classnames from 'classnames';
 
-export const PushButtons = React.createClass({
-  propTypes: {
-    labels: PropTypes.arrayOf(PropTypes.string),
-    handleClick: PropTypes.func.isRequired,
-    className: PropTypes.any
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  },
-
-  getInitialState() {
-    return {selectedIndex: 0};
-  },
+export class PushButtons extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {selectedIndex: 0};
+  }
 
   render() {
     const {labels, handleClick, className=''} = this.props;
@@ -43,6 +33,12 @@ export const PushButtons = React.createClass({
 
     return <div className={className}>{buttons}</div>;
   }
-});
+}
+
+PushButtons.propTypes = {
+  labels: PropTypes.arrayOf(PropTypes.string),
+  handleClick: PropTypes.func.isRequired,
+  className: PropTypes.any
+};
 
 export default PushButtons;
