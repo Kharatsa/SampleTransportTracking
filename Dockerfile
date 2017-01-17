@@ -1,7 +1,8 @@
 FROM node:6-slim
 MAINTAINER Sean Herman <sjh293@cornell.edu>
 
-RUN useradd --user-group --create-home --shell /bin/false stt
+RUN groupadd --gid 8888 stt \
+    && useradd --uid 8888 --gid 8888 --create-home --shell /bin/false stt
 
 ENV SYSTEM_DEPS='openssl' \
     BUILD_DEPS='git python make build-essential' \
