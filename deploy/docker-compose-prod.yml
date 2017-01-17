@@ -1,9 +1,10 @@
 version: '2'
 services:
   stt:
-    image: kharatsa/strack:${BUILD:-latest}
+    image: kharatsa/strack:latest
+    user: stt:stt
     group_add:
-      - 8888 # Must be created on the host
+      - stt
     container_name: app_stt
     restart: always
     ports:
@@ -28,8 +29,6 @@ services:
       - odk
   odk:
     image: kharatsa/odkaggregate:latest
-    group_add:
-      - 8888 # Must be created on the host
     container_name: odk_stt
     restart: always
     ports:

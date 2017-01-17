@@ -1,5 +1,6 @@
 #!/bin/bash -ex
 
+export APP_PATH=/var/www/stt
 export SOURCE_PATH=/home/ubuntu/stt
 export APP_LOG_PATH=/var/log/stt
 export ENV_VARS_FILE=/etc/stt_creds
@@ -16,8 +17,6 @@ cat /etc/stt_creds | \
 
 # Create the required log directories and set permissions
 mkdir -p $APP_LOG_PATH
-chgrp -R stt $ENV_VARS_FILE $APP_LOG_PATH
-chmod -R 6770 $ENV_VARS_FILE $APP_LOG_PATH
 echo "$APP_LOG_PATH/*.log {
 	weekly
 	rotate 10
@@ -30,8 +29,10 @@ echo "$APP_LOG_PATH/*.log {
 # Setup the static files path
 rm -rf /var/www/*
 mkdir -p /var/www/stt
-chgrp -R stt /var/www
-chmod -R 6775 /var/www
+
+# Set application file permissions
+chown -R stt:stt /var/www $ENV_VARS_FILE $APP_LOG_PATH
+chmod -R 6770 /var/www $ENV_VARS_FILE $APP_LOG_PATH
 
 # Export application and database credentials
 export $(cat /etc/stt_creds | xargs)
@@ -41,10 +42,13 @@ envsubst < ./deploy/nginx/temp.template > $NGINX_CONF_PATH/temp.conf
 nginx -t && nginx -s reload
 
 # Setup LetsEncrypt
-mkdir -p $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt /var/log/letsencrypt
-chgrp -R letsencrypt $LETS_ENCRYPT_PATH /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
+mkdir -p $LETS_ENCRYPT_PATH /etc/letsencrypt/configs /var/lib/letsencrypt \
+  /var/log/letsencrypt
+chown -R letsencrypt:letsencrypt $LETS_ENCRYPT_PATH /etc/letsencrypt \
+  /var/lib/letsencrypt /var/log/letsencrypt
 chmod -R 6770 /etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
-envsubst < ./deploy/certbot/certbot_conf.template > /etc/letsencrypt/configs/$TL_HOSTNAME.conf
+envsubst < ./deploy/certbot/certbot_conf.template > \ 
+  /etc/letsencrypt/configs/$TL_HOSTNAME.conf
 
 # Retrieve LetsEncrypt certificates
 chmod +x renew_certs.sh
