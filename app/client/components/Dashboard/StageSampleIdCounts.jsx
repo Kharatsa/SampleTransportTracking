@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+   import React, {PropTypes} from 'react';
 import {Map as ImmutableMap, List} from 'immutable';
 import DashboardPanel from '../DashboardPanel';
 import MetaText from '../MetaText';

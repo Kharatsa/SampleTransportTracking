@@ -1,17 +1,17 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import Link from 'react-router/lib/Link';
+import {APP_NAME} from '../../../common/sttworkflow';
 
-export const Header = ({appName}) =>
+export const Header = () =>
   <div className='horizontal-header'>
-    <div id='detail-menu' className='pure-menu pure-menu-horizontal menu-title black-bg'>
+    <div
+      id='detail-menu'
+      className='pure-menu pure-menu-horizontal menu-title black-bg'
+    >
       <Link to='/' className='pure-menu-heading green-bg'>
-        {appName}
+        {APP_NAME}
       </Link>
     </div>
   </div>;
-
-Header.propTypes = {
-  appName: PropTypes.string
-};
 
 export default Header;

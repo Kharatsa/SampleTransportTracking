@@ -1,13 +1,14 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import history from 'react-router/lib/browserHistory';
+import {APP_NAME} from '../../common/sttworkflow';
 import {
-  SummaryCounts, StageDatesCounts, StageCounts, TurnArounds,
-  DateFilters, LocationFilters
+  DashboardData, DateFilters, LocationFilters,
+  SummaryCounts, StageDatesCounts, StageArtifactCounts,
 } from '../containers';
-import {SideMenuLayout} from '../components';
+import {SideMenuLayout, SummaryTabs} from '../components';
 import {SampleSearch, ViewChangesButton} from '../components/DashboardControls';
 
-export const DashboardPage = ({appName}) => {
+export const DashboardPage = () => {
   const controls = [
     <LocationFilters />,
     <DateFilters />,
@@ -17,25 +18,21 @@ export const DashboardPage = ({appName}) => {
 
   return (
     <SideMenuLayout
-      menuHeader={appName}
+      menuHeader={APP_NAME}
       menuItems={controls}
     >
       <div>
+        <DashboardData />
+        <SummaryTabs />
         <SummaryCounts />
-        <h3 className='dashboard-title'>Turn Around Time (TAT) Averages</h3>
-        <TurnArounds />
         <h3 className='dashboard-title'>Sample ID Stages by Date</h3>
         <StageDatesCounts />
         <br style={{'clear': 'left'}} />
         <h3 className='dashboard-title'>Sample & Lab Stage Updates</h3>
-        <StageCounts />
+        <StageArtifactCounts />
       </div>
     </SideMenuLayout>
   );
-};
-
-DashboardPage.propTypes = {
-  appName: PropTypes.string,
 };
 
 export default DashboardPage;

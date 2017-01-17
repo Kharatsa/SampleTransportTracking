@@ -1,20 +1,10 @@
 import React, {PropTypes} from 'react';
-import shallowCompare from 'react-addons-shallow-compare';
 import Select from 'react-select';
 
-export const LocationFilters = React.createClass({
-  propTypes: {
-    isLoading: PropTypes.bool.isRequired,
-    metaRegions: PropTypes.object.isRequired,
-    filteredMetaFacilities: PropTypes.object.isRequired,
-    filterRegionKey: PropTypes.string,
-    filterFacilityKey: PropTypes.string,
-    changeSummaryFilter: PropTypes.func.isRequired,
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  },
+export class LocationFilters extends React.PureComponent {
+  constructor(props) {
+    super(props);
+  }
 
   _selectLocationFilter(selected, type) {
     const {filterRegionKey, filterFacilityKey} = this.props;
@@ -37,22 +27,20 @@ export const LocationFilters = React.createClass({
           {regionKey: selectedKey, facilityKey: filterFacilityKey});
       }
     }
-  },
+  }
 
   selectFacility(selectedKey) {
     this._selectLocationFilter(selectedKey, 'facility');
-  },
+  }
 
   selectRegion(selectedKey) {
     this._selectLocationFilter(selectedKey, 'region');
-  },
+  }
 
   render() {
     const {
-      isLoading,
-      metaRegions,
-      filteredMetaFacilities,
-      filterRegionKey, filterFacilityKey
+      isReady, metaRegions, filteredMetaFacilities, filterRegionKey,
+      filterFacilityKey
     } = this.props;
 
     const regionKey = filterRegionKey;
@@ -71,28 +59,38 @@ export const LocationFilters = React.createClass({
         <label htmlFor='regionFilter'>Laboratory</label>
         <Select
             id='regionFilter'
-            isLoading={isLoading}
+            isLoading={!isReady}
             matchPos='any'
             matchProp='label'
             placeholder='Select Laboratory...'
             value={regionKey}
             options={regionOptions}
-            onChange={this.selectRegion}
+            onChange={this.selectRegion.bind(this)}
         />
         <label htmlFor='facilityFilter'>Facility</label>
         <Select
             id='facilityFilter'
             disabled={regionKey === null}
-            isLoading={isLoading}
+            isLoading={!isReady}
             matchPos='any'
             matchProp='label'
             placeholder='Select Facility...'
             value={facilityKey}
             options={facilityOptions}
-            onChange={this.selectFacility}
+            onChange={this.selectFacility.bind(this)}
         />
-      </div>);
+      </div>
+    );
   }
-});
+}
+
+LocationFilters.propTypes = {
+  isReady: PropTypes.bool.isRequired,
+  metaRegions: PropTypes.object.isRequired,
+  filteredMetaFacilities: PropTypes.object.isRequired,
+  filterRegionKey: PropTypes.string,
+  filterFacilityKey: PropTypes.string,
+  changeSummaryFilter: PropTypes.func.isRequired,
+};
 
 export default LocationFilters;

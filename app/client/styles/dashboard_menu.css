@@ -165,6 +165,12 @@ how it works:
 `.menu-link` represents the responsive menu toggle that shows/hides on
 small screens.
 */
+
+.menu-button{
+    background-color: #406A9E;
+    color: #EAEAEA;
+}
+
 .menu-link {
     cursor: pointer;
     position: fixed;

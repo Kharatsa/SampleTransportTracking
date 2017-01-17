@@ -1,61 +1,29 @@
 import React, {PropTypes} from 'react';
-import shallowCompare from 'react-addons-shallow-compare';
 import {Map as ImmutableMap, List, Record} from 'immutable';
-import WaitOnFetch from '../WaitOnFetch.jsx';
 import TurnAroundsTable from './TurnAroundsTable';
 import TurnAroundsChart from './TurnAroundsChart';
 
-const TurnAroundsTableWrapped = WaitOnFetch(TurnAroundsTable);
-const TurnAroundsChartWrapped = WaitOnFetch(TurnAroundsChart);
-
-export const TurnArounds = React.createClass({
-  propTypes: {
-    endToEndTAT: PropTypes.instanceOf(Record).isRequired,
-    fetchTurnArounds: PropTypes.func.isRequired,
-    isLoading: PropTypes.bool.isRequired,
-    metaStages: PropTypes.instanceOf(ImmutableMap),
-    metaStatuses: PropTypes.instanceOf(ImmutableMap),
-    summaryFilter: PropTypes.object,
-    stagesTATs: PropTypes.instanceOf(List).isRequired,
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  },
-   
-  componentWillMount() {
-    this._update(this.props.summaryFilter);
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.summaryFilter !== this.props.summaryFilter) {
-      this._update(nextProps.summaryFilter);
-    }
-  },
-
-  _update(filter) {
-    const {fetchTurnArounds} = this.props;
-    fetchTurnArounds(filter);
-  },
+export class TurnArounds extends React.PureComponent {
+  constructor(props) {
+    super(props);
+  }
 
   render() {
     const {
-      isLoading, metaStages, metaStatuses, stagesTATs, endToEndTAT
+      metaStages, metaStatuses, stagesTATs, endToEndTAT
     } = this.props;
 
     return (
       <div className='pure-g'>
         <div className='pure-u-1 pure-u-lg-1-2'>
-          <TurnAroundsChartWrapped
-            isLoading={isLoading}
+          <TurnAroundsChart
             metaStages={metaStages}
             metaStatuses={metaStatuses}
             stagesTATs={stagesTATs}
           />
         </div>
         <div className='pure-u-1 pure-u-lg-1-2'>
-          <TurnAroundsTableWrapped
-            isLoading={isLoading}
+          <TurnAroundsTable
             metaStages={metaStages}
             metaStatuses={metaStatuses}
             stagesTATs={stagesTATs}
@@ -64,6 +32,15 @@ export const TurnArounds = React.createClass({
         </div>
       </div>);
   }
-});
+}
+
+TurnArounds.propTypes = {
+  endToEndTAT: PropTypes.instanceOf(Record).isRequired,
+  fetchTurnArounds: PropTypes.func.isRequired,
+  metaStages: PropTypes.instanceOf(ImmutableMap),
+  metaStatuses: PropTypes.instanceOf(ImmutableMap),
+  summaryFilter: PropTypes.object,
+  stagesTATs: PropTypes.instanceOf(List).isRequired,
+};
 
 export default TurnArounds;

@@ -1,32 +1,35 @@
 import * as actions from '../actions/actions.js';
 
-export const isFetchingData = (state=false, action) => {
-  switch (action.type) {
-  case actions.FETCH_CHANGES:
-  case actions.FETCH_SAMPLE_DETAIL:
-  case actions.FETCH_SUMMARY:
-    return true;
-  case actions.FETCH_CHANGES_FAILURE:
-  case actions.FETCH_SAMPLE_DETAIL_FAILURE:
-  case actions.FETCH_SUMMARY_FAILURE:
-  case actions.RECEIVE_CHANGES:
-  case actions.RECEIVE_SAMPLE_DETAIL:
-  case actions.RECEIVE_SUMMARY:
-    return false;
-  default:
-    return state;
-  }
+const makeReducer = (fetch, receive) => {
+  return (state=false, action) => {
+    switch (action.type) {
+    case fetch:
+      return false;
+    case receive:
+      return true;
+    default:
+      return state;
+    }
+  };
 };
 
-export const isFetchingMetadata = (state=false, action) => {
-  switch (action.type) {
-  case actions.FETCH_METADATA:
-    return true;
-  case actions.FETCH_METADATA_FAILURE:
-  case actions.RECEIVE_METADATA: {
-    return false;
-  }
-  default:
-    return state;
-  }
-};
+export const isChangesAvailable = makeReducer(
+  actions.FETCH_CHANGES, actions.RECEIVE_CHANGES);
+
+export const isSampleDetailAvailable = makeReducer(
+  actions.FETCH_SAMPLE_DETAIL, actions.RECEIVE_SAMPLE_DETAIL);
+
+export const isSummaryAvailable = makeReducer(
+  actions.FETCH_SUMMARY, actions.RECEIVE_SUMMARY);
+
+export const isDateSummaryAvailable = makeReducer(
+  actions.FETCH_DATE_SUMMARY, actions.RECEIVE_DATE_SUMMARY);
+
+export const isTATAvailable = makeReducer(
+  actions.FETCH_TURN_AROUNDS, actions.RECEIVE_TURN_AROUNDS);
+
+export const isMetadataAvailable = makeReducer(
+  actions.FETCH_METADATA, actions.RECEIVE_METADATA);
+
+export const isUsersAvailable = makeReducer(
+  actions.FETCH_USERS, actions.RECEIVE_USERS);

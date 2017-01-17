@@ -1,11 +1,9 @@
 import {
-  RECEIVE_CHANGES, FETCH_CHANGES, FETCH_CHANGES_FAILURE
+  RECEIVE_CHANGES, CHANGE_PAGE, FETCH_CHANGES, FETCH_CHANGES_FAILURE,
 } from '../actions/actions.js';
 import {Page} from '../api/records.js';
 
-const DEFAULT_TOTAL = 0;
-
-export const paginationTotal = (state=DEFAULT_TOTAL, action) => {
+export const paginationTotal = (state=0, action) => {
   switch (action.type) {
   case RECEIVE_CHANGES:
     return action.count;
@@ -22,12 +20,12 @@ const DEFAULT_PAGE = Page();
 
 export const paginationPage = (state=DEFAULT_PAGE, action) => {
   switch (action.type) {
-  case FETCH_CHANGES: {
-    const pageNum = Number(action.page || 1);
-    return Page({last: state.current, current: pageNum});
-  }
+  case CHANGE_PAGE:
+    return Page({current: action.pageNum, last: state.current});
+  case FETCH_CHANGES:
+    return Page({current: action.page, last: state.current});
   case FETCH_CHANGES_FAILURE:
-    return Page({current: state.last});
+    return Page({current: state.last, last: null});
   default:
     return state;
   }

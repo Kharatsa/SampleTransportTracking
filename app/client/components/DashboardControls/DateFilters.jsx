@@ -1,5 +1,4 @@
 import React, {PropTypes} from 'react';
-import shallowCompare from 'react-addons-shallow-compare';
 import DatePicker from 'react-datepicker';
 import Moment from 'moment';
 
@@ -13,16 +12,10 @@ const calcBeforeDate = (afterDateInput, beforeDate) => {
   return beforeDate <= minBeforeDate ? minBeforeDate : beforeDate;
 };
 
-export const DateFilters = React.createClass({
-  propTypes: {
-    afterDateFilter: PropTypes.instanceOf(Moment).isRequired,
-    beforeDateFilter: PropTypes.instanceOf(Moment).isRequired,
-    changeSummaryFilter: PropTypes.func.isRequired,
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  },
+export class DateFilters extends React.PureComponent {
+  constructor(props) {
+    super(props);
+  }
 
   selectAfterDate(afterDateInput) {
     const {changeSummaryFilter} = this.props;
@@ -33,7 +26,7 @@ export const DateFilters = React.createClass({
       return changeSummaryFilter(
         {afterDate: afterDateInput, beforeDate: nextBeforeDate});
     }
-  },
+  }
 
   selectBeforeDate(beforeDateInput) {
     const {changeSummaryFilter} = this.props;
@@ -44,30 +37,36 @@ export const DateFilters = React.createClass({
       return changeSummaryFilter(
         {afterDate: nextAfterDate, beforeDate: beforeDateInput});
     }
-  },
+  }
 
   render() {
     const {afterDateFilter, beforeDateFilter} = this.props;
 
     return (
       <form className='pure-form'>
-        <label htmlFor='regionFilter'>After Date</label>
+        <label htmlFor='regionFilter'>From</label>
         <DatePicker
             selected={afterDateFilter}
             maxDate={Moment().subtract(1, 'day')}
-            onChange={this.selectAfterDate}
+            onChange={this.selectAfterDate.bind(this)}
             className='pure-menu-input'
         />
 
-        <label htmlFor='regionFilter'>Before Date</label>
+        <label htmlFor='regionFilter'>To</label>
         <DatePicker
             selected={beforeDateFilter}
             maxDate={Moment()}
-            onChange={this.selectBeforeDate}
+            onChange={this.selectBeforeDate.bind(this)}
             className='pure-menu-input'
         />
       </form>);
   }
-});
+}
+
+DateFilters.propTypes = {
+  afterDateFilter: PropTypes.instanceOf(Moment).isRequired,
+  beforeDateFilter: PropTypes.instanceOf(Moment).isRequired,
+  changeSummaryFilter: PropTypes.func.isRequired,
+};
 
 export default DateFilters;

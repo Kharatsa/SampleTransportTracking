@@ -1,17 +1,15 @@
-import React, {PropTypes} from 'react';
-import {Sample} from '../containers';
+import React from 'react';
+import {APP_NAME} from '../../common/sttworkflow';
+import {SampleDetail, SampleDetailData} from '../containers';
 import Header from '../components/Header';
 
-export const SamplePage = (props) => {
+export const SamplePage = () => {
   return (
     <div>
-      <Header appName={props.appName} />
-      <Sample {...props} />
+      <Header appName={APP_NAME} />
+      <SampleDetailData />
+      <SampleDetail />
     </div>);
-};
-
-SamplePage.propTypes = {
-  appName: PropTypes.string
 };
 
 export default SamplePage;
