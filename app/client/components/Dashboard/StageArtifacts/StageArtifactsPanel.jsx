@@ -12,7 +12,7 @@ export const StageArtifactsPanel = ({
     <div className='pure-u-1 pure-u-md-1-2'>
       <DashboardPanel
         heading={stageName}
-        subheading='TODO' >
+      >
         <StageArtifactsTable
           metaArtifacts={metaArtifacts}
           artifactCounts={artifactCounts} />

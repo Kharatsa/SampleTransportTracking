@@ -1,24 +1,16 @@
-import React, {PropTypes} from 'react';
-import shallowCompare from 'react-addons-shallow-compare';
+import React from 'react';
 import {withRouter} from 'react-router';
+import {routerPropTypes} from '../../util/proptypes';
 
 const stripTrim = str => {
   return str ? str.trim().split(' ').join('') : '';
 };
 
-export const SampleSearch = withRouter(React.createClass({
-  propTypes: {
-    pushHistory: PropTypes.func.isRequired,
-    router: PropTypes.object
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  },
-
-  getInitialState() {
-    return {value: ''};
-  },
+class SampleSearchBase extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+  }
 
   handleSubmit(event) {
     event.preventDefault();
@@ -28,16 +20,19 @@ export const SampleSearch = withRouter(React.createClass({
     if (sampleId.length) {
       router.push(`/samples/${sampleId}`);
     }
-  },
+  }
 
   handleChange(event) {
     const sampleId = stripTrim(event.target.value);
     this.setState({value: sampleId});
-  },
+  }
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit} className='pure-form'>
+      <form
+        onSubmit={this.handleSubmit.bind(this)}
+        className='pure-form'
+      >
         <label htmlFor='search'>Lookup Sample ID</label>
         <input
             id='sample-search'
@@ -45,10 +40,17 @@ export const SampleSearch = withRouter(React.createClass({
             value={this.state.value}
             placeholder='Sample ID...'
             className='pure-menu-input'
-            onChange={this.handleChange} />
+            onChange={this.handleChange.bind(this)}
+        />
       </form>
     );
   }
-}));
+}
+
+SampleSearchBase.propTypes = {
+  ...routerPropTypes,
+};
+
+export const SampleSearch = withRouter(SampleSearchBase);
 
 export default SampleSearch;
