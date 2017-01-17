@@ -1,5 +1,5 @@
 import {
-  RECEIVE_CHANGES, FETCH_CHANGES, FETCH_CHANGES_FAILURE, CHANGE_PAGE,
+  RECEIVE_CHANGES, CHANGE_PAGE, FETCH_CHANGES, FETCH_CHANGES_FAILURE,
 } from '../actions/actions.js';
 import {Page} from '../api/records.js';
 
@@ -22,6 +22,10 @@ export const paginationPage = (state=DEFAULT_PAGE, action) => {
   switch (action.type) {
   case CHANGE_PAGE:
     return Page({current: action.pageNum, last: state.current});
+  case FETCH_CHANGES:
+    return Page({current: action.page, last: state.current});
+  case FETCH_CHANGES_FAILURE:
+    return Page({current: state.last, last: null});
   default:
     return state;
   }

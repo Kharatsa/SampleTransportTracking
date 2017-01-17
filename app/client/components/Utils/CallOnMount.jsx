@@ -1,5 +1,5 @@
 import React from 'react';
-import {getDisplayName} from '../../util/hoc.js';
+import {getDisplayName} from '../../util/hoc';
 
 /**
  * @callback onMountCallback

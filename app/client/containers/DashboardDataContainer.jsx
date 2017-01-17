@@ -1,7 +1,9 @@
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {fetchDateSummary, fetchSummary} from '../actions/actioncreators';
-import {callOnMount, callOnProps} from '../components/Utils';
+import {callOnMount, callOnPropChanged} from '../components/Utils';
+
+// TODO: get filter from router
 
 export const DashboardDataContainer = compose(
   connect(
@@ -15,13 +17,11 @@ export const DashboardDataContainer = compose(
       fetchDateSummary();
       fetchSummary();
     }),
-  callOnProps(
-    ({fetchDateSummary, fetchSummary}, {filter}) => {
+  callOnPropChanged(
+    ({filter, fetchDateSummary, fetchSummary}) => {
       fetchDateSummary(filter);
       fetchSummary(filter);
-    },
-    ({filter}, {filter: nextFilter}) => filter !== nextFilter,
-  )
+    }),
 )(() => null);
 
 export default DashboardDataContainer;

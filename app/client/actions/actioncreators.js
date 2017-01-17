@@ -72,7 +72,7 @@ const requestChanges = (summaryFilter, page) =>
 const fetchChangesFailure = (error, page) =>
   ({type: action.FETCH_CHANGES_FAILURE, error, prevPageNumber: page});
 
-export const fetchChanges = (summaryFilter, page) => {
+export const fetchChanges = (summaryFilter, page=1) => {
   return dispatch => {
     dispatch(requestChanges(summaryFilter, page));
     return api.getChanges(getFilterValues(summaryFilter), page, (err, data) => {

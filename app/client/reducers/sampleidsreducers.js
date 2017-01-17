@@ -24,9 +24,18 @@ export const samplesById = (state=ImmutableMap(), action) => {
   }
 };
 
-export const selectedSampleId = (state=null, action) => {
+export const sampleDetailId = (state=null, action) => {
   switch (action.type) {
   case CHANGE_SELECTED_SAMPLE:
+    return action.sampleId;
+  default:
+    return state;
+  }
+};
+
+export const sampleDetailUUID = (state=null, action) => {
+  switch (action.type) {
+  case RECEIVE_SAMPLE_DETAIL:
     return action.sampleId;
   default:
     return state;

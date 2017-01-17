@@ -1,17 +1,14 @@
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getIsSampleReady} from '../selectors/uiselectors';
-import {
-  fetchSampleDetail, changeSelectedSample
-} from '../actions/actioncreators.js';
+import {getIsSampleDetailReady} from '../selectors/uiselectors';
 import {SampleDetail} from '../components';
-import {callOnMount, waitOnReady, watchRouter} from '../components/Utils';
+import {waitOnReady} from '../components/Utils';
 
 export const SampleDetailContainer = compose(
   connect(
     state => ({
-      isReady: getIsSampleReady(state),
-      selectedSampleId: state.selectedSampleId,
+      isReady: getIsSampleDetailReady(state),
+      selectedSampleId: state.sampleDetailUUID,
       samplesById: state.samplesById,
       changeIds: state.changeIds,
       changesById: state.changesById,
@@ -28,15 +25,7 @@ export const SampleDetailContainer = compose(
       metaPeople: state.metaPeopleByKey,
       metaFacilities: state.metaFacilitiesByKey,
       metaLabTests: state.metaLabTestsByKey
-    }),
-    {fetchSampleDetail, changeSelectedSample}),
-  watchRouter(
-    ({params}) => params.sampleId,
-    (sampleId, {changeSelectedSample}) => changeSelectedSample(sampleId),
-  ),
-  callOnMount(({fetchSampleDetail, selectedSampleId}) => {
-    return fetchSampleDetail(selectedSampleId);
-  }),
+    })),
   waitOnReady,
 )(SampleDetail);
 

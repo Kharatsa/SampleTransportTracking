@@ -7,7 +7,8 @@ import DateFilters from './DateFiltersContainer';
 import LabTestCounts from './LabTestsContainer';
 import LocationFilters from './LocationFiltersContainer';
 import Pagination from './PaginationContainer';
-import Sample from './SampleContainer';
+import SampleDetailData from './SampleDetailDataContainer';
+import SampleDetail from './SampleDetailContainer';
 import StageDatesCounts from './StageDatesCountsContainer';
 import StageArtifactCounts from './StageArtifactCountsContainer';
 import SummaryCounts from './SummaryCountsContainer';
@@ -23,7 +24,8 @@ export {
   LabTestCounts,
   LocationFilters,
   Pagination,
-  Sample,
+  SampleDetailData,
+  SampleDetail,
   StageDatesCounts,
   StageArtifactCounts,
   SummaryCounts,

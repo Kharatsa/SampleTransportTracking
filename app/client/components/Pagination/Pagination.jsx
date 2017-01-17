@@ -1,10 +1,8 @@
 import React, {PropTypes} from 'react';
 import PageButton from './PageButton.jsx';
 import PageSummary from './PageSummary.jsx';
-import {Page} from '../../api/records.js';
 
-export const Paging = ({total, perPage, page}) => {
-  const currentPage = page.get('current');
+export const Paging = ({currentPage, total, perPage}) => {
   const pageCount = Math.ceil(total / perPage);
 
   const buttonsStyle = {textAlign: 'right'};
@@ -38,7 +36,7 @@ export const Paging = ({total, perPage, page}) => {
 Paging.propTypes = {
   total: PropTypes.number.isRequired,
   perPage: PropTypes.number.isRequired,
-  page: PropTypes.instanceOf(Page).isRequired,
+  currentPage: PropTypes.number.isRequired,
 };
 
 export default Paging;

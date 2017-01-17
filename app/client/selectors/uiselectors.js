@@ -1,16 +1,13 @@
 import {createSelector} from 'reselect';
+import {allTrue} from '../util/arrays';
 
 const getIsMetadataAvailable = state => state.isMetadataAvailable;
 const getIsChangesAvailable = state => state.isChangesAvailable;
 const getIsSummaryAvailable = state => state.isSummaryAvailable;
 const getIsDateSummaryAvailable = state => state.isDateSummaryAvailable;
 const getIsTATAvailable = state => state.isTATAvailable;
-const getIsSampleDetailAvailable = state => {
-  return state.isSampleDetailAvailable;
-};
+const getIsSampleDetailAvailable = state => state.isSampleDetailAvailable;
 const getPaginationPage = state => state.paginationPage;
-
-const allTrue = (...args) => args.every((arg) => !!arg);
 
 export const getIsChangesReady = createSelector(
   getIsMetadataAvailable,
@@ -36,18 +33,12 @@ export const getIsDateSummaryReady = createSelector(
   allTrue,
 );
 
-export const getIsSampleReady = createSelector(
+export const getIsSampleDetailReady = createSelector(
   getIsMetadataAvailable,
   getIsSampleDetailAvailable,
-  (meta, sample) => {
-    console.debug(`meta=${meta}, sample=${sample}`);
-    return allTrue(meta, sample);
-  }
-  // allTrue,
+  allTrue,
 );
 
 export const getCurrentPage = createSelector(
-  [getPaginationPage],
-  page => {
-    return page.get('current', null);
-  });
+  getPaginationPage,
+  page => page.get('current', null));

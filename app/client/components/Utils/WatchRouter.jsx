@@ -1,7 +1,7 @@
 import React from 'react';
 import {withRouter} from 'react-router';
-import {getDisplayName} from '../../util/hoc.js';
-import {routerPropTypes} from '../../util/proptypes.js';
+import {getDisplayName, NullComponent} from '../../util/hoc';
+import {routerPropTypes} from '../../util/proptypes';
 
 /**
  * Returns the target value from the router's query parameters.
@@ -26,14 +26,19 @@ export const watchRouter = (getValue, update) => {
   return Component => {
 
     let last;
+    let outdatedProps;
 
     const Wrapped = class WatchRouter extends React.Component {
       constructor(props) {
         super(props);
-        const {router} = props;
+      }
+
+      componentWillMount() {
+        const {router} = this.props;
         const value = getValue(router);
-        last = value;
         update(value, this.props);
+        outdatedProps = true;
+        last = value;
       }
 
       componentWillReceiveProps({router, ...others}) {
@@ -41,13 +46,17 @@ export const watchRouter = (getValue, update) => {
         if (last !== value) {
           update(value, {router, ...others});
           last = value;
+          outdatedProps = true;
+        } else if (last === value && outdatedProps) {
+          outdatedProps = false;
         }
       }
 
       render() {
-        return (
-          <Component {...this.props} />
-        );
+        if (outdatedProps) {
+          return <NullComponent />;
+        }
+        return <Component {...this.props} />;
       }
     };
     Wrapped.propTypes = {

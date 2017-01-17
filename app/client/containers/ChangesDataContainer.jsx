@@ -1,27 +1,30 @@
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {changePage, fetchChanges} from '../actions/actioncreators';
-import {getCurrentPage} from '../selectors/uiselectors';
-import {callOnMount, callOnProps, watchRouter} from '../components/Utils';
+import {withRouter} from 'react-router';
+import {queryValue} from '../util/router';
+import {fetchChanges} from '../actions/actioncreators';
+import {callOnMount, callOnPropChanged} from '../components/Utils';
+import {intFromString} from '../util/convert';
+
+const pageValue = queryValue('page', intFromString);
+
+// TODO: get filter from router
 
 export const ChangesDataContainer = compose(
   connect(
     state => ({
       filter: state.summaryFilter,
-      page: getCurrentPage(state),
     }),
-    {changePage, fetchChanges}),
-  watchRouter(
-    ({location: {query}}) => query.page && Number(query.page) || 1,
-    (page, {changePage}) => changePage(page),
-  ),
+    {fetchChanges}),
+  withRouter,
   callOnMount(
-    ({fetchChanges, filter, page}) => fetchChanges(filter, page)),
-  callOnProps(
-    ({fetchChanges}, {filter, page}) => fetchChanges(filter, page),
-    ({filter, page}, {filter: nextFilter, page: nextPage}) => {
-      return filter !== nextFilter || page !== nextPage;
+    ({fetchChanges, filter, router}) => {
+      const page = pageValue(router);
+      return fetchChanges(filter, page);
     }),
+  callOnPropChanged(
+    ({router}) => pageValue(router),
+    (page, {fetchChanges, filter}) => fetchChanges(filter, page)),
 )(() => null);
 
 export default ChangesDataContainer;
