@@ -42,6 +42,7 @@ Vagrantfile
 *.swp
 
 # Project
+*.sync-conflict*
 secret*
 junkyard/
 app/public

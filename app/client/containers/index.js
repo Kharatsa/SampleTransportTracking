@@ -13,6 +13,7 @@ import StageDatesCounts from './StageDatesCountsContainer';
 import StageArtifactCounts from './StageArtifactCountsContainer';
 import SummaryCounts from './SummaryCountsContainer';
 import TurnArounds from './TurnAroundsContainer';
+import TurnAroundsData from './TurnAroundsDataContainer';
 
 export {
   App,
@@ -30,4 +31,5 @@ export {
   StageArtifactCounts,
   SummaryCounts,
   TurnArounds,
+  TurnAroundsData,
 };

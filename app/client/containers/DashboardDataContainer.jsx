@@ -18,7 +18,8 @@ export const DashboardDataContainer = compose(
       fetchSummary();
     }),
   callOnPropChanged(
-    ({filter, fetchDateSummary, fetchSummary}) => {
+    ({filter}) => filter,
+    (filter, {fetchDateSummary, fetchSummary}) => {
       fetchDateSummary(filter);
       fetchSummary(filter);
     }),

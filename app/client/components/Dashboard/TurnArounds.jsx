@@ -36,7 +36,6 @@ export class TurnArounds extends React.PureComponent {
 
 TurnArounds.propTypes = {
   endToEndTAT: PropTypes.instanceOf(Record).isRequired,
-  fetchTurnArounds: PropTypes.func.isRequired,
   metaStages: PropTypes.instanceOf(ImmutableMap),
   metaStatuses: PropTypes.instanceOf(ImmutableMap),
   summaryFilter: PropTypes.object,

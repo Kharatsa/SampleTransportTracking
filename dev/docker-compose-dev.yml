@@ -13,6 +13,7 @@ services:
   server:
     container_name: app_stt
     image: kharatsa/strack
+    command: node_modules/.bin/nodemon app/server
     ports:
       - "8081:8081"
     volumes:
