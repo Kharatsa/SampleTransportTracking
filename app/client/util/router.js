@@ -1,22 +1,15 @@
-const makeConverter = (convertValue) => {
-  if (convertValue) {
-    return value => convertValue(value);
-  } else {
-    return value => value;
-  }
-};
-
 /**
-* Returns the final value, given the String value from router
+* Converts the string value from react-router to its final representation.
 * @callback convertValueCallback
 * @param {string} value - The raw value
 * @returns {Any}
 */
 
 /**
+* Returns either the string or converted value from react-router.
 * @callback paramValueCallback
 * @param {Object} router - react-router
-* @returns {string}
+* @returns {Any}
 */
 
 /**
@@ -25,9 +18,13 @@ const makeConverter = (convertValue) => {
 * @returns {paramValueCallback}
 */
 export const paramValue = (key, convert=null) => {
-  const converter = makeConverter(convert);
   return ({params}) => {
-    return converter(params[key]);
+    const value = params[key];
+    if (convert) {
+      return convert(value);
+    } else {
+      return value;
+    }
   };
 };
 
@@ -43,9 +40,13 @@ export const paramValue = (key, convert=null) => {
  * @returns {queryValueCallback}
  */
 export const queryValue = (key, convert=null) => {
-  const converter = makeConverter(convert);
   return ({location: {query}}) => {
-    return converter(query[key]);
+    const value = query[key];
+    if (convert) {
+      return convert(value);
+    } else {
+      return value;
+    }
   };
 };
 

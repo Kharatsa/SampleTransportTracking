@@ -1,6 +1,8 @@
 import React, {PropTypes} from 'react';
 import DatePicker from 'react-datepicker';
 import Moment from 'moment';
+import {shortFormatDate} from '../../util/stringformat';
+import {routerPropTypes} from '../../util/proptypes';
 
 const calcAfterDate = (beforeDateInput, afterDate) => {
   const maxAfterDate = beforeDateInput.clone().subtract(1, 'day');
@@ -17,46 +19,56 @@ export class DateFilters extends React.PureComponent {
     super(props);
   }
 
-  selectAfterDate(afterDateInput) {
+  selectAfterDate(router, afterDateInput) {
     const {changeSummaryFilter} = this.props;
-    const {afterDateFilter, beforeDateFilter} = this.props;
+    const {afterDate, beforeDate} = this.props;
 
-    if (afterDateInput !== afterDateFilter) {
-      const nextBeforeDate = calcBeforeDate(afterDateInput, beforeDateFilter);
+    if (afterDateInput !== afterDate) {
+      const nextBeforeDate = calcBeforeDate(afterDateInput, beforeDate);
+      router.pushWithQuery({
+        after: shortFormatDate(afterDateInput),
+        before: shortFormatDate(nextBeforeDate),
+      });
+
       return changeSummaryFilter(
         {afterDate: afterDateInput, beforeDate: nextBeforeDate});
     }
   }
 
-  selectBeforeDate(beforeDateInput) {
+  selectBeforeDate(router, beforeDateInput) {
     const {changeSummaryFilter} = this.props;
-    const {afterDateFilter, beforeDateFilter} = this.props;
+    const {afterDate, beforeDate} = this.props;
 
-    if (beforeDateInput !== beforeDateFilter) {
-      const nextAfterDate = calcAfterDate(beforeDateInput, afterDateFilter);
+    if (beforeDateInput !== beforeDate) {
+      const nextAfterDate = calcAfterDate(beforeDateInput, afterDate);
+      router.pushWithQuery({
+        after: shortFormatDate(nextAfterDate),
+        before: shortFormatDate(beforeDateInput),
+      });
+
       return changeSummaryFilter(
         {afterDate: nextAfterDate, beforeDate: beforeDateInput});
     }
   }
 
   render() {
-    const {afterDateFilter, beforeDateFilter} = this.props;
+    const {afterDate, beforeDate} = this.props;
 
     return (
       <form className='pure-form'>
         <label htmlFor='regionFilter'>From</label>
         <DatePicker
-            selected={afterDateFilter}
-            maxDate={Moment().subtract(1, 'day')}
-            onChange={this.selectAfterDate.bind(this)}
+              selected={afterDate}
+              maxDate={Moment().subtract(1, 'day')}
+            onChange={this.selectAfterDate.bind(this, this.props.router)}
             className='pure-menu-input'
         />
 
         <label htmlFor='regionFilter'>To</label>
         <DatePicker
-            selected={beforeDateFilter}
+            selected={beforeDate}
             maxDate={Moment()}
-            onChange={this.selectBeforeDate.bind(this)}
+            onChange={this.selectBeforeDate.bind(this, this.props.router)}
             className='pure-menu-input'
         />
       </form>);
@@ -64,9 +76,10 @@ export class DateFilters extends React.PureComponent {
 }
 
 DateFilters.propTypes = {
-  afterDateFilter: PropTypes.instanceOf(Moment).isRequired,
-  beforeDateFilter: PropTypes.instanceOf(Moment).isRequired,
+  afterDate: PropTypes.instanceOf(Moment).isRequired,
+  beforeDate: PropTypes.instanceOf(Moment).isRequired,
   changeSummaryFilter: PropTypes.func.isRequired,
+  ...routerPropTypes,
 };
 
 export default DateFilters;

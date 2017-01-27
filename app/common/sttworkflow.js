@@ -1,3 +1,7 @@
+'use strict';
+
+const moment = require('moment');
+
 /**
  * Constants representing key aspects of the STT workflow. These variables
  * should be used in view, reducer, selector, and normalize logic, rather than
@@ -5,6 +9,11 @@
  * more sensibly in the future.
  */
 const APP_NAME = 'Sample Tracking';
+
+const DEFAULT_AFTER_DATE = (moment()
+                            .startOf('day')
+                            .subtract(1, 'months'));
+const DEFAULT_BEFORE_DATE = moment().startOf('day');
 
 const SCAN_STAGES = {
   SAMPLE_PICKUP: 'SDEPART',
@@ -126,6 +135,8 @@ const META_TYPES_ORDER = [
 
 module.exports = {
   APP_NAME,
+  DEFAULT_AFTER_DATE,
+  DEFAULT_BEFORE_DATE,
   SCAN_STAGES,
   SCAN_STAGES_ORDER,
   SCAN_ARTIFACTS,
