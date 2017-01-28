@@ -16,6 +16,8 @@ class AppRouter {
   constructor(router) {
     this._router = router;
 
+    this.location = router.location;
+
     // Expose router methods on this object
     this.push = router.push.bind(router);
     this.replace = router.replace.bind(router);

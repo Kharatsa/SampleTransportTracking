@@ -2,9 +2,9 @@ import React from 'react';
 import {getDisplayName} from '../../util/hoc';
 
 /**
- * Returns the target value from the router's query parameters.
+ * Returns the target value from props
  * @callback getValueCallback
- * @param {Object}  - Router query parameters
+ * @param {Object} props - componentWillReceiveProps nextProps
  * @returns {Any}
  */
 

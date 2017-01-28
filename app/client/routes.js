@@ -70,6 +70,10 @@ const saveQuery = ({location}) => {
  * @param {Function} [callback]
  */
 
+// compose
+// chain async calls
+// for any err, do callback(err, values)
+
 /**
  * Return onEnter callback function which either reincludes a saved query
  * or reincludes and missing default query parameters.

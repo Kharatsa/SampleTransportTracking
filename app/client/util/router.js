@@ -53,13 +53,8 @@ export const queryValue = (key, convert=null) => {
 /**
  * Compose param and query callbacks into a single function.
  * @param {queryValueCallback|paramValueCallback[]} args
- * @returns {string[]}
+ * @returns {Any[]}
  */
 export const manyValues = (...args) => {
-  return router => {
-    return args.reduce((result, getValue) => {
-      result.push(getValue(router));
-      return result;
-    }, []);
-  };
+  return router => args.map((getValue) => getValue(router));
 };
