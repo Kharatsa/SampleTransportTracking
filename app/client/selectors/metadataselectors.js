@@ -12,15 +12,15 @@ const getMetaRegionsByKey = (state) => state.metaRegionsByKey;
 // all facilities).
 export const getFilteredMetaFacilities = createSelector(
   [getMetaFacilitiesKey, getMetaFacilitiesByKey, getSummaryFilter],
-  (facilitiyKeys, facilitiesByKey, summaryFilter) => {
+  (facilityKeys, facilitiesByKey, summaryFilter) => {
     const regionKey = summaryFilter.get('regionKey');
-    if (regionKey !== null) {
+    if (regionKey !== null && facilityKeys) {
       return (
-        facilitiyKeys
+        facilityKeys
         .map(key => facilitiesByKey.get(key))
         .filter(facility => facility.get('region') === regionKey));
     }
-    return Seq();
+    return Seq([]);
   }
 );
 

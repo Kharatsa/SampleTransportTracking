@@ -7,6 +7,7 @@ import DateFilters from './DateFiltersContainer';
 import LabTestCounts from './LabTestsContainer';
 import LocationFilters from './LocationFiltersContainer';
 import Pagination from './PaginationContainer';
+import ParseQuery from './ParseQueryContainer';
 import SampleDetailData from './SampleDetailDataContainer';
 import SampleDetail from './SampleDetailContainer';
 import StageDatesCounts from './StageDatesCountsContainer';
@@ -25,6 +26,7 @@ export {
   LabTestCounts,
   LocationFilters,
   Pagination,
+  ParseQuery,
   SampleDetailData,
   SampleDetail,
   StageDatesCounts,

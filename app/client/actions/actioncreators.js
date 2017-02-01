@@ -138,12 +138,13 @@ export const fetchTurnArounds = (summaryFilter) => {
 };
 
 export const changeSummaryFilter = ({
-  afterDate, beforeDate, regionKey, facilityKey
+  afterDate, beforeDate, regionKey, facilityKey, queryProcessed=null,
 }) => ({
   type: action.CHANGE_SUMMARY_FILTER,
   summaryFilter: new SummaryFilter({
     afterDate, beforeDate, regionKey, facilityKey
-  })
+  }),
+  queryProcessed,
 });
 
 const requestDateSummary = (summaryFilter) =>

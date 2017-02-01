@@ -1,46 +1,69 @@
 import React, {PropTypes} from 'react';
 import Select from 'react-select';
+import {routerPropTypes} from '../../util/proptypes';
 
 export class LocationFilters extends React.PureComponent {
   constructor(props) {
     super(props);
   }
 
-  _selectLocationFilter(selected, type) {
+  _selectLocationFilter(router, selected, type) {
     const {filterRegionKey, filterFacilityKey} = this.props;
     const {changeSummaryFilter} = this.props;
 
     if (!selected) {
       if (type === 'region') {
-        changeSummaryFilter({regionKey: null, facilityKey: null});
-      } else {
-        changeSummaryFilter({regionKey: filterRegionKey, facilityKey: null});
-      }
-    } else {
+        router.pushWithQuery({
+          query: {region: null, facility: null},
+        });
+        return changeSummaryFilter({
+          regionKey: null, facilityKey: null,
+        });
 
+      } else {
+        router.pushWithQuery({
+          query: {region: filterRegionKey, facility: null},
+        });
+        return changeSummaryFilter({
+          regionKey: filterRegionKey, facilityKey: null,
+        });
+
+      }
+
+    } else {
       const {value: selectedKey} = selected;
       if (type === 'facility' && selectedKey !== filterFacilityKey) {
-        changeSummaryFilter(
-          {regionKey: filterRegionKey, facilityKey: selectedKey});
+        router.pushWithQuery({
+          query: {region: filterRegionKey, facility: selectedKey},
+        });
+        return changeSummaryFilter({
+          regionKey: filterRegionKey, facilityKey: selectedKey,
+        });
+
       } else if (type === 'region') {
-        changeSummaryFilter(
-          {regionKey: selectedKey, facilityKey: filterFacilityKey});
+        router.pushWithQuery({
+          query: {region: selectedKey, facility: filterFacilityKey},
+        });
+        return changeSummaryFilter({
+          regionKey: selectedKey, facilityKey: filterFacilityKey,
+        });
+
       }
     }
   }
 
-  selectFacility(selectedKey) {
-    this._selectLocationFilter(selectedKey, 'facility');
+  selectFacility(router, selectedKey) {
+    this._selectLocationFilter(router, selectedKey, 'facility');
   }
 
-  selectRegion(selectedKey) {
-    this._selectLocationFilter(selectedKey, 'region');
+  selectRegion(router, selectedKey) {
+    this._selectLocationFilter(router, selectedKey, 'region');
   }
 
   render() {
     const {
       isReady, metaRegions, filteredMetaFacilities, filterRegionKey,
-      filterFacilityKey
+      filterFacilityKey, router,
     } = this.props;
 
     const regionKey = filterRegionKey;
@@ -65,7 +88,7 @@ export class LocationFilters extends React.PureComponent {
             placeholder='Select Laboratory...'
             value={regionKey}
             options={regionOptions}
-            onChange={this.selectRegion.bind(this)}
+            onChange={this.selectRegion.bind(this, router)}
         />
         <label htmlFor='facilityFilter'>Facility</label>
         <Select
@@ -77,7 +100,7 @@ export class LocationFilters extends React.PureComponent {
             placeholder='Select Facility...'
             value={facilityKey}
             options={facilityOptions}
-            onChange={this.selectFacility.bind(this)}
+            onChange={this.selectFacility.bind(this, router)}
         />
       </div>
     );
@@ -91,6 +114,7 @@ LocationFilters.propTypes = {
   filterRegionKey: PropTypes.string,
   filterFacilityKey: PropTypes.string,
   changeSummaryFilter: PropTypes.func.isRequired,
+  ...routerPropTypes,
 };
 
 export default LocationFilters;

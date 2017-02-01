@@ -12,7 +12,7 @@ import {getDisplayName} from '../../util/hoc';
  * Does something with the latest target value
  * @callback updateCallback
  * @param {Any} value
- * @param {Object} props
+ * @param {Object} props - componentWillReceiveProps nextProps
  */
 
 /**

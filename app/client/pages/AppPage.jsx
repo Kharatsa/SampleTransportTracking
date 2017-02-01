@@ -1,7 +1,15 @@
 import React, {PropTypes} from 'react';
-import {AppContainer} from '../containers/AppContainer';
+import {App, ParseQuery} from '../containers';
 
-export const AppPage = ({children}) => <AppContainer>{children}</AppContainer>;
+export const AppPage = ({children}) => {
+  return (
+    <App>
+      <ParseQuery>
+        {children}
+      </ParseQuery>
+    </App>
+  );
+};
 
 AppPage.propTypes = {
   children: PropTypes.node.isRequired,

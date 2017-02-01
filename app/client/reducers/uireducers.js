@@ -33,3 +33,17 @@ export const isMetadataAvailable = makeReducer(
 
 export const isUsersAvailable = makeReducer(
   actions.FETCH_USERS, actions.RECEIVE_USERS);
+
+export const isQueryProcessed = (state=false, action) => {
+  switch (action.type) {
+  case actions.CHANGE_SUMMARY_FILTER: {
+    const processed = action.queryProcessed;
+    if (processed !== null) {
+      return processed;
+    }
+    return state;
+  }
+  default:
+    return state;
+  }
+};
