@@ -14,7 +14,7 @@ export const LocationFilterContainer = compose(
       filterFacilityKey: state.summaryFilter.get('facilityKey', null),
       filteredMetaFacilities: getFilteredMetaFacilities(state),
       filterRegionKey: state.summaryFilter.get('regionKey', null),
-      metaFacilitiesByKey: state.metaRegionsByKey,
+      metaFacilitiesByKey: state.metaFacilitiesByKey,
       metaRegions: getMetaRegions(state),
       metaRegionsByKey: state.metaRegionsByKey,
     }),
