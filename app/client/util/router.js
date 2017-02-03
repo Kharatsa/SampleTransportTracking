@@ -70,7 +70,6 @@ let LAST_QUERY = {};
  */
 export const saveQuery = ({location}) => {
   const {query={}} = location;
-  console.debug(`Saving query from location: ${JSON.stringify(location)}`)
   LAST_QUERY = query;
 };
 
@@ -78,19 +77,16 @@ export const saveQuery = ({location}) => {
  * @callback loadLastQueryCallback
  * @param {Object} query - A location query
  * @returns {Object|null} - Query updated with the saved or previous query.
- *                          Returns null when no updates are applied.
  */
 
 /**
- * @param {string[]} keys - The query keys that should be restored from the 
- *                          previous or saved query.
+ * @param {string[]} keys - The query keys that should be restored.
  * @returns {loadLastQueryCallback}
  */
 export const makeLastQueryLoader = (...keys) => {
   const missingKeys = (source, target) => {
     return keys.some((key) => {
-      console.debug(`Checking source[${key}] (${source[key]}) && !target[${key}] (${target[key]})`)
-      return source[key] && !target[key]
+      return source[key] && target[key] === undefined;
     });
   };
 
@@ -109,12 +105,10 @@ export const makeLastQueryLoader = (...keys) => {
     if (prevQuery && missingKeys(prevQuery, query)) {
       // called from onChange
       const filtered = filterKeys(prevQuery, query);
-      console.debug(`Query ${JSON.stringify(query)} missing previous keys ${JSON.stringify(prevQuery)}`)
       result = Object.assign({}, filtered, query);
 
     } else if (missingKeys(LAST_QUERY, query)) {
       // called from onEnter
-      console.debug(`Query ${JSON.stringify(query)} missing saved keys ${JSON.stringify(LAST_QUERY)}`)
       const filtered = filterKeys(LAST_QUERY, query);
       result = Object.assign({}, filtered, query);
       LAST_QUERY = {};
@@ -183,24 +177,9 @@ export class AppRouter {
   locationFromQuery({query={}, state}) {
     const oldQuery = this.location.query;
 
-    // Exclude any falsy values passed to set
-    const filtered = Object.keys(query).reduce((result, key) => {
-      const value = query[key];
-      const oldValue = oldQuery[key];
-
-      if (value) {
-        result[key] = value;
-      } else if (oldValue) {
-        // explicit falsy values in new query erase any existing value
-        delete oldQuery[key];
-      }
-
-      return result;
-    }, {});
-
     return {
       pathname: this.location.pathname,
-      query: Object.assign({}, oldQuery, filtered),
+      query: Object.assign({}, oldQuery, query),
       state,
     };
   }

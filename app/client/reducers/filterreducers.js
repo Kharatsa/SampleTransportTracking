@@ -26,7 +26,8 @@ export const summaryFilter = (state=defaultSummaryFilter, action) => {
       afterDate: getFilterValue(filter, state, 'afterDate'),
       beforeDate: getFilterValue(filter, state, 'beforeDate'),
       regionKey: getFilterValue(filter, state, 'regionKey'),
-      facilityKey: getFilterValue(filter, state, 'facilityKey')
+      facilityKey: getFilterValue(filter, state, 'facilityKey'),
+      loading: getFilterValue(filter, state, 'loading') || true,
     };
     return SummaryFilter(updatedFilter);
   }

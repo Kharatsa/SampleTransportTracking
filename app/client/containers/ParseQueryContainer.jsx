@@ -1,21 +1,35 @@
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import moment from 'moment';
-import {changeSummaryFilter} from '../actions/actioncreators.js';
+import {changePage, changeSummaryFilter} from '../actions/actioncreators.js';
 import {ParseQuery} from '../components';
 import {
   callOnMount, callOnPropChanged, waitOnReady, withAppRouter,
 } from '../components/Utils';
 import {queryValue, manyValues} from '../util/router';
 
+/**
+ * Returns an in-order array of strings parsed from the query.
+ * @param {Object} router
+ * @returns {string[]}
+ */
 const loadQuery = manyValues(
   queryValue('after'),
   queryValue('before'),
   queryValue('region'),
   queryValue('facility'),
-  // queryValue('page'),
+  queryValue('page'),
 );
 
+/**
+ * Returns the updated location filter object, or null when no update is
+ * necessary.
+ * @param {string} regionQuery
+ * @param {string} facilityQuery
+ * @param {string} regionFilter
+ * @param {string} facilityFilter
+ * @returns {Object|null}
+ */
 const loadLocationQuery = ({
   regionQuery, facilityQuery, regionFilter, facilityFilter,
 }) => {
@@ -44,6 +58,15 @@ const loadLocationQuery = ({
   return null;
 };
 
+/**
+ * Returns the updated date filter object, or null when no update is
+ * necessary.
+ * @param {string} afterQuery
+ * @param {string} beforeQuery
+ * @param {string} afterDate
+ * @param {string} beforeDate
+ * @returns {Object|null}
+ */
 const loadDateQuery = ({
   afterQuery, beforeQuery, afterDate, beforeDate,
 }) => {
@@ -65,6 +88,19 @@ const loadDateQuery = ({
   return null;
 };
 
+/**
+ * @param {string} pageQuery
+ * @param {string} pageNum
+ * @returns {number|null}
+ */
+const loadPageQuery = ({pageQuery, pageNum}) => {
+  const parsed = Number(pageQuery);
+  if (!Number.isNaN(parsed) && parsed !== pageNum) {
+    return parsed;
+  }
+  return null;
+};
+
 export const ParseQueryContainer = compose(
   connect(
     state => ({
@@ -73,9 +109,9 @@ export const ParseQueryContainer = compose(
       before: state.summaryFilter.get('beforeDate', null),
       region: state.summaryFilter.get('regionKey', null),
       facility: state.summaryFilter.get('facilityKey', null),
-      // page: null,
+      page: state.paginationPage.get('current', null),
     }),
-    {changeSummaryFilter},
+    {changeSummaryFilter, changePage},
   ),
 
   withAppRouter,
@@ -113,10 +149,9 @@ export const ParseQueryContainer = compose(
   callOnPropChanged(
     ({router}) => loadQuery(router),
     (
-      [afterQuery, beforeQuery, regionQuery, facilityQuery],
-      {router, after, before, region, facility, changeSummaryFilter}
+      [afterQuery, beforeQuery, regionQuery, facilityQuery, pageQuery],
+      {after, before, region, facility, page, changeSummaryFilter, changePage},
     ) => {
-      console.debug(`Checking location ${JSON.stringify(router.location)} for changes`);
       const queryDateChanges = loadDateQuery({
         afterQuery,
         beforeQuery,
@@ -135,8 +170,13 @@ export const ParseQueryContainer = compose(
         // Synchronize these updated filter values with state
         const dateFilter = queryDateChanges || {};
         const locationFilter = queryLocationChanges || {};
-        console.debug(`Updating state dates=${JSON.stringify(dateFilter)}, locations=${JSON.stringify(locationFilter)}`);
         return changeSummaryFilter({...dateFilter, ...locationFilter});
+      }
+
+      const changedPageNum = loadPageQuery({pageQuery, pageNum: page});
+
+      if (changedPageNum) {
+        changePage(changedPageNum);
       }
 
     }),

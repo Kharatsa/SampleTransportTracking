@@ -18,7 +18,7 @@ const DEFAULT_DATES = {
 };
 
 const dashboardLoadQuery = makeLastQueryLoader(
-  'after', 'before', 'lab', 'region',
+  'after', 'before', 'region', 'facility',
 );
 
 const dashboardLoadDefaultQuery = makeDefaultQueryLoader({
@@ -29,13 +29,28 @@ const changesLoadDefaultQuery = makeDefaultQueryLoader({
   ...DEFAULT_DATES, page: 1,
 });
 
+/**
+ * https://github.com/reacttraining/react-router/blob/master/docs/api.md#onenternextstate-replace-callback
+ * @callback onEnterCallback
+ * @param {Object} nextState
+ * @param {Function} replace
+ * @param {Function} [callback]
+ */
+
+/**
+ * Returns an onEnter function that loads either the relevant last query
+ * parameters, or the default query parameters, or nothing if the location
+ * has things covered.
+ * @param {Function} loadLast
+ * @param {Function} loadDefault
+ * @returns {onEnterCallback}
+ */
 const makeOnEnter = (loadLast, loadDefault) => {
   return ({location}, replace, callback) => {
     const lastQuery = loadLast(location.query);
     const defaultQuery = loadDefault(location.query);
 
     if (lastQuery) {
-      console.debug(`Loading ${JSON.stringify(lastQuery)} over ${JSON.stringify(location.query)}`)
       replace({
         pathname: location.pathname,
         query: lastQuery,
@@ -55,16 +70,29 @@ const makeOnEnter = (loadLast, loadDefault) => {
   };
 };
 
+/**
+ * https://github.com/ReactTraining/react-router/blob/master/docs/API.md#onchangeprevstate-nextstate-replace-callback
+ * @callback onChangeCallback
+ * @param {Object} prevState
+ * @param {Object} nextState
+ * @param {Function} replace
+ * @param {Function} [callback]
+ */
+
+/**
+ * Returns an onChange function that loads relevant query parameters from
+ * the last location (PUSH only).
+ * @param {Function} loadLast
+ * @returns {onChangeCallback}
+ */
 const makeOnChange = loadLast => {
   return (prevState, nextState, replace, callback) => {
     const {location: prevLocation} = prevState;
     const {location} = nextState;
-    console.debug(`Handling change from ${JSON.stringify(prevLocation)} to ${JSON.stringify(location)}`);
 
     if (location.action === 'PUSH') {
       const lastQuery = loadLast(location.query, prevLocation.query);
       if (lastQuery) {
-        console.debug(`Loading ${JSON.stringify(lastQuery)} over ${JSON.stringify(location.query)}`)
         replace({
           pathname: location.pathname,
           query: lastQuery,
@@ -79,12 +107,21 @@ const makeOnChange = loadLast => {
   };
 };
 
+/**
+ * onEnter handler for the Dashboard pages
+ */
 const dashboardOnEnter = makeOnEnter(
   dashboardLoadQuery, dashboardLoadDefaultQuery
 );
 
+/**
+ * onChange handler for the Dashboard pages
+ */
 const dashboardOnChange = makeOnChange(dashboardLoadQuery);
 
+/**
+ * onEnter handler for the Changes pages
+ */
 const changesOnEnter = makeOnEnter(
   dashboardLoadQuery, changesLoadDefaultQuery,
 );
